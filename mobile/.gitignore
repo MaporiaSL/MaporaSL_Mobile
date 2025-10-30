@@ -16,25 +16,46 @@ pubspec.lock
 .vscode/
 
 # Android specific
-**/android/**/gradle-wrapper.jar
+# Gradle files
+.gradle/
 **/android/**/.gradle/
+**/android/gradle/wrapper/gradle-wrapper.jar
+**/android/gradlew
+**/android/gradlew.bat
+
+# Local configuration
+**/android/local.properties
+**/android/key.properties
+
+# Build and generated files
+**/android/**/build/
 **/android/**/.kotlin/
 **/android/**/captures/
-**/android/local.properties
 **/android/**/GeneratedPluginRegistrant.java
-**/android/key.properties
-**/android/**/*.jks
-**/android/app/release/
 **/android/app/debug/
 **/android/app/profile/
+**/android/app/release/
 
-# Keep these Android files (remove if you want to ignore them)
+# Android Studio
+**/android/**/*.iml
+**/.idea/
+**/android/**/.cxx/
+
+# Keystore files
+*.jks
+*.keystore
+
+# Keep these Android files
 !**/android/build.gradle.kts
 !**/android/settings.gradle.kts
 !**/android/gradle.properties
 !**/android/gradle/wrapper/gradle-wrapper.properties
 !**/android/app/build.gradle.kts
-!**/android/app/src/
+!**/android/app/src/main/AndroidManifest.xml
+!**/android/app/src/main/res/
+!**/android/app/src/main/kotlin/
+!**/android/app/src/debug/AndroidManifest.xml
+!**/android/app/src/profile/AndroidManifest.xml
 
 # iOS/XCode specific
 **/ios/**/*.mode1v3
