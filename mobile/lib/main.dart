@@ -8,15 +8,10 @@ import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  // ✅ Initialize Mapbox access token
-  MapboxOptions.setAccessToken("YOUR_MAPBOX_ACCESS_TOKEN_HERE");
-
-  runApp(
-    const ProviderScope(
-      child: GemifiedTravelApp(),
-    ),
+  MapboxOptions.setAccessToken(
+    "pk.eyJ1IjoiYW51amEtaiIsImEiOiJjbWhrazJoZHIxMG9rMmpvOGVzNTJwem9oIn0.QjUIU6cABQ1NjmwHdbNnsQ",
   );
+  runApp(const ProviderScope(child: GemifiedTravelApp()));
 }
 
 class GemifiedTravelApp extends StatelessWidget {
