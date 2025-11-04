@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'core/theme/app_theme.dart';
 import 'core/services/permission_service.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'features/map/presentation/map_screen.dart';
 
 void main() {
-  runApp(const GemifiedTravelApp());
+  runApp(const ProviderScope(child: GemifiedTravelApp())); // ✅ Wrap app here
 }
 
 class GemifiedTravelApp extends StatelessWidget {
@@ -13,7 +15,7 @@ class GemifiedTravelApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Gemified Travel Portfolio',
+      title: 'MAPORIA',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light(),
       darkTheme: AppTheme.dark(),
