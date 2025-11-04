@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="NONE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="85c81345-a34b-4cea-a4e8-41472e7b44b3" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/caches/deviceStreaming.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/deviceManager.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/gemified-travel-portfolio.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/.nojekyll" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/ARCHITECTURE.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/PROJECT_SPEC.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/_coverpage.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/_sidebar.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/index.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/style.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mobile/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/lib/main.dart" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 0
+}</component>
+  <component name="ProjectId" id="34bt6ydrZz9MBDvWKkcW0rB4nHL" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.readMode.enableVisualFormatting": "true",
+    "cf.first.check.clang-format": "false",
+    "cidr.known.project.marker": "true",
+    "dart.analysis.tool.window.visible": "false",
+    "git-widget-placeholder": "repo-management",
+    "last_opened_file_path": "D:/Github_projects/gemified-travel-portfolio",
+    "settings.editor.selected.configurable": "dart.settings"
+  }
+}]]></component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="85c81345-a34b-4cea-a4e8-41472e7b44b3" name="Changes" comment="" />
+      <created>1761493930406</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1761493930406</updated>
+    </task>
+    <servers />
+  </component>
+</project>
