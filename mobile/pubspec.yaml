@@ -35,6 +35,17 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
 
+  # Theming & fonts
+  google_fonts: ^6.1.0
+  # Permissions & location groundwork
+  # State management
+  google_maps_flutter: ^2.7.0
+  geolocator: ^12.0.0
+  permission_handler: ^11.0.1
+  flutter_riverpod: ^2.5.1
+  mapbox_maps_flutter: ^2.12.0
+
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
