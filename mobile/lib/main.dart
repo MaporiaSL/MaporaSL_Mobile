@@ -5,6 +5,7 @@ import 'core/theme/app_theme.dart';
 import 'core/services/permission_service.dart';
 import 'features/map/presentation/mapbox_map_screen.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
+import 'features/home/presentation/home_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,7 +26,7 @@ class GemifiedTravelApp extends StatelessWidget {
       theme: AppTheme.light(),
       darkTheme: AppTheme.dark(),
       themeMode: ThemeMode.system,
-      home: const MapboxMapScreen(),
+      home: const HomeScreen(),
     );
   }
 }
