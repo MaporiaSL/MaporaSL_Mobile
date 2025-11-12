@@ -34,7 +34,7 @@ class _MapboxMapScreenState extends State<MapboxMapScreen> {
           center: mapbox.Point(
             coordinates: mapbox.Position(position.longitude, position.latitude),
           ),
-          zoom: 1.0,
+          zoom: 14.0,
         ),
       );
     }
@@ -57,16 +57,20 @@ class _MapboxMapScreenState extends State<MapboxMapScreen> {
   Future<void> _onMapCreated(mapbox.MapboxMap mapboxMap) async {
     _mapboxMap = mapboxMap;
 
-    await _mapboxMap!.loadStyleURI("mapbox://styles/anuja-j/cmhlo2u6k004p01sjgqr60he9");
+    await _mapboxMap!.loadStyleURI(
+      "mapbox://styles/anuja-j/cmhlo2u6k004p01sjgqr60he9",
+    );
 
-    await _mapboxMap!.gestures.updateSettings(mapbox.GesturesSettings(
-      rotateEnabled: false,
-      pitchEnabled: false,
-      scrollEnabled: true,
-      pinchToZoomEnabled: true,
-      quickZoomEnabled: true,
-      doubleTapToZoomInEnabled: true,
-    ));
+    await _mapboxMap!.gestures.updateSettings(
+      mapbox.GesturesSettings(
+        rotateEnabled: false,
+        pitchEnabled: true,
+        scrollEnabled: true,
+        pinchToZoomEnabled: true,
+        quickZoomEnabled: true,
+        doubleTapToZoomInEnabled: true,
+      ),
+    );
 
     await _mapboxMap!.setBounds(
       mapbox.CameraBoundsOptions(
@@ -76,11 +80,13 @@ class _MapboxMapScreenState extends State<MapboxMapScreen> {
       ),
     );
 
-    await _mapboxMap!.location.updateSettings(mapbox.LocationComponentSettings(
-      enabled: true,
-      pulsingEnabled: true,
-      showAccuracyRing: true,
-    ));
+    await _mapboxMap!.location.updateSettings(
+      mapbox.LocationComponentSettings(
+        enabled: true,
+        pulsingEnabled: true,
+        showAccuracyRing: true,
+      ),
+    );
 
     await _initializeLocation();
   }
