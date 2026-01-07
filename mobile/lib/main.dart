@@ -5,6 +5,16 @@ import 'core/theme/app_theme.dart';
 import 'core/services/permission_service.dart';
 import 'features/map/presentation/mapbox_map_screen.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
+<<<<<<< HEAD
+import 'features/home/presentation/home_screen.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  MapboxOptions.setAccessToken(
+    "pk.eyJ1IjoiYW51amEtaiIsImEiOiJjbWhrazJoZHIxMG9rMmpvOGVzNTJwem9oIn0.QjUIU6cABQ1NjmwHdbNnsQ",
+  );
+  runApp(const ProviderScope(child: GemifiedTravelApp()));
+=======
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,6 +27,7 @@ void main() async {
       child: GemifiedTravelApp(),
     ),
   );
+>>>>>>> main
 }
 
 class GemifiedTravelApp extends StatelessWidget {
@@ -30,7 +41,11 @@ class GemifiedTravelApp extends StatelessWidget {
       theme: AppTheme.light(),
       darkTheme: AppTheme.dark(),
       themeMode: ThemeMode.system,
+<<<<<<< HEAD
+      home: const HomeScreen(),
+=======
       home: const MapboxMapScreen(),
+>>>>>>> main
     );
   }
 }
