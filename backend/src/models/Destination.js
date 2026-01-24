@@ -37,6 +37,10 @@ const destinationSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
+  location: {
+    type: { type: String, enum: ['Point'], default: 'Point' },
+    coordinates: { type: [Number], required: true, index: '2dsphere' }
+  },
   createdAt: {
     type: Date,
     default: Date.now
@@ -50,9 +54,18 @@ const destinationSchema = new mongoose.Schema({
 // Compound indexes for common queries
 destinationSchema.index({ userId: 1, travelId: 1 });
 
-// Update timestamp on save
+// 2dsphere index for geospatial queries
+destinationSchema.index({ location: '2dsphere' });
+
+// Update timestamp on save and sync location from lat/lng
 destinationSchema.pre('save', function(next) {
   this.updatedAt = Date.now();
+  if (this.isModified('latitude') || this.isModified('longitude')) {
+    this.location = {
+      type: 'Point',
+      coordinates: [this.longitude, this.latitude]
+    };
+  }
   next();
 });
 
