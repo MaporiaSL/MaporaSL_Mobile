@@ -37,6 +37,15 @@ const destinationSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
+  visitedAt: {
+    type: Date,
+    default: null
+  },
+  districtId: {
+    type: String,
+    default: null,
+    index: true
+  },
   location: {
     type: { type: String, enum: ['Point'], default: 'Point' },
     coordinates: { type: [Number], required: true, index: '2dsphere' }
