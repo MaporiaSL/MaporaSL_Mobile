@@ -12,8 +12,10 @@
 2. [Auth Endpoints](#auth-endpoints)
 3. [Travel Endpoints](#travel-endpoints)
 4. [Destination Endpoints](#destination-endpoints)
-5. [Error Responses](#error-responses)
-6. [Status Codes](#status-codes)
+5. [Map Endpoints](#map-endpoints)
+6. [Geospatial Query Endpoints](#geospatial-query-endpoints)
+7. [Error Responses](#error-responses)
+8. [Status Codes](#status-codes)
 
 ---
 
@@ -776,6 +778,335 @@ curl -X POST http://localhost:5000/api/travel/TRAVEL_ID/destinations \
     "longitude": -157.8293,
     "visited": false
   }'
+```
+
+---
+
+## Map Endpoints
+
+### Get Travel GeoJSON
+
+Retrieve complete GeoJSON representation of a travel with all destinations, routes, and boundaries.
+
+**Endpoint**: `GET /api/travel/:travelId/geojson`  
+**Auth**: Required (JWT)
+
+**Query Parameters**:
+- `includeRoute` (boolean, default: true) - Include route LineString connecting destinations
+- `includeBoundary` (boolean, default: true) - Include boundary Polygon (convex hull)
+- `lightweight` (boolean, default: false) - Return minimal properties only
+
+**Response**: GeoJSON FeatureCollection
+
+```json
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [79.8612, 6.9271]
+      },
+      "properties": {
+        "id": "679f5e8d3c2a1b4e5f6a7b8c",
+        "name": "Colombo Fort",
+        "visited": true,
+        "order": 1,
+        "marker-color": "#10b981"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [[79.8612, 6.9271], [80.6350, 7.2906]]
+      },
+      "properties": {
+        "type": "route",
+        "distance": 89.45,
+        "stroke": "#8b5cf6"
+      }
+    }
+  ],
+  "properties": {
+    "travelId": "679f5e8d3c2a1b4e5f6a7b8c",
+    "travelName": "Sri Lanka Adventure",
+    "destinationCount": 12,
+    "visitedCount": 8,
+    "unvisitedCount": 4
+  }
+}
+```
+
+**cURL Example**:
+```bash
+curl -X GET "http://localhost:5000/api/travel/TRAVEL_ID/geojson?includeRoute=true&includeBoundary=true" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+```
+
+**PowerShell Example**:
+```powershell
+$response = Invoke-RestMethod -Uri "http://localhost:5000/api/travel/TRAVEL_ID/geojson" `
+  -Headers @{ "Authorization" = "Bearer $env:AUTH_TOKEN" } -Method GET
+$response | ConvertTo-Json -Depth 10
+```
+
+---
+
+### Get Travel Boundary
+
+Get convex hull boundary polygon enclosing all destinations in a travel.
+
+**Endpoint**: `GET /api/travel/:travelId/boundary`  
+**Auth**: Required (JWT)  
+**Min Destinations**: 3
+
+**Response**: GeoJSON Polygon Feature
+
+```json
+{
+  "type": "Feature",
+  "geometry": {
+    "type": "Polygon",
+    "coordinates": [[
+      [79.8612, 6.9271],
+      [80.6350, 7.2906],
+      [81.0188, 7.8742],
+      [79.8612, 6.9271]
+    ]]
+  },
+  "properties": {
+    "type": "boundary",
+    "area": 2847.32,
+    "destinations": 12,
+    "travelId": "679f5e8d3c2a1b4e5f6a7b8c",
+    "travelName": "Sri Lanka Adventure"
+  }
+}
+```
+
+**cURL Example**:
+```bash
+curl -X GET http://localhost:5000/api/travel/TRAVEL_ID/boundary \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+```
+
+---
+
+### Get Travel Terrain
+
+Get terrain/elevation data for destinations in a travel.
+
+**Endpoint**: `GET /api/travel/:travelId/terrain`  
+**Auth**: Required (JWT)  
+**Status**: Placeholder (elevation API integration pending)
+
+**Response**:
+
+```json
+{
+  "travelId": "679f5e8d3c2a1b4e5f6a7b8c",
+  "travelName": "Sri Lanka Adventure",
+  "elevationProfile": [
+    {
+      "destinationId": "679f5e8d3c2a1b4e5f6a7b8d",
+      "name": "Colombo Fort",
+      "latitude": 6.9271,
+      "longitude": 79.8612,
+      "elevation": null,
+      "elevationUnit": "meters"
+    }
+  ],
+  "message": "Elevation data not yet implemented. Requires integration with elevation API (e.g., Open Elevation, Mapbox Terrain)"
+}
+```
+
+---
+
+### Get Travel Statistics
+
+Get comprehensive statistics for a travel including distances, areas, and completion metrics.
+
+**Endpoint**: `GET /api/travel/:travelId/stats`  
+**Auth**: Required (JWT)
+
+**Response**:
+
+```json
+{
+  "travelId": "679f5e8d3c2a1b4e5f6a7b8c",
+  "travelName": "Sri Lanka Adventure",
+  "destinations": {
+    "total": 12,
+    "visited": 8,
+    "unvisited": 4,
+    "completionPercentage": 67
+  },
+  "geography": {
+    "routeDistanceKm": 487.32,
+    "boundaryAreaKm2": 2847.32,
+    "centerPoint": {
+      "latitude": 7.2906,
+      "longitude": 80.6350
+    },
+    "bounds": {
+      "swLng": 79.8612,
+      "swLat": 6.9271,
+      "neLng": 81.0188,
+      "neLat": 7.8742
+    }
+  },
+  "media": {
+    "totalPhotos": 143,
+    "averagePhotosPerDestination": 11.9
+  },
+  "timeline": {
+    "startDate": "2025-12-01T00:00:00.000Z",
+    "endDate": "2025-12-15T00:00:00.000Z",
+    "durationDays": 14,
+    "firstVisit": "2025-12-02T10:30:00.000Z",
+    "lastVisit": "2025-12-14T16:45:00.000Z"
+  }
+}
+```
+
+**cURL Example**:
+```bash
+curl -X GET http://localhost:5000/api/travel/TRAVEL_ID/stats \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+```
+
+---
+
+## Geospatial Query Endpoints
+
+### Find Nearby Destinations
+
+Find destinations near a specific point using MongoDB $near geospatial query.
+
+**Endpoint**: `GET /api/destinations/nearby`  
+**Auth**: Required (JWT)
+
+**Query Parameters**:
+- `lat` (number, required) - Latitude of center point
+- `lng` (number, required) - Longitude of center point
+- `radius` (number, optional) - Search radius in kilometers (default: 10)
+- `travelId` (string, optional) - Filter by specific travel
+
+**Response**:
+
+```json
+{
+  "query": {
+    "latitude": 6.9271,
+    "longitude": 79.8612,
+    "radiusKm": 50,
+    "travelId": null
+  },
+  "count": 8,
+  "results": [
+    {
+      "destination": {
+        "_id": "679f5e8d3c2a1b4e5f6a7b8d",
+        "name": "Galle Fort",
+        "latitude": 6.0278,
+        "longitude": 80.2169,
+        "visited": true,
+        "travelId": {
+          "_id": "679f5e8d3c2a1b4e5f6a7b8c",
+          "name": "Sri Lanka Adventure"
+        }
+      },
+      "distanceKm": 42.15,
+      "bearing": "SE"
+    }
+  ],
+  "geojson": {
+    "type": "FeatureCollection",
+    "features": [],
+    "properties": {
+      "queryPoint": {
+        "latitude": 6.9271,
+        "longitude": 79.8612
+      },
+      "radiusKm": 50,
+      "resultsCount": 8
+    }
+  }
+}
+```
+
+**cURL Example**:
+```bash
+curl -X GET "http://localhost:5000/api/destinations/nearby?lat=6.9271&lng=79.8612&radius=50" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+```
+
+**PowerShell Example**:
+```powershell
+$response = Invoke-RestMethod -Uri "http://localhost:5000/api/destinations/nearby?lat=6.9271&lng=79.8612&radius=50" `
+  -Headers @{ "Authorization" = "Bearer $env:AUTH_TOKEN" } -Method GET
+$response | ConvertTo-Json -Depth 10
+```
+
+---
+
+### Find Destinations Within Bounds
+
+Find destinations within a bounding box using MongoDB $geoWithin geospatial query.
+
+**Endpoint**: `GET /api/destinations/within-bounds`  
+**Auth**: Required (JWT)
+
+**Query Parameters**:
+- `swLat` (number, required) - Southwest corner latitude
+- `swLng` (number, required) - Southwest corner longitude
+- `neLat` (number, required) - Northeast corner latitude
+- `neLng` (number, required) - Northeast corner longitude
+- `travelId` (string, optional) - Filter by specific travel
+
+**Response**:
+
+```json
+{
+  "query": {
+    "bounds": {
+      "southwest": { "latitude": 6.0, "longitude": 79.0 },
+      "northeast": { "latitude": 7.0, "longitude": 81.0 }
+    },
+    "travelId": null
+  },
+  "count": 15,
+  "destinations": [],
+  "geojson": {
+    "type": "FeatureCollection",
+    "features": [],
+    "properties": {
+      "bounds": {
+        "swLat": 6.0,
+        "swLng": 79.0,
+        "neLat": 7.0,
+        "neLng": 81.0
+      },
+      "resultsCount": 15
+    }
+  }
+}
+```
+
+**cURL Example**:
+```bash
+curl -X GET "http://localhost:5000/api/destinations/within-bounds?swLat=6.0&swLng=79.0&neLat=7.0&neLng=81.0" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+```
+
+**PowerShell Example**:
+```powershell
+$uri = "http://localhost:5000/api/destinations/within-bounds?swLat=6.0&swLng=79.0&neLat=7.0&neLng=81.0"
+$response = Invoke-RestMethod -Uri $uri `
+  -Headers @{ "Authorization" = "Bearer $env:AUTH_TOKEN" } -Method GET
+$response | ConvertTo-Json -Depth 10
 ```
 
 ---

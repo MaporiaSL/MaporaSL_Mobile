@@ -20,7 +20,7 @@
 
 - ✅ [PHASE1_DETAILED_PLAN.md](02_implementation/PHASE1_DETAILED_PLAN.md) - Authentication & User Management (COMPLETE)
 - ✅ [PHASE2_DETAILED_PLAN.md](02_implementation/PHASE2_DETAILED_PLAN.md) - Travel Data Management (COMPLETE)
-- 🔄 Phase 3: Map Integration & Place Management (Upcoming)
+- 🔄 [PHASE3_DETAILED_PLAN.md](02_implementation/PHASE3_DETAILED_PLAN.md) - Map Integration (Backend COMPLETE, Frontend IN PROGRESS)
 - 📋 Phase 4: Trip Planning
 - 📋 Phase 5: Social Features & Sharing
 - 📋 Phase 6: Admin Panel & Moderation
@@ -35,6 +35,7 @@
 
 - ✅ [PHASE1_COMPLETION_SUMMARY.md](03_completion_logs/PHASE1_COMPLETION_SUMMARY.md) - Phase 1 completion details
 - ✅ [PHASE2_COMPLETION_SUMMARY.md](03_completion_logs/PHASE2_COMPLETION_SUMMARY.md) - Phase 2 completion details
+- ✅ [PHASE3_BACKEND_COMPLETION.md](03_completion_logs/PHASE3_BACKEND_COMPLETION.md) - Phase 3 backend completion details
 
 ### 04_api/
 **Purpose**: API documentation and endpoints
@@ -43,6 +44,8 @@
   - 3 Auth endpoints (register, me, logout)
   - 5 Travel endpoints (full CRUD)
   - 5 Destination endpoints (nested CRUD)
+  - 4 Map endpoints (GeoJSON, boundary, terrain, stats)
+  - 2 Geo endpoints (nearby search, bounds search)
   - Request/response examples
   - Error handling documentation
   - cURL test examples
