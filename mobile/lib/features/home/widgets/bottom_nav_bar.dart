@@ -13,7 +13,7 @@ class BottomNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     return BottomNavigationBar(
       currentIndex: currentIndex,
       onTap: onTap,
@@ -38,6 +38,11 @@ class BottomNavBar extends StatelessWidget {
           icon: Icon(Icons.card_travel),
           activeIcon: Icon(Icons.card_travel),
           label: 'Trips',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.timeline_outlined),
+          activeIcon: Icon(Icons.timeline),
+          label: 'Timeline',
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.shopping_bag_outlined),
