@@ -22,6 +22,24 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: null
   },
+  // Gamification progress tracking
+  unlockedDistricts: {
+    type: [String],
+    default: []
+  },
+  unlockedProvinces: {
+    type: [String],
+    default: []
+  },
+  achievements: [{
+    districtId: { type: String, required: true },
+    progress: { type: Number, default: 0 },
+    unlockedAt: { type: Date, default: null }
+  }],
+  totalPlacesVisited: {
+    type: Number,
+    default: 0
+  },
   createdAt: {
     type: Date,
     default: Date.now

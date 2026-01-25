@@ -1,5 +1,6 @@
 const Destination = require('../models/Destination');
 const Travel = require('../models/Travel');
+const { recalculateUserProgress } = require('./userController');
 
 // Create destination
 async function createDestination(req, res) {
@@ -89,11 +90,10 @@ async function getSingleDestination(req, res) {
   }
 }
 
-// Update destination
 async function updateDestination(req, res) {
   try {
     const { travelId, destId } = req.params;
-    const { name, latitude, longitude, notes, visited } = req.body;
+    const { name, latitude, longitude, notes, visited, visitedAt, districtId } = req.body;
 
     // Verify travel exists and belongs to user
     const travel = await Travel.findOne({ _id: travelId, userId: req.userId });
@@ -111,14 +111,39 @@ async function updateDestination(req, res) {
       return res.status(404).json({ error: 'Destination not found' });
     }
 
+    // Track if visited status changed
+    const visitedStatusChanged = visited !== undefined && destination.visited !== visited;
+
     // Update fields
     if (name !== undefined) destination.name = name;
     if (latitude !== undefined) destination.latitude = latitude;
     if (longitude !== undefined) destination.longitude = longitude;
     if (notes !== undefined) destination.notes = notes;
-    if (visited !== undefined) destination.visited = visited;
+    if (districtId !== undefined) destination.districtId = districtId;
+    
+    if (visited !== undefined) {
+      destination.visited = visited;
+      // Set visitedAt timestamp when marking as visited
+      if (visited && !destination.visitedAt) {
+        destination.visitedAt = visitedAt || new Date();
+      }
+      // Clear visitedAt if unmarking as visited
+      if (!visited) {
+        destination.visitedAt = null;
+      }
+    }
 
     await destination.save();
+
+    // Recalculate user progress if visited status changed
+    if (visitedStatusChanged) {
+      try {
+        await recalculateUserProgress(req.userId);
+      } catch (progressError) {
+        console.error('Progress recalculation error:', progressError);
+        // Don't fail the request if progress calc fails
+      }
+    }
 
     res.json({
       message: 'Destination updated successfully',

@@ -10,6 +10,7 @@ const travelRoutes = require('./routes/travelRoutes');
 const destinationRoutes = require('./routes/destinationRoutes');
 const mapRoutes = require('./routes/mapRoutes');
 const geoRoutes = require('./routes/geoRoutes');
+const userRoutes = require('./routes/userRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -35,6 +36,10 @@ app.use('/api/travel/:travelId/destinations', checkJwt, extractUserId, destinati
 // Map and geospatial routes (JWT protected within route files)
 app.use('/api/travel', mapRoutes);
 app.use('/api/destinations', geoRoutes);
+
+// User progress routes (JWT protected)
+app.use('/api/users', userRoutes);
+app.use('/api/districts', userRoutes);
 
 // Boot: connect to DB first, then start server
 (async () => {
