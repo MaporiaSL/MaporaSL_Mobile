@@ -17,6 +17,23 @@ class TripModel {
   final DateTime createdAt;
   final DateTime updatedAt;
 
+  /// Optional metadata for planning/clone flows
+  final String? startingPoint;
+  final String? tripType;
+  final String? budgetLevel;
+  final double? estimatedCost;
+
+  /// Indicates if trip was cloned from a template
+  @JsonKey(defaultValue: false)
+  final bool isCloned;
+
+  /// Template reference if cloned
+  final String? originalTemplateId;
+
+  /// Cached completion percentage from backend (0-100)
+  @JsonKey(defaultValue: 0)
+  final int completionPercentageCached;
+
   // These will be populated from separate destination queries or aggregated by backend
   @JsonKey(defaultValue: 0)
   final int destinationCount;
@@ -34,6 +51,13 @@ class TripModel {
     this.locations,
     required this.createdAt,
     required this.updatedAt,
+    this.startingPoint,
+    this.tripType,
+    this.budgetLevel,
+    this.estimatedCost,
+    this.isCloned = false,
+    this.originalTemplateId,
+    this.completionPercentageCached = 0,
     this.destinationCount = 0,
     this.visitedCount = 0,
   });
@@ -43,7 +67,9 @@ class TripModel {
       destinationCount > 0 ? visitedCount / destinationCount : 0.0;
 
   /// Completion percentage as integer (0-100)
-  int get completionPercentage => (completionRate * 100).round();
+  int get completionPercentage => completionPercentageCached > 0
+      ? completionPercentageCached
+      : (completionRate * 100).round();
 
   /// Trip status based on current date
   TripStatus get status {

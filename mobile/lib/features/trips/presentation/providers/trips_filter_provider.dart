@@ -3,7 +3,7 @@ import '../../data/models/trip_model.dart';
 import 'trips_provider.dart';
 
 /// Filter options for trips
-enum TripFilter { all, active, completed }
+enum TripFilter { all, active, upcoming, completed }
 
 extension TripFilterExtension on TripFilter {
   String get label {
@@ -12,6 +12,8 @@ extension TripFilterExtension on TripFilter {
         return 'All';
       case TripFilter.active:
         return 'Active';
+      case TripFilter.upcoming:
+        return 'Planned';
       case TripFilter.completed:
         return 'Completed';
     }
@@ -23,6 +25,8 @@ extension TripFilterExtension on TripFilter {
         return null;
       case TripFilter.active:
         return TripStatus.active;
+      case TripFilter.upcoming:
+        return TripStatus.upcoming;
       case TripFilter.completed:
         return TripStatus.completed;
     }

@@ -69,6 +69,11 @@ class TripsNotifier extends StateNotifier<TripsState> {
     }
   }
 
+  /// Insert a trip at the top of the list (used after cloning templates)
+  void addTrip(TripModel trip) {
+    state = state.copyWith(trips: [trip, ...state.trips]);
+  }
+
   /// Load more trips (pagination)
   Future<void> loadMore() async {
     if (!state.hasMore || state.isLoading) return;
