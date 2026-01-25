@@ -8,6 +8,8 @@ import 'widgets/trips_debug_panel.dart';
 import 'providers/trips_provider.dart';
 import 'providers/trips_filter_provider.dart';
 import 'memory_lane_page.dart';
+import 'trip_detail_page.dart';
+import '../data/models/trip_model.dart';
 
 /// Main trips page - "Quest Log" for MAPORIA adventures
 class TripsPage extends ConsumerStatefulWidget {
@@ -178,7 +180,7 @@ class _TripsPageState extends ConsumerState<TripsPage> {
               final trip = filteredTrips[index];
               return AdventureTripCard(
                 trip: trip,
-                onTap: () => _navigateToTripDetail(trip.id),
+                onTap: () => _navigateToTripDetail(trip),
                 onLongPress: () => _showTripActions(trip),
               );
             }, childCount: filteredTrips.length),
@@ -206,11 +208,11 @@ class _TripsPageState extends ConsumerState<TripsPage> {
     );
   }
 
-  void _navigateToTripDetail(String tripId) {
-    // TODO: Navigate to trip detail/map view
-    ScaffoldMessenger.of(
+  void _navigateToTripDetail(TripModel trip) {
+    Navigator.push(
       context,
-    ).showSnackBar(SnackBar(content: Text('Opening trip $tripId...')));
+      MaterialPageRoute(builder: (_) => TripDetailPage(trip: trip)),
+    );
   }
 
   void _showTripActions(trip) {

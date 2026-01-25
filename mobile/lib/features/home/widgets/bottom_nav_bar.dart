@@ -40,6 +40,11 @@ class BottomNavBar extends StatelessWidget {
           label: 'Trips',
         ),
         BottomNavigationBarItem(
+          icon: Icon(Icons.timeline_outlined),
+          activeIcon: Icon(Icons.timeline),
+          label: 'Timeline',
+        ),
+        BottomNavigationBarItem(
           icon: Icon(Icons.shopping_bag_outlined),
           activeIcon: Icon(Icons.shopping_bag),
           label: 'Shop',

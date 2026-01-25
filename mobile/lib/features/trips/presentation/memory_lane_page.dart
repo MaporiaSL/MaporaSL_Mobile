@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../data/models/trip_model.dart';
+import 'trip_detail_page.dart';
 import 'providers/trips_provider.dart';
 import 'widgets/adventure_trip_card.dart';
 
@@ -282,9 +283,9 @@ class _MemoryLanePageState extends ConsumerState<MemoryLanePage> {
             child: AdventureTripCard(
               trip: trip,
               onTap: () {
-                // TODO: Navigate to trip detail page
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Viewing ${trip.title}')),
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => TripDetailPage(trip: trip)),
                 );
               },
               onLongPress: () => _showTripActions(context, trip),
