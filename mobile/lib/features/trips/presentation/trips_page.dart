@@ -4,8 +4,10 @@ import 'widgets/explorer_stats_card.dart';
 import 'widgets/filter_chips.dart';
 import 'widgets/adventure_trip_card.dart';
 import 'widgets/empty_trips_state.dart';
+import 'widgets/trips_debug_panel.dart';
 import 'providers/trips_provider.dart';
 import 'providers/trips_filter_provider.dart';
+import 'memory_lane_page.dart';
 
 /// Main trips page - "Quest Log" for MAPORIA adventures
 class TripsPage extends ConsumerStatefulWidget {
@@ -66,6 +68,16 @@ class _TripsPageState extends ConsumerState<TripsPage> {
             : const Text('My Adventures'),
         actions: [
           IconButton(
+            icon: const Icon(Icons.timeline),
+            tooltip: 'Memory Lane',
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const MemoryLanePage()),
+              );
+            },
+          ),
+          IconButton(
             icon: Icon(_isSearching ? Icons.close : Icons.search),
             onPressed: () {
               setState(() {
@@ -76,6 +88,11 @@ class _TripsPageState extends ConsumerState<TripsPage> {
                 }
               });
             },
+          ),
+          IconButton(
+            icon: const Icon(Icons.bug_report),
+            tooltip: 'Dev Tools',
+            onPressed: () => showTripsDebugPanel(context),
           ),
         ],
       ),
