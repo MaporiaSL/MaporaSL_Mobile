@@ -1,6 +1,6 @@
 # Local Development Setup Guide
 
-**Last Updated**: January 24, 2026  
+**Last Updated**: January 26, 2026  
 **Target OS**: Windows (adaptable for macOS/Linux)
 
 ---
@@ -245,6 +245,10 @@ Server running on port 5000
 - Auto-restarts on file changes
 - Watches `.js`, `.json` files
 - Type `rs` to manually restart
+
+**Dev auth bypass**: When `NODE_ENV !== 'production'`, `backend/src/middleware/auth.js` injects a mock user so you can call APIs without Auth0 setup.
+
+**Android emulator base URL**: From the emulator, use `http://10.0.2.2:5000` to reach the backend running on your host machine.
 
 ---
 

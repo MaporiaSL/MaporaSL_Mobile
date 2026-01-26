@@ -9,8 +9,8 @@ Comprehensive custom trip creation system with timeline management, trip editing
 **Purpose**: Form-based interface for creating and editing custom trips
 
 **Features**:
-- Trip title, description input
-- Date range picker (start & end dates)
+- Trip title, description input (title + at least one destination required)
+- Date range picker (start & end dates) with validation: end >= start
 - Starting location selector
 - Transportation mode dropdown:
   - Train
@@ -20,15 +20,15 @@ Comprehensive custom trip creation system with timeline management, trip editing
   - Walking
   - Flying
 - Destination management (add/remove multiple places)
-- Form validation
-- Create new or edit existing trips
+- Form validation with inline messaging
+- Create new or edit existing trips (upsert flow)
 
 **Key Methods**:
 - `_pickStartDate()` - DatePicker for start date
 - `_pickEndDate()` - DatePicker for end date
 - `_addPlace()` - Add destination to trip
 - `_removePlace(int)` - Remove destination
-- `_saveTrip()` - Validate and save/update trip
+- `_saveTrip()` - Validate and upsert trip
 
 ### 2. Updated MemoryLanePage (`memory_lane_page.dart`)
 **Purpose**: Timeline view organized by trip status with tabbed interface
@@ -38,7 +38,7 @@ Comprehensive custom trip creation system with timeline management, trip editing
   - **Quests Tab**: Placeholder for future quest feature
   - **Trips Tab**: Shows all user trips organized by status
 
-- **Trip Status Organization**:
+- **Trip Status Organization** (driven by derived status):
   - Scheduled (editable)
   - Planned (editable)
   - Completed (read-only)
@@ -63,8 +63,10 @@ Comprehensive custom trip creation system with timeline management, trip editing
 - Updated `_showCreateCustomTripForm()` to navigate to CreateTripPage
 
 ### 4. Data Model Updates (`trip_model.dart`)
-**Added Field**:
-- `status`: String field ('scheduled', 'planned', 'completed', etc.)
+**Fields & Derived State**:
+- `status`: Optional string; retained for legacy compatibility.
+- `timelineStatus`: Derived `TripStatus` enum based on dates/status to keep UI consistent.
+- `statusLabel` / `statusEmoji`: Computed from `timelineStatus` for chips and cards.
 
 ## User Flow
 
@@ -72,13 +74,13 @@ Comprehensive custom trip creation system with timeline management, trip editing
 1. User taps "Create Custom Trip" in TripsScreen
 2. Navigates to CreateTripPage
 3. Fills in trip details:
-   - Title, description
-   - Start/end dates
-   - Starting location
-   - Transportation mode
-   - Multiple destinations
-4. Taps "Create Trip"
-5. Trip appears in Memory Lane > Trips tab (Scheduled status)
+  - Title (required), description (optional)
+  - Start/end dates (end must be on/after start)
+  - Starting location
+  - Transportation mode
+  - Multiple destinations (at least one required)
+4. Taps "Create Trip" or "Save Changes"
+5. Trip upserts and appears in Memory Lane > Trips tab (Scheduled status)
 
 ### Managing Trips in Timeline
 1. User navigates to Memory Lane
@@ -101,7 +103,7 @@ Comprehensive custom trip creation system with timeline management, trip editing
 ### State Management (Riverpod)
 - `tripsProvider`: Manages trips list state
 - Methods used:
-  - `addTrip(trip)`: Insert new or updated trip
+  - `upsertTrip(trip)`: Insert new or replace existing trip by id
   - `deleteTrip(id)`: Remove trip by ID
   - `loadTrips(refresh)`: Load/refresh trips from backend
 
@@ -119,6 +121,13 @@ Comprehensive custom trip creation system with timeline management, trip editing
 4. **Trip Statistics**: Duration, completion rate in timeline
 5. **User Authentication**: Replace 'user' placeholder with actual auth context
 6. **Real Backend Integration**: Persist trips to MongoDB
+
+## Recent Updates (Jan 2026)
+- Restored Memory Lane timeline UI (tabs, status grouping, actions).
+- Added strict create/edit validation: title + destination required, end date >= start date.
+- Upsert flow for edits (`upsertTrip`) to avoid duplicate entries.
+- Introduced derived `timelineStatus`/labels to prevent string mismatches across UI (includes trip detail status chip fix).
+- Minor copy/UX polish: clearer errors and consistent action labels.
 
 ## Files Modified/Created
 - ✅ Created: `create_trip_page.dart`

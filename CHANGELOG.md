@@ -4,6 +4,22 @@
 
 ---
 
+## [January 26, 2026] - Mobile Trips UX Fixes
+
+### Added
+- Restored Memory Lane timeline UI and status grouping after corruption.
+- Swapped inline trip creation dialog for navigation to CreateTripPage.
+
+### Changed
+- Trip creation/edit now enforces title + at least one destination and end date >= start.
+- Trip edits use upsert flow to prevent duplicates in memory.
+- Status chips and labels now use derived timeline status to avoid string/enum mismatches (fixes detail chip crash).
+
+### Notes
+- Development auth bypass remains for local testing; emulator hits backend via 10.0.2.2.
+
+---
+
 ## [January 24, 2026] - Phase 2 Complete: Travel & Destination Data Management
 
 ### Added

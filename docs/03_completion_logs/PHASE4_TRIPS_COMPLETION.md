@@ -3,6 +3,13 @@
 **Date:** January 25, 2026  
 **Status:** ✅ **COMPLETE - Ready for Testing**
 
+**Post-Completion Updates (Jan 26, 2026):**
+- Restored Memory Lane timeline after corruption; tabs and status grouping working again.
+- Reintroduced CreateTripPage navigation (no inline dialog) and tightened validation (title + destination required, end date >= start).
+- Added `upsertTrip` flow to avoid duplicate entries when editing.
+- Switched status display to derived `timelineStatus`/labels to prevent string/enum mismatches (fixes detail chip crash).
+- Minor UX polish on errors and action labels.
+
 ---
 
 ## 📋 Overview
