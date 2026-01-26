@@ -14,6 +14,7 @@ class TripModel {
   final DateTime startDate;
   final DateTime endDate;
   final List<String>? locations;
+  final String? status; // 'scheduled', 'planned', 'completed', etc.
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -49,6 +50,7 @@ class TripModel {
     required this.startDate,
     required this.endDate,
     this.locations,
+    this.status,
     required this.createdAt,
     required this.updatedAt,
     this.startingPoint,
@@ -72,7 +74,7 @@ class TripModel {
       : (completionRate * 100).round();
 
   /// Trip status based on current date
-  TripStatus get status {
+  TripStatus get timelineStatus {
     final now = DateTime.now();
     if (now.isBefore(startDate)) return TripStatus.upcoming;
     if (now.isAfter(endDate)) return TripStatus.completed;
@@ -81,7 +83,7 @@ class TripModel {
 
   /// Status display text for gamified UI
   String get statusLabel {
-    switch (status) {
+    switch (timelineStatus) {
       case TripStatus.upcoming:
         return 'Planned';
       case TripStatus.active:
@@ -89,11 +91,12 @@ class TripModel {
       case TripStatus.completed:
         return 'Completed';
     }
+    return 'Planned';
   }
 
   /// Emoji for trip status
   String get statusEmoji {
-    switch (status) {
+    switch (timelineStatus) {
       case TripStatus.upcoming:
         return '📅';
       case TripStatus.active:
@@ -101,6 +104,7 @@ class TripModel {
       case TripStatus.completed:
         return '✅';
     }
+    return '📅';
   }
 
   /// Duration in days
@@ -129,6 +133,7 @@ class TripModel {
     DateTime? startDate,
     DateTime? endDate,
     List<String>? locations,
+    String? status,
     DateTime? createdAt,
     DateTime? updatedAt,
     int? destinationCount,
@@ -142,6 +147,7 @@ class TripModel {
       startDate: startDate ?? this.startDate,
       endDate: endDate ?? this.endDate,
       locations: locations ?? this.locations,
+      status: status ?? this.status,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       destinationCount: destinationCount ?? this.destinationCount,

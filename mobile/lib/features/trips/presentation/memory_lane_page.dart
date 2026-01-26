@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import '../data/models/trip_model.dart';
-import 'trip_detail_page.dart';
-import 'providers/trips_provider.dart';
-import 'widgets/adventure_trip_card.dart';
 
-/// Memory Lane - Timeline view of trips organized by status
+import '../data/models/trip_model.dart';
+import 'providers/trips_provider.dart';
+import 'create_trip_page.dart';
+import 'trip_detail_page.dart';
+
+/// Memory Lane - timeline of user trips with status-based grouping
 class MemoryLanePage extends ConsumerStatefulWidget {
   const MemoryLanePage({super.key});
 
@@ -14,11 +15,21 @@ class MemoryLanePage extends ConsumerStatefulWidget {
   ConsumerState<MemoryLanePage> createState() => _MemoryLanePageState();
 }
 
-class _MemoryLanePageState extends ConsumerState<MemoryLanePage> {
+class _MemoryLanePageState extends ConsumerState<MemoryLanePage>
+    with SingleTickerProviderStateMixin {
+  late final TabController _tabController;
+
   @override
   void initState() {
     super.initState();
+    _tabController = TabController(length: 2, initialIndex: 1, vsync: this);
     Future.microtask(() => ref.read(tripsProvider.notifier).loadTrips());
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
   }
 
   @override
@@ -26,435 +37,253 @@ class _MemoryLanePageState extends ConsumerState<MemoryLanePage> {
     final tripsState = ref.watch(tripsProvider);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F0),
-      body: CustomScrollView(
-        slivers: [
-          // App Bar
-          SliverAppBar(
-            expandedHeight: 120,
-            floating: false,
-            pinned: true,
-            backgroundColor: const Color(0xFF2C3E50),
-            flexibleSpace: FlexibleSpaceBar(
-              title: const Text(
-                '🗺️ Memory Lane',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
-              background: Container(
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [Color(0xFF2C3E50), Color(0xFF34495E)],
-                  ),
-                ),
-                child: Stack(
-                  children: [
-                    Positioned(
-                      right: -20,
-                      top: 20,
-                      child: Icon(
-                        Icons.explore,
-                        size: 120,
-                        color: Colors.white.withOpacity(0.1),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-
-          // Pull to refresh
-          if (tripsState.isLoading && tripsState.trips.isEmpty)
-            const SliverFillRemaining(
-              child: Center(child: CircularProgressIndicator()),
-            )
-          else if (tripsState.error != null)
-            SliverFillRemaining(
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(
-                      Icons.error_outline,
-                      size: 48,
-                      color: Colors.red,
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      tripsState.error!,
-                      style: const TextStyle(color: Colors.red),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 16),
-                    ElevatedButton.icon(
-                      onPressed: () => ref
-                          .read(tripsProvider.notifier)
-                          .loadTrips(refresh: true),
-                      icon: const Icon(Icons.refresh),
-                      label: const Text('Retry'),
-                    ),
-                  ],
-                ),
-              ),
-            )
-          else if (tripsState.trips.isEmpty)
-            const SliverFillRemaining(
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text('📭', style: TextStyle(fontSize: 64)),
-                    SizedBox(height: 16),
-                    Text(
-                      'No adventures yet',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    SizedBox(height: 8),
-                    Text(
-                      'Start planning your first journey!',
-                      style: TextStyle(color: Colors.grey),
-                    ),
-                  ],
-                ),
-              ),
-            )
-          else
-            SliverPadding(
-              padding: const EdgeInsets.all(16),
-              sliver: SliverList(
-                delegate: SliverChildListDelegate([
-                  // Organize trips by status
-                  _buildStatusSection(
-                    context,
-                    '🚀 Active Quests',
-                    'Currently exploring',
-                    tripsState.trips
-                        .where((t) => t.status == TripStatus.active)
-                        .toList(),
-                    Colors.amber,
-                  ),
-                  const SizedBox(height: 24),
-                  _buildStatusSection(
-                    context,
-                    '📅 Planned Adventures',
-                    'Upcoming journeys',
-                    tripsState.trips
-                        .where((t) => t.status == TripStatus.upcoming)
-                        .toList(),
-                    Colors.blue,
-                  ),
-                  const SizedBox(height: 24),
-                  _buildStatusSection(
-                    context,
-                    '✅ Completed Journeys',
-                    'Conquered territories',
-                    tripsState.trips
-                        .where((t) => t.status == TripStatus.completed)
-                        .toList(),
-                    Colors.green,
-                  ),
-                ]),
-              ),
-            ),
-        ],
+      appBar: AppBar(
+        title: const Text('Memory Lane'),
+        bottom: TabBar(
+          controller: _tabController,
+          tabs: const [
+            Tab(text: 'Quests'),
+            Tab(text: 'Trips'),
+          ],
+        ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => _showCreateTripDialog(context),
-        backgroundColor: const Color(0xFF2C3E50),
-        icon: const Icon(Icons.add_location_alt),
-        label: const Text('Plan Quest'),
+      body: TabBarView(
+        controller: _tabController,
+        children: [
+          _buildQuestsTab(context),
+          _buildTripsTab(context, tripsState),
+        ],
       ),
     );
   }
 
-  Widget _buildStatusSection(
-    BuildContext context,
-    String title,
-    String subtitle,
-    List<TripModel> trips,
-    Color accentColor,
-  ) {
-    if (trips.isEmpty) {
-      return Container(
-        padding: const EdgeInsets.all(24),
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.5),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.grey.shade300),
-        ),
+  Widget _buildQuestsTab(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.stars, size: 64, color: Colors.orange),
+          const SizedBox(height: 12),
+          const Text(
+            'Quests coming soon',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Track achievements and challenges here.',
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTripsTab(BuildContext context, TripsState tripsState) {
+    if (tripsState.isLoading && tripsState.trips.isEmpty) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (tripsState.error != null) {
+      return Center(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.explore_off, size: 32, color: Colors.grey.shade400),
-            const SizedBox(height: 8),
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.grey.shade600,
-              ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              'No $subtitle',
-              style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
+            const Icon(Icons.error_outline, size: 48, color: Colors.red),
+            const SizedBox(height: 12),
+            Text(tripsState.error!, textAlign: TextAlign.center),
+            const SizedBox(height: 12),
+            ElevatedButton.icon(
+              onPressed: () =>
+                  ref.read(tripsProvider.notifier).loadTrips(refresh: true),
+              icon: const Icon(Icons.refresh),
+              label: const Text('Retry'),
             ),
           ],
         ),
       );
     }
 
+    final trips = tripsState.trips;
+    if (trips.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.travel_explore, size: 64, color: Colors.grey),
+            const SizedBox(height: 12),
+            const Text(
+              'No trips yet',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Start planning your adventure!',
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton.icon(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const CreateTripPage()),
+                );
+              },
+              icon: const Icon(Icons.add),
+              label: const Text('Create Trip'),
+            ),
+          ],
+        ),
+      );
+    }
+
+    // Group trips
+    List<TripModel> _byStatus(String key) => trips.where((t) {
+      final s = _statusKey(t);
+      return s == key;
+    }).toList();
+
+    final scheduled = _byStatus('scheduled');
+    final planned = _byStatus('planned') + _byStatus('active');
+    final completed = _byStatus('completed');
+
+    return RefreshIndicator(
+      onRefresh: () async =>
+          ref.read(tripsProvider.notifier).loadTrips(refresh: true),
+      child: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          if (scheduled.isNotEmpty)
+            _StatusSection(
+              label: 'Scheduled',
+              color: Colors.blue,
+              icon: Icons.calendar_today,
+              trips: scheduled,
+              canEdit: true,
+            ),
+          if (scheduled.isNotEmpty) const SizedBox(height: 24),
+          if (planned.isNotEmpty)
+            _StatusSection(
+              label: 'Planned / Active',
+              color: Colors.green,
+              icon: Icons.route,
+              trips: planned,
+              canEdit: true,
+            ),
+          if (planned.isNotEmpty) const SizedBox(height: 24),
+          if (completed.isNotEmpty)
+            _StatusSection(
+              label: 'Completed',
+              color: Colors.purple,
+              icon: Icons.check_circle,
+              trips: completed,
+              canEdit: false,
+            ),
+        ],
+      ),
+    );
+  }
+
+  String _statusKey(TripModel trip) {
+    if (trip.status != null) return trip.status!;
+    switch (trip.timelineStatus) {
+      case TripStatus.upcoming:
+        return 'planned';
+      case TripStatus.active:
+        return 'active';
+      case TripStatus.completed:
+        return 'completed';
+    }
+  }
+}
+
+class _StatusSection extends ConsumerWidget {
+  final String label;
+  final Color color;
+  final IconData icon;
+  final List<TripModel> trips;
+  final bool canEdit;
+
+  const _StatusSection({
+    required this.label,
+    required this.color,
+    required this.icon,
+    required this.trips,
+    required this.canEdit,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Section Header
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                accentColor.withOpacity(0.2),
-                accentColor.withOpacity(0.05),
-              ],
+        Row(
+          children: [
+            Icon(icon, color: color),
+            const SizedBox(width: 8),
+            Text(
+              label,
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                color: color,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-            borderRadius: BorderRadius.circular(12),
-            border: Border(left: BorderSide(color: accentColor, width: 4)),
-          ),
-          child: Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: accentColor.darken(0.3),
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      subtitle,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey.shade700,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 6,
-                ),
-                decoration: BoxDecoration(
-                  color: accentColor,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  '${trips.length}',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ],
-          ),
+            const SizedBox(width: 8),
+            Chip(
+              label: Text('${trips.length}'),
+              backgroundColor: color.withOpacity(0.15),
+              labelStyle: TextStyle(color: color, fontWeight: FontWeight.w600),
+            ),
+          ],
         ),
         const SizedBox(height: 12),
-
-        // Trip Cards
         ...trips.map(
-          (trip) => Padding(
-            padding: const EdgeInsets.only(bottom: 12),
-            child: AdventureTripCard(
-              trip: trip,
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => TripDetailPage(trip: trip)),
-                );
-              },
-              onLongPress: () => _showTripActions(context, trip),
-            ),
+          (trip) => _TripCard(
+            trip: trip,
+            color: color,
+            canEdit: canEdit,
+            onEdit: canEdit
+                ? () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => CreateTripPage(trip: trip),
+                      ),
+                    );
+                  }
+                : null,
+            onView: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => TripDetailPage(trip: trip)),
+              );
+            },
+            onDelete: canEdit ? () => _confirmDelete(context, ref, trip) : null,
           ),
         ),
       ],
     );
   }
 
-  void _showCreateTripDialog(BuildContext context) {
-    final titleController = TextEditingController();
-    final descController = TextEditingController();
-    DateTime startDate = DateTime.now();
-    DateTime endDate = DateTime.now().add(const Duration(days: 7));
-
+  void _confirmDelete(BuildContext context, WidgetRef ref, TripModel trip) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('🗺️ Plan New Quest'),
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: titleController,
-                decoration: const InputDecoration(
-                  labelText: 'Quest Name',
-                  hintText: 'e.g., Southern Coast Adventure',
-                  prefixIcon: Icon(Icons.title),
-                ),
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: descController,
-                decoration: const InputDecoration(
-                  labelText: 'Description',
-                  hintText: 'What makes this journey special?',
-                  prefixIcon: Icon(Icons.description),
-                ),
-                maxLines: 3,
-              ),
-              const SizedBox(height: 16),
-              ListTile(
-                title: const Text('Start Date'),
-                subtitle: Text(DateFormat.yMMMd().format(startDate)),
-                leading: const Icon(Icons.calendar_today),
-                onTap: () async {
-                  final date = await showDatePicker(
-                    context: context,
-                    initialDate: startDate,
-                    firstDate: DateTime.now(),
-                    lastDate: DateTime.now().add(const Duration(days: 365)),
-                  );
-                  if (date != null) startDate = date;
-                },
-              ),
-              ListTile(
-                title: const Text('End Date'),
-                subtitle: Text(DateFormat.yMMMd().format(endDate)),
-                leading: const Icon(Icons.event),
-                onTap: () async {
-                  final date = await showDatePicker(
-                    context: context,
-                    initialDate: endDate,
-                    firstDate: startDate,
-                    lastDate: DateTime.now().add(const Duration(days: 365)),
-                  );
-                  if (date != null) endDate = date;
-                },
-              ),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              // TODO: Create trip via provider
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Quest creation coming soon!')),
-              );
-            },
-            child: const Text('Create'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showTripActions(BuildContext context, TripModel trip) {
-    showModalBottomSheet(
-      context: context,
-      builder: (context) => Container(
-        padding: const EdgeInsets.symmetric(vertical: 20),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: const Icon(Icons.edit),
-              title: const Text('Edit Quest'),
-              onTap: () {
-                Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Editing ${trip.title}')),
-                );
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.share),
-              title: const Text('Share Journey'),
-              onTap: () {
-                Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Sharing feature coming soon')),
-                );
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.delete, color: Colors.red),
-              title: const Text(
-                'Delete Quest',
-                style: TextStyle(color: Colors.red),
-              ),
-              onTap: () {
-                Navigator.pop(context);
-                _confirmDelete(context, trip);
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void _confirmDelete(BuildContext context, TripModel trip) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Delete Quest?'),
+      builder: (ctx) => AlertDialog(
+        title: const Text('Delete trip?'),
         content: Text('Are you sure you want to delete "${trip.title}"?'),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.pop(ctx),
             child: const Text('Cancel'),
           ),
-          TextButton(
-            onPressed: () async {
-              try {
-                await ref.read(tripsProvider.notifier).deleteTrip(trip.id);
-                if (context.mounted) {
-                  Navigator.pop(context);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Quest deleted')),
-                  );
-                }
-              } catch (e) {
-                if (context.mounted) {
-                  ScaffoldMessenger.of(
-                    context,
-                  ).showSnackBar(SnackBar(content: Text('Error: $e')));
-                }
-              }
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            onPressed: () {
+              ref.read(tripsProvider.notifier).deleteTrip(trip.id);
+              Navigator.pop(ctx);
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(const SnackBar(content: Text('Trip deleted')));
             },
-            style: TextButton.styleFrom(foregroundColor: Colors.red),
             child: const Text('Delete'),
           ),
         ],
@@ -463,14 +292,136 @@ class _MemoryLanePageState extends ConsumerState<MemoryLanePage> {
   }
 }
 
-// Extension to darken colors
-extension ColorExtension on Color {
-  Color darken(double amount) {
-    assert(amount >= 0 && amount <= 1);
-    final hsl = HSLColor.fromColor(this);
-    final darkened = hsl.withLightness(
-      (hsl.lightness - amount).clamp(0.0, 1.0),
+class _TripCard extends StatelessWidget {
+  final TripModel trip;
+  final Color color;
+  final bool canEdit;
+  final VoidCallback? onEdit;
+  final VoidCallback onView;
+  final VoidCallback? onDelete;
+
+  const _TripCard({
+    required this.trip,
+    required this.color,
+    required this.canEdit,
+    required this.onView,
+    this.onEdit,
+    this.onDelete,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final durationDays =
+        trip.endDate.difference(trip.startDate).inDays.clamp(0, 999) + 1;
+
+    return Card(
+      margin: const EdgeInsets.only(bottom: 12),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        trip.title,
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        _dateRange(trip.startDate, trip.endDate),
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 8,
+                  ),
+                  decoration: BoxDecoration(
+                    color: color.withOpacity(0.12),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Column(
+                    children: [
+                      Text(
+                        '$durationDays',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                      Text(
+                        'days',
+                        style: Theme.of(context).textTheme.labelSmall,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            if (trip.description != null && trip.description!.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: Text(
+                  trip.description!,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+              ),
+            if (trip.locations != null && trip.locations!.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: Wrap(
+                  spacing: 6,
+                  runSpacing: 6,
+                  children: trip.locations!.take(3).map((loc) {
+                    return Chip(label: Text(loc));
+                  }).toList(),
+                ),
+              ),
+            const SizedBox(height: 12),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                OutlinedButton.icon(
+                  onPressed: onView,
+                  icon: const Icon(Icons.visibility),
+                  label: const Text('View'),
+                ),
+                if (canEdit) ...[
+                  const SizedBox(width: 8),
+                  OutlinedButton.icon(
+                    onPressed: onEdit,
+                    icon: const Icon(Icons.edit),
+                    label: const Text('Edit'),
+                  ),
+                  const SizedBox(width: 8),
+                  OutlinedButton.icon(
+                    onPressed: onDelete,
+                    icon: const Icon(Icons.delete_outline, color: Colors.red),
+                    label: const Text('Delete'),
+                  ),
+                ],
+              ],
+            ),
+          ],
+        ),
+      ),
     );
-    return darkened.toColor();
+  }
+
+  String _dateRange(DateTime start, DateTime end) {
+    final fmt = DateFormat('MMM d, yyyy');
+    return '${fmt.format(start)} - ${fmt.format(end)}';
   }
 }

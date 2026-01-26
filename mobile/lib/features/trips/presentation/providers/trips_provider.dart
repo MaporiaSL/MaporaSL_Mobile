@@ -74,6 +74,20 @@ class TripsNotifier extends StateNotifier<TripsState> {
     state = state.copyWith(trips: [trip, ...state.trips]);
   }
 
+  /// Upsert a trip locally (replace if exists, otherwise insert at top)
+  void upsertTrip(TripModel trip) {
+    final existingIndex = state.trips.indexWhere((t) => t.id == trip.id);
+    final updated = [...state.trips];
+
+    if (existingIndex >= 0) {
+      updated[existingIndex] = trip;
+    } else {
+      updated.insert(0, trip);
+    }
+
+    state = state.copyWith(trips: updated);
+  }
+
   /// Load more trips (pagination)
   Future<void> loadMore() async {
     if (!state.hasMore || state.isLoading) return;
