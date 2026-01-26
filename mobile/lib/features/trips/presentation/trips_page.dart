@@ -1,42 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../data/models/trip_model.dart';
+
 import '../data/models/preplanned_trip_model.dart';
 import 'providers/preplanned_trips_provider.dart';
-import 'providers/trips_filter_provider.dart';
 import 'providers/trips_provider.dart';
-import 'trip_detail_page.dart';
 import 'memory_lane_page.dart';
-import 'widgets/adventure_trip_card.dart';
-import 'widgets/empty_trips_state.dart';
 import 'widgets/explorer_stats_card.dart';
-import 'widgets/filter_chips.dart';
 import 'widgets/trips_debug_panel.dart';
 
-/// Adventures Hub with My Journeys | Discover toggle
-class AdventuresHubScreen extends ConsumerStatefulWidget {
-  const AdventuresHubScreen({super.key});
+/// Trip Planning Hub - plan custom trips or start curated adventures, plus view explorer stats.
+class TripsScreen extends ConsumerStatefulWidget {
+  const TripsScreen({super.key});
 
   @override
-  ConsumerState<AdventuresHubScreen> createState() =>
-      _AdventuresHubScreenState();
+  ConsumerState<TripsScreen> createState() => _TripsScreenState();
 }
 
-/// Legacy entry point retained for existing navigation usages
+/// Legacy entry point retained for existing navigation usages.
 class TripsPage extends StatelessWidget {
   const TripsPage({super.key});
 
   @override
-  Widget build(BuildContext context) => const AdventuresHubScreen();
+  Widget build(BuildContext context) => const TripsScreen();
 }
 
-class _AdventuresHubScreenState extends ConsumerState<AdventuresHubScreen>
+class _TripsScreenState extends ConsumerState<TripsScreen>
     with SingleTickerProviderStateMixin {
   late final TabController _tabController;
-  final _myJourneysScroll = ScrollController();
-  final _discoverScroll = ScrollController();
-  final _searchController = TextEditingController();
-  bool _isSearching = false;
+  final _planningScroll = ScrollController();
+  final _statsScroll = ScrollController();
 
   @override
   void initState() {
@@ -46,42 +38,46 @@ class _AdventuresHubScreenState extends ConsumerState<AdventuresHubScreen>
 
     // Load trips on init
     Future.microtask(() => ref.read(tripsProvider.notifier).loadTrips());
-
-    // Setup infinite scroll for My Journeys
-    _myJourneysScroll.addListener(_onScrollMyJourneys);
   }
 
   @override
   void dispose() {
     _tabController.dispose();
-    _myJourneysScroll.dispose();
-    _discoverScroll.dispose();
-    _searchController.dispose();
+    _planningScroll.dispose();
+    _statsScroll.dispose();
     super.dispose();
-  }
-
-  void _onScrollMyJourneys() {
-    if (_myJourneysScroll.position.pixels >=
-        _myJourneysScroll.position.maxScrollExtent * 0.8) {
-      ref.read(tripsProvider.notifier).loadMore();
-    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final tripsState = ref.watch(tripsProvider);
-    final filteredTrips = ref.watch(filteredTripsProvider);
-    final isDiscover = _tabController.index == 0;
+    final templatesAsync = ref.watch(preplannedTripsFutureProvider);
+    final filters = ref.watch(preplannedFiltersProvider);
 
     return Scaffold(
       appBar: AppBar(
-        title: _buildTitle(isDiscover),
-        actions: _buildActions(isDiscover),
+        title: const Text('Trip Planning'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.timeline),
+            tooltip: 'Memory Lane',
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const MemoryLanePage()),
+              );
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.bug_report),
+            tooltip: 'Dev Tools',
+            onPressed: () => showTripsDebugPanel(context),
+          ),
+        ],
         bottom: TabBar(
           controller: _tabController,
           tabs: const [
-            Tab(text: 'Discover'),
-            Tab(text: 'My Journeys'),
+            Tab(text: 'Plan Journey'),
+            Tab(text: 'Explorer Stats'),
           ],
         ),
       ),
@@ -93,187 +89,57 @@ class _AdventuresHubScreenState extends ConsumerState<AdventuresHubScreen>
               ref.invalidate(preplannedTripsFutureProvider);
               await ref.read(preplannedTripsFutureProvider.future);
             },
-            child: _buildDiscoverTab(),
+            child: _buildTripPlanningTab(templatesAsync, filters),
           ),
           RefreshIndicator(
-            onRefresh: () =>
-                ref.read(tripsProvider.notifier).loadTrips(refresh: true),
-            child: _buildMyJourneys(tripsState, filteredTrips),
+            onRefresh: () async {},
+            child: _buildExplorerStatsTab(),
           ),
         ],
       ),
-      floatingActionButton: !isDiscover
-          ? FloatingActionButton.extended(
-              onPressed: () => _tabController.animateTo(0),
-              icon: const Icon(Icons.explore),
-              label: const Text('Plan New Trip'),
-            )
-          : null,
     );
   }
 
-  Widget _buildTitle(bool isDiscover) {
-    if (isDiscover) return const Text('Discover Adventures');
-    if (_isSearching) {
-      return TextField(
-        controller: _searchController,
-        autofocus: true,
-        decoration: const InputDecoration(
-          hintText: 'Search your journeys...',
-          border: InputBorder.none,
-        ),
-        onChanged: (value) {
-          ref.read(tripSearchProvider.notifier).state = value;
-        },
-      );
-    }
-    return const Text('My Journeys');
-  }
-
-  List<Widget> _buildActions(bool isDiscover) {
-    return [
-      IconButton(
-        icon: const Icon(Icons.timeline),
-        tooltip: 'Memory Lane',
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => const MemoryLanePage()),
-          );
-        },
-      ),
-      if (!isDiscover)
-        IconButton(
-          icon: Icon(_isSearching ? Icons.close : Icons.search),
-          onPressed: () {
-            setState(() {
-              _isSearching = !_isSearching;
-              if (!_isSearching) {
-                _searchController.clear();
-                ref.read(tripSearchProvider.notifier).state = '';
-              }
-            });
-          },
-        ),
-      IconButton(
-        icon: const Icon(Icons.bug_report),
-        tooltip: 'Dev Tools',
-        onPressed: () => showTripsDebugPanel(context),
-      ),
-    ];
-  }
-
-  Widget _buildMyJourneys(TripsState state, List<TripModel> filteredTrips) {
-    if (state.isLoading && state.trips.isEmpty) {
-      return const Center(child: CircularProgressIndicator());
-    }
-
-    if (state.error != null && state.trips.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.error_outline, size: 64, color: Colors.red),
-            const SizedBox(height: 16),
-            Text(state.error!),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () =>
-                  ref.read(tripsProvider.notifier).loadTrips(refresh: true),
-              child: const Text('Retry'),
-            ),
-          ],
-        ),
-      );
-    }
-
-    if (state.trips.isEmpty) {
-      return EmptyTripsState(onCreateTrip: () => _tabController.animateTo(0));
-    }
-
-    final active = filteredTrips
-        .where((t) => t.status == TripStatus.active)
-        .toList(growable: false);
-    final planned = filteredTrips
-        .where((t) => t.status == TripStatus.upcoming)
-        .toList(growable: false);
-    final completed = filteredTrips
-        .where((t) => t.status == TripStatus.completed)
-        .toList(growable: false);
-
-    return CustomScrollView(
-      controller: _myJourneysScroll,
-      slivers: [
-        const SliverToBoxAdapter(child: ExplorerStatsCard()),
-        const SliverToBoxAdapter(child: FilterChips()),
-        if (filteredTrips.isEmpty)
-          SliverFillRemaining(
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.search_off, size: 64, color: Colors.grey.shade400),
-                  const SizedBox(height: 16),
-                  Text(
-                    'No trips found',
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Try adjusting your filters or search',
-                    style: TextStyle(color: Colors.grey.shade600),
-                  ),
-                ],
-              ),
-            ),
-          )
-        else ...[
-          if (active.isNotEmpty) _buildSection('Active Quests', active),
-          if (planned.isNotEmpty) _buildSection('Planned Adventures', planned),
-          if (completed.isNotEmpty)
-            _buildSection('Completed Journeys', completed),
-        ],
-        if (state.isLoading && state.trips.isNotEmpty)
-          const SliverToBoxAdapter(
-            child: Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Center(child: CircularProgressIndicator()),
-            ),
-          ),
-        const SliverToBoxAdapter(child: SizedBox(height: 80)),
-      ],
-    );
-  }
-
-  SliverList _buildSection(String title, List<TripModel> trips) {
-    return SliverList(
-      delegate: SliverChildListDelegate([
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
-          child: Text(
-            '$title (${trips.length})',
-            style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
-          ),
-        ),
-        ...trips.map(
-          (trip) => AdventureTripCard(
-            trip: trip,
-            onTap: () => _navigateToTripDetail(trip),
-            onLongPress: () => _showTripActions(trip),
-          ),
-        ),
-      ]),
-    );
-  }
-
-  Widget _buildDiscoverTab() {
-    final templatesAsync = ref.watch(preplannedTripsFutureProvider);
-    final filters = ref.watch(preplannedFiltersProvider);
-
+  Widget _buildTripPlanningTab(
+    AsyncValue<List<PrePlannedTripModel>> templatesAsync,
+    PreplannedFilters filters,
+  ) {
     return ListView(
-      controller: _discoverScroll,
+      controller: _planningScroll,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       children: [
+        Padding(
+          padding: const EdgeInsets.only(bottom: 16),
+          child: ElevatedButton.icon(
+            onPressed: _showCreateCustomTripForm,
+            icon: const Icon(Icons.add),
+            label: const Text('Create Custom Trip'),
+            style: ElevatedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          child: Row(
+            children: [
+              Expanded(child: Divider(color: Colors.grey.shade300)),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: Text(
+                  'OR DISCOVER PRE-PLANNED QUESTS',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.grey.shade600,
+                  ),
+                ),
+              ),
+              Expanded(child: Divider(color: Colors.grey.shade300)),
+            ],
+          ),
+        ),
+        const SizedBox(height: 8),
         _DiscoverFilters(
           filters: filters,
           onChanged: (updated) =>
@@ -330,6 +196,96 @@ class _AdventuresHubScreenState extends ConsumerState<AdventuresHubScreen>
     );
   }
 
+  Widget _buildExplorerStatsTab() {
+    return ListView(
+      controller: _statsScroll,
+      padding: const EdgeInsets.all(16),
+      children: [
+        const ExplorerStatsCard(),
+        const SizedBox(height: 24),
+        Text(
+          'Your Achievements',
+          style: Theme.of(
+            context,
+          ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 12),
+        Card(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: const [
+                _AchievementItem(
+                  icon: '🏔️',
+                  title: 'Mountain Explorer',
+                  description: 'Visited 5 mountain destinations',
+                ),
+                SizedBox(height: 12),
+                _AchievementItem(
+                  icon: '🏖️',
+                  title: 'Beach Master',
+                  description: 'Completed 3 coastal trips',
+                ),
+                SizedBox(height: 12),
+                _AchievementItem(
+                  icon: '🏛️',
+                  title: 'History Buff',
+                  description: 'Visited 10 historical sites',
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _showCreateCustomTripForm() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Create Custom Trip'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: const [
+            TextField(
+              decoration: InputDecoration(
+                labelText: 'Trip Name',
+                hintText: 'e.g., My Mountain Adventure',
+              ),
+            ),
+            SizedBox(height: 12),
+            TextField(
+              decoration: InputDecoration(
+                labelText: 'Description',
+                hintText: 'What will you do?',
+              ),
+              maxLines: 3,
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Custom trip creation coming soon!'),
+                ),
+              );
+              Navigator.pop(context);
+            },
+            child: const Text('Create'),
+          ),
+        ],
+      ),
+    );
+  }
+
   Future<void> _startAdventure(PrePlannedTripModel template) async {
     final range = await showDateRangePicker(
       context: context,
@@ -355,7 +311,6 @@ class _AdventuresHubScreenState extends ConsumerState<AdventuresHubScreen>
         messenger.showSnackBar(
           SnackBar(content: Text('Added to My Journeys: ${template.title}')),
         );
-        _tabController.animateTo(1);
       }
     } catch (e) {
       messenger.showSnackBar(
@@ -419,87 +374,6 @@ class _AdventuresHubScreenState extends ConsumerState<AdventuresHubScreen>
       ),
     );
   }
-
-  void _navigateToTripDetail(TripModel trip) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (_) => TripDetailPage(trip: trip)),
-    );
-  }
-
-  void _showTripActions(TripModel trip) {
-    showModalBottomSheet(
-      context: context,
-      builder: (context) => Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          ListTile(
-            leading: const Icon(Icons.edit),
-            title: const Text('Edit Trip'),
-            onTap: () {
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Edit trip coming soon!')),
-              );
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.delete, color: Colors.red),
-            title: const Text(
-              'Delete Trip',
-              style: TextStyle(color: Colors.red),
-            ),
-            onTap: () async {
-              Navigator.pop(context);
-              final confirm = await _confirmDelete(trip);
-              if (confirm) {
-                await ref.read(tripsProvider.notifier).deleteTrip(trip.id);
-                if (mounted) {
-                  ScaffoldMessenger.of(
-                    context,
-                  ).showSnackBar(const SnackBar(content: Text('Trip deleted')));
-                }
-              }
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.share),
-            title: const Text('Share Trip'),
-            onTap: () {
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Share coming soon!')),
-              );
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
-  Future<bool> _confirmDelete(TripModel trip) async {
-    return await showDialog<bool>(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('Delete Trip?'),
-            content: Text(
-              'This will permanently delete "${trip.title}" and all its destinations.',
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context, false),
-                child: const Text('Cancel'),
-              ),
-              TextButton(
-                onPressed: () => Navigator.pop(context, true),
-                style: TextButton.styleFrom(foregroundColor: Colors.red),
-                child: const Text('Delete'),
-              ),
-            ],
-          ),
-        ) ??
-        false;
-  }
 }
 
 class _DiscoverFilters extends StatelessWidget {
@@ -515,47 +389,262 @@ class _DiscoverFilters extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final durations = <String?>['1-3', '4-6', '7+'];
-    final difficulties = <String?>['Easy', 'Moderate', 'Hard'];
-    final starts = <String?>['Colombo', 'Kandy', 'Galle', 'Jaffna', 'Trinco'];
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('Filters', style: Theme.of(context).textTheme.titleMedium),
-            TextButton(onPressed: onClear, child: const Text('Clear')),
+            Text(
+              'Quick Filters',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            TextButton(onPressed: onClear, child: const Text('Clear All')),
           ],
         ),
+        const SizedBox(height: 12),
+        // Single row with dropdowns
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: [
+              _FilterDropdown(
+                label: 'Duration',
+                value: filters.duration,
+                options: const ['1-3', '4-6', '7+'],
+                onChanged: (val) => onChanged(filters.copyWith(duration: val)),
+              ),
+              const SizedBox(width: 12),
+              _FilterDropdown(
+                label: 'Difficulty',
+                value: filters.difficulty,
+                options: const ['Easy', 'Moderate', 'Hard'],
+                onChanged: (val) =>
+                    onChanged(filters.copyWith(difficulty: val)),
+              ),
+              const SizedBox(width: 12),
+              _FilterDropdown(
+                label: 'Starting Point',
+                value: filters.startingPoint,
+                options: const [
+                  'Colombo',
+                  'Kandy',
+                  'Galle',
+                  'Jaffna',
+                  'Trinco',
+                ],
+                onChanged: (val) =>
+                    onChanged(filters.copyWith(startingPoint: val)),
+              ),
+              const SizedBox(width: 12),
+              _ThemeMultiSelect(
+                selected: filters.tags,
+                onChanged: (tags) => onChanged(filters.copyWith(tags: tags)),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _FilterDropdown extends StatelessWidget {
+  final String label;
+  final String? value;
+  final List<String> options;
+  final ValueChanged<String?> onChanged;
+
+  const _FilterDropdown({
+    required this.label,
+    required this.value,
+    required this.options,
+    required this.onChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return DropdownButton<String?>(
+      hint: Text(label),
+      value: value,
+      underline: Container(height: 2, color: Colors.blue),
+      items: [
+        DropdownMenuItem(value: null, child: Text('$label (Any)')),
+        ...options.map((opt) {
+          return DropdownMenuItem(value: opt, child: Text(opt));
+        }).toList(),
+      ],
+      onChanged: onChanged,
+    );
+  }
+}
+
+class _ThemeMultiSelect extends StatefulWidget {
+  final List<String> selected;
+  final ValueChanged<List<String>> onChanged;
+
+  const _ThemeMultiSelect({required this.selected, required this.onChanged});
+
+  @override
+  State<_ThemeMultiSelect> createState() => _ThemeMultiSelectState();
+}
+
+class _ThemeMultiSelectState extends State<_ThemeMultiSelect> {
+  final _themes = const [
+    'Beach',
+    'Mountain',
+    'Culture',
+    'Nature',
+    'City',
+    'History',
+    'Adventure',
+    'Relaxation',
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(color: Colors.grey.shade400, width: 2),
+        ),
+      ),
+      child: DropdownButton<String>(
+        hint: const Text('Themes'),
+        underline: const SizedBox(),
+        items: _themes.map((theme) {
+          final isSelected = widget.selected.contains(theme);
+          return DropdownMenuItem(
+            value: theme,
+            child: Row(
+              children: [
+                Checkbox(
+                  value: isSelected,
+                  onChanged: (_) => _toggleTheme(theme),
+                ),
+                Text(theme),
+              ],
+            ),
+          );
+        }).toList(),
+        onChanged: (_) {},
+      ),
+    );
+  }
+
+  void _toggleTheme(String theme) {
+    final updated = List<String>.from(widget.selected);
+    if (updated.contains(theme)) {
+      updated.remove(theme);
+    } else {
+      updated.add(theme);
+    }
+    widget.onChanged(updated);
+  }
+}
+
+class _FilterCategory extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final List<Widget> children;
+
+  const _FilterCategory({
+    required this.icon,
+    required this.title,
+    required this.children,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey.shade300),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      padding: const EdgeInsets.all(12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(icon, size: 20, color: Colors.blue),
+              const SizedBox(width: 8),
+              Text(
+                title,
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blue,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          ...children,
+        ],
+      ),
+    );
+  }
+}
+
+class _FilterSection extends StatelessWidget {
+  final String title;
+  final List<String> options;
+  final String? selected;
+  final List<String>? selectedList;
+  final bool multiSelect;
+  final ValueChanged<String?>? onSelect;
+  final ValueChanged<List<String>>? onSelectList;
+
+  const _FilterSection({
+    required this.title,
+    required this.options,
+    this.selected,
+    this.selectedList,
+    this.multiSelect = false,
+    this.onSelect,
+    this.onSelectList,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: Theme.of(
+            context,
+          ).textTheme.labelMedium?.copyWith(fontWeight: FontWeight.w600),
+        ),
+        const SizedBox(height: 8),
         Wrap(
           spacing: 8,
           runSpacing: 8,
-          children: [
-            ...durations.map(
-              (d) => FilterChip(
-                label: Text(d ?? 'Any duration'),
-                selected: filters.duration == d,
-                onSelected: (_) => onChanged(filters.copyWith(duration: d)),
-              ),
-            ),
-            ...difficulties.map(
-              (d) => FilterChip(
-                label: Text(d ?? 'Any difficulty'),
-                selected: filters.difficulty == d,
-                onSelected: (_) => onChanged(filters.copyWith(difficulty: d)),
-              ),
-            ),
-            ...starts.map(
-              (s) => FilterChip(
-                label: Text(s ?? 'Any start'),
-                selected: filters.startingPoint == s,
-                onSelected: (_) =>
-                    onChanged(filters.copyWith(startingPoint: s)),
-              ),
-            ),
-          ],
+          children: options.map((opt) {
+            if (multiSelect) {
+              final current = selectedList ?? [];
+              final isSelected = current.contains(opt);
+              return FilterChip(
+                label: Text(opt),
+                selected: isSelected,
+                onSelected: (_) {
+                  final next = List<String>.from(current);
+                  if (isSelected) {
+                    next.remove(opt);
+                  } else {
+                    next.add(opt);
+                  }
+                  onSelectList?.call(next);
+                },
+              );
+            }
+            return ChoiceChip(
+              label: Text(opt),
+              selected: selected == opt,
+              onSelected: (_) => onSelect?.call(selected == opt ? null : opt),
+            );
+          }).toList(),
         ),
       ],
     );
@@ -598,7 +687,7 @@ class _TemplateCard extends StatelessWidget {
                 Chip(label: Text('${template.xpReward} XP')),
                 Chip(label: Text(template.difficulty)),
                 if (template.tags.isNotEmpty)
-                  Chip(label: Text(template.tags.take(2).join(' • '))),
+                  Chip(label: Text(template.tags.take(2).join(', '))),
               ],
             ),
             const SizedBox(height: 12),
@@ -620,6 +709,37 @@ class _TemplateCard extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _AchievementItem extends StatelessWidget {
+  final String icon;
+  final String title;
+  final String description;
+
+  const _AchievementItem({
+    required this.icon,
+    required this.title,
+    required this.description,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Text(icon, style: const TextStyle(fontSize: 32)),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(title, style: Theme.of(context).textTheme.titleMedium),
+              Text(description, style: Theme.of(context).textTheme.bodySmall),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

@@ -11,6 +11,7 @@ const destinationRoutes = require('./routes/destinationRoutes');
 const mapRoutes = require('./routes/mapRoutes');
 const geoRoutes = require('./routes/geoRoutes');
 const userRoutes = require('./routes/userRoutes');
+const preplannedTripsRoutes = require('./routes/preplannedTripsRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -28,6 +29,9 @@ app.get('/health', (req, res) => {
 
 // Auth routes (public + JWT protected)
 app.use('/api/auth', authRoutes);
+
+// Pre-planned trips (public read, protected clone)
+app.use('/api/preplanned-trips', preplannedTripsRoutes);
 
 // Protected routes
 app.use('/api/travel', checkJwt, extractUserId, travelRoutes);
