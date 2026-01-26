@@ -5,6 +5,7 @@ import '../data/models/preplanned_trip_model.dart';
 import 'providers/preplanned_trips_provider.dart';
 import 'providers/trips_provider.dart';
 import 'memory_lane_page.dart';
+import 'create_trip_page.dart';
 import 'widgets/explorer_stats_card.dart';
 import 'widgets/trips_debug_panel.dart';
 
@@ -242,47 +243,9 @@ class _TripsScreenState extends ConsumerState<TripsScreen>
   }
 
   void _showCreateCustomTripForm() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Create Custom Trip'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: const [
-            TextField(
-              decoration: InputDecoration(
-                labelText: 'Trip Name',
-                hintText: 'e.g., My Mountain Adventure',
-              ),
-            ),
-            SizedBox(height: 12),
-            TextField(
-              decoration: InputDecoration(
-                labelText: 'Description',
-                hintText: 'What will you do?',
-              ),
-              maxLines: 3,
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Custom trip creation coming soon!'),
-                ),
-              );
-              Navigator.pop(context);
-            },
-            child: const Text('Create'),
-          ),
-        ],
-      ),
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const CreateTripPage()),
     );
   }
 
