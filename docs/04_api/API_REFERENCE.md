@@ -1,8 +1,8 @@
 # API Reference - Gemified Travel Portfolio
 
-**Base URL**: `http://localhost:5000` (Development)  
-**Version**: 1.0.0  
-**Last Updated**: January 24, 2026
+**Base URL**: `http://localhost:5000` (Dev host) / `http://10.0.2.2:5000` (Android emulator)  
+**Version**: 1.0.1  
+**Last Updated**: January 26, 2026
 
 ---
 
@@ -103,7 +103,7 @@ curl --request POST \
 
 ### Create Travel
 **Endpoint**: `POST /api/travel`  
-**Auth**: Required (JWT)
+**Auth**: Required (JWT) – bypassed in dev via mock auth middleware
 
 **Request**:
 ```json
@@ -131,11 +131,11 @@ curl --request POST \
 
 ### List Travels
 **Endpoint**: `GET /api/travel`  
-**Auth**: Required (JWT)
+**Auth**: Required (JWT) – bypassed in dev via mock auth middleware
 
 **Query Parameters**:
-- `page` (optional) - Page number for pagination
-- `limit` (optional) - Results per page
+- `skip` (optional) - Offset for pagination (default 0)
+- `limit` (optional) - Results per page (default 20)
 
 **Response** (200):
 ```json
@@ -149,14 +149,15 @@ curl --request POST \
       "createdAt": "2026-01-24T10:30:00.000Z"
     }
   ],
-  "totalCount": 1,
-  "page": 1
+  "total": 1,
+  "limit": 20,
+  "skip": 0
 }
 ```
 
 ### Get Travel
 **Endpoint**: `GET /api/travel/:travelId`  
-**Auth**: Required (JWT)
+**Auth**: Required (JWT) – bypassed in dev via mock auth middleware
 
 **Response** (200):
 ```json
@@ -174,7 +175,7 @@ curl --request POST \
 
 ### Update Travel
 **Endpoint**: `PATCH /api/travel/:travelId`  
-**Auth**: Required (JWT)
+**Auth**: Required (JWT) – bypassed in dev via mock auth middleware
 
 **Request**:
 ```json
@@ -188,7 +189,15 @@ curl --request POST \
 
 ### Delete Travel
 **Endpoint**: `DELETE /api/travel/:travelId`  
-**Auth**: Required (JWT)
+**Auth**: Required (JWT) – bypassed in dev via mock auth middleware
+
+---
+
+## Development Notes
+
+- **Auth bypass in dev**: `backend/src/middleware/auth.js` injects a mock user when `NODE_ENV !== 'production'` to speed up local testing.
+- **Android emulator networking**: Use `http://10.0.2.2:5000` from the emulator to reach the host machine backend.
+- **Pagination shape**: Responses expose `total`, `limit`, and `skip` instead of `page`/`totalCount`.
 
 **Response** (200):
 ```json
