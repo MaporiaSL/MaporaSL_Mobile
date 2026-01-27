@@ -4,6 +4,36 @@
 
 ---
 
+## [January 27, 2026] - Places Feature Planning & Spec
+
+### Added
+- **Places System Planning** - Comprehensive feature specification for tourist attractions/locations
+  - Core feature: Curated list of 50-100 Sri Lankan tourist attractions (foundational to trip planning)
+  - User contributions: Locals/tourists can submit new places with photos and metadata
+  - Admin verification workflow: Multi-step approval process to ensure legitimacy and quality
+  - Gamification: Badges and leaderboard for contributors (Explorer, Local Guide, Curator, Legend)
+  
+- **Documentation**:
+  - `docs/06_implementation/PLACES_FEATURE_SPEC.md` - Complete feature spec with data models, workflows, and success metrics
+  - `docs/06_implementation/PLACES_IMPLEMENTATION_PLAN.md` - 6-phase step-by-step implementation guide (50+ pages)
+  - `project_resorces/places_seed_data.json` - Initial 42 curated Sri Lankan attractions with full metadata
+
+- **Updated Project Docs**:
+  - `docs/01_planning/PROJECT_SOURCE_OF_TRUTH.md` - Added Places as critical foundation, updated roadmap phases 1-5
+
+### Design Notes
+- Places system is **not a standalone page** but foundational infrastructure used by every trip planner
+- Each place stores: category, location, accessibility info, photos, ratings, contributor metadata
+- Two sources: curated system places + user-verified community contributions
+- API endpoints planned: list/search places, submit place, admin approval workflow
+
+### Next Actions
+- Backend Phase 2: Create Place & PlaceRequest models, API endpoints, photo upload
+- Frontend Phase 3: Place discovery UI, integration with trip creation
+- Admin Phase 5: Dashboard for reviewing submissions, badge system
+
+---
+
 ## [January 26, 2026] - Mobile Trips UX Fixes
 
 ### Added

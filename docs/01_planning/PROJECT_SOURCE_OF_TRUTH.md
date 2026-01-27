@@ -93,6 +93,38 @@ The app encourages **physical travel**, **exploration**, and **cultural discover
 
 # 03. Feature Breakdown
 
+---
+
+## Places System (Core Foundation)
+
+**Status**: 📋 Planning Phase – Ready for implementation  
+**Criticality**: 🔴 CRITICAL – Central to all trip planning
+
+This is not a dedicated UI page, but a **foundational data system** that every user encounters when planning trips.
+
+### Why Places Matter
+
+- **Every trip creation** starts by selecting places from this list
+- **Discover mode** allows exploration by category/location
+- **Community contributions** keep list growing and fresh
+- **Admin curation** ensures quality and legitimacy
+
+### Feature Highlight: Gamified Contributions
+
+Users who suggest new places earn:
+- 🏅 Badges: Explorer (1), Local Guide (5), Curator (10), Legend (20+)
+- 📊 Public profile stats: "Places Contributed"
+- 👥 Leaderboard position
+- 🎖️ Special recognition on contributed place cards
+
+### Documentation References
+
+- **Feature Spec**: [PLACES_FEATURE_SPEC.md](../06_implementation/PLACES_FEATURE_SPEC.md)
+- **Implementation Plan**: [PLACES_IMPLEMENTATION_PLAN.md](../06_implementation/PLACES_IMPLEMENTATION_PLAN.md)
+- **Seed Data**: [places_seed_data.json](../../project_resorces/places_seed_data.json) (42 curated places)
+
+---
+
 ## Authentication Flow
 
 * App Launch
@@ -162,24 +194,40 @@ Achievements are:
 
 ## Trip Planning System
 
+### Integration with Places System
+
+**All trips are built from the Places catalog**. When creating a custom trip:
+
+1. User selects dates and trip theme
+2. Searches/filters Places catalog
+3. Adds selected places to trip itinerary
+4. System calculates route, distance, duration
+5. Trip saved with place references
+
 ### Two Modes
 
-#### 1. Pre-Planned Trips
+#### 1. Pre-Planned Trips (System-Curated)
 
-* System-provided curated trips
-* User adds:
+* MAPORIA team creates themed itineraries
+* Examples:
+  - "Cultural Triangle Heritage Tour" (Sigiriya → Dambulla → Kandy)
+  - "South Coast Beach Escape" (Mirissa → Unawatuna → Galle)
+  - "Highland Adventure" (Ella → Horton Plains → Nuwara Eliya)
 
-  * Dates
-  * Notes
+* User adapts:
+  - Dates
+  - Pace (add/remove days)
+  - Notes and preferences
 
 #### 2. Custom Trip Planning
 
-* Select places manually
+* User selects individual places from catalog
+* Reorder places on map
+* System suggests optimal route
 * Define:
-
-  * Duration
-  * Visit order
-  * Travel days
+  - Duration
+  - Travel order
+  - Notes per place
 
 ---
 
@@ -195,6 +243,7 @@ Each trip shows:
 * Distance
 * Duration
 * Places visited
+* Trip photos
 
 ---
 
@@ -210,30 +259,122 @@ Each trip shows:
 
 ---
 
-## Place Catalog
+## Place Catalog (Core System Foundation)
 
-* Official places
-* Community-added places
+**Critical Note**: The Places system is a **foundational feature** that powers trip planning. Every time a user creates or plans a trip, they select destinations from this Places list.
 
-Each place includes:
+### System Architecture
 
-* Images
-* Description
-* Location
-* Contributor credits
+**Two Data Sources**:
+
+1. **Curated Places** (System-seeded)
+   - 50-100 major tourist attractions
+   - Manually researched and verified by developers
+   - Pre-loaded at app launch
+   - Categories: waterfall, mountain, beach, temple, historical, forest, garden, city, etc.
+
+2. **User-Contributed Places** (Community-sourced)
+   - Locals and tourists can suggest new places
+   - Requires submission form with photos and metadata
+   - Admin verification before official listing
+   - Gamification rewards for verified contributions
+
+### Each Place Stores
+
+* **Metadata**: Name, description, category, province, district
+* **Location**: GPS coordinates (lat/long), address
+* **Media**: Photos (2+ required for submissions)
+* **Accessibility**: Season, difficulty, duration, entry fee, wheelchair access
+* **Ratings**: User ratings and review count
+* **Contributor**: Who added it (system vs user + date)
+* **Tags**: Search keywords (e.g., #UNESCO, #hiking, #scenic)
+
+### Place Discovery Features
+
+* Search by name, category, province
+* Filter by: difficulty, rating, season, accessibility
+* Geospatial queries: "Find places near me"
+* Trending: Most-added to trips, highest-rated, newly added
 
 ---
 
-## Add New Place (User Contribution)
+## Add New Place (User Contribution – Verified Submission)
 
-* Users submit:
+### User Submission Workflow
 
-  * Place name
-  * Description
-  * Images
-  * GPS location
+1. User taps "Suggest a Place" button
+2. Fills form with:
+   - Place name
+   - Detailed description (min 50 chars)
+   - Category (dropdown)
+   - Province/District (cascading selectors)
+   - Exact location (map pin + coordinates)
+   - **At least 2 clear photos**
+   - Optional: season, difficulty, entry fee, contact
 
-* Goes into **admin review queue**
+3. Form validates and uploads photos to cloud storage
+4. Submission enters **admin review queue** with status: `pending`
+
+### Admin Verification Process
+
+**Admin Dashboard**:
+- Review pending submissions with photo gallery
+- Verify against known locations (Google Maps, etc.)
+- Check for duplicates
+- Validate legitimacy (public access, no restrictions)
+- Approve or reject with preset reasons
+
+**After Approval**:
+- Place added to official list (status: `verified`)
+- Contributor gets achievement badge
+- User stat updated: "Places Contributed"
+- Notification sent to contributor
+- Place shows contributor credit in metadata
+
+**After Rejection**:
+- Submission deleted
+- Contributor notified with reason
+- Can resubmit with corrections
+
+### Security & Verification
+
+* **Spam Prevention**: Rate limit submissions per user
+* **Duplicate Detection**: Check name + location match
+* **Location Validation**: Coordinates within Sri Lanka bounds
+* **Photo Validation**: Manual review for actual location match
+* **Content Safety**: Check for restricted areas (national security, private property)
+
+---
+
+## User Profile & Contributions Stats
+
+### Profile Section: "My Contributions"
+
+For users who submit places, their profile displays:
+
+- **Total Places Submitted**: Count of suggestions sent for review
+- **Approved Count**: Places successfully verified by admin
+- **Approval Rate**: Percentage of submissions approved
+- **Badges Earned**: Visual badges for contribution milestones
+- **Contributed Places List**: Show all approved places with contributor credit
+- **Leaderboard Rank**: Position among all contributors
+
+### Achievement Progression
+
+As users contribute verified places:
+
+| Contributions | Badge | Icon |
+|---|---|---|
+| 1 approved | Explorer | 🏅 |
+| 5 approved | Local Guide | 🎖️ |
+| 10 approved | Place Curator | 👑 |
+| 20+ approved | Community Legend | 🌟 |
+
+### Impact Metrics
+
+- See how many users have added your contributed places to their trips
+- View where people are visiting your suggested locations
+- Get notifications when your place is used/reviewed
 
 ---
 
@@ -242,9 +383,10 @@ Each place includes:
 Users can share:
 
 * Unlocked districts
-* Achievements
+* Achievements & badges
 * Map snapshots
 * Trip summaries
+* **Contributed places** (if a curator)
 
 All content includes MAPORIA branding.
 
@@ -356,9 +498,30 @@ Supabase Backend
 
 # 10. Admin & Moderation
 
-* Admin dashboard (web)
-* Review new places
-* Approve / reject submissions
+### Place Submission Review (New)
+
+**Dedicated Admin Dashboard**:
+- List pending place submissions with status badges
+- Photo gallery viewer with contributor info
+- Verification checklist:
+  - ✅ Place exists (cross-reference Google Maps)
+  - ✅ Coordinates accurate
+  - ✅ No duplicate
+  - ✅ Public/legitimate location
+  - ✅ Photos match location
+  - ✅ Legal/safe to visit
+
+**Actions**:
+- Approve → Place added to catalog, contributor notified + badge earned
+- Reject → Submission deleted, contributor notified with reason
+- Request Changes → Send feedback to contributor, keep submission pending
+
+### Community Moderation
+
+- Flag inappropriate places
+- Report low-quality submissions
+- Community upvoting/downvoting
+- Contributor reputation tracking
 
 ---
 
@@ -367,6 +530,7 @@ Supabase Backend
 * Location used only during visit check
 * Photos private by default
 * GDPR-friendly deletion
+* **Place submission photos**: Stored securely, validated for authenticity
 
 ---
 
@@ -377,24 +541,35 @@ Supabase Backend
 * Auth
 * Map UI
 * DB setup
+* **Places API + seed data import** (50-100 curated locations)
 
 ### Phase 2 – Core Gameplay
 
 * Visit logic
 * Achievements
 * Cloud system
+* **Place discovery UI** (search, filter, detail view, integration with trip creation)
 
 ### Phase 3 – Trips & Media
 
-* Trip planner
+* Trip planner (integrated with Places system)
 * Camera
 * Album
+* **User place submission form** with photo upload
 
-### Phase 4 – Social & Polish
+### Phase 4 – Admin & Moderation
+
+* Admin dashboard (web)
+* **Place submission review workflow** (approve/reject/changes)
+* Contributor stats & badges
+* Leaderboard
+
+### Phase 5 – Social & Polish
 
 * Sharing
 * Animations
 * Performance
+* **Gamification UI** (badges, profile contributions section)
 
 ---
 

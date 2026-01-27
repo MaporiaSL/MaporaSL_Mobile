@@ -235,7 +235,7 @@ Please report security vulnerabilities to [security@example.com] privately.
 - **Documentation**: [docs/README.md](docs/README.md)
 - **Issues**: [GitHub Issues](https://github.com/your-username/gemified-travel-portfolio/issues)
 - **Discussions**: [GitHub Discussions](https://github.com/your-username/gemified-travel-portfolio/discussions)
-- **Email**: [team@example.com]
+- **Email**: [info@maporiasl.com]
 
 ---
 

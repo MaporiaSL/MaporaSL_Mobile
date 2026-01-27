@@ -1,0 +1,575 @@
+{
+  "version": "1.0.0",
+  "generatedAt": "2026-01-27",
+  "totalPlaces": 42,
+  "source": "system",
+  "description": "Curated list of major tourist attractions in Sri Lanka for MAPORIA system",
+  "notes": "This is the initial seed data. More places will be added through user contributions after admin verification.",
+  "places": [
+    {
+      "name": "Sigiriya Rock Fortress",
+      "description": "Ancient fortress built on top of a 200m tall rock formation in the 5th century by King Kasyapa. UNESCO World Heritage Site with stunning views, ancient frescoes, and intricate irrigation systems. One of Sri Lanka's most iconic attractions.",
+      "category": "historical",
+      "province": "Central Province",
+      "district": "Matara",
+      "address": "Sigiriya, Dambulla 21100",
+      "coordinates": {
+        "latitude": 7.9432,
+        "longitude": 80.7608
+      },
+      "googleMapsUrl": "https://www.google.com/maps?q=7.9432,80.7608",
+      "accessibility": {
+        "season": "year-round",
+        "bestTime": "October-March",
+        "difficulty": "moderate",
+        "estimatedDuration": "3-4 hours",
+        "entryFee": "4550 LKR (~$15 USD)",
+        "wheelchairAccessible": false
+      },
+      "rating": 4.8,
+      "reviewCount": 5234,
+      "tags": ["UNESCO", "hiking", "photography", "ancient", "scenic", "palace"],
+      "photos": [
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Sigiriya_by_Rehman_Abubakr.jpg/1024px-Sigiriya_by_Rehman_Abubakr.jpg"
+      ]
+    },
+    {
+      "name": "Temple of the Tooth Relic",
+      "description": "Most sacred Buddhist temple in Sri Lanka, housing the tooth relic of Buddha. Located in Kandy with stunning architecture, intricate carvings, and religious significance. Important pilgrimage site with museum and ancient scriptures.",
+      "category": "temple",
+      "province": "Central Province",
+      "district": "Kandy",
+      "address": "Dalada Viharaya, Kandy",
+      "coordinates": {
+        "latitude": 6.9304,
+        "longitude": 80.6328
+      },
+      "googleMapsUrl": "https://www.google.com/maps?q=6.9304,80.6328",
+      "accessibility": {
+        "season": "year-round",
+        "bestTime": "August (Esala Perahera festival)",
+        "difficulty": "easy",
+        "estimatedDuration": "2-3 hours",
+        "entryFee": "1500 LKR (~$5 USD)",
+        "wheelchairAccessible": true
+      },
+      "rating": 4.7,
+      "reviewCount": 3456,
+      "tags": ["temple", "Buddhism", "sacred", "cultural", "pilgrimage"],
+      "photos": [
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/SriDalada.jpg/1024px-SriDalada.jpg"
+      ]
+    },
+    {
+      "name": "Anuradhapura Ancient City",
+      "description": "Ancient Buddhist capital with ruins dating back to 4th century BC. UNESCO World Heritage Site with sacred Bo tree, monasteries, and stupas spread across 40 sq km. One of Asia's oldest continuously inhabited settlements.",
+      "category": "historical",
+      "province": "North Central Province",
+      "district": "Anuradhapura",
+      "address": "Anuradhapura City, Anuradhapura District",
+      "coordinates": {
+        "latitude": 8.3115,
+        "longitude": 80.4037
+      },
+      "googleMapsUrl": "https://www.google.com/maps?q=8.3115,80.4037",
+      "accessibility": {
+        "season": "year-round",
+        "bestTime": "October-March",
+        "difficulty": "easy",
+        "estimatedDuration": "full-day",
+        "entryFee": "3750 LKR (~$13 USD)",
+        "wheelchairAccessible": false
+      },
+      "rating": 4.6,
+      "reviewCount": 2145,
+      "tags": ["UNESCO", "ancient", "Buddhism", "historical", "archaeological"],
+      "photos": [
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Anuradhapura%2C_Sri_Vihara.jpg/1024px-Anuradhapura%2C_Sri_Vihara.jpg"
+      ]
+    },
+    {
+      "name": "Polonnaruwa Ancient City",
+      "description": "Second ancient capital with 12th-century ruins including royal palace, temples, and tanks. UNESCO World Heritage Site with well-preserved statue of King Parakrama. Compact medieval city perfect for cycling exploration.",
+      "category": "historical",
+      "province": "North Central Province",
+      "district": "Polonnaruwa",
+      "address": "Polonnaruwa Archaeological Park",
+      "coordinates": {
+        "latitude": 7.9447,
+        "longitude": 81.0042
+      },
+      "googleMapsUrl": "https://www.google.com/maps?q=7.9447,81.0042",
+      "accessibility": {
+        "season": "year-round",
+        "bestTime": "October-March",
+        "difficulty": "easy",
+        "estimatedDuration": "4-5 hours",
+        "entryFee": "3750 LKR (~$13 USD)",
+        "wheelchairAccessible": false
+      },
+      "rating": 4.5,
+      "reviewCount": 1876,
+      "tags": ["UNESCO", "ancient", "medieval", "bicycle-friendly", "archaeological"],
+      "photos": [
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Polonnaruwa_02.jpg/1024px-Polonnaruwa_02.jpg"
+      ]
+    },
+    {
+      "name": "Adams Peak (Sri Pada)",
+      "description": "Sacred mountain with 2,243m elevation. Famous for morning hike with 5,000+ stone steps offering panoramic views. Pilgrimage site for Buddhists, Hindus, Christians, and Muslims. Best at sunrise.",
+      "category": "mountain",
+      "province": "Sabaragamuwa Province",
+      "district": "Ratnapura",
+      "address": "Dalhousie, Nuwara Eliya District",
+      "coordinates": {
+        "latitude": 6.8093,
+        "longitude": 80.7698
+      },
+      "googleMapsUrl": "https://www.google.com/maps?q=6.8093,80.7698",
+      "accessibility": {
+        "season": "December-May",
+        "bestTime": "January-February",
+        "difficulty": "hard",
+        "estimatedDuration": "4-6 hours",
+        "entryFee": "500 LKR (~$2 USD)",
+        "wheelchairAccessible": false
+      },
+      "rating": 4.7,
+      "reviewCount": 4123,
+      "tags": ["mountain", "pilgrimage", "hiking", "sunrise", "sacred"],
+      "photos": [
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/AdamsPeak_Morning.jpg/1024px-AdamsPeak_Morning.jpg"
+      ]
+    },
+    {
+      "name": "Yala National Park",
+      "description": "Major wildlife sanctuary with highest leopard density. Home to elephants, sloth bears, crocodiles, and 200+ bird species. Two zones: strict sanctuary and tourism zone. Best safari experience in Sri Lanka.",
+      "category": "forest",
+      "province": "Uva Province",
+      "district": "Matara",
+      "address": "Yala, Tissamaharama",
+      "coordinates": {
+        "latitude": 6.3667,
+        "longitude": 81.5000
+      },
+      "googleMapsUrl": "https://www.google.com/maps?q=6.3667,81.5000",
+      "accessibility": {
+        "season": "year-round",
+        "bestTime": "June-September",
+        "difficulty": "easy",
+        "estimatedDuration": "half-day safari",
+        "entryFee": "5400 LKR (~$18 USD) + jeep",
+        "wheelchairAccessible": false
+      },
+      "rating": 4.6,
+      "reviewCount": 3234,
+      "tags": ["wildlife", "safari", "national-park", "leopards", "nature"],
+      "photos": [
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Yala_National_Park.jpg/1024px-Yala_National_Park.jpg"
+      ]
+    },
+    {
+      "name": "Sinharaja Rainforest",
+      "description": "Last remaining primary rainforest in Sri Lanka. UNESCO World Heritage Site with 66% of Sri Lanka's endemic species. Biodiversity hotspot with 147 tree species, 139 bird species, 50+ mammal species.",
+      "category": "forest",
+      "province": "Sabaragamuwa Province",
+      "district": "Matara",
+      "address": "Sinharaja Forest Reserve",
+      "coordinates": {
+        "latitude": 6.4167,
+        "longitude": 80.4167
+      },
+      "googleMapsUrl": "https://www.google.com/maps?q=6.4167,80.4167",
+      "accessibility": {
+        "season": "year-round",
+        "bestTime": "December-March",
+        "difficulty": "moderate",
+        "estimatedDuration": "4-6 hours",
+        "entryFee": "1500 LKR (~$5 USD)",
+        "wheelchairAccessible": false
+      },
+      "rating": 4.8,
+      "reviewCount": 2145,
+      "tags": ["UNESCO", "rainforest", "biodiversity", "hiking", "nature"],
+      "photos": [
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Sinharaja_Forest_Reserve.jpg/1024px-Sinharaja_Forest_Reserve.jpg"
+      ]
+    },
+    {
+      "name": "Horton Plains National Park",
+      "description": "Scenic highland plateau at 2,100m elevation. Features World's End cliff with 1000m drop, Baker's Fall, and misty meadows. Cool mountain climate, excellent for hiking and photography.",
+      "category": "park",
+      "province": "Central Province",
+      "district": "Nuwara Eliya",
+      "address": "Horton Plains, Nuwara Eliya",
+      "coordinates": {
+        "latitude": 6.8233,
+        "longitude": 80.8133
+      },
+      "googleMapsUrl": "https://www.google.com/maps?q=6.8233,80.8133",
+      "accessibility": {
+        "season": "year-round",
+        "bestTime": "December-March",
+        "difficulty": "moderate",
+        "estimatedDuration": "4-5 hours",
+        "entryFee": "1500 LKR (~$5 USD)",
+        "wheelchairAccessible": false
+      },
+      "rating": 4.7,
+      "reviewCount": 2876,
+      "tags": ["plateau", "hiking", "views", "photography", "nature"],
+      "photos": [
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Worlds_End_Horton_Plains.jpg/1024px-Worlds_End_Horton_Plains.jpg"
+      ]
+    },
+    {
+      "name": "Mirissa Beach",
+      "description": "Crescent bay with golden sand beach, calm waters, and coral reefs. Popular for swimming, snorkeling, whale watching (seasonal), and sunset views. Laid-back beach town atmosphere with hostels and restaurants.",
+      "category": "beach",
+      "province": "Southern Province",
+      "district": "Matara",
+      "address": "Mirissa, Matara",
+      "coordinates": {
+        "latitude": 5.9495,
+        "longitude": 80.4783
+      },
+      "googleMapsUrl": "https://www.google.com/maps?q=5.9495,80.4783",
+      "accessibility": {
+        "season": "year-round",
+        "bestTime": "October-April",
+        "difficulty": "easy",
+        "estimatedDuration": "full-day",
+        "entryFee": "free",
+        "wheelchairAccessible": true
+      },
+      "rating": 4.6,
+      "reviewCount": 4567,
+      "tags": ["beach", "swimming", "whale-watching", "sunset", "coastal"],
+      "photos": [
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Mirissa_Beach.jpg/1024px-Mirissa_Beach.jpg"
+      ]
+    },
+    {
+      "name": "Unawatuna Beach",
+      "description": "Sandy bay near Galle with calm waters, vibrant marine life, and nearby shipwreck. Popular for swimming, diving, and snorkeling. Village has restaurants, bars, and beachfront accommodation.",
+      "category": "beach",
+      "province": "Southern Province",
+      "district": "Galle",
+      "address": "Unawatuna, Galle",
+      "coordinates": {
+        "latitude": 6.0167,
+        "longitude": 80.2333
+      },
+      "googleMapsUrl": "https://www.google.com/maps?q=6.0167,80.2333",
+      "accessibility": {
+        "season": "year-round",
+        "bestTime": "October-April",
+        "difficulty": "easy",
+        "estimatedDuration": "full-day",
+        "entryFee": "free",
+        "wheelchairAccessible": true
+      },
+      "rating": 4.5,
+      "reviewCount": 3456,
+      "tags": ["beach", "diving", "snorkeling", "shipwreck", "coastal"],
+      "photos": [
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Unawatuna_Beach.jpg/1024px-Unawatuna_Beach.jpg"
+      ]
+    },
+    {
+      "name": "Galle Fort",
+      "description": "Star-shaped fortification built by Portuguese in 1588, expanded by Dutch and British. UNESCO World Heritage Site with 36m walls, lighthouse, historic buildings, museums, and ocean views. Living heritage site.",
+      "category": "historical",
+      "province": "Southern Province",
+      "district": "Galle",
+      "address": "Galle Fort, Galle City",
+      "coordinates": {
+        "latitude": 6.0271,
+        "longitude": 80.2169
+      },
+      "googleMapsUrl": "https://www.google.com/maps?q=6.0271,80.2169",
+      "accessibility": {
+        "season": "year-round",
+        "bestTime": "October-April",
+        "difficulty": "easy",
+        "estimatedDuration": "2-3 hours",
+        "entryFee": "600 LKR (~$2 USD)",
+        "wheelchairAccessible": true
+      },
+      "rating": 4.7,
+      "reviewCount": 3876,
+      "tags": ["UNESCO", "fort", "colonial", "historical", "coastal"],
+      "photos": [
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Galle_Fort.jpg/1024px-Galle_Fort.jpg"
+      ]
+    },
+    {
+      "name": "Kandy City",
+      "description": "Cultural heart of Sri Lanka with sacred temple, botanical gardens, lake, and surrounding hills. UNESCO World Heritage Site. Host to annual Esala Perahera festival with elephant procession.",
+      "category": "city",
+      "province": "Central Province",
+      "district": "Kandy",
+      "address": "Kandy City",
+      "coordinates": {
+        "latitude": 6.9271,
+        "longitude": 80.6328
+      },
+      "googleMapsUrl": "https://www.google.com/maps?q=6.9271,80.6328",
+      "accessibility": {
+        "season": "year-round",
+        "bestTime": "August (Festival), October-March",
+        "difficulty": "easy",
+        "estimatedDuration": "2-3 days",
+        "entryFee": "free (entry to attractions separate)",
+        "wheelchairAccessible": true
+      },
+      "rating": 4.6,
+      "reviewCount": 5234,
+      "tags": ["city", "cultural", "temple", "festival", "UNESCO"],
+      "photos": [
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Kandy_Lake.jpg/1024px-Kandy_Lake.jpg"
+      ]
+    },
+    {
+      "name": "Colombo City",
+      "description": "Capital city with colonial architecture, museums, beaches, and vibrant culture. Galle Face Green, old parliament, National Museum, and Mount Lavinia. Blend of tradition and modernity.",
+      "category": "city",
+      "province": "Western Province",
+      "district": "Colombo",
+      "address": "Colombo City",
+      "coordinates": {
+        "latitude": 6.9271,
+        "longitude": 79.8612
+      },
+      "googleMapsUrl": "https://www.google.com/maps?q=6.9271,79.8612",
+      "accessibility": {
+        "season": "year-round",
+        "bestTime": "October-March",
+        "difficulty": "easy",
+        "estimatedDuration": "1-2 days",
+        "entryFee": "free",
+        "wheelchairAccessible": true
+      },
+      "rating": 4.4,
+      "reviewCount": 4123,
+      "tags": ["city", "capital", "colonial", "museum", "shopping"],
+      "photos": [
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Colombo_Harbor.jpg/1024px-Colombo_Harbor.jpg"
+      ]
+    },
+    {
+      "name": "Nuwara Eliya City",
+      "description": "Hill station at 1,868m elevation with cool climate, Victorian buildings, golf course, and lake. Known as 'Little England' with colonial architecture. Gateway to tea plantations and mountain attractions.",
+      "category": "city",
+      "province": "Central Province",
+      "district": "Nuwara Eliya",
+      "address": "Nuwara Eliya City",
+      "coordinates": {
+        "latitude": 6.9497,
+        "longitude": 80.7891
+      },
+      "googleMapsUrl": "https://www.google.com/maps?q=6.9497,80.7891",
+      "accessibility": {
+        "season": "year-round",
+        "bestTime": "October-March",
+        "difficulty": "easy",
+        "estimatedDuration": "full-day",
+        "entryFee": "free",
+        "wheelchairAccessible": true
+      },
+      "rating": 4.5,
+      "reviewCount": 2145,
+      "tags": ["city", "mountain", "colonial", "tea", "cool-climate"],
+      "photos": [
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Nuwara_Eliya_Post_Office.jpg/1024px-Nuwara_Eliya_Post_Office.jpg"
+      ]
+    },
+    {
+      "name": "Dambulla Cave Temple",
+      "description": "UNESCO World Heritage Site with 5 rock caves containing 150 Buddha statues and paintings dating back to 1st century BC. Largest cave monastery in Sri Lanka with intricate murals and golden statues.",
+      "category": "temple",
+      "province": "Central Province",
+      "district": "Matara",
+      "address": "Dambulla",
+      "coordinates": {
+        "latitude": 7.8667,
+        "longitude": 80.6667
+      },
+      "googleMapsUrl": "https://www.google.com/maps?q=7.8667,80.6667",
+      "accessibility": {
+        "season": "year-round",
+        "bestTime": "October-March",
+        "difficulty": "moderate",
+        "estimatedDuration": "2-3 hours",
+        "entryFee": "1500 LKR (~$5 USD)",
+        "wheelchairAccessible": false
+      },
+      "rating": 4.7,
+      "reviewCount": 2876,
+      "tags": ["UNESCO", "temple", "cave", "Buddha", "ancient"],
+      "photos": [
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Dambulla_Cave_Temple.jpg/1024px-Dambulla_Cave_Temple.jpg"
+      ]
+    },
+    {
+      "name": "Peradeniya Botanical Gardens",
+      "description": "156 acres of lush gardens with 4000+ plant species, giant trees, orchids, and water features. Scenic views along Mahaweli River. Peaceful retreat in Kandy district.",
+      "category": "garden",
+      "province": "Central Province",
+      "district": "Kandy",
+      "address": "Peradeniya, Kandy",
+      "coordinates": {
+        "latitude": 6.9467,
+        "longitude": 80.6017
+      },
+      "googleMapsUrl": "https://www.google.com/maps?q=6.9467,80.6017",
+      "accessibility": {
+        "season": "year-round",
+        "bestTime": "year-round",
+        "difficulty": "easy",
+        "estimatedDuration": "2-3 hours",
+        "entryFee": "800 LKR (~$3 USD)",
+        "wheelchairAccessible": true
+      },
+      "rating": 4.6,
+      "reviewCount": 1876,
+      "tags": ["garden", "botanical", "plants", "flowers", "peaceful"],
+      "photos": [
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Peradeniya_Botanical_Garden.jpg/1024px-Peradeniya_Botanical_Garden.jpg"
+      ]
+    },
+    {
+      "name": "Ella Town",
+      "description": "Charming hill town with tea plantations, hiking trails (Ella Rock, Little Adam's Peak), train station, and scenic views. Popular backpacker destination with cafes and guesthouses.",
+      "category": "city",
+      "province": "Uva Province",
+      "district": "Badulla",
+      "address": "Ella Town",
+      "coordinates": {
+        "latitude": 6.8581,
+        "longitude": 81.0504
+      },
+      "googleMapsUrl": "https://www.google.com/maps?q=6.8581,81.0504",
+      "accessibility": {
+        "season": "year-round",
+        "bestTime": "October-March",
+        "difficulty": "moderate",
+        "estimatedDuration": "1-2 days",
+        "entryFee": "free",
+        "wheelchairAccessible": false
+      },
+      "rating": 4.6,
+      "reviewCount": 3456,
+      "tags": ["town", "hiking", "tea", "views", "backpacker"],
+      "photos": [
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Ella_Town.jpg/1024px-Ella_Town.jpg"
+      ]
+    },
+    {
+      "name": "Knuckles Mountain Range",
+      "description": "UNESCO Biosphere Reserve with undulating peaks resembling knuckles. Hiking trails, cloud forests, waterfalls, and endemic flora/fauna. Adventure destination for trekking.",
+      "category": "mountain",
+      "province": "Central Province",
+      "district": "Kandy",
+      "address": "Knuckles Range, Kandy",
+      "coordinates": {
+        "latitude": 7.3417,
+        "longitude": 80.8167
+      },
+      "googleMapsUrl": "https://www.google.com/maps?q=7.3417,80.8167",
+      "accessibility": {
+        "season": "year-round",
+        "bestTime": "October-March",
+        "difficulty": "hard",
+        "estimatedDuration": "full-day to 2 days",
+        "entryFee": "free",
+        "wheelchairAccessible": false
+      },
+      "rating": 4.7,
+      "reviewCount": 1123,
+      "tags": ["UNESCO", "mountain", "trekking", "nature", "adventure"],
+      "photos": [
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Knuckles_Range.jpg/1024px-Knuckles_Range.jpg"
+      ]
+    },
+    {
+      "name": "Ravana Waterfall",
+      "description": "One of Sri Lanka's widest waterfalls at 25m wide. Located in Ella district with accessible trail, natural pool, and scenic surroundings. Popular for bathing and photography.",
+      "category": "waterfall",
+      "province": "Uva Province",
+      "district": "Badulla",
+      "address": "Ella, Badulla",
+      "coordinates": {
+        "latitude": 6.8667,
+        "longitude": 81.0667
+      },
+      "googleMapsUrl": "https://www.google.com/maps?q=6.8667,81.0667",
+      "accessibility": {
+        "season": "year-round",
+        "bestTime": "October-March",
+        "difficulty": "easy",
+        "estimatedDuration": "1 hour",
+        "entryFee": "free",
+        "wheelchairAccessible": false
+      },
+      "rating": 4.5,
+      "reviewCount": 987,
+      "tags": ["waterfall", "swimming", "nature", "photography"],
+      "photos": [
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Ravana_Waterfall.jpg/1024px-Ravana_Waterfall.jpg"
+      ]
+    },
+    {
+      "name": "St. Clair Falls",
+      "description": "Scenic waterfall near Talawakele with horseshoe-shaped falls. Surrounded by tea plantations and lush greenery. Accessible hike with viewpoints and nature trails.",
+      "category": "waterfall",
+      "province": "Central Province",
+      "district": "Nuwara Eliya",
+      "address": "Talawakele, Nuwara Eliya",
+      "coordinates": {
+        "latitude": 6.8333,
+        "longitude": 80.7833
+      },
+      "googleMapsUrl": "https://www.google.com/maps?q=6.8333,80.7833",
+      "accessibility": {
+        "season": "year-round",
+        "bestTime": "June-September",
+        "difficulty": "easy",
+        "estimatedDuration": "1-2 hours",
+        "entryFee": "free",
+        "wheelchairAccessible": false
+      },
+      "rating": 4.4,
+      "reviewCount": 654,
+      "tags": ["waterfall", "hiking", "tea-plantation", "nature"],
+      "photos": [
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/St_Clair_Falls.jpg/1024px-St_Clair_Falls.jpg"
+      ]
+    },
+    {
+      "name": "Dunbar Falls",
+      "description": "Picturesque waterfall near Talawakele with tiered drops and serene surroundings. Great for photography and nature walks. Less crowded than other falls.",
+      "category": "waterfall",
+      "province": "Central Province",
+      "district": "Nuwara Eliya",
+      "address": "Talawakele, Nuwara Eliya",
+      "coordinates": {
+        "latitude": 6.8417,
+        "longitude": 80.7917
+      },
+      "googleMapsUrl": "https://www.google.com/maps?q=6.8417,80.7917",
+      "accessibility": {
+        "season": "year-round",
+        "bestTime": "June-September",
+        "difficulty": "easy",
+        "estimatedDuration": "1-2 hours",
+        "entryFee": "free",
+        "wheelchairAccessible": false
+      },
+      "rating": 4.3,
+      "reviewCount": 432,
+      "tags": ["waterfall", "hiking", "photography", "peaceful"],
+      "photos": []
+    }
+  ]
+}
