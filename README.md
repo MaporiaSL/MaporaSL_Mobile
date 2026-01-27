@@ -10,13 +10,14 @@
 MAPORIA is a mobile-first application that gamifies real-world travel across Sri Lanka. Users unlock districts and provinces by visiting places, earn achievements, plan trips, and share their journey with others.
 
 ### Key Features
-- 🗺️ **Interactive Sri Lanka Map** with fog-of-war mechanics
-- 📍 **GPS-based Place Visits** with automatic verification
+- 🗺️ **Interactive Sri Lanka Map** with fog-of-war mechanics and cloud reveal system
+- 🏙️ **Places Discovery** - 50+ curated attractions + community contributions with verification
+- 📍 **GPS-based Place Visits** with automatic verification and navigation to Google Maps pins
 - 🏆 **Achievement System** for completing districts and provinces
-- 🚶 **Trip Planning** with route visualization
-- 📸 **Photo Documentation** with branded overlays
-- 👥 **Social Sharing** of achievements and progress
-- 🎨 **Gamification** with unlockables and progress tracking
+- 🚶 **Trip Planning** (pre-planned + custom) with route visualization and estimated duration
+- 📸 **Photo Documentation** with geotagging and branded overlays
+- 👥 **Social Sharing** of achievements, progress, and contributed places
+- 🎨 **Gamification** with badges, leaderboard, and contributor recognition
 
 ---
 
@@ -61,7 +62,7 @@ MAPORIA is a mobile-first application that gamifies real-world travel across Sri
 
 #### 1. Clone the Repository
 ```bash
-git clone https://github.com/your-username/gemified-travel-portfolio.git
+git clone https://github.com/maporiasl/gemified-travel-portfolio.git
 cd gemified-travel-portfolio
 ```
 
@@ -127,21 +128,34 @@ gemified-travel-portfolio/
 
 ## 🏗️ Development Status
 
-### Phase 1: Authentication & User Management (CURRENT)
-- [ ] Backend project setup
-- [ ] MongoDB connection
-- [ ] Auth0 integration
-- [ ] User registration/login
-- [ ] Data isolation
+### Phase 1: Authentication & User Management ✅ COMPLETE
+- [x] Backend project setup
+- [x] MongoDB connection
+- [x] Auth0 integration
+- [x] User registration/login
+- [x] Data isolation
 
-### Phase 2: Map Integration (PLANNED)
-- [ ] Mapbox setup
-- [ ] Sri Lanka boundaries
-- [ ] Place markers
-- [ ] Fog/cloud system
+### Phase 2: Map Integration ✅ COMPLETE
+- [x] Mapbox setup
+- [x] Sri Lanka boundaries
+- [x] Place markers
+- [x] Fog/cloud system
 
-### Phase 3-6: Future Phases
-See [Implementation Strategy](docs/01_planning/IMPLEMENTATION_STRATEGY.md) for full roadmap
+### Phase 3: Trip Planning & Memory Lane ✅ COMPLETE
+- [x] Pre-planned trips database
+- [x] Custom trip creation
+- [x] Memory lane timeline
+- [x] Trip-place associations
+
+### Phase 4: Places System 🚀 IN PROGRESS
+- [x] Feature specification & planning (42 curated attractions)
+- [x] Google Maps integration with deep links
+- [ ] Backend API implementation
+- [ ] User submission & verification workflow
+- [ ] Admin dashboard
+- [ ] Gamification badges & leaderboard
+
+See [Implementation Strategy](docs/01_planning/IMPLEMENTATION_STRATEGY.md) and [Places Planning](docs/06_implementation/PLACES_FEATURE_SPEC.md) for full roadmap
 
 ---
 
@@ -210,32 +224,119 @@ npm run test:e2e             # E2E tests
 - Follow security best practices in [docs/03_architecture/](docs/03_architecture/)
 
 ### Reporting Security Issues
-Please report security vulnerabilities to [security@example.com] privately.
+Please report security vulnerabilities to [info@maporiasl.com] privately.
 
 ---
 
 ## 📜 License
 
-[License Type] - See [LICENSE](LICENSE) file for details
+MIT License - See [LICENSE](LICENSE) file for details
 
 ---
 
 ## 👥 Team
 
-- **Project Lead**: [Name]
-- **Tech Lead**: [Name]
-- **Backend Team**: [Names]
-- **Frontend Team**: [Names]
-- **Design**: [Names]
+<div align="center">
+
+<table>
+	<tr>
+		<td align="center" width="180">
+			<a href="https://github.com/anucr" title="Anuk Ranasinghe">
+				<img src="https://avatars.githubusercontent.com/anucr?s=100" width="100" alt="Anuk Ranasinghe" />
+			</a>
+			<br/><b>Anuk Ranasinghe</b>
+			<br/><sub>Frontend Developer</sub>
+			<br/>
+			<a href="https://github.com/anucr" title="GitHub: anucr">
+				<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/github.svg" width="18" alt="GitHub" />
+			</a>
+		</td>
+		<td align="center" width="180">
+			<a href="https://github.com/Anuja-jayasinghe" title="Anuja Jayasinghe">
+				<img src="https://avatars.githubusercontent.com/Anuja-jayasinghe?s=100" width="100" alt="Anuja Jayasinghe" />
+			</a>
+			<br/><b>Anuja Jayasinghe</b>
+			<br/><sub>Frontend Developer</sub>
+			<br/>
+			<a href="https://github.com/Anuja-jayasinghe" title="GitHub: Anuja-jayasinghe">
+				<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/github.svg" width="18" alt="GitHub" />
+			</a>
+			&nbsp;
+			<a href="https://www.linkedin.com/in/anuja-jayasinghe/" title="LinkedIn: Anuja Jayasinghe">
+				<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/linkedin.svg" width="18" alt="LinkedIn" />
+			</a>
+		</td>
+		<td align="center" width="180">
+			<a href="https://github.com/PudamyaYamini" title="Pudamya Yamini">
+				<img src="https://avatars.githubusercontent.com/PudamyaYamini?s=100" width="100" alt="Pudamya Yamini" />
+			</a>
+			<br/><b>Pudamya Yamini</b>
+			<br/><sub>UI/UX & Flutter Specialist</sub>
+			<br/>
+			<a href="https://github.com/PudamyaYamini" title="GitHub: PudamyaYamini">
+				<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/github.svg" width="18" alt="GitHub" />
+			</a>
+			&nbsp;
+			<a href="http://www.linkedin.com/in/pudamya-de-silva-1a2ab7320" title="LinkedIn: Pudamya de Silva">
+				<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/linkedin.svg" width="18" alt="LinkedIn" />
+			</a>
+		</td>
+	</tr>
+	<tr>
+		<td align="center" width="180">
+			<a href="https://github.com/KaushalSenevirathne" title="Kaushal Senevirathne">
+				<img src="https://avatars.githubusercontent.com/KaushalSenevirathne?s=100" width="100" alt="Kaushal Senevirathne" />
+			</a>
+			<br/><b>Kaushal Senevirathne</b>
+			<br/><sub>Frontend Developer</sub>
+			<br/>
+			<a href="https://github.com/KaushalSenevirathne" title="GitHub: KaushalSenevirathne">
+				<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/github.svg" width="18" alt="GitHub" />
+			</a>
+		</td>
+		<td align="center" width="180">
+			<a href="https://github.com/Sedani25" title="Sedani Lesara">
+				<img src="https://avatars.githubusercontent.com/Sedani25?s=100" width="100" alt="Sedani Lesara" />
+			</a>
+			<br/><b>Sedani Lesara</b>
+			<br/><sub>UI/UX & QA</sub>
+			<br/>
+			<a href="https://github.com/Sedani25" title="GitHub: Sedani25">
+				<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/github.svg" width="18" alt="GitHub" />
+			</a>
+			&nbsp;
+			<a href="http://www.linkedin.com/in/sedani-lesara-sethumlee-956998395" title="LinkedIn: Sedani Lesara">
+				<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/linkedin.svg" width="18" alt="LinkedIn" />
+			</a>
+		</td>
+		<td align="center" width="180">
+			<a href="https://github.com/hitheshik" title="Hitheshi Kariyawasam">
+				<img src="https://avatars.githubusercontent.com/hitheshik?s=100" width="100" alt="Hitheshi Kariyawasam" />
+			</a>
+			<br/><b>Hitheshi Kariyawasam</b>
+			<br/><sub>UI/UX & Product Design</sub>
+			<br/>
+			<a href="https://github.com/hitheshik" title="GitHub: hitheshik">
+				<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/github.svg" width="18" alt="GitHub" />
+			</a>
+			&nbsp;
+			<a href="https://www.linkedin.com/in/hitheshi-kariyawasam-719600378/" title="LinkedIn: Hitheshi Kariyawasam">
+				<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/linkedin.svg" width="18" alt="LinkedIn" />
+			</a>
+		</td>
+	</tr>
+</table>
+
+</div>
 
 ---
 
 ## 📞 Contact & Support
 
 - **Documentation**: [docs/README.md](docs/README.md)
-- **Issues**: [GitHub Issues](https://github.com/your-username/gemified-travel-portfolio/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/your-username/gemified-travel-portfolio/discussions)
-- **Email**: [info@maporiasl.com]
+- **Issues**: [GitHub Issues](https://github.com/maporiasl/gemified-travel-portfolio/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/maporiasl/gemified-travel-portfolio/discussions)
+- **Email**: [info@maporiasl.com](mailto:info@maporiasl.com)
 
 ---
 
@@ -251,13 +352,13 @@ Please report security vulnerabilities to [security@example.com] privately.
 
 ## 📊 Project Stats
 
-![GitHub stars](https://img.shields.io/github/stars/your-username/gemified-travel-portfolio)
-![GitHub forks](https://img.shields.io/github/forks/your-username/gemified-travel-portfolio)
-![GitHub issues](https://img.shields.io/github/issues/your-username/gemified-travel-portfolio)
-![GitHub license](https://img.shields.io/github/license/your-username/gemified-travel-portfolio)
+![GitHub stars](https://img.shields.io/github/stars/maporiasl/MaporaSL_Mobile)
+![GitHub forks](https://img.shields.io/github/forks/maporiasl/MaporaSL_Mobile)
+![GitHub issues](https://img.shields.io/github/issues/maporiasl/MaporaSL_Mobile)
+![GitHub license](https://img.shields.io/github/license/maporiasl/MaporaSL_Mobile)
 
 ---
 
-**Last Updated**: January 7, 2026  
-**Version**: 0.2.0  
-**Status**: 🚧 Active Development - Phase 1 (Authentication)
+**Last Updated**: January 27, 2026  
+**Version**: 0.4.0  
+**Status**: 🚀 Active Development - Phase 4 (Places System & Gamification)
