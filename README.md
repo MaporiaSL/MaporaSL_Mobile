@@ -256,7 +256,7 @@ MIT License - See [LICENSE](LICENSE) file for details
 				<img src="https://avatars.githubusercontent.com/Anuja-jayasinghe?s=100" width="100" alt="Anuja Jayasinghe" />
 			</a>
 			<br/><b>Anuja Jayasinghe</b>
-			<br/><sub>Frontend Developer</sub>
+			<br/><sub>Backend Developer</sub>
 			<br/>
 			<a href="https://github.com/Anuja-jayasinghe" title="GitHub: Anuja-jayasinghe">
 				<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/github.svg" width="18" alt="GitHub" />
