@@ -26,13 +26,17 @@
 - 📋 [trips-refactor-plan.md](implementation/trips-refactor-plan.md) - Trips feature refactoring
 
 ### features/
-**Purpose**: Comprehensive feature specifications with code examples
+**Purpose**: Comprehensive feature specifications for all platform features
 
 - 🛍️ [shop.md](features/shop.md) - E-commerce & In-App Shop (hybrid model, 21 endpoints, 7 phases)
-- 🛍️ [shop-implementation.md](features/shop-implementation.md) - Shop implementation with code (backend models, services, Flutter UI, admin dashboard)
 - 📍 [places.md](features/places.md) - Tourist attractions system with community contributions and gamification
-- 🗺️ [trip-plan.md](features/trip-plan.md) - Custom trip creation with timeline and status management
+- 🗺️ [trip-plan.md](features/trip-plan.md) - Custom trips + pre-planned itineraries with timeline and status management
 - 📸 [album.md](features/album.md) - Photo capture, organization, geotagging, and map integration
+
+### feature-implementation-plans/
+**Purpose**: Detailed implementation plans with code examples for each feature
+
+- 🛍️ [shop-implementation.md](feature-implementation-plans/shop-implementation.md) - Shop implementation (backend models, services, Flutter UI, admin dashboard with full code)
 
 ### architecture/
 **Purpose**: Technical architecture documentation
@@ -137,6 +141,7 @@ Examples:
 - core/ (most important - project foundations)
 - implementation/
 - features/
+- feature-implementation-plans/
 - setup-guides/
 - completion-logs/
 ```
@@ -177,8 +182,8 @@ All implementation docs should include:
 ### Planned 📋
 - Phase 5: Social Features & Sharing
 - Phase 6: Admin Panel & Moderation
-- Places Feature
-- Album Feature
+- Advanced achievements & daily challenges
+- AR features for place discovery
 
 See [implementation/](implementation/) folder for detailed phase plans.
 
