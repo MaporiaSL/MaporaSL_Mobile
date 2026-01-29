@@ -1,46 +1,56 @@
 # MAPORIA - Documentation Index
 
-> **Last Updated**: January 24, 2026  
-> **Purpose**: Central index for all project documentation
+> **Last Updated**: January 29, 2026  
+> **Purpose**: Centralized index for all project documentation
 
 ---
 
 ## 📁 Documentation Structure
 
-### 01_planning/
-**Purpose**: High-level planning, architecture decisions, and strategy documents
+### core/
+**Purpose**: Core project documentation - source of truth, architecture decisions, and strategy (MOST IMPORTANT)
 
-- [PROJECT_SOURCE_OF_TRUTH.md](01_planning/PROJECT_SOURCE_OF_TRUTH.md) - Complete feature specification and requirements
-- [TECH_STACK.md](01_planning/TECH_STACK.md) - Chosen technology stack (Express.js + MongoDB + Auth0)
-- [ALTERNATIVE_STACKS.md](01_planning/ALTERNATIVE_STACKS.md) - Other technology options considered
-- [IMPLEMENTATION_STRATEGY.md](01_planning/IMPLEMENTATION_STRATEGY.md) - Testing strategy and implementation approach
+- [project-source-of-truth.md](core/project-source-of-truth.md) - Complete feature specification and requirements ⭐
+- [tech-stack.md](core/tech-stack.md) - Chosen technology stack (Express.js + MongoDB + Auth0) ⭐
+- [alternative-stacks.md](core/alternative-stacks.md) - Other technology options considered
+- [implementation-strategy.md](core/implementation-strategy.md) - Testing strategy and implementation approach
 
-### 02_implementation/
-**Purpose**: Step-by-step implementation guides for each feature
+### implementation/
+**Purpose**: Step-by-step implementation guides for each phase
 
-- ✅ [PHASE1_DETAILED_PLAN.md](02_implementation/PHASE1_DETAILED_PLAN.md) - Authentication & User Management (COMPLETE)
-- ✅ [PHASE2_DETAILED_PLAN.md](02_implementation/PHASE2_DETAILED_PLAN.md) - Travel Data Management (COMPLETE)
-- 🔄 [PHASE3_DETAILED_PLAN.md](02_implementation/PHASE3_DETAILED_PLAN.md) - Map Integration (Backend COMPLETE, Frontend IN PROGRESS)
-- 📋 Phase 4: Trip Planning
-- 📋 Phase 5: Social Features & Sharing
-- 📋 Phase 6: Admin Panel & Moderation
+- ✅ [phase1-detailed-plan.md](implementation/phase1-detailed-plan.md) - Authentication & User Management (COMPLETE)
+- ✅ [phase2-detailed-plan.md](implementation/phase2-detailed-plan.md) - Travel Data Management (COMPLETE)
+- 🔄 [phase3-detailed-plan.md](implementation/phase3-detailed-plan.md) - Map Integration (Backend COMPLETE, Frontend IN PROGRESS)
+- 🔄 [phase4-detailed-plan.md](implementation/phase4-detailed-plan.md) - Trip Planning (IN PROGRESS)
+- 📋 [trips-page-plan.md](implementation/trips-page-plan.md) - Trips page implementation
+- 📋 [trips-refactor-plan.md](implementation/trips-refactor-plan.md) - Trips feature refactoring
 
-### 03_architecture/
+### features/
+**Purpose**: Comprehensive feature specifications with code examples
+
+- 🛍️ [shop.md](features/shop.md) - E-commerce & In-App Shop (hybrid model, 21 endpoints, 7 phases)
+- 🛍️ [shop-implementation.md](features/shop-implementation.md) - Shop implementation with code (backend models, services, Flutter UI, admin dashboard)
+- 📍 [places.md](features/places.md) - Tourist attractions system with community contributions and gamification
+- 🗺️ [trip-plan.md](features/trip-plan.md) - Custom trip creation with timeline and status management
+- 📸 [album.md](features/album.md) - Photo capture, organization, geotagging, and map integration
+
+### architecture/
 **Purpose**: Technical architecture documentation
 
-- ✅ [DATABASE_SCHEMA.md](03_architecture/DATABASE_SCHEMA.md) - Complete database schema, relationships, indexes
+- ✅ [database-schema.md](architecture/database-schema.md) - Complete database schema, relationships, indexes
 
-### 03_completion_logs/
+### completion-logs/
 **Purpose**: Phase completion summaries and progress tracking
 
-- ✅ [PHASE1_COMPLETION_SUMMARY.md](03_completion_logs/PHASE1_COMPLETION_SUMMARY.md) - Phase 1 completion details
-- ✅ [PHASE2_COMPLETION_SUMMARY.md](03_completion_logs/PHASE2_COMPLETION_SUMMARY.md) - Phase 2 completion details
-- ✅ [PHASE3_BACKEND_COMPLETION.md](03_completion_logs/PHASE3_BACKEND_COMPLETION.md) - Phase 3 backend completion details
+- ✅ [phase1-completion-summary.md](completion-logs/phase1-completion-summary.md) - Phase 1 completion details
+- ✅ [phase2-completion-summary.md](completion-logs/phase2-completion-summary.md) - Phase 2 completion details
+- ✅ [phase3-backend-completion.md](completion-logs/phase3-backend-completion.md) - Phase 3 backend completion details
+- ✅ [phase4-trips-completion.md](completion-logs/phase4-trips-completion.md) - Phase 4 trips completion details
 
-### 04_api/
+### api/
 **Purpose**: API documentation and endpoints
 
-- ✅ [API_REFERENCE.md](04_api/API_REFERENCE.md) - Complete REST API reference with examples
+- ✅ [api-reference.md](api/api-reference.md) - Complete REST API reference with examples
   - 3 Auth endpoints (register, me, logout)
   - 5 Travel endpoints (full CRUD)
   - 5 Destination endpoints (nested CRUD)
@@ -50,15 +60,15 @@
   - Error handling documentation
   - cURL test examples
 
-### 05_setup_guides/
+### setup-guides/
 **Purpose**: Environment setup and configuration
 
-- ✅ [LOCAL_DEVELOPMENT.md](05_setup_guides/LOCAL_DEVELOPMENT.md) - Complete local setup from scratch
-- ✅ [AUTH0_SETUP.md](05_setup_guides/AUTH0_SETUP.md) - Auth0 configuration step-by-step
-- 📋 TESTING_GUIDE.md - Testing workflows (To be created)
-- 📋 DEPLOYMENT.md - Production deployment guide (To be created)
+- ✅ [local-development.md](setup-guides/local-development.md) - Complete local setup from scratch
+- ✅ [auth0-setup.md](setup-guides/auth0-setup.md) - Auth0 configuration step-by-step
+- 📋 testing-guide.md - Testing workflows (To be created)
+- 📋 deployment.md - Production deployment guide (To be created)
 
-### 06_meeting_notes/
+### meeting-notes/
 **Purpose**: Team meeting notes and decisions
 
 - Weekly progress meetings
@@ -66,32 +76,40 @@
 - Sprint planning
 - Retrospectives
 
+### legacy-implementation/
+**Purpose**: Archived implementation files (pre-reorganization)
+
+- Archived documentation from consolidation on Jan 29, 2026
+- See `_archive/` subfolder for old files
+
 ---
 
 ## 🚀 Quick Start
 
 ### For New Team Members
 
-1. **Start here**: Read [PROJECT_SOURCE_OF_TRUTH.md](01_planning/PROJECT_SOURCE_OF_TRUTH.md)
-2. **Understand the stack**: Read [TECH_STACK.md](01_planning/TECH_STACK.md)
-3. **Setup environment**: Follow [LOCAL_DEVELOPMENT.md](05_setup_guides/LOCAL_DEVELOPMENT.md)
-4. **Configure Auth0**: Follow [AUTH0_SETUP.md](05_setup_guides/AUTH0_SETUP.md)
-5. **API Reference**: Check [API_REFERENCE.md](04_api/API_REFERENCE.md)
-6. **Implementation**: Check current phase in [PHASE2_DETAILED_PLAN.md](02_implementation/PHASE2_DETAILED_PLAN.md)
+1. **Start here**: Read [project-source-of-truth.md](core/project-source-of-truth.md) ⭐ ESSENTIAL
+2. **Understand the stack**: Read [tech-stack.md](core/tech-stack.md) ⭐ ESSENTIAL
+3. **Setup environment**: Follow [local-development.md](setup-guides/local-development.md)
+4. **Configure Auth0**: Follow [auth0-setup.md](setup-guides/auth0-setup.md)
+5. **API Reference**: Check [api-reference.md](api/api-reference.md)
+6. **Features**: Browse [features/](features/) folder for all feature specifications
 
 ### For Developers
 
-1. Check `02_implementation/` for current development phase
-2. Refer to `03_architecture/DATABASE_SCHEMA.md` for database design
-3. Use `04_api/API_REFERENCE.md` for API integration
-4. Follow setup guides in `05_setup_guides/`
-5. Review completion logs in `03_completion_logs/`
+1. Check [implementation/](implementation/) for current development phase
+2. Refer to [database-schema.md](architecture/database-schema.md) for database design
+3. Use [api-reference.md](api/api-reference.md) for API integration
+4. Browse [features/](features/) for feature specifications and code examples
+5. Follow setup guides in [setup-guides/](setup-guides/)
+6. Review completion logs in [completion-logs/](completion-logs/)
 
 ### For Project Managers
 
-1. Review `01_planning/` for project scope
-2. Check `02_implementation/` for progress tracking
-3. Read `06_meeting_notes/` for team updates
+1. Review [core/](core/) for project scope and requirements ⭐ START HERE
+2. Check [implementation/](implementation/) for progress tracking
+3. Read [meeting-notes/](meeting-notes/) for team updates
+4. Check [completion-logs/](completion-logs/) for completed phases
 
 ---
 
@@ -99,14 +117,28 @@
 
 ### File Naming Convention
 
-```
-[PHASE]_[FEATURE]_[TYPE].md
+All files use **kebab-case** naming:
 
+```
 Examples:
-- PHASE1_AUTH_IMPLEMENTATION.md
-- PHASE2_MAPBOX_SETUP.md
-- ARCHITECTURE_DATABASE_SCHEMA.md
-- API_AUTH_ENDPOINTS.md
+- phase1-auth-implementation.md
+- phase2-mapbox-setup.md
+- database-schema.md
+- api-auth-endpoints.md
+- shop-implementation.md
+```
+
+### Folder Naming Convention
+
+All folders use **kebab-case** naming without number prefixes:
+
+```
+Examples:
+- core/ (most important - project foundations)
+- implementation/
+- features/
+- setup-guides/
+- completion-logs/
 ```
 
 ### Document Structure
@@ -132,21 +164,23 @@ All implementation docs should include:
 
 ## 🔄 Current Development Status
 
-### Phase 1: Authentication & User Management (CURRENT)
-- [ ] Backend setup (Express.js + MongoDB + Auth0)
-- [ ] User registration
-- [ ] User login
-- [ ] Token management
-- [ ] Data isolation testing
+### Completed Phases ✅
+- Phase 1: Authentication & User Management
+- Phase 2: Travel Data Management
+- Phase 3: Map Integration (Backend)
 
-### Phase 2: Map Integration (PLANNED)
-- [ ] Mapbox setup
-- [ ] Sri Lanka map rendering
-- [ ] Province/district boundaries
-- [ ] Place markers
+### In Progress 🔄
+- Phase 3: Map Integration (Frontend)
+- Phase 4: Trip Planning
+- Shop Feature Implementation
 
-### Phase 3-6: (PLANNED)
-See implementation folder for detailed breakdown
+### Planned 📋
+- Phase 5: Social Features & Sharing
+- Phase 6: Admin Panel & Moderation
+- Places Feature
+- Album Feature
+
+See [implementation/](implementation/) folder for detailed phase plans.
 
 ---
 

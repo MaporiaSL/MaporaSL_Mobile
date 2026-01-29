@@ -4,6 +4,102 @@
 
 ---
 
+## [January 29, 2026] - Shop Feature Planning & Specification (UPDATED)
+
+### Updated Shop Feature Understanding
+**Changed from**: In-game cosmetic shop  
+**Changed to**: Hybrid e-commerce platform with TWO sections
+
+### Shop System Architecture
+
+#### 1. Real Store (Primary - E-Commerce)
+**Purpose**: Sell physical Sri Lankan souvenirs and travel merchandise for real money (LKR)
+
+**Workflow**:
+- Users browse and add items to cart
+- Checkout shows bank account details
+- Users transfer money offline to bank account
+- Users upload transfer receipt as proof
+- Order moves to "My Orders" with pending status
+- Admin reviews receipt and verifies payment
+- Admin processes and ships order manually
+- Users track order status in app
+
+**Key Features**:
+- Product catalog (souvenirs, apparel, books, food, art)
+- Shopping cart with quantity management
+- Manual bank transfer checkout (Phase 1)
+- Receipt upload system for payment proof
+- Order tracking with admin manual updates
+- Shipping address collection
+- Order history with status timeline
+
+**Future Enhancements** (Phase 5-6):
+- Payment gateway integration (credit card, online banking, eZ Cash)
+- Automated payment verification
+- Real-time delivery tracking with courier APIs
+- Refund management system
+
+**Database**: RealStoreItem, ShoppingCart, Order, PaymentReceipt collections
+
+#### 2. In-App Shop (Secondary - Cosmetics)
+**Purpose**: Players spend earned in-app currency (Gemstones, future Travel Coins) on cosmetics
+
+**Workflow**:
+- Users browse cosmetics (skins, themes, frames, effects)
+- Instant purchase with game currency
+- Automatic equip (cosmetics visible on profile/map)
+- No manual processing needed
+
+**Key Features**:
+- Cosmetic items only (no P2W mechanics)
+- Instant purchase & equip
+- Inventory management
+- Account-bound items
+- Rarity tiers (common, rare, epic, legendary)
+- Limited edition seasonal items
+- Earning system (achievements give gems)
+
+**Future Enhancements**:
+- Travel Coins currency system (design later)
+- Player cosmetics marketplace
+- VIP exclusive items
+- Community voting on user-created cosmetics
+
+**Database**: InAppShopItem, UserInAppInventory, InAppTransaction collections
+
+### Technical Scope
+- **Backend**: 11 real store endpoints + 4 in-app endpoints
+- **Mobile**: Two shop tabs, cart system, receipt uploader
+- **Database**: 5 new collections (3 for real store, 2 for in-app)
+- **Currency**: LKR for real store, Gemstones/Travel Coins for in-app
+- **Payment**: Manual bank transfer (Phase 1) → Payment gateway (Phase 5)
+
+### Phase Timeline
+- **Phase 1-2** (2-3 weeks): Real store MVP (products, cart, manual checkout)
+- **Phase 2** (2 weeks): In-app shop (cosmetics with gems)
+- **Phase 3** (1 week): Admin dashboard (receipt verification, order management)
+- **Phase 4** (1 week): Testing & content seeding
+- **Phase 5 (Future)** (2-3 weeks): Payment gateway integration
+- **Phase 6 (Future)** (2-3 weeks): Delivery tracking automation
+- **Phase 7 (Future)** (3+ weeks): Travel Coins & marketplace
+
+### Key Differences from Initial Plan
+1. Real store is **NOT cosmetics**, it's **physical merchandise**
+2. Payment is **manual bank transfer** (not automated initially)
+3. Receipt upload is **critical** for order confirmation
+4. Admin processes **manually** (no automatic fulfillment yet)
+5. Two **separate currencies**: LKR (real) vs Gems/Coins (in-app)
+6. Two **distinct purposes**: Monetization (real store) vs Engagement (in-app)
+
+### Next Steps
+- Week 1-2: Implement Real Store Phase 1 (backend models, cart API, payment endpoints)
+- Week 2-3: Mobile UI for real store (browse, cart, checkout screens)
+- Week 3: Receipt upload system and admin dashboard
+- Week 4+: In-app shop integration and testing
+
+---
+
 ## [January 27, 2026] - Places Feature Planning & Spec
 
 ### Added

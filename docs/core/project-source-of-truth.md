@@ -564,12 +564,26 @@ Supabase Backend
 * Contributor stats & badges
 * Leaderboard
 
-### Phase 5 – Social & Polish
+### Phase 5 – Shop & Monetization
 
-* Sharing
-* Animations
-* Performance
-* **Gamification UI** (badges, profile contributions section)
+* **In-game Shop** (marketplace for cosmetics, map themes, boosters)
+  * Gemstone currency (earned through gameplay)
+  * Item categories: Avatar skins, map themes, markers, reveal effects
+  * Rarity tiers: Common, Rare, Epic, Legendary
+  * Limited-edition seasonal items (FOMO mechanics)
+  * Purchase, equip, return workflows
+  * 7-day return window with 10% restocking fee
+  * Optional hard currency (Gems) for cosmetics only
+* Purchase transaction logging & fraud prevention
+* Analytics dashboard for monetization metrics
+* Optional Phase 2: In-app payment integration (IAP)
+
+### Phase 6 – Social & Polish
+
+* Sharing (achievements, loadouts, profile)
+* Animations & visual effects
+* Performance optimization
+* **Gamification UI** (badges, leaderboard, contributor section)
 
 ---
 
