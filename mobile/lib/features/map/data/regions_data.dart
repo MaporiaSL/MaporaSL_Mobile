@@ -2,11 +2,13 @@
 ///
 /// Contains all 9 provinces with their metadata, colors, and landmark locations
 
+import 'package:flutter/material.dart';
+
 class SriLankaRegion {
   final String id;
   final String name;
   final String displayName;
-  final Color color;
+  final HexColor color;
   final double latitude;
   final double longitude;
   final List<String> landmarks;
@@ -25,13 +27,16 @@ class SriLankaRegion {
 }
 
 // Hex color helper
-class Color {
+class HexColor {
   final int value;
-  const Color(this.value);
-  
-  static Color fromHex(String hex) {
-    return Color(int.parse(hex.replaceFirst('#', '0xff')));
+  const HexColor(this.value);
+
+  static HexColor fromHex(String hex) {
+    return HexColor(int.parse(hex.replaceFirst('#', '0xff')));
   }
+
+  // Convert to Flutter Color
+  Color toFlutterColor() => Color(value);
 }
 
 /// All Sri Lanka regions/provinces
@@ -40,126 +45,90 @@ final sriLankaRegions = <SriLankaRegion>[
     id: 'western',
     name: 'Western Province',
     displayName: 'Western',
-    color: Color.fromHex('#FF6B6B'),
+    color: HexColor.fromHex('#FF4444'),
     latitude: 6.9271,
     longitude: 80.6900,
-    landmarks: [
-      'Colombo',
-      'Galle Face Green',
-      'Colombo Port',
-    ],
+    landmarks: ['Colombo', 'Galle Face Green', 'Colombo Port'],
     description: 'The commercial and cultural heart of Sri Lanka',
   ),
   SriLankaRegion(
     id: 'central',
     name: 'Central Province',
     displayName: 'Central',
-    color: Color.fromHex('#4ECDC4'),
+    color: HexColor.fromHex('#4ECDC4'),
     latitude: 6.9271,
     longitude: 80.7744,
-    landmarks: [
-      'Kandy',
-      'Temple of the Tooth',
-      'Peradeniya Botanical Gardens',
-    ],
+    landmarks: ['Kandy', 'Temple of the Tooth', 'Peradeniya Botanical Gardens'],
     description: 'Home of the sacred Temple of the Tooth',
   ),
   SriLankaRegion(
     id: 'northern',
     name: 'Northern Province',
     displayName: 'Northern',
-    color: Color.fromHex('#FFE66D'),
+    color: HexColor.fromHex('#FFE66D'),
     latitude: 8.5241,
     longitude: 80.7965,
-    landmarks: [
-      'Jaffna',
-      'Jaffna Fort',
-      'Nallur Kandasamy Temple',
-    ],
+    landmarks: ['Jaffna', 'Jaffna Fort', 'Nallur Kandasamy Temple'],
     description: 'The historic peninsula with vibrant culture',
   ),
   SriLankaRegion(
     id: 'eastern',
     name: 'Eastern Province',
     displayName: 'Eastern',
-    color: Color.fromHex('#95E1D3'),
+    color: HexColor.fromHex('#95E1D3'),
     latitude: 7.7409,
     longitude: 81.6869,
-    landmarks: [
-      'Trincomalee',
-      'Nilaveli Beach',
-      'Pigeon Island',
-    ],
+    landmarks: ['Trincomalee', 'Nilaveli Beach', 'Pigeon Island'],
     description: 'Beaches and marine treasures',
   ),
   SriLankaRegion(
     id: 'southern',
     name: 'Southern Province',
     displayName: 'Southern',
-    color: Color.fromHex('#A8E6CF'),
+    color: HexColor.fromHex('#A8E6CF'),
     latitude: 6.0535,
     longitude: 80.7891,
-    landmarks: [
-      'Galle',
-      'Galle Fort',
-      'Unawatuna Beach',
-    ],
+    landmarks: ['Galle', 'Galle Fort', 'Unawatuna Beach'],
     description: 'Famous for historic fort and pristine beaches',
   ),
   SriLankaRegion(
     id: 'north_central',
     name: 'North Central Province',
     displayName: 'North Central',
-    color: Color.fromHex('#FFB6B9'),
+    color: HexColor.fromHex('#FFB6B9'),
     latitude: 7.9456,
     longitude: 80.7669,
-    landmarks: [
-      'Anuradhapura',
-      'Sacred Bo Tree',
-      'Abhayagiri Dagoba',
-    ],
+    landmarks: ['Anuradhapura', 'Sacred Bo Tree', 'Abhayagiri Dagoba'],
     description: 'Ancient capital with sacred Buddhist sites',
   ),
   SriLankaRegion(
     id: 'north_western',
     name: 'North Western Province',
     displayName: 'North Western',
-    color: Color.fromHex('#FEC8D8'),
+    color: HexColor.fromHex('#FEC8D8'),
     latitude: 7.1905,
     longitude: 80.3244,
-    landmarks: [
-      'Kurunegala',
-      'Ambuluwawa Tower',
-      'Ibbagamuwa Temple',
-    ],
+    landmarks: ['Kurunegala', 'Ambuluwawa Tower', 'Ibbagamuwa Temple'],
     description: 'Ancient kingdom with historic temples',
   ),
   SriLankaRegion(
     id: 'sabaragamuwa',
     name: 'Sabaragamuwa Province',
     displayName: 'Sabaragamuwa',
-    color: Color.fromHex('#FFDDC1'),
+    color: HexColor.fromHex('#FFDDC1'),
     latitude: 6.6271,
     longitude: 80.7744,
-    landmarks: [
-      'Ratnapura',
-      'Sinharaja Forest',
-      'Gem Mines',
-    ],
+    landmarks: ['Ratnapura', 'Sinharaja Forest', 'Gem Mines'],
     description: 'Gem mines and rainforests',
   ),
   SriLankaRegion(
     id: 'uva',
     name: 'Uva Province',
     displayName: 'Uva',
-    color: Color.fromHex('#FFFFB5'),
+    color: HexColor.fromHex('#FFFFB5'),
     latitude: 6.8521,
     longitude: 81.1269,
-    landmarks: [
-      'Badulla',
-      'Dunhinda Falls',
-      'Ravana Caves',
-    ],
+    landmarks: ['Badulla', 'Dunhinda Falls', 'Ravana Caves'],
     description: 'Misty mountains and hidden waterfalls',
   ),
 ];

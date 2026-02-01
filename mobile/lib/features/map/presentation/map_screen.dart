@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../data/regions_data.dart';
+import 'widgets/cartoon_map_canvas.dart';
 
 /// Cartoonish map screen displaying trip with stylized Sri Lanka map
 class MapScreen extends ConsumerStatefulWidget {
@@ -43,95 +45,66 @@ class _MapScreenState extends ConsumerState<MapScreen> {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          // Cartoonish map (placeholder for now)
-          Expanded(
-            child: Container(
-              color: Colors.blue.shade100,
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.map,
-                      size: 80,
-                      color: Colors.blue.shade300,
-                    ),
-                    const SizedBox(height: 16),
-                    const Text(
-                      'Cartoonish Map Coming Soon',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    const Text(
-                      'Building the stylized Sri Lanka map...',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ],
-                ),
+      body: SafeArea(
+        top: false,
+        child: Column(
+          children: [
+            // Cartoonish map canvas
+            Expanded(
+              child: CartoonMapCanvas(
+                regions: sriLankaRegions,
+                selectedRegionId: selectedRegion,
+                onRegionSelected: (regionId) {
+                  setState(() => selectedRegion = regionId);
+                },
               ),
             ),
-          ),
 
-          // Bottom info panel
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(16),
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 8,
+            // Bottom info panel
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(16),
                 ),
-              ],
-            ),
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Trip Progress',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 8,
                   ),
-                ),
-                const SizedBox(height: 8),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: LinearProgressIndicator(
-                    value: 0.0,
-                    minHeight: 8,
-                    backgroundColor: Colors.grey.shade200,
-                    valueColor: AlwaysStoppedAnimation(
-                      Colors.blue.shade400,
+                ],
+              ),
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Trip Progress',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 8),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: LinearProgressIndicator(
+                      value: 0.0,
+                      minHeight: 8,
+                      backgroundColor: Colors.grey.shade200,
+                      valueColor: AlwaysStoppedAnimation(Colors.blue.shade400),
                     ),
                   ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  selectedRegion != null
-                      ? 'Selected: $selectedRegion'
-                      : 'Tap a region to start',
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey,
+                  const SizedBox(height: 8),
+                  Text(
+                    selectedRegion != null
+                        ? 'Selected: $selectedRegion'
+                        : 'Tap a region to start',
+                    style: const TextStyle(fontSize: 14, color: Colors.grey),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

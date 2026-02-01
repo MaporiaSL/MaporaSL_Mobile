@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../map/presentation/game_map_screen.dart';
+import '../../map/presentation/map_screen.dart';
 import '../../album/presentation/album_page.dart';
 import '../../trips/presentation/trips_page.dart';
 import '../../trips/presentation/memory_lane_page.dart';
@@ -15,10 +15,10 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _selectedIndex = 2; // Start with Trips as default
+  int _selectedIndex = 0; // Start with Trips as default
 
   final List<Widget> _screens = const [
-    GameMapScreen(), // 0 Map
+    MapScreen(travelId: 'default'), // 0 Map
     AlbumPage(), // 1 Album
     TripsPage(), // 2 Trips
     MemoryLanePage(), // 3 Timeline
