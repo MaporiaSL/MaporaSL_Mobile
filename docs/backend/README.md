@@ -50,44 +50,34 @@ Server runs on `http://localhost:5000`
 
 ## 🎯 Feature Implementation
 
-**"Where do I make changes?"** → Find your feature below
+**"Where do I make changes?"** → See [Common Feature Implementation](../common/feature-implementation/)
 
-Each feature guide tells you **exactly which files to modify**:
-- Which controller handles this feature
-- Which model stores the data
-- Which routes define the endpoints
-- What validators to use
-- What middleware applies
+Backend implementation guides are now consolidated with frontend guides in the common documentation.
 
-### 📋 Features
+### 📋 Quick Reference: Backend Files by Feature
 
-| Feature | Backend Files | API Endpoints | Details |
-|---------|--------------|---------------|---------|
-| **Authentication** | `authController.js`, `authRoutes.js` | 3 endpoints | [Implementation](feature-implementation/authentication.md) |
-| **Places & Attractions** | `destinationController.js`, `Destination.js` | 5+ endpoints | [Implementation](feature-implementation/places-attractions.md) |
-| **Trip Planning** | `travelController.js`, `Travel.js`, `PrePlannedTrip.js` | 6+ endpoints | [Implementation](feature-implementation/trip-planning.md) |
-| **Album & Photos** | Part of destinations | Via destinations API | [Implementation](feature-implementation/album-photos.md) |
-| **Shop & E-Commerce** | `shopController.js` (coming) | 21 endpoints | [Implementation](feature-implementation/shop-ecommerce.md) |
-| **Achievements & Gamification** | `userController.js`, `User.js` | 4+ endpoints | [Implementation](feature-implementation/achievements-gamification.md) |
-| **Maps & Geospatial** | `mapController.js`, `geoController.js` | 4+ endpoints | [Implementation](feature-implementation/map-visualization.md) |
+| Feature | Controller | Model | Route | Middleware/Validators |
+|---------|------------|-------|-------|----------------------|
+| **Authentication** | `authController.js` | `User.js` | `authRoutes.js` | `auth.js`, `extractUserId.js` |
+| **Places & Attractions** | `destinationController.js`, `geoController.js` | `Destination.js` | `destinationRoutes.js`, `geoRoutes.js` | - |
+| **Trip Planning** | `travelController.js` | `Travel.js`, `PrePlannedTrip.js` | `travelRoutes.js` | - |
+| **Album & Photos** | *To be created* | *To be created* | *To be created* | - |
+| **Shop & E-Commerce** | *Planned* | *Planned* | *Planned* | - |
+| **Achievements** | In `User.js` model | `User.js` | *To be created* | - |
+| **Maps & Geospatial** | `mapController.js`, `geoController.js` | Uses `Destination.js` | `mapRoutes.js`, `geoRoutes.js` | - |
 
-### How to Use Feature Guides
+**All backend files located in**: `backend/src/`
 
-Each feature implementation guide includes:
+### Detailed Implementation Guides
 
-1. **Overview** - What the feature does
-2. **Data Model** - Which MongoDB collections involved
-3. **File Structure** - Which files to modify
-   ```
-   ✏️ backend/src/controllers/[feature]Controller.js
-   ✏️ backend/src/models/[Feature].js
-   ✏️ backend/src/routes/[feature]Routes.js
-   ✏️ backend/src/validators/[feature]Validators.js
-   ✏️ backend/src/middleware/[feature]Middleware.js
-   ```
-4. **Step-by-Step Implementation** - Code examples for each file
-5. **Testing** - How to test your changes
-6. **Common Patterns** - Design patterns used in this feature
+See [Common Feature Implementation](../common/feature-implementation/) for step-by-step guides on:
+- [Authentication](../common/feature-implementation/authentication.md)
+- [Places](../common/feature-implementation/places.md)
+- [Trips](../common/feature-implementation/trips.md)
+- [Album](../common/feature-implementation/album.md)
+- [Shop](../common/feature-implementation/shop-implementation.md)
+- [Achievements](../common/feature-implementation/achievements.md)
+- [Maps](../common/feature-implementation/maps.md)
 
 ---
 
@@ -95,16 +85,25 @@ Each feature implementation guide includes:
 
 All API endpoints follow RESTful conventions.
 
-### API Endpoints by Feature
+### Quick Reference
 
-| Endpoint Docs | Endpoints Count | Features |
-|---------------|-----------------|----------|
-| [Authentication](api-endpoints/authentication-endpoints.md) | 3 | Register, login, logout |
-| [Places](api-endpoints/places-endpoints.md) | 5+ | Get/create/update places |
-| [Trips](api-endpoints/trips-endpoints.md) | 6+ | Custom & pre-planned trips |
-| [User](api-endpoints/user-endpoints.md) | 4+ | User progress, achievements |
-| [Map & Geo](api-endpoints/map-geospatial-endpoints.md) | 4+ | GeoJSON, terrain, nearby |
-| [Shop](api-endpoints/shop-endpoints.md) | 21 | Products, orders, payments |
+**[API Endpoints Quick Reference](api-endpoints/README.md)** - All endpoints at a glance
+
+### Detailed Endpoint Documentation
+
+| Documentation | Description | Link |
+|--------------|-------------|------|
+| **Authentication Endpoints** | Register, login, get user profile | [Auth Endpoints](api-endpoints/auth-endpoints.md) |
+| **Full API Reference** | Complete API documentation with examples | [API Reference](api-endpoints/api-reference.md) |
+
+### API Sections in Full Reference
+
+The [Full API Reference](api-endpoints/api-reference.md) includes:
+- Authentication (3 endpoints)
+- Trips/Travel (5 endpoints)
+- Destinations (5 endpoints)
+- Maps & GeoJSON (4 endpoints)
+- Geospatial Queries (2 endpoints)
 
 ### API Format
 

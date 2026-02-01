@@ -9,6 +9,7 @@
 ## 📚 Table of Contents
 
 - [Features](#-features)
+- [Feature Implementation](#-feature-implementation)
 - [Architecture](#-architecture)
 - [Setup Guides](#-setup-guides)
 - [Quick Navigation](#-quick-navigation)
@@ -23,12 +24,13 @@ Common feature specifications define **what users can do** and **how the system 
 
 | Feature | Description | Status | Documentation |
 |---------|-------------|--------|-----------------|
-| **Authentication** | Login, signup, logout, user accounts | ✅ Complete | [Read](features/authentication.md) |
-| **Places & Attractions** | Discover locations, visit tracking, community contributions | ✅ Complete | [Read](features/places-attractions.md) |
-| **Trip Planning** | Custom trips, pre-planned itineraries, route planning | ✅ Complete | [Read](features/trip-planning.md) |
-| **Album & Photos** | Photo capture, organization, geotagging | ✅ Complete | [Read](features/album-photos.md) |
-| **Shop & E-Commerce** | In-app shop, products, purchases, orders | ✅ Complete | [Read](features/shop-ecommerce.md) |
-| **Achievements & Gamification** | Badges, leaderboards, progress, rewards | ✅ Complete | [Read](features/achievements-gamification.md) |
+| **Authentication** | Login, signup, logout, user accounts | ✅ Complete | [Spec](features/authentication.md) · [Implementation](feature-implementation/authentication.md) |
+| **Places & Attractions** | Discover locations, visit tracking, community contributions | ✅ Complete | [Spec](features/places.md) · [Implementation](feature-implementation/places.md) |
+| **Trip Planning** | Custom trips, pre-planned itineraries, route planning | ✅ Complete | [Spec](features/trip-plan.md) · [Implementation](feature-implementation/trips.md) |
+| **Album & Photos** | Photo capture, organization, geotagging | 🔄 Planned | [Spec](features/album.md) · [Implementation](feature-implementation/album.md) |
+| **Shop & E-Commerce** | In-app shop, products, purchases, orders | 🔄 Planned | [Spec](features/shop.md) · [Implementation](feature-implementation/shop-implementation.md) |
+| **Achievements & Gamification** | Badges, leaderboards, progress, rewards | ✅ Complete | [Implementation](feature-implementation/achievements.md) |
+| **Maps & Visualization** | Interactive maps, route display, geospatial queries | ✅ Complete | [Implementation](feature-implementation/maps.md) |
 
 ### 🎮 What's Included in Each Feature Doc
 
@@ -40,6 +42,26 @@ Each feature specification includes:
 - **Success Criteria**: How to know it's working
 - **Links**: Where to implement (Backend & Frontend)
 
+
+## 💻 Feature Implementation
+
+Implementation guides show **exactly where to make changes** in both backend and frontend code.
+
+### 📖 Implementation Guides
+
+| Feature | Backend Files | Frontend Files | API Endpoints |
+|---------|---------------|----------------|---------------|
+| **Authentication** | `User.js`, `authController.js` | `auth_service.dart`, `auth_provider.dart` | [Docs](../backend/api-endpoints/auth-endpoints.md) |
+| **Places** | `Destination.js`, `destinationController.js`, `geoController.js` | `places_screen.dart`, `places_provider.dart` | [Docs](../backend/api-endpoints/README.md#destinations) |
+| **Trips** | `Travel.js`, `travelController.js` | `trips_screen.dart`, `trips_provider.dart` | [Docs](../backend/api-endpoints/README.md#trips-travel) |
+| **Album** | *To be implemented* | *To be implemented* | *Planned* |
+| **Shop** | *Planned models & controllers* | *Planned screens* | *Planned* |
+| **Achievements** | `User.js` (gamification fields) | *To be implemented* | *Planned* |
+| **Maps** | `mapController.js`, `geoController.js` | `map_screen.dart`, `mapbox_controller.dart` | [Docs](../backend/api-endpoints/README.md#maps--geospatial) |
+
+**👉 Full Implementation Details**: See [feature-implementation/](./feature-implementation/) for complete guides on where to make changes.
+
+---
 ---
 
 ## 🏗️ Architecture
@@ -71,13 +93,14 @@ See [Tech Stack](core/tech-stack.md) for detailed rationale.
 Setup guides help developers **configure their environment** and **get the project running locally**.
 
 ### 📖 Setup Documentation
+[feature spec](./features/) and [implementation guide](./feature-implementation/), then check which files to modify
+- **Need API endpoint details?** → Check [API Endpoints Quick Reference](../backend/api-endpoints/README.md) or [Auth Endpoints](../backend/api-endpoints/auth-endpoints.md)
+- **Working with database?** → Review [Database Schema](architecture/database-schema.md), then see [Database Models](../backend/database/models.md) for detailed documentation
 
-| Guide | Purpose | For Whom |
-|-------|---------|----------|
-| **Local Development** | Set up backend + frontend locally | Everyone |
-| **Auth0 Setup** | Configure authentication service | Backend devs |
-| **Environment Variables** | Required config values and defaults | Backend & Frontend |
-
+### For Frontend Developers  
+- **Implementing a feature?** → Read the [feature spec](./features/) and [implementation guide](./feature-implementation/), then check which screens/providers to modify
+- **Need to call an API?** → Check [Backend API Endpoints](../backend/api-endpoints/README.md), then follow [Frontend API Integration Guide](../frontend/api-integration/README.md)
+- **Working with state?** → See implementation guides for Riverpod provider patterns
 ### 🚀 Quick Start
 
 **New to the project?**

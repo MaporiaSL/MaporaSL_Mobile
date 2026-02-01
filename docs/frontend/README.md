@@ -57,6 +57,35 @@ App runs on emulator/device, defaults to debug mode
 
 ## 🎯 Feature Implementation
 
+**"Where do I make changes?"** → See [Common Feature Implementation](../common/feature-implementation/)
+
+Frontend implementation guides are now consolidated with backend guides in the common documentation.
+
+### 📋 Quick Reference: Frontend Files by Feature
+
+| Feature | Screen/UI | Provider/State | Service | Model |
+|---------|-----------|----------------|---------|-------|
+| **Authentication** | `login_screen.dart` | `auth_provider.dart` | `auth_service.dart` | `user_model.dart` |
+| **Places & Attractions** | `places_screen.dart`, `place_details_screen.dart` | `places_provider.dart` | - | `place_model.dart` |
+| **Trip Planning** | `trips_screen.dart`, `trip_details_screen.dart`, `create_trip_screen.dart` | `trips_provider.dart` | - | `trip_model.dart` |
+| **Album & Photos** | *To be created* | *To be created* | - | *To be created* |
+| **Shop & E-Commerce** | *Planned* | *Planned* | - | *Planned* |
+| **Achievements** | *To be created* | *To be created* | - | - |
+| **Maps & Geospatial** | `map_screen.dart` | `map_provider.dart` | `mapbox_controller.dart` | - |
+
+**All frontend files located in**: `mobile/lib/`
+
+### Detailed Implementation Guides
+
+See [Common Feature Implementation](../common/feature-implementation/) for step-by-step guides on:
+- [Authentication](../common/feature-implementation/authentication.md)
+- [Places](../common/feature-implementation/places.md)
+- [Trips](../common/feature-implementation/trips.md)
+- [Album](../common/feature-implementation/album.md)
+- [Shop](../common/feature-implementation/shop-implementation.md)
+- [Achievements](../common/feature-implementation/achievements.md)
+- [Maps](../common/feature-implementation/maps.md)
+
 **"Where do I make changes?"** → Find your feature below
 
 Each feature guide tells you **exactly which files to modify**:
