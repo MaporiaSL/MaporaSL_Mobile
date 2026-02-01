@@ -112,13 +112,16 @@ class CameraPresets {
   }
 }
 
-/// Map interaction settings
+/// Map interaction settings - LOCKED TO SRI LANKA
 class MapInteractionSettings {
-  static const bool enableRotation = true;
-  static const bool enableTilt = true;
+  // Disabled to lock map view
+  static const bool enableRotation = false;
+  static const bool enableTilt = false;
+  
+  // Always enabled
   static const bool enableScroll = true;
   static const bool enableZoom = true;
-  static const double minZoom = 4.0;
+  static const double minZoom = 5.0; // Prevent zooming out beyond Sri Lanka
   static const double maxZoom = 18.0;
   
   /// Get interaction configuration
@@ -130,6 +133,53 @@ class MapInteractionSettings {
       'zoom': enableZoom,
       'minZoom': minZoom,
       'maxZoom': maxZoom,
+    };
+  }
+}
+
+/// Theme options for the map
+enum MapTheme {
+  standard('Standard - Default Mapbox style'),
+  custom('Custom - Dark theme with accent colors'),
+  fogOfWar('Fog of War - Reveal destinations as you explore');
+
+  final String displayName;
+  const MapTheme(this.displayName);
+}
+
+/// Camera restriction for keeping map within Sri Lanka bounds
+class CameraRestriction {
+  // Sri Lanka exact bounding box
+  static const double minLatitude = 5.88;
+  static const double maxLatitude = 9.83;
+  static const double minLongitude = 79.65;
+  static const double maxLongitude = 81.87;
+  
+  /// Clamp latitude to Sri Lanka bounds
+  static double clampLatitude(double lat) {
+    return lat.clamp(minLatitude, maxLatitude);
+  }
+  
+  /// Clamp longitude to Sri Lanka bounds
+  static double clampLongitude(double lng) {
+    return lng.clamp(minLongitude, maxLongitude);
+  }
+  
+  /// Check if coordinates are within bounds
+  static bool isWithinBounds(double lat, double lng) {
+    return lat >= minLatitude &&
+        lat <= maxLatitude &&
+        lng >= minLongitude &&
+        lng <= maxLongitude;
+  }
+  
+  /// Get Sri Lanka center with padding
+  static Map<String, double> getSriLankaCenter() {
+    final centerLat = (minLatitude + maxLatitude) / 2;
+    final centerLng = (minLongitude + maxLongitude) / 2;
+    return {
+      'latitude': centerLat,
+      'longitude': centerLng,
     };
   }
 }

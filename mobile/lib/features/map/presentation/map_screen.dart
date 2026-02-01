@@ -5,7 +5,7 @@ import '../controllers/map_controller.dart';
 import '../models/map_models.dart';
 import '../providers/map_provider.dart';
 import '../services/map_api_service.dart';
-import '../utils/map_style_manager.dart';
+import '../utils/map_style_manager.dart' as styles;
 
 /// Main map screen displaying trip with destinations
 class MapScreen extends ConsumerStatefulWidget {
@@ -20,6 +20,7 @@ class MapScreen extends ConsumerStatefulWidget {
 class _MapScreenState extends ConsumerState<MapScreen> {
   late MapController _mapController;
   MapboxMap? _mapboxMap;
+  styles.MapTheme _currentTheme = styles.MapTheme.standard;
 
   @override
   void initState() {
@@ -82,20 +83,109 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     );
   }
 
+  void _applyGestureLocks() {
+    _mapboxMap?.gestures.updateSettings(
+      GesturesSettings(
+        rotateEnabled: false,
+        pitchEnabled: false,
+        simultaneousRotateAndPinchToZoomEnabled: false,
+      ),
+    );
+  }
+
+  void _onStyleLoaded(StyleLoadedEventData data) {
+    _applyGestureLocks();
+    _mapboxMap?.setCamera(CameraOptions(bearing: 0.0, pitch: 0.0));
+  }
+
   /// Handle map creation
   void _onMapCreated(MapboxMap mapboxMap) {
     _mapboxMap = mapboxMap;
     _mapController.initialize(mapboxMap);
 
-    // Load style
-    final mapState = ref.read(mapStateProvider);
-    mapboxMap.loadStyleURI(mapState.mapStyle.url);
+    // Disable rotation and tilt (locked to north-up)
+    _applyGestureLocks();
+
+    // Load style based on theme
+    _applyTheme(_currentTheme);
+
+    // Set camera to Sri Lanka center with proper zoom
+    final center = styles.CameraRestriction.getSriLankaCenter();
+    final options = CameraOptions(
+      center: Point(
+        coordinates: Position(center['longitude']!, center['latitude']!),
+      ),
+      zoom: 6.5,
+      bearing: 0.0, // Lock bearing to north
+      pitch: 0.0, // Lock pitch (tilt) to 0
+    );
+    mapboxMap.setCamera(options);
 
     // Load existing GeoJSON if available
     final geoJson = ref.read(mapStateProvider).tripGeoJson;
     if (geoJson != null) {
       _loadGeoJsonOnMap(geoJson);
     }
+  }
+
+  /// Apply theme and customize map appearance
+  void _applyTheme(styles.MapTheme theme) {
+    final mapState = ref.read(mapStateProvider);
+
+    switch (theme) {
+      case styles.MapTheme.standard:
+        _mapboxMap?.loadStyleURI(mapState.mapStyle.url);
+        debugPrint('✅ Applied Standard theme');
+
+      case styles.MapTheme.custom:
+        // Load custom dark style
+        _mapboxMap?.loadStyleURI('mapbox://styles/mapbox/dark-v11');
+        debugPrint('✅ Applied Custom theme');
+
+      case styles.MapTheme.fogOfWar:
+        // Fog of War - starts with dark, reveals as you visit
+        _mapboxMap?.loadStyleURI('mapbox://styles/mapbox/dark-v11');
+        debugPrint('✅ Applied Fog of War theme');
+    }
+  }
+
+  /// Handle theme selection
+  void _showThemeOptions() {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => Container(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Map Theme',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              '🔒 Map is locked to Sri Lanka (no rotation/tilt)',
+              style: TextStyle(fontSize: 12, color: Colors.grey),
+            ),
+            const SizedBox(height: 16),
+            ...styles.MapTheme.values.map((theme) {
+              return ListTile(
+                title: Text(theme.displayName),
+                trailing: _currentTheme == theme
+                    ? const Icon(Icons.check)
+                    : null,
+                onTap: () {
+                  setState(() => _currentTheme = theme);
+                  _applyTheme(theme);
+                  Navigator.pop(context);
+                },
+              );
+            }),
+          ],
+        ),
+      ),
+    );
   }
 
   /// Handle style click to change map style
@@ -179,13 +269,16 @@ class _MapScreenState extends ConsumerState<MapScreen> {
               // Duration
               _StatRow(
                 label: 'Trip Duration',
-                value: '${stats.timeline.durationDays} days',
+                value: stats.timeline.durationDays != null
+                    ? '${stats.timeline.durationDays} days'
+                    : 'N/A',
               ),
               // Visited status
-              if (stats.timeline.lastVisit.isBefore(DateTime.now()))
+              if (stats.timeline.lastVisit != null &&
+                  stats.timeline.lastVisit!.isBefore(DateTime.now()))
                 _StatRow(
                   label: 'Last Visit',
-                  value: _formatDate(stats.timeline.lastVisit),
+                  value: _formatDate(stats.timeline.lastVisit!),
                 ),
             ],
           ),
@@ -225,11 +318,21 @@ class _MapScreenState extends ConsumerState<MapScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(mapState.currentTrip?.name ?? 'Map'),
+        title: Text(mapState.currentTrip?.name ?? '🗺️ Discover Sri Lanka'),
         actions: [
+          // Theme selector
+          IconButton(
+            icon: Icon(
+              _currentTheme == styles.MapTheme.fogOfWar
+                  ? Icons.dark_mode
+                  : Icons.palette,
+            ),
+            onPressed: _showThemeOptions,
+            tooltip: 'Change map theme',
+          ),
           // Style button
           IconButton(
-            icon: const Icon(Icons.palette),
+            icon: const Icon(Icons.style),
             onPressed: _showStyleOptions,
             tooltip: 'Change map style',
           ),
@@ -241,158 +344,155 @@ class _MapScreenState extends ConsumerState<MapScreen> {
           ),
         ],
       ),
-      body: Stack(
+      body: Column(
         children: [
-          // Mapbox map
-          MapWidget(
-            key: const ValueKey('mapWidget'),
-            cameraOptions: CameraOptions(
-              center: Point(coordinates: Position(80.7718, 7.8731)),
-              zoom: 7.0,
-            ),
-            onMapCreated: _onMapCreated,
-            styleUri: mapState.mapStyle.url,
-          ),
-
-          // Loading overlay
-          if (isLoading)
-            Container(
-              color: Colors.black.withOpacity(0.3),
-              child: const Center(child: CircularProgressIndicator()),
-            ),
-
-          // Error message
-          if (error != null)
-            Positioned(
-              top: 16,
-              left: 16,
-              right: 16,
-              child: Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.red.shade100,
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.red),
-                ),
-                child: Text(
-                  error,
-                  style: TextStyle(color: Colors.red.shade900),
-                ),
-              ),
-            ),
-
-          // Bottom info panel
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(16),
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 8,
+          Expanded(
+            child: Stack(
+              children: [
+                // Mapbox map
+                MapWidget(
+                  key: const ValueKey('mapWidget'),
+                  cameraOptions: CameraOptions(
+                    center: Point(coordinates: Position(80.7718, 7.8731)),
+                    zoom: 7.0,
                   ),
-                ],
-              ),
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // Completion progress
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'Trip Progress',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(8),
-                              child: LinearProgressIndicator(
-                                value: completion / 100,
-                                minHeight: 8,
-                                backgroundColor: Colors.grey.shade200,
-                                valueColor: AlwaysStoppedAnimation(
-                                  completion == 100
-                                      ? Colors.green
-                                      : Colors.blue,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              '$completion% Complete',
-                              style: const TextStyle(fontSize: 12),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
+                  onMapCreated: _onMapCreated,
+                  onStyleLoadedListener: _onStyleLoaded,
+                  styleUri: mapState.mapStyle.url,
+                ),
 
-                  // Layer visibility toggles
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _LayerToggle(
-                          label: 'Route',
-                          value: mapState.showRoute,
-                          onChanged: (value) {
-                            ref
-                                .read(mapStateProvider.notifier)
-                                .toggleRoute(value);
-                            _mapController.setLayerVisibility(
-                              'trip-route',
-                              value,
-                            );
-                          },
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: _LayerToggle(
-                          label: 'Boundary',
-                          value: mapState.showBoundary,
-                          onChanged: (value) {
-                            ref
-                                .read(mapStateProvider.notifier)
-                                .toggleBoundary(value);
-                            _mapController.setLayerVisibility(
-                              'trip-boundary',
-                              value,
-                            );
-                          },
-                        ),
-                      ),
-                    ],
+                // Loading overlay
+                if (isLoading)
+                  Container(
+                    color: Colors.black.withOpacity(0.3),
+                    child: const Center(child: CircularProgressIndicator()),
                   ),
 
-                  const SizedBox(height: 16),
-
-                  // Refresh button
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton.icon(
-                      onPressed: _loadTripData,
-                      icon: const Icon(Icons.refresh),
-                      label: const Text('Refresh'),
+                // Error message
+                if (error != null)
+                  Positioned(
+                    top: 16,
+                    left: 16,
+                    right: 16,
+                    child: Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.red.shade100,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: Colors.red),
+                      ),
+                      child: Text(
+                        error,
+                        style: TextStyle(color: Colors.red.shade900),
+                      ),
                     ),
                   ),
-                ],
+              ],
+            ),
+          ),
+
+          // Bottom info panel
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(16),
               ),
+              boxShadow: [
+                BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 8),
+              ],
+            ),
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Completion progress
+                Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Trip Progress',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: LinearProgressIndicator(
+                              value: completion / 100,
+                              minHeight: 8,
+                              backgroundColor: Colors.grey.shade200,
+                              valueColor: AlwaysStoppedAnimation(
+                                completion == 100 ? Colors.green : Colors.blue,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            '$completion% Complete',
+                            style: const TextStyle(fontSize: 12),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+
+                // Layer visibility toggles
+                Row(
+                  children: [
+                    Expanded(
+                      child: _LayerToggle(
+                        label: 'Route',
+                        value: mapState.showRoute,
+                        onChanged: (value) {
+                          ref
+                              .read(mapStateProvider.notifier)
+                              .toggleRoute(value);
+                          _mapController.setLayerVisibility(
+                            'trip-route',
+                            value,
+                          );
+                        },
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: _LayerToggle(
+                        label: 'Boundary',
+                        value: mapState.showBoundary,
+                        onChanged: (value) {
+                          ref
+                              .read(mapStateProvider.notifier)
+                              .toggleBoundary(value);
+                          _mapController.setLayerVisibility(
+                            'trip-boundary',
+                            value,
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 16),
+
+                // Refresh button
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: _loadTripData,
+                    icon: const Icon(Icons.refresh),
+                    label: const Text('Refresh'),
+                  ),
+                ),
+              ],
             ),
           ),
         ],
@@ -474,12 +574,4 @@ class _LayerToggle extends StatelessWidget {
       ),
     );
   }
-}
-
-// Simple Trip model for this screen
-class Trip {
-  final String id;
-  final String name;
-
-  Trip({required this.id, required this.name});
 }
