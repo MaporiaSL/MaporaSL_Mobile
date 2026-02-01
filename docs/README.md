@@ -1,53 +1,322 @@
-# MAPORIA - Documentation Index
+# MAPORIA Documentation Hub
 
-> **Last Updated**: January 29, 2026  
-> **Purpose**: Centralized index for all project documentation
+> **Last Updated**: February 1, 2026  
+> **Project**: Gemified Travel Portfolio  
+> **Status**: Complete restructuring into three-tier documentation
 
 ---
 
-## 📁 Documentation Structure
+## 📚 Documentation Overview
 
-### core/
-**Purpose**: Core project documentation - source of truth, architecture decisions, and strategy (MOST IMPORTANT)
+Welcome to MAPORIA's comprehensive documentation hub. This documentation is organized into **three tiers** to serve different audiences:
 
-- [project-source-of-truth.md](core/project-source-of-truth.md) - Complete feature specification and requirements ⭐
-- [tech-stack.md](core/tech-stack.md) - Chosen technology stack (Express.js + MongoDB + Auth0) ⭐
-- [alternative-stacks.md](core/alternative-stacks.md) - Other technology options considered
-- [implementation-strategy.md](core/implementation-strategy.md) - Testing strategy and implementation approach
+### 🎯 Quick Navigation
 
-### implementation/
-**Purpose**: Step-by-step implementation guides for each phase
+| Tier | Purpose | Audience | Start Here |
+|------|---------|----------|-----------|
+| **Common** | Shared feature specs, architecture, setup | Everyone | [Go to Common →](common/README.md) |
+| **Backend** | Implementation details, API, database | Backend Developers | [Go to Backend →](backend/README.md) |
+| **Frontend** | UI implementation, state management | Flutter Developers | [Go to Frontend →](frontend/README.md) |
 
-- ✅ [phase1-detailed-plan.md](implementation/phase1-detailed-plan.md) - Authentication & User Management (COMPLETE)
-- ✅ [phase2-detailed-plan.md](implementation/phase2-detailed-plan.md) - Travel Data Management (COMPLETE)
-- 🔄 [phase3-detailed-plan.md](implementation/phase3-detailed-plan.md) - Map Integration (Backend COMPLETE, Frontend IN PROGRESS)
-- 🔄 [phase4-detailed-plan.md](implementation/phase4-detailed-plan.md) - Trip Planning (IN PROGRESS)
-- 📋 [trips-page-plan.md](implementation/trips-page-plan.md) - Trips page implementation
-- 📋 [trips-refactor-plan.md](implementation/trips-refactor-plan.md) - Trips feature refactoring
+---
 
-### features/
-**Purpose**: Comprehensive feature specifications for all platform features
+## 🚀 Quick Start by Role
 
-- 🛍️ [shop.md](features/shop.md) - E-commerce & In-App Shop (hybrid model, 21 endpoints, 7 phases)
-- 📍 [places.md](features/places.md) - Tourist attractions system with community contributions and gamification
-- 🗺️ [trip-plan.md](features/trip-plan.md) - Custom trips + pre-planned itineraries with timeline and status management
-- 📸 [album.md](features/album.md) - Photo capture, organization, geotagging, and map integration
+### 👨‍💼 Project Managers / Product Owners
+1. Read [MAPORIA Overview](common/README.md) to understand features
+2. Check [Architecture Overview](common/architecture/system-overview.md) for how it all connects
 
-### feature-implementation-plans/
-**Purpose**: Detailed implementation plans with code examples for each feature
+### 👨‍💻 Backend Developers
+1. Start with [Backend Getting Started](backend/getting-started/README.md)
+2. Review [Backend Project Structure](backend/getting-started/project-structure.md)
+3. Choose a feature from [Feature Implementation Guides](backend/feature-implementation/)
+4. Reference [API Endpoints](backend/api-endpoints/) documentation
+5. Check [Database Documentation](backend/database/)
 
-- 🛍️ [shop-implementation.md](feature-implementation-plans/shop-implementation.md) - Shop implementation (backend models, services, Flutter UI, admin dashboard with full code)
+### 📱 Flutter/Frontend Developers
+1. Start with [Frontend Getting Started](frontend/getting-started/README.md)
+2. Review [Frontend Project Structure](frontend/getting-started/project-structure.md)
+3. Choose a feature from [Feature Implementation Guides](frontend/feature-implementation/)
+4. Check [State Management Patterns](frontend/state-management/riverpod-patterns.md)
+5. Reference [API Integration Guide](frontend/api-integration/dio-client-setup.md)
 
-### architecture/
-**Purpose**: Technical architecture documentation
+### 🔧 DevOps / Infrastructure
+1. Backend [Deployment Guide](backend/deployment/README.md)
+2. Frontend [Deployment Guide](frontend/deployment/README.md)
 
-- ✅ [database-schema.md](architecture/database-schema.md) - Complete database schema, relationships, indexes
+---
 
-### completion-logs/
-**Purpose**: Phase completion summaries and progress tracking
+## 📁 Three-Tier Documentation Structure
 
-- ✅ [phase1-completion-summary.md](completion-logs/phase1-completion-summary.md) - Phase 1 completion details
-- ✅ [phase2-completion-summary.md](completion-logs/phase2-completion-summary.md) - Phase 2 completion details
+### 📌 Common Documentation
+**Location**: [docs/common/](common/)  
+**Contains**: Feature specifications, database schema, architecture, setup guides  
+**Updated By**: Entire team
+
+```
+common/
+├── README.md                          # Overview & quick links
+├── features/                          # What users can do
+│   ├── authentication.md
+│   ├── places-attractions.md
+│   ├── trip-planning.md
+│   ├── album-photos.md
+│   ├── shop-ecommerce.md
+│   └── achievements-gamification.md
+├── architecture/                      # How systems connect
+│   ├── system-overview.md
+│   ├── database-schema.md
+│   └── api-design-principles.md
+└── setup-guides/                      # Environment setup
+    ├── local-development.md
+    ├── auth0-setup.md
+    └── environment-variables.md
+```
+
+### 🔧 Backend Documentation
+**Location**: [docs/backend/](backend/)  
+**Contains**: Implementation details, API docs, database models, where to make changes  
+**Audience**: Backend developers  
+**Updated By**: Backend team
+
+```
+backend/
+├── README.md                          # Backend overview
+├── getting-started/                   # For new backend devs
+│   ├── README.md
+│   ├── quick-setup.md
+│   └── project-structure.md
+├── feature-implementation/            # WHERE TO MAKE CHANGES
+│   ├── authentication.md              # Controllers, routes, models
+│   ├── places-attractions.md
+│   ├── trip-planning.md
+│   ├── album-photos.md
+│   ├── shop-ecommerce.md
+│   └── achievements-gamification.md
+├── api-endpoints/                     # API documentation
+│   ├── authentication-endpoints.md
+│   ├── places-endpoints.md
+│   ├── trips-endpoints.md
+│   ├── user-endpoints.md
+│   └── map-geospatial-endpoints.md
+├── database/                          # Database & models
+│   ├── models.md
+│   ├── relationships.md
+│   └── indexes-optimization.md
+├── middleware-validation/             # Auth, validation, error handling
+│   ├── jwt-authentication.md
+│   ├── input-validators.md
+│   └── error-handling.md
+├── utilities-helpers/                 # Shared functions
+│   ├── geospatial-functions.md
+│   └── data-transformers.md
+├── testing/                           # Testing strategies
+│   ├── test-setup.md
+│   ├── controller-tests.md
+│   └── integration-tests.md
+└── deployment/                        # Production & deployment
+    ├── README.md
+    ├── environment-config.md
+    ├── database-migration.md
+    └── production-checklist.md
+```
+
+### 📱 Frontend Documentation
+**Location**: [docs/frontend/](frontend/)  
+**Contains**: UI implementation, screens, state management, where to make changes  
+**Audience**: Flutter developers  
+**Updated By**: Frontend team
+
+```
+frontend/
+├── README.md                          # Frontend overview
+├── getting-started/                   # For new Flutter devs
+│   ├── README.md
+│   ├── quick-setup.md
+│   └── project-structure.md
+├── feature-implementation/            # WHERE TO MAKE CHANGES
+│   ├── authentication.md              # Screens, providers, logic
+│   ├── places-attractions.md
+│   ├── trip-planning.md
+│   ├── album-photos.md
+│   ├── shop-ecommerce.md
+│   ├── achievements-gamification.md
+│   └── map-visualization.md
+├── state-management/                  # Riverpod patterns
+│   ├── riverpod-overview.md
+│   ├── riverpod-patterns.md
+│   └── async-data-handling.md
+├── ui-components/                     # Design & widgets
+│   ├── design-system.md
+│   ├── custom-widgets.md
+│   └── screen-layouts.md
+├── api-integration/                   # Calling APIs
+│   ├── dio-client-setup.md
+│   ├── api-calling-patterns.md
+│   └── error-handling.md
+├── location-maps/                     # Maps & GPS
+│   ├── mapbox-integration.md
+│   ├── gps-location-handling.md
+│   └── offline-maps.md
+├── offline-first/                     # Caching & sync
+│   ├── local-caching.md
+│   ├── sync-strategy.md
+│   └── offline-functionality.md
+├── testing/                           # Testing strategies
+│   ├── widget-tests.md
+│   ├── integration-tests.md
+│   └── test-examples.md
+└── deployment/                        # Build & release
+    ├── README.md
+    ├── android-build.md
+    ├── ios-build.md
+    ├── web-deployment.md
+    └── release-process.md
+```
+
+---
+
+## 🔗 Cross-Reference Guide
+
+### When implementing a feature, follow this path:
+
+1. **Read the Feature Spec**
+   - Location: `common/features/[feature-name].md`
+   - Understand: What users can do, requirements, data involved
+
+2. **Backend Implementation**
+   - Read: `backend/feature-implementation/[feature-name].md` 
+   - Learn: Which files to modify, what to change, how it fits together
+
+3. **Frontend Implementation**
+   - Read: `frontend/feature-implementation/[feature-name].md`
+   - Learn: Which screens to modify, what providers to create, UI changes
+
+4. **API Reference** (if needed)
+   - Location: `backend/api-endpoints/`
+   - Understand: Request/response formats, error codes
+
+---
+
+## 📊 Feature Documentation Index
+
+Each feature has documentation across the three tiers:
+
+### Authentication
+- **What**: User login, signup, logout, session management
+- Common: [Feature Spec](common/features/authentication.md)
+- Backend: [Implementation](backend/feature-implementation/authentication.md) | [API Endpoints](backend/api-endpoints/authentication-endpoints.md)
+- Frontend: [Implementation](frontend/feature-implementation/authentication.md)
+
+### Places & Attractions
+- **What**: Discover places, visit locations, community contributions
+- Common: [Feature Spec](common/features/places-attractions.md)
+- Backend: [Implementation](backend/feature-implementation/places-attractions.md) | [API Endpoints](backend/api-endpoints/places-endpoints.md)
+- Frontend: [Implementation](frontend/feature-implementation/places-attractions.md)
+
+### Trip Planning
+- **What**: Create custom trips, pre-planned itineraries, route planning
+- Common: [Feature Spec](common/features/trip-planning.md)
+- Backend: [Implementation](backend/feature-implementation/trip-planning.md) | [API Endpoints](backend/api-endpoints/trips-endpoints.md)
+- Frontend: [Implementation](frontend/feature-implementation/trip-planning.md)
+
+### Album & Photos
+- **What**: Photo capture, geotagging, albums, memories
+- Common: [Feature Spec](common/features/album-photos.md)
+- Backend: [Implementation](backend/feature-implementation/album-photos.md)
+- Frontend: [Implementation](frontend/feature-implementation/album-photos.md)
+
+### Shop & E-Commerce
+- **What**: In-app shop, product catalog, purchases, orders
+- Common: [Feature Spec](common/features/shop-ecommerce.md)
+- Backend: [Implementation](backend/feature-implementation/shop-ecommerce.md) | [API Endpoints](backend/api-endpoints/shop-endpoints.md)
+- Frontend: [Implementation](frontend/feature-implementation/shop-ecommerce.md)
+
+### Achievements & Gamification
+- **What**: Badges, leaderboards, progress tracking, rewards
+- Common: [Feature Spec](common/features/achievements-gamification.md)
+- Backend: [Implementation](backend/feature-implementation/achievements-gamification.md) | [API Endpoints](backend/api-endpoints/user-endpoints.md)
+- Frontend: [Implementation](frontend/feature-implementation/achievements-gamification.md)
+
+### Map & Visualization
+- **What**: Interactive map, fog-of-war, district reveal, offline maps
+- Common: [Architecture](common/architecture/system-overview.md)
+- Backend: [Implementation](backend/feature-implementation/map-visualization.md) | [API Endpoints](backend/api-endpoints/map-geospatial-endpoints.md)
+- Frontend: [Implementation](frontend/feature-implementation/map-visualization.md)
+
+---
+
+## 🛠️ Technology Stack Reference
+
+| Component | Technology | Documentation |
+|-----------|-----------|-----------------|
+| **Frontend** | Flutter (Dart) | [Frontend Docs](frontend/) |
+| **Backend** | Node.js + Express.js | [Backend Docs](backend/) |
+| **Database** | MongoDB | [Database Docs](backend/database/) |
+| **Authentication** | Auth0 + JWT | [Auth Docs](backend/middleware-validation/jwt-authentication.md) |
+| **File Storage** | Firebase Storage | [Setup Guide](common/setup-guides/) |
+| **Maps** | Mapbox | [Maps Integration](frontend/location-maps/mapbox-integration.md) |
+| **State Management** | Riverpod | [Riverpod Guide](frontend/state-management/riverpod-patterns.md) |
+
+---
+
+## 📖 How to Use This Documentation
+
+### ✅ Best Practices
+
+1. **Start with your role's "Getting Started"**
+   - Backend devs → [Backend Getting Started](backend/getting-started/README.md)
+   - Frontend devs → [Frontend Getting Started](frontend/getting-started/README.md)
+
+2. **Use feature guides when implementing**
+   - Pick a feature from your tier's feature-implementation folder
+   - It will tell you exactly where to make changes
+
+3. **Cross-reference when needed**
+   - Links between tiers help you understand the full picture
+   - Backend API docs help frontend devs consume APIs correctly
+
+4. **Keep docs updated**
+   - If you change code, update the corresponding documentation
+   - Backend changes → Update `docs/backend/`
+   - Frontend changes → Update `docs/frontend/`
+
+---
+
+## 📞 Documentation Maintenance
+
+### Who Updates What
+- **Backend changes**: Backend developer updates `docs/backend/` tier
+- **Frontend changes**: Frontend developer updates `docs/frontend/` tier
+- **Feature changes**: Both teams update `docs/common/` tier features
+- **Architecture changes**: Team lead updates `docs/common/architecture/`
+
+### When to Update
+- When adding a new feature → Create docs in all three tiers
+- When refactoring → Update affected feature guides
+- When fixing bugs → Update if the workaround is unclear
+- When finding gaps → Document the missing piece
+
+---
+
+## 🔄 Navigation Shortcuts
+
+### Jump to Common Docs
+- [Features](common/features/) - What the app does
+- [Architecture](common/architecture/) - How it's built
+- [Setup Guides](common/setup-guides/) - Get started
+
+### Jump to Backend Docs
+- [Getting Started](backend/getting-started/) - New to backend?
+- [Feature Implementation](backend/feature-implementation/) - Making changes?
+- [API Endpoints](backend/api-endpoints/) - API details?
+- [Database](backend/database/) - Schema & models?
+
+### Jump to Frontend Docs
+- [Getting Started](frontend/getting-started/) - New to frontend?
+- [Feature Implementation](frontend/feature-implementation/) - Making changes?
+- [State Management](frontend/state-management/) - Riverpod?
+- [UI Components](frontend/ui-components/) - Building screens?
 - ✅ [phase3-backend-completion.md](completion-logs/phase3-backend-completion.md) - Phase 3 backend completion details
 - ✅ [phase4-trips-completion.md](completion-logs/phase4-trips-completion.md) - Phase 4 trips completion details
 
