@@ -16,9 +16,9 @@ This document provides a quick reference to all available API endpoints. For det
 
 | Method | Endpoint | Description | Auth Required | Docs |
 |--------|----------|-------------|---------------|------|
-| POST | `/api/auth/register` | Register/sync user from Auth0 | No | [Details](./auth-endpoints.md#register-user) |
-| GET | `/api/auth/me` | Get current user profile | Yes | [Details](./auth-endpoints.md#get-current-user) |
-| POST | `/api/auth/logout` | Logout user | Yes | [Details](./auth-endpoints.md#logout) |
+| POST | `/api/auth/register` | Register/sync user from Auth0 | No | [auth-endpoints.md](./auth-endpoints.md#register-user) |
+| GET | `/api/auth/me` | Get current user profile | Yes | [auth-endpoints.md](./auth-endpoints.md#get-current-user) |
+| POST | `/api/auth/logout` | Logout user | Yes | [auth-endpoints.md](./auth-endpoints.md#logout) |
 
 ---
 
@@ -26,11 +26,11 @@ This document provides a quick reference to all available API endpoints. For det
 
 | Method | Endpoint | Description | Auth Required | Docs |
 |--------|----------|-------------|---------------|------|
-| POST | `/api/travel` | Create new trip | Yes | [api-reference.md](./api-reference.md#create-travel) |
-| GET | `/api/travel` | Get all user trips (paginated) | Yes | [api-reference.md](./api-reference.md#list-travels) |
-| GET | `/api/travel/:travelId` | Get single trip details | Yes | [api-reference.md](./api-reference.md#get-travel) |
-| PATCH | `/api/travel/:travelId` | Update trip details | Yes | [api-reference.md](./api-reference.md#update-travel) |
-| DELETE | `/api/travel/:travelId` | Delete trip | Yes | [api-reference.md](./api-reference.md#delete-travel) |
+| POST | `/api/travel` | Create new trip | Yes | [travel-endpoints.md](./travel-endpoints.md#create-travel) |
+| GET | `/api/travel` | Get all user trips (paginated) | Yes | [travel-endpoints.md](./travel-endpoints.md#list-travels) |
+| GET | `/api/travel/:travelId` | Get single trip details | Yes | [travel-endpoints.md](./travel-endpoints.md#get-travel) |
+| PATCH | `/api/travel/:travelId` | Update trip details | Yes | [travel-endpoints.md](./travel-endpoints.md#update-travel) |
+| DELETE | `/api/travel/:travelId` | Delete trip | Yes | [travel-endpoints.md](./travel-endpoints.md#delete-travel) |
 
 ---
 
@@ -38,11 +38,11 @@ This document provides a quick reference to all available API endpoints. For det
 
 | Method | Endpoint | Description | Auth Required | Docs |
 |--------|----------|-------------|---------------|------|
-| POST | `/api/travel/:travelId/destinations` | Add destination to trip | Yes | [api-reference.md](./api-reference.md#create-destination) |
-| GET | `/api/travel/:travelId/destinations` | Get trip's destinations | Yes | [api-reference.md](./api-reference.md#list-destinations) |
-| GET | `/api/travel/:travelId/destinations/:destId` | Get single destination | Yes | [api-reference.md](./api-reference.md#get-destination) |
-| PATCH | `/api/travel/:travelId/destinations/:destId` | Update destination | Yes | [api-reference.md](./api-reference.md#update-destination) |
-| DELETE | `/api/travel/:travelId/destinations/:destId` | Delete destination | Yes | [api-reference.md](./api-reference.md#delete-destination) |
+| POST | `/api/travel/:travelId/destinations` | Add destination to trip | Yes | [destination-endpoints.md](./destination-endpoints.md#create-destination) |
+| GET | `/api/travel/:travelId/destinations` | Get trip's destinations | Yes | [destination-endpoints.md](./destination-endpoints.md#list-destinations) |
+| GET | `/api/travel/:travelId/destinations/:destId` | Get single destination | Yes | [destination-endpoints.md](./destination-endpoints.md#get-destination) |
+| PATCH | `/api/travel/:travelId/destinations/:destId` | Update destination | Yes | [destination-endpoints.md](./destination-endpoints.md#update-destination) |
+| DELETE | `/api/travel/:travelId/destinations/:destId` | Delete destination | Yes | [destination-endpoints.md](./destination-endpoints.md#delete-destination) |
 
 ---
 
@@ -50,12 +50,34 @@ This document provides a quick reference to all available API endpoints. For det
 
 | Method | Endpoint | Description | Auth Required | Docs |
 |--------|----------|-------------|---------------|------|
-| GET | `/api/travel/:travelId/geojson` | Get trip as GeoJSON for map | Yes | [api-reference.md](./api-reference.md#get-travel-geojson) |
-| GET | `/api/travel/:travelId/boundary` | Get trip boundary polygon | Yes | [api-reference.md](./api-reference.md#get-travel-boundary) |
-| GET | `/api/travel/:travelId/stats` | Get trip statistics | Yes | [api-reference.md](./api-reference.md#get-travel-statistics) |
-| GET | `/api/travel/:travelId/terrain` | Get elevation data (placeholder) | Yes | [api-reference.md](./api-reference.md#get-travel-terrain) |
-| GET | `/api/destinations/nearby` | Find destinations near coordinates | Yes | [api-reference.md](./api-reference.md#find-nearby-destinations) |
-| GET | `/api/destinations/within-bounds` | Find destinations in bounding box | Yes | [api-reference.md](./api-reference.md#find-destinations-within-bounds) |
+| GET | `/api/travel/:travelId/geojson` | Get trip as GeoJSON for map | Yes | [map-endpoints.md](./map-endpoints.md#get-trip-as-geojson) |
+| GET | `/api/travel/:travelId/boundary` | Get trip boundary polygon | Yes | [map-endpoints.md](./map-endpoints.md#get-trip-boundary) |
+| GET | `/api/travel/:travelId/stats` | Get trip statistics | Yes | [map-endpoints.md](./map-endpoints.md#get-trip-statistics) |
+| GET | `/api/travel/:travelId/terrain` | Get elevation data (placeholder) | Yes | [map-endpoints.md](./map-endpoints.md#get-trip-terrain) |
+| GET | `/api/destinations/nearby` | Find destinations near coordinates | Yes | [geo-endpoints.md](./geo-endpoints.md#find-nearby-destinations) |
+| GET | `/api/destinations/within-bounds` | Find destinations in bounding box | Yes | [geo-endpoints.md](./geo-endpoints.md#find-destinations-within-bounds) |
+
+---
+
+## Pre-Planned Trips
+
+| Method | Endpoint | Description | Auth Required | Docs |
+|--------|----------|-------------|---------------|------|
+| GET | `/api/preplannedtrips` | List all trip templates | No | [preplanned-trips-endpoints.md](./preplanned-trips-endpoints.md#list-pre-planned-trips) |
+| GET | `/api/preplannedtrips/:templateId` | Get template details | No | [preplanned-trips-endpoints.md](./preplanned-trips-endpoints.md#get-pre-planned-trip-details) |
+| POST | `/api/preplannedtrips/:templateId/use` | Create trip from template | Yes | [preplanned-trips-endpoints.md](./preplanned-trips-endpoints.md#create-trip-from-template) |
+
+---
+
+## User Profile
+
+| Method | Endpoint | Description | Auth Required | Docs |
+|--------|----------|-------------|---------------|------|
+| GET | `/api/user/me` | Get current user's full profile | Yes | [user-endpoints.md](./user-endpoints.md#get-current-user-profile) |
+| GET | `/api/user/:userId` | Get public user profile | No | [user-endpoints.md](./user-endpoints.md#get-user-by-id) |
+| PATCH | `/api/user/profile` | Update user profile | Yes | [user-endpoints.md](./user-endpoints.md#update-user-profile) |
+| PATCH | `/api/user/preferences` | Update user preferences | Yes | [user-endpoints.md](./user-endpoints.md#update-user-preferences) |
+| GET | `/api/user/:userId/stats` | Get user achievements and statistics | No | [user-endpoints.md](./user-endpoints.md#get-user-statistics) |
 
 ---
 
