@@ -13,7 +13,19 @@ if (process.env.MONGODB_URI) {
   
   mongoose.connect(process.env.MONGODB_URI, {
     serverSelectionTimeoutMS: 10000, // 10 second timeout
-  })
+  })D:\Github_projects\gemified-travel-portfolio>git status
+On branch main
+Your branch is up to date with 'origin/main'.
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+        modified:   mobile/android/.gradle/buildOutputCleanup/buildOutputCleanup.lock
+        modified:   mobile/android/.gradle/file-system.probe
+
+no changes added to commit (use "git add" and/or "git commit -a")
+
+D:\Github_projects\gemified-travel-portfolio>
   .then((conn) => {
     console.log('✅ SUCCESS! MongoDB Connected:', conn.connection.host);
     console.log('Database:', conn.connection.name);

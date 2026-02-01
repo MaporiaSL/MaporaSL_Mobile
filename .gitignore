@@ -91,6 +91,7 @@ coverage/
 .pub-cache/
 .pub/
 build/
+**/android/.gradle/
 flutter_*.png
 linked_*.ds
 unlinked.ds
