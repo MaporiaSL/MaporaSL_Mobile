@@ -40,7 +40,11 @@ class MapController {
       await addSymbolLayer(
         sourceId: sourceId,
         layerId: 'trip-destinations',
-        filter: ['!=', ['get', 'type'], 'route'],
+        filter: [
+          '!=',
+          ['get', 'type'],
+          'route',
+        ],
       );
 
       // Add route line layer if included
@@ -48,7 +52,11 @@ class MapController {
         await addLineLayer(
           sourceId: sourceId,
           layerId: 'trip-route',
-          filter: ['==', ['get', 'type'], 'route'],
+          filter: [
+            '==',
+            ['get', 'type'],
+            'route',
+          ],
           lineColor: '#8b5cf6',
           lineWidth: 3.0,
         );
@@ -59,7 +67,11 @@ class MapController {
         await addFillLayer(
           sourceId: sourceId,
           layerId: 'trip-boundary',
-          filter: ['==', ['get', 'type'], 'boundary'],
+          filter: [
+            '==',
+            ['get', 'type'],
+            'boundary',
+          ],
           fillColor: '#8b5cf6',
           fillOpacity: 0.1,
         );
@@ -116,10 +128,7 @@ class MapController {
       }
 
       // Create GeoJsonSource from data
-      final source = GeoJsonSource(
-        id: sourceId,
-        data: geoJson,
-      );
+      final source = GeoJsonSource(id: sourceId, data: geoJson);
 
       // Add source to map
       await _mapboxMap!.style.addSource(source);
@@ -270,10 +279,7 @@ class MapController {
     if (_mapboxMap == null) return;
 
     try {
-      final source = GeoJsonSource(
-        id: sourceId,
-        data: geoJson,
-      );
+      final source = GeoJsonSource(id: sourceId, data: geoJson);
 
       await _mapboxMap!.style.updateSource(source);
       debugPrint('✅ Updated GeoJSON source: $sourceId');
@@ -291,10 +297,7 @@ class MapController {
     if (_mapboxMap == null) return;
 
     try {
-      final options = CameraOptions(
-        bounds: bounds,
-        padding: padding,
-      );
+      final options = CameraOptions(bounds: bounds, padding: padding);
 
       await _mapboxMap!.setCamera(options);
       debugPrint('✅ Fitted camera to bounds');
@@ -350,7 +353,11 @@ class MapController {
 
     try {
       final visibility = visible ? Visibility.VISIBLE : Visibility.NONE;
-      await _mapboxMap!.style.setLayerProperty(layerId, 'visibility', visibility);
+      await _mapboxMap!.style.setLayerProperty(
+        layerId,
+        'visibility',
+        visibility,
+      );
       debugPrint('✅ Set ${layerId} visibility to: $visible');
     } catch (e) {
       debugPrint('❌ Error setting layer visibility: $e');

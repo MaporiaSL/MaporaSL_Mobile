@@ -11,10 +11,7 @@ import '../utils/map_style_manager.dart';
 class MapScreen extends ConsumerStatefulWidget {
   final String travelId;
 
-  const MapScreen({
-    super.key,
-    required this.travelId,
-  });
+  const MapScreen({super.key, required this.travelId});
 
   @override
   ConsumerState<MapScreen> createState() => _MapScreenState();
@@ -67,9 +64,9 @@ class _MapScreenState extends ConsumerState<MapScreen> {
       }
     } catch (e) {
       mapStateNotifier.setError('Failed to load trip: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error: $e')));
     }
   }
 
@@ -142,9 +139,9 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     final completion = ref.read(completionPercentageProvider);
 
     if (stats == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Statistics not available')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Statistics not available')));
       return;
     }
 
@@ -158,10 +155,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Completion
-              _StatRow(
-                label: 'Completion',
-                value: '$completion%',
-              ),
+              _StatRow(label: 'Completion', value: '$completion%'),
               // Destinations
               _StatRow(
                 label: 'Destinations',
@@ -172,7 +166,8 @@ class _MapScreenState extends ConsumerState<MapScreen> {
               // Distance
               _StatRow(
                 label: 'Total Distance',
-                value: '${stats.geography.routeDistanceKm.toStringAsFixed(1)} km',
+                value:
+                    '${stats.geography.routeDistanceKm.toStringAsFixed(1)} km',
               ),
               // Area
               _StatRow(
@@ -252,9 +247,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
           MapWidget(
             key: const ValueKey('mapWidget'),
             cameraOptions: CameraOptions(
-              center: Point(
-                coordinates: Position(80.7718, 7.8731),
-              ),
+              center: Point(coordinates: Position(80.7718, 7.8731)),
               zoom: 7.0,
             ),
             onMapCreated: _onMapCreated,
@@ -265,9 +258,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
           if (isLoading)
             Container(
               color: Colors.black.withOpacity(0.3),
-              child: const Center(
-                child: CircularProgressIndicator(),
-              ),
+              child: const Center(child: CircularProgressIndicator()),
             ),
 
           // Error message
@@ -360,7 +351,8 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                           label: 'Route',
                           value: mapState.showRoute,
                           onChanged: (value) {
-                            ref.read(mapStateProvider.notifier)
+                            ref
+                                .read(mapStateProvider.notifier)
                                 .toggleRoute(value);
                             _mapController.setLayerVisibility(
                               'trip-route',
@@ -375,7 +367,8 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                           label: 'Boundary',
                           value: mapState.showBoundary,
                           onChanged: (value) {
-                            ref.read(mapStateProvider.notifier)
+                            ref
+                                .read(mapStateProvider.notifier)
                                 .toggleBoundary(value);
                             _mapController.setLayerVisibility(
                               'trip-boundary',
@@ -413,10 +406,7 @@ class _StatRow extends StatelessWidget {
   final String label;
   final String value;
 
-  const _StatRow({
-    required this.label,
-    required this.value,
-  });
+  const _StatRow({required this.label, required this.value});
 
   @override
   Widget build(BuildContext context) {
@@ -425,19 +415,10 @@ class _StatRow extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            label,
-            style: const TextStyle(
-              fontSize: 14,
-              color: Colors.grey,
-            ),
-          ),
+          Text(label, style: const TextStyle(fontSize: 14, color: Colors.grey)),
           Text(
             value,
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-            ),
+            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
           ),
         ],
       ),

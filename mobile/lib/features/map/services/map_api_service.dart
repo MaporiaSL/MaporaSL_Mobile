@@ -124,52 +124,57 @@ final mapApiServiceProvider = Provider<MapApiService>((ref) {
 });
 
 /// Fetch trip GeoJSON
-final tripGeoJsonFutureProvider =
-    FutureProvider.family<TripGeoJson, String>((ref, travelId) {
+final tripGeoJsonFutureProvider = FutureProvider.family<TripGeoJson, String>((
+  ref,
+  travelId,
+) {
   final mapApi = ref.watch(mapApiServiceProvider);
   return mapApi.getTravelGeoJson(travelId);
 });
 
 /// Fetch trip boundary
-final tripBoundaryFutureProvider =
-    FutureProvider.family<TripBoundary, String>((ref, travelId) {
+final tripBoundaryFutureProvider = FutureProvider.family<TripBoundary, String>((
+  ref,
+  travelId,
+) {
   final mapApi = ref.watch(mapApiServiceProvider);
   return mapApi.getTravelBoundary(travelId);
 });
 
 /// Fetch trip statistics
-final tripStatsFutureProvider =
-    FutureProvider.family<TripStats, String>((ref, travelId) {
+final tripStatsFutureProvider = FutureProvider.family<TripStats, String>((
+  ref,
+  travelId,
+) {
   final mapApi = ref.watch(mapApiServiceProvider);
   return mapApi.getTravelStats(travelId);
 });
 
 /// Fetch nearby destinations
-final nearbyDestinationsFutureProvider = FutureProvider.family<
-    NearbyDestinationsResponse,
-    ({double latitude, double longitude, double radiusKm})>((ref, params) {
-  final mapApi = ref.watch(mapApiServiceProvider);
-  return mapApi.findNearbyDestinations(
-    params.latitude,
-    params.longitude,
-    radiusKm: params.radiusKm,
-  );
-});
+final nearbyDestinationsFutureProvider =
+    FutureProvider.family<
+      NearbyDestinationsResponse,
+      ({double latitude, double longitude, double radiusKm})
+    >((ref, params) {
+      final mapApi = ref.watch(mapApiServiceProvider);
+      return mapApi.findNearbyDestinations(
+        params.latitude,
+        params.longitude,
+        radiusKm: params.radiusKm,
+      );
+    });
 
 /// Fetch destinations in bounds
-final destinationsInBoundsFutureProvider = FutureProvider.family<
-    TripGeoJson,
-    ({
-      double swLat,
-      double swLng,
-      double neLat,
-      double neLng,
-    })>((ref, bounds) {
-  final mapApi = ref.watch(mapApiServiceProvider);
-  return mapApi.findDestinationsWithinBounds(
-    bounds.swLat,
-    bounds.swLng,
-    bounds.neLat,
-    bounds.neLng,
-  );
-});
+final destinationsInBoundsFutureProvider =
+    FutureProvider.family<
+      TripGeoJson,
+      ({double swLat, double swLng, double neLat, double neLng})
+    >((ref, bounds) {
+      final mapApi = ref.watch(mapApiServiceProvider);
+      return mapApi.findDestinationsWithinBounds(
+        bounds.swLat,
+        bounds.swLng,
+        bounds.neLat,
+        bounds.neLng,
+      );
+    });
