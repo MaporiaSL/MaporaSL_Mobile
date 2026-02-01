@@ -11,6 +11,11 @@
 .svn/
 migrate_working_dir/
 
+# Gradle build files (Android)
+**/android/.gradle/
+**/.gradle/
+**/build/
+
 # Environment variables (CRITICAL - NEVER COMMIT)
 .env
 .env.local
