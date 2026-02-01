@@ -24,7 +24,8 @@ Welcome to MAPORIA's comprehensive documentation hub. This documentation is orga
 
 ### 👨‍💼 Project Managers / Product Owners
 1. Read [MAPORIA Overview](common/README.md) to understand features
-2. Check [Architecture Overview](common/architecture/system-overview.md) for how it all connects
+2. Check [Database Schema](common/architecture/database-schema.md) to see data structure
+3. Review [Feature Specs](common/features/) to understand what's built
 
 ### 👨‍💻 Backend Developers
 1. Start with [Backend Getting Started](backend/getting-started/README.md)
@@ -204,45 +205,45 @@ Each feature has documentation across the three tiers:
 
 ### Authentication
 - **What**: User login, signup, logout, session management
-- Common: [Feature Spec](common/features/authentication.md)
-- Backend: [Implementation](backend/feature-implementation/authentication.md) | [API Endpoints](backend/api-endpoints/authentication-endpoints.md)
-- Frontend: [Implementation](frontend/feature-implementation/authentication.md)
+- Common: Feature spec (to be created in common/features/)
+- Backend: [API Reference](backend/api-endpoints/api-reference.md) (see auth section)
+- Frontend: Implementation guide (to be created)
 
 ### Places & Attractions
 - **What**: Discover places, visit locations, community contributions
-- Common: [Feature Spec](common/features/places-attractions.md)
-- Backend: [Implementation](backend/feature-implementation/places-attractions.md) | [API Endpoints](backend/api-endpoints/places-endpoints.md)
-- Frontend: [Implementation](frontend/feature-implementation/places-attractions.md)
+- Common: [Feature Spec](common/features/places.md) ✅
+- Backend: [API Reference](backend/api-endpoints/api-reference.md) (see destinations section)
+- Frontend: Implementation guide (to be created)
 
 ### Trip Planning
 - **What**: Create custom trips, pre-planned itineraries, route planning
-- Common: [Feature Spec](common/features/trip-planning.md)
-- Backend: [Implementation](backend/feature-implementation/trip-planning.md) | [API Endpoints](backend/api-endpoints/trips-endpoints.md)
-- Frontend: [Implementation](frontend/feature-implementation/trip-planning.md)
+- Common: [Feature Spec](common/features/trip-plan.md) ✅
+- Backend: [API Reference](backend/api-endpoints/api-reference.md) (see travel section)
+- Frontend: Implementation guide (to be created)
 
 ### Album & Photos
 - **What**: Photo capture, geotagging, albums, memories
-- Common: [Feature Spec](common/features/album-photos.md)
-- Backend: [Implementation](backend/feature-implementation/album-photos.md)
-- Frontend: [Implementation](frontend/feature-implementation/album-photos.md)
+- Common: [Feature Spec](common/features/album.md) ✅
+- Backend: [API Reference](backend/api-endpoints/api-reference.md) (see destinations section)
+- Frontend: Implementation guide (to be created)
 
 ### Shop & E-Commerce
 - **What**: In-app shop, product catalog, purchases, orders
-- Common: [Feature Spec](common/features/shop-ecommerce.md)
-- Backend: [Implementation](backend/feature-implementation/shop-ecommerce.md) | [API Endpoints](backend/api-endpoints/shop-endpoints.md)
-- Frontend: [Implementation](frontend/feature-implementation/shop-ecommerce.md)
+- Common: [Feature Spec](common/features/shop.md) ✅
+- Backend: [Implementation Guide](backend/feature-implementation/shop-implementation.md) ✅
+- Frontend: Implementation guide (to be created)
 
 ### Achievements & Gamification
 - **What**: Badges, leaderboards, progress tracking, rewards
-- Common: [Feature Spec](common/features/achievements-gamification.md)
-- Backend: [Implementation](backend/feature-implementation/achievements-gamification.md) | [API Endpoints](backend/api-endpoints/user-endpoints.md)
-- Frontend: [Implementation](frontend/feature-implementation/achievements-gamification.md)
+- Common: Feature spec (to be created)
+- Backend: [API Reference](backend/api-endpoints/api-reference.md) (see user progress section)
+- Frontend: Implementation guide (to be created)
 
 ### Map & Visualization
 - **What**: Interactive map, fog-of-war, district reveal, offline maps
-- Common: [Architecture](common/architecture/system-overview.md)
-- Backend: [Implementation](backend/feature-implementation/map-visualization.md) | [API Endpoints](backend/api-endpoints/map-geospatial-endpoints.md)
-- Frontend: [Implementation](frontend/feature-implementation/map-visualization.md)
+- Common: [Database Schema](common/architecture/database-schema.md) ✅
+- Backend: [API Reference](backend/api-endpoints/api-reference.md) (see map & geo sections)
+- Frontend: Implementation guide (to be created)
 
 ---
 
