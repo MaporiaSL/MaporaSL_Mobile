@@ -45,3 +45,132 @@ async function createAlbum(req, res) {
     res.status(500).json({ error: 'Failed to create album' });
   }
 }
+
+/**
+ * Get all albums for a user
+ * GET /api/albums
+ */
+async function getAlbums(req, res) {
+  try {
+    const userId = req.userId;
+    const { page = 1, limit = 10, districtId, provinceId } = req.query;
+
+    const query = { userId };
+    if (districtId) query.districtId = districtId;
+    if (provinceId) query.provinceId = provinceId;
+
+    const totalAlbums = await Album.countDocuments(query);
+    const albums = await Album.find(query)
+      .select('name description coverPhotoUrl tags districtId provinceId photos createdAt updatedAt')
+      .sort({ createdAt: -1 })
+      .skip((parseInt(page) - 1) * parseInt(limit))
+      .limit(parseInt(limit));
+
+    res.status(200).json({
+      totalAlbums,
+      page: parseInt(page),
+      limit: parseInt(limit),
+      totalPages: Math.ceil(totalAlbums / parseInt(limit)),
+      albums: albums.map(album => ({
+        id: album._id,
+        name: album.name,
+        description: album.description,
+        coverPhotoUrl: album.coverPhotoUrl,
+        tags: album.tags,
+        districtId: album.districtId,
+        provinceId: album.provinceId,
+        photoCount: album.photos.length,
+        createdAt: album.createdAt,
+        updatedAt: album.updatedAt
+      }))
+    });
+  } catch (error) {
+    console.error('Get albums error:', error);
+    res.status(500).json({ error: 'Failed to retrieve albums' });
+  }
+}
+
+/**
+ * Get a single album by ID
+ * GET /api/albums/:albumId
+ */
+async function getAlbum(req, res) {
+  try {
+    const { albumId } = req.params;
+    const userId = req.userId;
+
+    const album = await Album.findOne({ _id: albumId, userId });
+    if (!album) {
+      return res.status(404).json({ error: 'Album not found' });
+    }
+
+    res.status(200).json({
+      id: album._id,
+      name: album.name,
+      description: album.description,
+      coverPhotoUrl: album.coverPhotoUrl,
+      tags: album.tags,
+      districtId: album.districtId,
+      provinceId: album.provinceId,
+      photoCount: album.photos.length,
+      photos: album.photos.map(photo => ({
+        id: photo._id,
+        url: photo.url,
+        originalName: photo.originalName,
+        caption: photo.caption,
+        location: photo.location,
+        createdAt: photo.createdAt
+      })),
+      createdAt: album.createdAt,
+      updatedAt: album.updatedAt
+    });
+  } catch (error) {
+    console.error('Get album error:', error);
+    res.status(500).json({ error: 'Failed to retrieve album' });
+  }
+}
+
+/**
+ * Get user's album and photo statistics
+ * GET /api/albums/stats
+ */
+async function getAlbumStats(req, res) {
+  try {
+    const userId = req.userId;
+
+    const albums = await Album.find({ userId });
+    
+    const totalAlbums = albums.length;
+    const totalPhotos = albums.reduce((sum, album) => sum + album.photos.length, 0);
+    const totalStorageBytes = albums.reduce((sum, album) => 
+      sum + album.photos.reduce((photoSum, photo) => photoSum + (photo.size || 0), 0), 0
+    );
+
+    // Group photos by district
+    const photosByDistrict = {};
+    albums.forEach(album => {
+      if (album.districtId) {
+        photosByDistrict[album.districtId] = (photosByDistrict[album.districtId] || 0) + album.photos.length;
+      }
+    });
+
+    res.status(200).json({
+      totalAlbums,
+      totalPhotos,
+      totalStorageMB: Math.round(totalStorageBytes / (1024 * 1024) * 100) / 100,
+      photosByDistrict,
+      recentAlbums: albums
+        .sort((a, b) => b.createdAt - a.createdAt)
+        .slice(0, 5)
+        .map(a => ({
+          id: a._id,
+          name: a.name,
+          photoCount: a.photos.length,
+          coverPhotoUrl: a.coverPhotoUrl
+        }))
+    });
+  } catch (error) {
+    console.error('Get album stats error:', error);
+    res.status(500).json({ error: 'Failed to retrieve album statistics' });
+  }
+}
