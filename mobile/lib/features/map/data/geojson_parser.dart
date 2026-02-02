@@ -6,10 +6,21 @@ class GeoJsonParser {
   /// Load and parse province boundaries from GeoJSON file
   static Future<Map<String, List<List<Offset>>>>
   loadProvinceBoundaries() async {
+    return _loadBoundaries('assets/geojson/boundaries/LK-provinces.geojson');
+  }
+
+  /// Load and parse district boundaries from GeoJSON file
+  static Future<Map<String, List<List<Offset>>>>
+  loadDistrictBoundaries() async {
+    return _loadBoundaries('assets/geojson/boundaries/LK-districts.geojson');
+  }
+
+  /// Generic boundary loader
+  static Future<Map<String, List<List<Offset>>>> _loadBoundaries(
+    String assetPath,
+  ) async {
     try {
-      final jsonString = await rootBundle.loadString(
-        'assets/geojson/geoBoundaries-LKA-ADM1_simplified.geojson',
-      );
+      final jsonString = await rootBundle.loadString(assetPath);
       final Map<String, dynamic> geoJson = jsonDecode(jsonString);
       final features = geoJson['features'] as List<dynamic>;
 
@@ -17,7 +28,11 @@ class GeoJsonParser {
 
       for (final feature in features) {
         final properties = feature['properties'] as Map<String, dynamic>;
-        final shapeName = properties['shapeName'] as String?;
+        // Try multiple property keys for name
+        final shapeName = properties['shapeName'] as String? ??
+            properties['NAME_1'] as String? ??
+            properties['NAME_2'] as String? ??
+            properties['name'] as String?;
         final geometry = feature['geometry'] as Map<String, dynamic>;
 
         if (shapeName != null) {
@@ -27,7 +42,7 @@ class GeoJsonParser {
 
       return boundaries;
     } catch (e) {
-      print('Error loading GeoJSON: $e');
+      print('Error loading GeoJSON from $assetPath: $e');
       return {};
     }
   }
