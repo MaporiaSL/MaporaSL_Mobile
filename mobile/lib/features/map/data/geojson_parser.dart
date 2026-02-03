@@ -29,7 +29,8 @@ class GeoJsonParser {
       for (final feature in features) {
         final properties = feature['properties'] as Map<String, dynamic>;
         // Try multiple property keys for name
-        final shapeName = properties['shapeName'] as String? ??
+        final shapeName =
+            properties['shapeName'] as String? ??
             properties['NAME_1'] as String? ??
             properties['NAME_2'] as String? ??
             properties['name'] as String?;

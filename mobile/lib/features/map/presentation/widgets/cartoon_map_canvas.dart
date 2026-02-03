@@ -25,7 +25,8 @@ class CartoonMapCanvas extends StatefulWidget {
 
 class _CartoonMapCanvasState extends State<CartoonMapCanvas> {
   late List<SriLankaRegion> _regions;
-  Map<String, List<List<Offset>>> _boundaries = {};
+  Map<String, List<List<Offset>>> _provinceBoundaries = {};
+  Map<String, List<List<Offset>>> _districtBoundaries = {};
   bool _boundariesLoaded = false;
 
   @override
@@ -38,9 +39,11 @@ class _CartoonMapCanvasState extends State<CartoonMapCanvas> {
   /// Load GeoJSON boundaries
   Future<void> _loadBoundaries() async {
     try {
-      final boundaries = await GeoJsonParser.loadProvinceBoundaries();
+      final provinces = await GeoJsonParser.loadProvinceBoundaries();
+      final districts = await GeoJsonParser.loadDistrictBoundaries();
       setState(() {
-        _boundaries = boundaries;
+        _provinceBoundaries = provinces;
+        _districtBoundaries = districts;
         _boundariesLoaded = true;
       });
     } catch (e) {
@@ -100,7 +103,8 @@ class _CartoonMapCanvasState extends State<CartoonMapCanvas> {
         painter: CartoonMapPainter(
           regions: _regions,
           selectedRegionId: widget.selectedRegionId,
-          boundaries: _boundaries,
+          provinceBoundaries: _provinceBoundaries,
+          districtBoundaries: _districtBoundaries,
           paintBuilder: (color, isSelected) {
             final paint = Paint()..color = color.toFlutterColor();
 
