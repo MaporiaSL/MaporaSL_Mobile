@@ -174,3 +174,100 @@ async function getAlbumStats(req, res) {
     res.status(500).json({ error: 'Failed to retrieve album statistics' });
   }
 }
+
+/**
+ * Update album metadata
+ * PATCH /api/albums/:albumId
+ */
+async function updateAlbum(req, res) {
+  try {
+    const { albumId } = req.params;
+    const userId = req.userId;
+    const { name, description, tags, districtId, provinceId, coverPhotoId } = req.body;
+
+    const album = await Album.findOne({ _id: albumId, userId });
+    if (!album) {
+      return res.status(404).json({ error: 'Album not found' });
+    }
+
+    // Update fields if provided
+    if (name !== undefined) album.name = name;
+    if (description !== undefined) album.description = description;
+    if (tags !== undefined) album.tags = tags;
+    if (districtId !== undefined) album.districtId = districtId;
+    if (provinceId !== undefined) album.provinceId = provinceId;
+
+    // Update cover photo if specified
+    if (coverPhotoId) {
+      const photo = album.photos.id(coverPhotoId);
+      if (photo) {
+        album.coverPhotoUrl = photo.url;
+      }
+    }
+
+    await album.save();
+
+    res.status(200).json({
+      message: 'Album updated successfully',
+      album: {
+        id: album._id,
+        name: album.name,
+        description: album.description,
+        coverPhotoUrl: album.coverPhotoUrl,
+        tags: album.tags,
+        districtId: album.districtId,
+        provinceId: album.provinceId,
+        photoCount: album.photos.length
+      }
+    });
+  } catch (error) {
+    console.error('Update album error:', error);
+    res.status(500).json({ error: 'Failed to update album' });
+  }
+}
+
+/**
+ * Delete an album and all its photos from Firebase Storage
+ * DELETE /api/albums/:albumId
+ */
+async function deleteAlbum(req, res) {
+  try {
+    const { albumId } = req.params;
+    const userId = req.userId;
+
+    const album = await Album.findOne({ _id: albumId, userId });
+    if (!album) {
+      return res.status(404).json({ error: 'Album not found' });
+    }
+
+    // Delete all photos from Firebase Storage
+    const bucket = getStorage();
+    const deletePromises = album.photos.map(async (photo) => {
+      try {
+        const file = bucket.file(photo.storagePath);
+        await file.delete();
+      } catch (err) {
+        console.error(`Failed to delete file ${photo.storagePath}:`, err);
+      }
+    });
+
+    await Promise.all(deletePromises);
+
+    // Delete album from MongoDB
+    await Album.deleteOne({ _id: albumId, userId });
+
+    res.status(200).json({ message: 'Album and all photos deleted successfully' });
+  } catch (error) {
+    console.error('Delete album error:', error);
+    res.status(500).json({ error: 'Failed to delete album' });
+  }
+}
+
+module.exports = {
+  createAlbum,
+  getAlbums,
+  getAlbum,
+  updateAlbum,
+  deleteAlbum,
+  getAlbumStats
+};
