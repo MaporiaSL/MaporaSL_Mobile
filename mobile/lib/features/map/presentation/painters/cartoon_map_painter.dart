@@ -2,17 +2,19 @@ import 'package:flutter/material.dart';
 import '../../data/regions_data.dart';
 
 /// Cartoonish painter for rendering stylized Sri Lanka map with GeoJSON boundaries
-/// Renders actual province outlines, boundaries, and colors
+/// Renders actual province and district outlines, boundaries, and colors
 class CartoonMapPainter extends CustomPainter {
   final List<SriLankaRegion> regions;
   final String? selectedRegionId;
-  final Map<String, List<List<Offset>>> boundaries;
+  final Map<String, List<List<Offset>>> provinceBoundaries;
+  final Map<String, List<List<Offset>>> districtBoundaries;
   final Paint Function(HexColor color, bool isSelected) paintBuilder;
 
   CartoonMapPainter({
     required this.regions,
     this.selectedRegionId,
-    required this.boundaries,
+    required this.provinceBoundaries,
+    required this.districtBoundaries,
     required this.paintBuilder,
   });
 
@@ -30,15 +32,54 @@ class CartoonMapPainter extends CustomPainter {
       Paint()..color = const Color(0xFF1A5F7A), // Deep ocean blue
     );
 
-    // Draw all regions with GeoJSON boundaries
+    // Draw all provinces with their colors
     for (final region in regions) {
       final isSelected = region.id == selectedRegionId;
       final paint = paintBuilder(region.color, isSelected);
       _drawRegionWithBoundaries(canvas, size, region, paint);
     }
 
-    // Draw borders and labels
+    // Draw district boundaries on top
+    _drawDistrictBoundaries(canvas, size);
+
+    // Draw outer border
     _drawBorders(canvas, size);
+  }
+
+  /// Draw all district boundaries
+  void _drawDistrictBoundaries(Canvas canvas, Size size) {
+    final districtBorderPaint = Paint()
+      ..color = Colors.white.withOpacity(0.4)
+      ..strokeWidth = 1
+      ..style = PaintingStyle.stroke;
+
+    for (final entry in districtBoundaries.entries) {
+      for (final polygon in entry.value) {
+        _drawPolygonBorder(canvas, size, polygon, districtBorderPaint);
+      }
+    }
+  }
+
+  /// Draw polygon border only (no fill)
+  void _drawPolygonBorder(
+    Canvas canvas,
+    Size size,
+    List<Offset> polygon,
+    Paint paint,
+  ) {
+    if (polygon.isEmpty) return;
+
+    final path = Path();
+    final first = _normalizeCoordinates(polygon[0], size);
+    path.moveTo(first.dx, first.dy);
+
+    for (int i = 1; i < polygon.length; i++) {
+      final point = _normalizeCoordinates(polygon[i], size);
+      path.lineTo(point.dx, point.dy);
+    }
+
+    path.close();
+    canvas.drawPath(path, paint);
   }
 
   /// Draw region with actual GeoJSON boundaries
@@ -53,7 +94,7 @@ class CartoonMapPainter extends CustomPainter {
     bool found = false;
 
     // Try multiple matching strategies
-    for (final entry in boundaries.entries) {
+    for (final entry in provinceBoundaries.entries) {
       final keyLower = entry.key.toLowerCase();
       final displayLower = region.displayName.toLowerCase();
 
@@ -192,6 +233,7 @@ class CartoonMapPainter extends CustomPainter {
   bool shouldRepaint(CartoonMapPainter oldDelegate) {
     return oldDelegate.selectedRegionId != selectedRegionId ||
         oldDelegate.regions != regions ||
-        oldDelegate.boundaries != boundaries;
+        oldDelegate.provinceBoundaries != provinceBoundaries ||
+        oldDelegate.districtBoundaries != districtBoundaries;
   }
 }

@@ -36,7 +36,7 @@ dependencies:
   cupertino_icons: ^1.0.8
 
   # Theming & fonts
-  google_fonts: ^6.1.0
+  google_fonts: ^8.0.0
   
   # State management
   flutter_riverpod: ^2.5.1
@@ -48,13 +48,13 @@ dependencies:
   json_annotation: ^4.8.1
   
   # Date & time formatting
-  intl: ^0.18.1
+  intl: ^0.20.2
   
   # Maps & location
   google_maps_flutter: ^2.7.0
   mapbox_maps_flutter: ^2.12.0
-  geolocator: ^12.0.0
-  permission_handler: ^11.0.1
+  geolocator: ^14.0.2
+  permission_handler: ^12.0.1
 
 
 dev_dependencies:
@@ -66,7 +66,7 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^5.0.0
+  flutter_lints: ^6.0.0
   
   # Code generation
   build_runner: ^2.4.6
@@ -85,7 +85,8 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets/geojson/geoBoundaries-LKA-ADM1_simplified.geojson
+    - assets/geojson/boundaries/LK-provinces.geojson
+    - assets/geojson/boundaries/LK-districts.geojson
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
