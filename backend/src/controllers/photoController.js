@@ -209,3 +209,119 @@ async function uploadMultiplePhotos(req, res) {
     res.status(500).json({ error: 'Failed to upload photos' });
   }
 }
+
+/**
+ * Get a single photo by ID
+ * GET /api/albums/:albumId/photos/:photoId
+ */
+async function getPhoto(req, res) {
+  try {
+    const { albumId, photoId } = req.params;
+    const userId = req.userId;
+
+    const album = await Album.findOne({ _id: albumId, userId });
+    if (!album) {
+      return res.status(404).json({ error: 'Album not found' });
+    }
+
+    const photo = album.photos.id(photoId);
+    if (!photo) {
+      return res.status(404).json({ error: 'Photo not found' });
+    }
+
+    res.status(200).json({
+      id: photo._id,
+      url: photo.url,
+      originalName: photo.originalName,
+      mimeType: photo.mimeType,
+      size: photo.size,
+      caption: photo.caption,
+      location: photo.location,
+      destinationId: photo.destinationId,
+      travelId: photo.travelId,
+      createdAt: photo.createdAt
+    });
+  } catch (error) {
+    console.error('Get photo error:', error);
+    res.status(500).json({ error: 'Failed to retrieve photo' });
+  }
+}
+
+/**
+ * Get a single photo by ID
+ * GET /api/albums/:albumId/photos/:photoId
+ */
+async function getPhoto(req, res) {
+  try {
+    const { albumId, photoId } = req.params;
+    const userId = req.userId;
+
+    const album = await Album.findOne({ _id: albumId, userId });
+    if (!album) {
+      return res.status(404).json({ error: 'Album not found' });
+    }
+
+    const photo = album.photos.id(photoId);
+    if (!photo) {
+      return res.status(404).json({ error: 'Photo not found' });
+    }
+
+    res.status(200).json({
+      id: photo._id,
+      url: photo.url,
+      originalName: photo.originalName,
+      mimeType: photo.mimeType,
+      size: photo.size,
+      caption: photo.caption,
+      location: photo.location,
+      destinationId: photo.destinationId,
+      travelId: photo.travelId,
+      createdAt: photo.createdAt
+    });
+  } catch (error) {
+    console.error('Get photo error:', error);
+    res.status(500).json({ error: 'Failed to retrieve photo' });
+  }
+}
+
+/**
+ * Get all photos in an album
+ * GET /api/albums/:albumId/photos
+ */
+async function getPhotos(req, res) {
+  try {
+    const { albumId } = req.params;
+    const userId = req.userId;
+    const { page = 1, limit = 20 } = req.query;
+
+    const album = await Album.findOne({ _id: albumId, userId });
+    if (!album) {
+      return res.status(404).json({ error: 'Album not found' });
+    }
+
+    // Paginate photos
+    const startIndex = (parseInt(page) - 1) * parseInt(limit);
+    const endIndex = startIndex + parseInt(limit);
+    const paginatedPhotos = album.photos.slice(startIndex, endIndex);
+
+    res.status(200).json({
+      albumId: album._id,
+      albumName: album.name,
+      totalPhotos: album.photos.length,
+      page: parseInt(page),
+      limit: parseInt(limit),
+      totalPages: Math.ceil(album.photos.length / parseInt(limit)),
+      photos: paginatedPhotos.map(photo => ({
+        id: photo._id,
+        url: photo.url,
+        originalName: photo.originalName,
+        caption: photo.caption,
+        location: photo.location,
+        createdAt: photo.createdAt
+      }))
+    });
+  } catch (error) {
+    console.error('Get photos error:', error);
+    res.status(500).json({ error: 'Failed to retrieve photos' });
+  }
+}
