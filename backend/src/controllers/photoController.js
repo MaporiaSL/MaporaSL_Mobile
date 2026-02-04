@@ -325,3 +325,107 @@ async function getPhotos(req, res) {
     res.status(500).json({ error: 'Failed to retrieve photos' });
   }
 }
+
+/**
+ * Update photo metadata (caption, location)
+ * PATCH /api/albums/:albumId/photos/:photoId
+ */
+async function updatePhoto(req, res) {
+  try {
+    const { albumId, photoId } = req.params;
+    const userId = req.userId;
+    const { caption, latitude, longitude, placeName } = req.body;
+
+    const album = await Album.findOne({ _id: albumId, userId });
+    if (!album) {
+      return res.status(404).json({ error: 'Album not found' });
+    }
+
+    const photo = album.photos.id(photoId);
+    if (!photo) {
+      return res.status(404).json({ error: 'Photo not found' });
+    }
+
+    // Update fields if provided
+    if (caption !== undefined) {
+      photo.caption = caption;
+    }
+    if (latitude !== undefined || longitude !== undefined || placeName !== undefined) {
+      photo.location = {
+        latitude: latitude !== undefined ? parseFloat(latitude) : photo.location?.latitude,
+        longitude: longitude !== undefined ? parseFloat(longitude) : photo.location?.longitude,
+        placeName: placeName !== undefined ? placeName : photo.location?.placeName
+      };
+    }
+
+    await album.save();
+
+    res.status(200).json({
+      message: 'Photo updated successfully',
+      photo: {
+        id: photo._id,
+        url: photo.url,
+        caption: photo.caption,
+        location: photo.location
+      }
+    });
+  } catch (error) {
+    console.error('Update photo error:', error);
+    res.status(500).json({ error: 'Failed to update photo' });
+  }
+}
+
+/**
+ * Delete a photo from Firebase Storage and MongoDB
+ * DELETE /api/albums/:albumId/photos/:photoId
+ */
+async function deletePhoto(req, res) {
+  try {
+    const { albumId, photoId } = req.params;
+    const userId = req.userId;
+
+    const album = await Album.findOne({ _id: albumId, userId });
+    if (!album) {
+      return res.status(404).json({ error: 'Album not found' });
+    }
+
+    const photo = album.photos.id(photoId);
+    if (!photo) {
+      return res.status(404).json({ error: 'Photo not found' });
+    }
+
+    // Delete from Firebase Storage
+    try {
+      const bucket = getStorage();
+      const file = bucket.file(photo.storagePath);
+      await file.delete();
+    } catch (storageError) {
+      console.error('Firebase Storage delete error:', storageError);
+      // Continue with MongoDB deletion even if Storage deletion fails
+    }
+
+    // Update cover photo if we're deleting the current cover
+    if (album.coverPhotoUrl === photo.url) {
+      const remainingPhotos = album.photos.filter(p => p._id.toString() !== photoId);
+      album.coverPhotoUrl = remainingPhotos.length > 0 ? remainingPhotos[0].url : null;
+    }
+
+    // Remove photo from album
+    album.photos.pull(photoId);
+    await album.save();
+
+    res.status(200).json({ message: 'Photo deleted successfully' });
+  } catch (error) {
+    console.error('Delete photo error:', error);
+    res.status(500).json({ error: 'Failed to delete photo' });
+  }
+}
+
+module.exports = {
+  uploadPhoto,
+  getPhoto,
+  getPhotos,
+  updatePhoto,
+  deletePhoto,
+  uploadMultiplePhotos,
+};
