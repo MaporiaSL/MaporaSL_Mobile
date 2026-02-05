@@ -59,8 +59,8 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                   selectedDistrict = districtName;
                   selectedProvince =
                       (provinceName != null && provinceName.isNotEmpty)
-                          ? provinceName
-                          : null;
+                      ? provinceName
+                      : null;
                 });
               },
             ),

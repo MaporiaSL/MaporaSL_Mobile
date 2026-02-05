@@ -98,7 +98,8 @@ class _CartoonMapCanvasState extends State<CartoonMapCanvas> {
       final xj = polygon[j].dx;
       final yj = polygon[j].dy;
 
-      final intersect = ((yi > point.dy) != (yj > point.dy)) &&
+      final intersect =
+          ((yi > point.dy) != (yj > point.dy)) &&
           (point.dx <
               (xj - xi) * (point.dy - yi) / ((yj - yi) == 0 ? 1 : (yj - yi)) +
                   xi);

@@ -62,10 +62,7 @@ class GeoJsonParser {
       );
     } catch (e) {
       print('Error loading GeoJSON from $assetPath: $e');
-      return const DistrictBoundaryData(
-        boundaries: {},
-        districtToProvince: {},
-      );
+      return const DistrictBoundaryData(boundaries: {}, districtToProvince: {});
     }
   }
 

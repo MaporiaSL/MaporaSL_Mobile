@@ -95,10 +95,7 @@ class MapStateNotifier extends StateNotifier<MapState> {
 
   /// Set current trip and load GeoJSON
   void setCurrentTrip(Trip trip) {
-    state = state.copyWith(
-      currentTrip: trip,
-      isLoading: true,
-    );
+    state = state.copyWith(currentTrip: trip, isLoading: true);
   }
 
   /// Update with loaded GeoJSON data
@@ -119,9 +116,7 @@ class MapStateNotifier extends StateNotifier<MapState> {
 
   /// Update user location
   void setUserLocation(double latitude, double longitude) {
-    state = state.copyWith(
-      userLocation: mapbox.LatLng(latitude, longitude),
-    );
+    state = state.copyWith(userLocation: mapbox.LatLng(latitude, longitude));
   }
 
   /// Change map style
@@ -146,10 +141,7 @@ class MapStateNotifier extends StateNotifier<MapState> {
 
   /// Set error message
   void setError(String error) {
-    state = state.copyWith(
-      error: error,
-      isLoading: false,
-    );
+    state = state.copyWith(error: error, isLoading: false);
   }
 
   /// Clear error
@@ -174,7 +166,7 @@ class MapStateNotifier extends StateNotifier<MapState> {
         // Only process Point features (not routes or boundaries)
         if (geometry['type'] == 'Point' && properties['type'] != 'route') {
           final coords = geometry['coordinates'] as List;
-          
+
           try {
             final destination = DestinationDetail(
               id: properties['id']?.toString() ?? '',
