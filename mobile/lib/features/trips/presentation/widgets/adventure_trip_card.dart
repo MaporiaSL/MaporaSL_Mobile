@@ -16,7 +16,7 @@ class AdventureTripCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isActive = trip.status == TripStatus.active;
+    final isActive = trip.timelineStatus == TripStatus.active;
 
     return Card(
       elevation: isActive ? 6 : 2,
@@ -43,7 +43,9 @@ class AdventureTripCard extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: _getStatusColor(trip.status).withOpacity(0.1),
+                      color: _getStatusColor(
+                        trip.timelineStatus,
+                      ).withOpacity(0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
@@ -65,7 +67,7 @@ class AdventureTripCard extends StatelessWidget {
                   ),
                   const SizedBox(width: 8),
                   // Status chip
-                  _StatusChip(status: trip.status),
+                  _StatusChip(status: trip.timelineStatus),
                 ],
               ),
               const SizedBox(height: 12),

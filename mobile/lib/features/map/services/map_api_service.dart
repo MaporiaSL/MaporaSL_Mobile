@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../core/services/api_client.dart';
+import 'package:gemified_travel_portfolio/core/services/api_client.dart';
 import '../models/map_models.dart';
 
 /// Map API service for fetching map data
