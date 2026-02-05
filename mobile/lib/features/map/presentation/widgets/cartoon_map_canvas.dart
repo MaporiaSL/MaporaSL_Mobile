@@ -98,9 +98,14 @@ class _CartoonMapCanvasState extends State<CartoonMapCanvas> {
       final xj = polygon[j].dx;
       final yj = polygon[j].dy;
 
+      // Skip horizontal edges; they do not contribute to the ray casting algorithm.
+      if (yi == yj) {
+        continue;
+      }
+
       final intersect = ((yi > point.dy) != (yj > point.dy)) &&
           (point.dx <
-              (xj - xi) * (point.dy - yi) / ((yj - yi) == 0 ? 1 : (yj - yi)) +
+              (xj - xi) * (point.dy - yi) / (yj - yi) +
                   xi);
       if (intersect) inside = !inside;
     }
