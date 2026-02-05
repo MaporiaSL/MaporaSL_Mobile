@@ -50,19 +50,21 @@ class _MapScreenState extends ConsumerState<MapScreen> {
         top: false,
         child: Stack(
           children: [
-            CartoonMapCanvas(
-              regions: sriLankaRegions,
-              selectedRegionId: selectedProvince,
-              selectedDistrictName: selectedDistrict,
-              onDistrictSelected: (districtName, provinceName) {
-                setState(() {
-                  selectedDistrict = districtName;
-                  selectedProvince =
-                      (provinceName != null && provinceName.isNotEmpty)
-                          ? provinceName
-                          : null;
-                });
-              },
+            Positioned.fill(
+              child: CartoonMapCanvas(
+                regions: sriLankaRegions,
+                selectedRegionId: selectedProvince,
+                selectedDistrictName: selectedDistrict,
+                onDistrictSelected: (districtName, provinceName) {
+                  setState(() {
+                    selectedDistrict = districtName;
+                    selectedProvince =
+                        (provinceName != null && provinceName.isNotEmpty)
+                            ? provinceName
+                            : null;
+                  });
+                },
+              ),
             ),
             if (selectedProvince != null || selectedDistrict != null)
               Positioned(
