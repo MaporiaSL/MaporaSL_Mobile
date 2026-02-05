@@ -3,8 +3,8 @@ const router = express.Router();
 const { checkJwt, extractUserId } = require('../middleware/auth');
 const { registerUser, getMe, logoutUser } = require('../controllers/authController');
 
-// Public route (called after Auth0 signup/login to sync user)
-router.post('/register', registerUser);
+// Protected route (called after Firebase login to sync user)
+router.post('/register', checkJwt, extractUserId, registerUser);
 
 // Protected routes
 router.get('/me', checkJwt, extractUserId, getMe);

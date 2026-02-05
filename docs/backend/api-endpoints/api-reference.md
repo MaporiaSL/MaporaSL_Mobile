@@ -21,29 +21,22 @@
 
 ## Authentication
 
-All endpoints except `POST /api/auth/register` require JWT authentication via Auth0.
+All endpoints require Firebase ID token authentication.
 
 ### Headers Required
 
 ```
-Authorization: Bearer <JWT_TOKEN>
+Authorization: Bearer <FIREBASE_ID_TOKEN>
 Content-Type: application/json
 ```
 
 ### Getting a Token
 
-Use Auth0 Client Credentials flow:
+Use Firebase Authentication (email/password or provider) to obtain an ID token:
 
 ```bash
-curl --request POST \
-  --url https://YOUR_AUTH0_DOMAIN/oauth/token \
-  --header 'content-type: application/json' \
-  --data '{
-    "client_id": "YOUR_CLIENT_ID",
-    "client_secret": "YOUR_CLIENT_SECRET",
-    "audience": "YOUR_API_AUDIENCE",
-    "grant_type": "client_credentials"
-  }'
+// Use the Firebase SDK on the client to sign in and retrieve an ID token.
+// Then attach it as: Authorization: Bearer <FIREBASE_ID_TOKEN>
 ```
 
 ---
@@ -52,13 +45,13 @@ curl --request POST \
 
 ### Register
 **Endpoint**: `POST /api/auth/register`  
-**Auth**: Not required
+**Auth**: Required (Firebase ID token)
 
 **Request**:
 ```json
 {
   "email": "user@example.com",
-  "password": "securePassword123"
+  "name": "John Doe"
 }
 ```
 
@@ -74,12 +67,12 @@ curl --request POST \
 
 ### Get Current User
 **Endpoint**: `GET /api/auth/me`  
-**Auth**: Required (JWT)
+**Auth**: Required (Firebase ID token)
 
 **Response** (200):
 ```json
 {
-  "sub": "auth0|user123",
+  "sub": "firebase-uid-123",
   "email": "user@example.com",
   "email_verified": true,
   "name": "John Doe"
@@ -88,7 +81,7 @@ curl --request POST \
 
 ### Logout
 **Endpoint**: `POST /api/auth/logout`  
-**Auth**: Required (JWT)
+**Auth**: Required (Firebase ID token)
 
 **Response** (200):
 ```json

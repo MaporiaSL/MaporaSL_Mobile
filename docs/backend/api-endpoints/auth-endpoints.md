@@ -7,16 +7,16 @@
 
 ## Overview
 
-Authentication endpoints handle user registration, login verification, and profile retrieval. Auth0 is used as the identity provider, and these endpoints sync user data with MongoDB.
+Authentication endpoints handle user registration, login verification, and profile retrieval. Firebase Authentication is used as the identity provider, and these endpoints sync user data with MongoDB.
 
 ---
 
 ## Authentication Headers
 
-All endpoints except `POST /api/auth/register` require JWT authentication.
+All endpoints require Firebase ID token authentication.
 
 ```http
-Authorization: Bearer <JWT_TOKEN>
+Authorization: Bearer <FIREBASE_ID_TOKEN>
 Content-Type: application/json
 ```
 
@@ -26,17 +26,16 @@ Content-Type: application/json
 
 ### Register User
 
-Sync user from Auth0 to MongoDB database. Call this after Auth0 login to create/update user record.
+Sync user from Firebase to MongoDB database. Call this after Firebase login to create/update user record.
 
 **Endpoint**: `POST /api/auth/register`  
-**Auth**: Not required  
+**Auth**: Required (Firebase ID token)  
 **Controller**: `authController.registerUser`
 
 #### Request
 
 ```json
 {
-  "auth0Id": "auth0|123456789",
   "email": "user@example.com",
   "name": "John Doe",
   "profilePicture": "https://example.com/avatar.jpg"
@@ -50,7 +49,7 @@ Sync user from Auth0 to MongoDB database. Call this after Auth0 login to create/
   "message": "User registered successfully",
   "user": {
     "_id": "60a7b8c9d1e2f3g4h5i6j7k8",
-    "auth0Id": "auth0|123456789",
+    "auth0Id": "firebase-uid-123456789",
     "email": "user@example.com",
     "name": "John Doe",
     "profilePicture": "https://example.com/avatar.jpg",
@@ -77,7 +76,7 @@ Sync user from Auth0 to MongoDB database. Call this after Auth0 login to create/
 **400 Bad Request**:
 ```json
 {
-  "error": "Missing required fields: auth0Id, email, name"
+  "error": "Missing required fields: email, name"
 }
 ```
 
@@ -92,9 +91,9 @@ Sync user from Auth0 to MongoDB database. Call this after Auth0 login to create/
 
 ```bash
 curl -X POST http://localhost:5000/api/auth/register \
+  -H "Authorization: Bearer YOUR_FIREBASE_ID_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
-    "auth0Id": "auth0|123456789",
     "email": "john@example.com",
     "name": "John Doe"
   }'
@@ -107,19 +106,19 @@ curl -X POST http://localhost:5000/api/auth/register \
 Retrieve current authenticated user's profile from MongoDB.
 
 **Endpoint**: `GET /api/auth/me`  
-**Auth**: Required (JWT)  
+**Auth**: Required (Firebase ID token)  
 **Controller**: `authController.getMe`
 
 #### Request
 
-No request body. User ID extracted from JWT token.
+No request body. User ID extracted from Firebase ID token.
 
 #### Response (200 OK)
 
 ```json
 {
   "_id": "60a7b8c9d1e2f3g4h5i6j7k8",
-  "auth0Id": "auth0|123456789",
+  "auth0Id": "firebase-uid-123456789",
   "email": "user@example.com",
   "name": "John Doe",
   "profilePicture": "https://example.com/avatar.jpg",
@@ -165,17 +164,17 @@ No request body. User ID extracted from JWT token.
 
 ```bash
 curl http://localhost:5000/api/auth/me \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+  -H "Authorization: Bearer YOUR_FIREBASE_ID_TOKEN"
 ```
 
 ---
 
 ### Logout
 
-Logout current user (placeholder endpoint - actual logout handled by Auth0 on client).
+Logout current user (placeholder endpoint - actual logout handled by Firebase on client).
 
 **Endpoint**: `POST /api/auth/logout`  
-**Auth**: Required (JWT)  
+**Auth**: Required (Firebase ID token)  
 **Controller**: `authController.logoutUser`
 
 #### Request
@@ -203,7 +202,7 @@ No request body.
 
 ```bash
 curl -X POST http://localhost:5000/api/auth/logout \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+  -H "Authorization: Bearer YOUR_FIREBASE_ID_TOKEN"
 ```
 
 ---
@@ -217,12 +216,12 @@ When `NODE_ENV !== 'production'`, authentication is bypassed with a mock user:
 ```javascript
 // In middleware/auth.js
 if (process.env.NODE_ENV !== 'production') {
-  req.user = { auth0Id: 'auth0|dev-user-123' };
+  req.user = { uid: 'dev-user-123' };
   return next();
 }
 ```
 
-**To Enable JWT Validation**: Set `NODE_ENV=production` in `.env`
+**To Enable Token Validation**: Set `NODE_ENV=production` in `.env`
 
 ---
 
@@ -231,12 +230,11 @@ if (process.env.NODE_ENV !== 'production') {
 ### Frontend (Flutter)
 
 ```dart
-// After Auth0 login
+// After Firebase login
 final credentials = await authService.login();
 
 // Sync to backend
 final response = await apiClient.post('/api/auth/register', data: {
-  'auth0Id': credentials.user.id,
   'email': credentials.user.email,
   'name': credentials.user.name,
   'profilePicture': credentials.user.picture,
@@ -252,5 +250,5 @@ print(user['totalPlacesVisited']);
 ## See Also
 
 - [Authentication Feature Implementation](../../common/feature-implementation/authentication.md)
-- [Auth0 Setup Guide](../../common/setup-guides/auth0-setup.md)
+- [Firebase Auth Setup Guide](../../common/setup-guides/firebase-auth-setup.md)
 - [User Model Documentation](../database/models.md#user-model)

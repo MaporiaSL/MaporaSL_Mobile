@@ -1,17 +1,18 @@
 const User = require('../models/User');
 
-// Register or sync user (called after Auth0 signup/login)
+// Register or sync user (called after Firebase login)
 async function registerUser(req, res) {
   try {
-    const { auth0Id, email, name, profilePicture } = req.body;
+    const { email, name, profilePicture } = req.body;
+    const authProviderId = req.userId;
 
     // Validate required fields
-    if (!auth0Id || !email || !name) {
-      return res.status(400).json({ error: 'Missing required fields: auth0Id, email, name' });
+    if (!authProviderId || !email || !name) {
+      return res.status(400).json({ error: 'Missing required fields: email, name' });
     }
 
     // Check if user exists
-    let user = await User.findOne({ auth0Id });
+    let user = await User.findOne({ auth0Id: authProviderId });
 
     if (user) {
       return res.status(200).json({
@@ -22,7 +23,7 @@ async function registerUser(req, res) {
 
     // Create new user
     user = new User({
-      auth0Id,
+      auth0Id: authProviderId,
       email,
       name,
       profilePicture
