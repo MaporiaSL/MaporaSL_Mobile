@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart' as mapbox;
 import '../models/map_models.dart';
@@ -262,5 +263,3 @@ final showRouteProvider = Provider<bool>((ref) {
 final showBoundaryProvider = Provider<bool>((ref) {
   return ref.watch(mapStateProvider).showBoundary;
 });
-
-import 'package:flutter/foundation.dart';

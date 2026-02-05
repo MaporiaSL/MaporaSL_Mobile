@@ -562,6 +562,11 @@ class _FilterSection extends StatelessWidget {
   const _FilterSection({
     required this.title,
     required this.options,
+    this.selected,
+    this.selectedList,
+    this.multiSelect = false,
+    this.onSelect,
+    this.onSelectList,
   });
 
   @override
