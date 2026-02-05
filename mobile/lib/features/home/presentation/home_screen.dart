@@ -41,9 +41,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
-                        builder: (_) => const ProfileScreen(),
-                      ),
+                      MaterialPageRoute(builder: (_) => const ProfileScreen()),
                     );
                   },
                   borderRadius: BorderRadius.circular(20),
@@ -67,10 +65,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     child: const CircleAvatar(
                       backgroundColor: Colors.transparent,
-                      child: Icon(
-                        Icons.person,
-                        color: Colors.black87,
-                      ),
+                      child: Icon(Icons.person, color: Colors.black87),
                     ),
                   ),
                 ),
