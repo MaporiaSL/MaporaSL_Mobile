@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../data/regions_data.dart';
+import '../theme/map_visual_theme.dart';
 
 /// Cartoonish painter for rendering stylized Sri Lanka map with GeoJSON boundaries
 /// Renders actual province and district outlines, boundaries, and colors
@@ -9,7 +10,7 @@ class CartoonMapPainter extends CustomPainter {
   final Map<String, List<List<Offset>>> provinceBoundaries;
   final Map<String, List<List<Offset>>> districtBoundaries;
   final String? selectedDistrictName;
-  final Paint Function(HexColor color, bool isSelected) paintBuilder;
+  final MapVisualTheme theme;
 
   CartoonMapPainter({
     required this.regions,
@@ -17,7 +18,7 @@ class CartoonMapPainter extends CustomPainter {
     required this.provinceBoundaries,
     required this.districtBoundaries,
     this.selectedDistrictName,
-    required this.paintBuilder,
+    required this.theme,
   });
 
   /// Sri Lanka geographic bounds (latitude/longitude)
@@ -31,14 +32,20 @@ class CartoonMapPainter extends CustomPainter {
     // Background (ocean color)
     canvas.drawRect(
       Rect.fromLTWH(0, 0, size.width, size.height),
-      Paint()..color = const Color(0xFF1A5F7A), // Deep ocean blue
+      Paint()..color = theme.oceanColor,
     );
 
     // Draw all provinces with their colors
     for (final region in regions) {
       final isSelected = region.id == selectedRegionId;
-      final paint = paintBuilder(region.color, isSelected);
-      _drawRegionWithBoundaries(canvas, size, region, paint);
+      final fillColor = theme.resolveRegionFill(
+        region.id,
+        region.color.toFlutterColor(),
+      );
+      final fillPaint = Paint()
+        ..color = fillColor
+        ..style = PaintingStyle.fill;
+      _drawRegionWithBoundaries(canvas, size, region, fillPaint, isSelected);
     }
 
     // Draw district boundaries on top
@@ -51,13 +58,13 @@ class CartoonMapPainter extends CustomPainter {
   /// Draw all district boundaries
   void _drawDistrictBoundaries(Canvas canvas, Size size) {
     final districtBorderPaint = Paint()
-      ..color = Colors.white.withOpacity(0.4)
-      ..strokeWidth = 1
+      ..color = theme.districtBorderColor
+      ..strokeWidth = theme.districtBorderWidth
       ..style = PaintingStyle.stroke;
 
     final selectedBorderPaint = Paint()
-      ..color = const Color(0xFFFFD54F)
-      ..strokeWidth = 3
+      ..color = theme.selectedDistrictBorderColor
+      ..strokeWidth = theme.selectedDistrictBorderWidth
       ..style = PaintingStyle.stroke;
 
     for (final entry in districtBoundaries.entries) {
@@ -101,6 +108,7 @@ class CartoonMapPainter extends CustomPainter {
     Size size,
     SriLankaRegion region,
     Paint paint,
+    bool isSelected,
   ) {
     // Find matching boundary for this region
     late List<List<Offset>> polygons;
@@ -126,8 +134,21 @@ class CartoonMapPainter extends CustomPainter {
     }
 
     // Draw all polygons for this region with filled color
+    final borderPaint = Paint()
+      ..color = theme.provinceBorderColor
+      ..strokeWidth = theme.provinceBorderWidth
+      ..style = PaintingStyle.stroke;
+
+    final selectedBorderPaint = Paint()
+      ..color = theme.selectedProvinceBorderColor
+      ..strokeWidth = theme.selectedProvinceBorderWidth
+      ..style = PaintingStyle.stroke;
+
     for (final polygon in polygons) {
-      _drawPolygon(canvas, size, polygon, paint);
+      _drawPolygon(canvas, size, polygon, paint, borderPaint);
+      if (isSelected) {
+        _drawPolygonBorder(canvas, size, polygon, selectedBorderPaint);
+      }
     }
 
     // Draw region label at center
@@ -141,6 +162,7 @@ class CartoonMapPainter extends CustomPainter {
     Size size,
     List<Offset> polygon,
     Paint paint,
+    Paint borderPaint,
   ) {
     if (polygon.isEmpty) return;
 
@@ -155,14 +177,7 @@ class CartoonMapPainter extends CustomPainter {
 
     path.close();
 
-    // Draw filled province with vibrant color
     canvas.drawPath(path, paint);
-
-    // Draw strong border
-    final borderPaint = Paint()
-      ..color = Colors.white.withOpacity(0.7)
-      ..strokeWidth = 2
-      ..style = PaintingStyle.stroke;
     canvas.drawPath(path, borderPaint);
   }
 
@@ -204,17 +219,7 @@ class CartoonMapPainter extends CustomPainter {
     final normalized = _normalizeCoordinates(position, size);
 
     final textPainter = TextPainter(
-      text: TextSpan(
-        text: label,
-        style: const TextStyle(
-          color: Colors.white,
-          fontSize: 11,
-          fontWeight: FontWeight.bold,
-          shadows: [
-            Shadow(offset: Offset(1, 1), blurRadius: 2, color: Colors.black87),
-          ],
-        ),
-      ),
+      text: TextSpan(text: label, style: theme.labelStyle),
       textDirection: TextDirection.ltr,
     );
     textPainter.layout();
@@ -228,8 +233,8 @@ class CartoonMapPainter extends CustomPainter {
   /// Draw province borders and coastline
   void _drawBorders(Canvas canvas, Size size) {
     final borderPaint = Paint()
-      ..color = Colors.white.withOpacity(0.3)
-      ..strokeWidth = 1.5
+      ..color = theme.coastlineColor
+      ..strokeWidth = theme.coastlineWidth
       ..style = PaintingStyle.stroke;
 
     // Draw coastline border

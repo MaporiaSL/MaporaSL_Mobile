@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/regions_data.dart';
 import 'widgets/cartoon_map_canvas.dart';
+import 'theme/map_visual_theme.dart';
 
 /// Cartoonish map screen displaying trip with stylized Sri Lanka map
 class MapScreen extends ConsumerStatefulWidget {
@@ -16,6 +17,23 @@ class MapScreen extends ConsumerStatefulWidget {
 class _MapScreenState extends ConsumerState<MapScreen> {
   String? selectedDistrict;
   String? selectedProvince;
+
+  static const MapVisualTheme _mapTheme = MapVisualTheme(
+    oceanColor: Color.fromARGB(255, 0, 1, 2),
+    coastlineColor: Color(0x66FFFFFF),
+    provinceBorderColor: Color(0x99FFFFFF),
+    districtBorderColor: Color.fromARGB(84, 247, 4, 4),
+    selectedDistrictBorderColor: Color(0xFFFFC857),
+    selectedProvinceBorderColor: Color(0xFF7AE1FF),
+    labelStyle: TextStyle(
+      color: Colors.white,
+      fontSize: 12,
+      fontWeight: FontWeight.w700,
+      shadows: [
+        Shadow(offset: Offset(1, 1), blurRadius: 2, color: Colors.black87),
+      ],
+    ),
+  );
 
   @override
   void initState() {
@@ -54,6 +72,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
               regions: sriLankaRegions,
               selectedRegionId: selectedProvince,
               selectedDistrictName: selectedDistrict,
+              theme: _mapTheme,
               onDistrictSelected: (districtName, provinceName) {
                 setState(() {
                   selectedDistrict = districtName;

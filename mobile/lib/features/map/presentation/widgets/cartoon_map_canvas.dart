@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../data/regions_data.dart';
 import '../../data/geojson_parser.dart';
 import '../painters/cartoon_map_painter.dart';
+import '../theme/map_visual_theme.dart';
 
 /// Interactive cartoonish map canvas
 /// Detects region taps and displays selection feedback
@@ -13,6 +14,7 @@ class CartoonMapCanvas extends StatefulWidget {
   final Function(String regionId)? onRegionSelected;
   final void Function(String districtName, String? provinceName)?
   onDistrictSelected;
+  final MapVisualTheme theme;
 
   const CartoonMapCanvas({
     super.key,
@@ -22,6 +24,7 @@ class CartoonMapCanvas extends StatefulWidget {
     this.onRegionTapped,
     this.onRegionSelected,
     this.onDistrictSelected,
+    this.theme = const MapVisualTheme(),
   });
 
   @override
@@ -136,16 +139,7 @@ class _CartoonMapCanvasState extends State<CartoonMapCanvas> {
           selectedDistrictName: widget.selectedDistrictName,
           provinceBoundaries: _provinceBoundaries,
           districtBoundaries: _districtBoundaries,
-          paintBuilder: (color, isSelected) {
-            final paint = Paint()..color = color.toFlutterColor();
-
-            if (isSelected) {
-              paint.strokeWidth = 2;
-              paint.style = PaintingStyle.stroke;
-            }
-
-            return paint;
-          },
+          theme: widget.theme,
         ),
         child: Container(),
       ),
