@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dio/dio.dart';
+import '../../../../core/config/app_config.dart';
 import '../../data/datasources/trips_api.dart';
 import '../../data/repositories/trips_repository.dart';
 import '../../data/models/trip_model.dart';
@@ -160,7 +161,13 @@ class TripsNotifier extends StateNotifier<TripsState> {
 
 /// Provider for Dio instance (can be overridden for testing)
 final dioProvider = Provider<Dio>((ref) {
-  final dio = Dio();
+  final dio = Dio(
+    BaseOptions(
+      baseUrl: AppConfig.apiBaseUrl,
+      connectTimeout: const Duration(seconds: 10),
+      receiveTimeout: const Duration(seconds: 10),
+    ),
+  );
 
   // Add auth interceptor here when Auth0 is integrated
   // dio.interceptors.add(AuthInterceptor());

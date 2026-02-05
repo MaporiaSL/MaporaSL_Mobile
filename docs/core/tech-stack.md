@@ -1,7 +1,7 @@
-﻿# MAPORIA Technology Stack (Chosen: Express.js + MongoDB + Auth0)
+﻿# MAPORIA Technology Stack (Chosen: Express.js + MongoDB + Firebase Auth)
 
 > **Date**: January 1, 2026  
-> **Decision**: Option 1B (Express.js + MongoDB Atlas + Auth0 + Firebase Storage/FCM). Supabase remains an alternative in docs/ALTERNATIVE_STACKS.md.
+> **Decision**: Express.js + MongoDB Atlas + Firebase Auth + Firebase Storage/FCM. Supabase remains an alternative in docs/ALTERNATIVE_STACKS.md.
 
 ---
 
@@ -12,7 +12,7 @@
 | Mobile App | Flutter (Dart) | Cross-platform, fast iteration | Free |
 | Backend API | Node.js + Express (TypeScript) | Simple, flexible, industry-standard | Free (Vercel/Railway) |
 | Database | MongoDB Atlas (M0) | Flexible schema, always-free tier | Free |
-| Authentication | Auth0 | Secure, OAuth-ready, 7k MAU free | Free |
+| Authentication | Firebase Auth | Native SDKs, simple setup, free tier | Free |
 | File Storage | Firebase Storage | Easy SDK, 5GB free | Free |
 | Maps | Mapbox | Custom styling for gamification, 50k MAU free | Free |
 | Notifications | Firebase Cloud Messaging | Reliable, free | Free |
@@ -42,7 +42,7 @@ mobile/
        constants/
        services/
           api_service.dart      # REST client (Dio)
-          auth0_service.dart    # Native/Auth0 login flows
+          firebase_auth_service.dart    # Firebase Auth login flows
           location_service.dart
           camera_service.dart
        utils/
@@ -74,8 +74,8 @@ dependencies:
   # Networking & Auth
   dio: ^5.0.0
   http: ^1.1.0
-  flutter_secure_storage: ^8.0.0   # store JWT/access tokens
-  flutter_appauth: ^6.0.0          # Auth0 native flows
+   flutter_secure_storage: ^8.0.0   # store ID tokens
+   firebase_auth: ^4.0.0            # Firebase Auth
 
   # Maps & Location
   mapbox_maps_flutter: ^0.2.0
@@ -110,7 +110,7 @@ dev_dependencies:
 # 2) Backend (Node.js + Express + TypeScript)
 - Minimal boilerplate, fast to build, huge ecosystem
 - REST style for simplicity; add GraphQL later if needed
-- Auth0-issued JWTs validated in middleware
+- Firebase ID tokens validated in middleware
 
 ## Proposed Backend Layout
 ```
@@ -120,9 +120,9 @@ backend/
     config/
        env.ts
        database.ts            # Mongo connection
-       auth0.ts               # JWKS / audience / issuer
+      firebase.ts            # Admin SDK init / token verification
     middleware/
-       auth.ts                # Validate Auth0 JWT
+      auth.ts                # Validate Firebase ID token
        errorHandler.ts
     models/                    # Mongoose schemas
     routes/                    # Express routers
@@ -134,15 +134,24 @@ backend/
  .env.example
 ```
 
-## Auth0 Integration (API)
+## Firebase Auth Integration (API)
 ```typescript
 // middleware/auth.ts
-import { auth } from 'express-oauth2-jwt-bearer';
+import { getAuth } from 'firebase-admin/auth';
 
-export const requireAuth = auth({
-  audience: process.env.AUTH0_AUDIENCE!,
-  issuerBaseURL: `https://${process.env.AUTH0_DOMAIN}`,
-});
+export async function requireAuth(req, res, next) {
+   const header = req.headers.authorization || '';
+   const token = header.startsWith('Bearer ') ? header.slice(7) : null;
+   if (!token) return res.status(401).json({ error: 'Missing token' });
+
+   try {
+      const decoded = await getAuth().verifyIdToken(token);
+      req.user = { firebaseUid: decoded.uid, email: decoded.email };
+      return next();
+   } catch (err) {
+      return res.status(401).json({ error: 'Invalid token' });
+   }
+}
 ```
 
 ## Protected Route Example
@@ -160,7 +169,7 @@ export default router;
 
 ## Deployment (prototype)
 - API hosting: Vercel (serverless) or Railway (always-free credits)
-- Secrets: AUTH0_DOMAIN, AUTH0_AUDIENCE, MONGODB_URI stored in platform secrets
+- Secrets: FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, FIREBASE_PRIVATE_KEY, MONGODB_URI stored in platform secrets
 
 ---
 
@@ -184,27 +193,17 @@ export const Visit = model('Visit', VisitSchema);
 
 ---
 
-# 4) Authentication (Auth0)
-- Free tier ~7k MAU
-- Native app flow via `flutter_appauth` (Authorization Code + PKCE)
-- Access token (Bearer) sent to Express API; middleware validates audience/issuer
+# 4) Authentication (Firebase Auth)
+- Free tier for core auth features
+- Native in-app login via `firebase_auth`
+- ID token (Bearer) sent to Express API; middleware verifies token
 
 ```dart
-// auth0_service.dart (Flutter)
-final _appAuth = FlutterAppAuth();
+// firebase_auth_service.dart (Flutter)
+final auth = FirebaseAuth.instance;
 
-Future<AuthResponse?> login() async {
-  final result = await _appAuth.authorizeAndExchangeCode(
-    AuthorizationTokenRequest(
-      'AUTH0_CLIENT_ID',
-      'AUTH0_DOMAIN/authorize',
-      issuer: 'https://AUTH0_DOMAIN',
-      redirectUrl: 'com.maporia.app://login-callback',
-      scopes: ['openid', 'profile', 'email'],
-      audience: 'AUTH0_API_AUDIENCE',
-    ),
-  );
-  return result;
+Future<UserCredential> loginWithEmail(String email, String password) {
+   return auth.signInWithEmailAndPassword(email: email, password: password);
 }
 ```
 
@@ -242,14 +241,14 @@ Future<AuthResponse?> login() async {
 ---
 
 # 10) Environments & Secrets
-- Local: `.env` for API, Auth0, Mongo, Firebase
+- Local: `.env` for API, Firebase, Mongo
 - Remote: platform secrets on Vercel/Railway; Flutter `.env` via `flutter_dotenv` if needed
 
 ---
 
 # 11) Cost Snapshot (Prototype)
 - MongoDB Atlas M0: $0
-- Auth0: $0 (within free tier)
+- Firebase Auth: $0 (within free tier)
 - Firebase Storage + FCM + Analytics: $0
 - Vercel/Railway: $0 within limits
 - Mapbox: $0 up to ~50k MAU
@@ -258,7 +257,7 @@ Future<AuthResponse?> login() async {
 
 # 12) Migration Notes
 - Swap MongoDB -> managed Postgres + Prisma if relational needs grow
-- Swap Auth0 -> AWS Cognito/Okta if enterprise SSO required
+- Swap Firebase Auth -> AWS Cognito/Okta if enterprise SSO required
 - Move storage -> S3/Cloudinary for advanced media pipelines
 - Add Redis for caching/leaderboards if realtime load increases
 

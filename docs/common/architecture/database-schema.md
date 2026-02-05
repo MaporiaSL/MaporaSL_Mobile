@@ -37,7 +37,7 @@ All data is isolated by `userId` to ensure users can only access their own data.
 ```javascript
 {
   _id: ObjectId,
-  auth0Id: String,        // Unique identifier from Auth0
+  firebaseUid: String,    // Unique identifier from Firebase Auth
   email: String,          // User's email address
   name: String,           // User's display name
   profilePicture: String, // URL to profile image
@@ -51,7 +51,7 @@ All data is isolated by `userId` to ensure users can only access their own data.
 | Field | Type | Required | Unique | Indexed | Description |
 |-------|------|----------|--------|---------|-------------|
 | _id | ObjectId | Yes | Yes | Yes (auto) | MongoDB document ID |
-| auth0Id | String | Yes | Yes | Yes | Auth0 user identifier (e.g., "auth0\|123456") |
+| firebaseUid | String | Yes | Yes | Yes | Firebase user identifier (e.g., "firebase-uid-123456") |
 | email | String | Yes | Yes | Yes | User's email address |
 | name | String | Yes | No | No | User's full name |
 | profilePicture | String | No | No | No | URL to profile photo |
@@ -59,19 +59,19 @@ All data is isolated by `userId` to ensure users can only access their own data.
 | updatedAt | Date | Yes | No | No | Last modification timestamp |
 
 **Constraints**:
-- `auth0Id` must be unique (Auth0 enforces uniqueness)
+- `firebaseUid` must be unique (Firebase Auth enforces uniqueness)
 - `email` must be unique and valid email format
 - Timestamps auto-managed by Mongoose
 
 **Indexes**:
-- `auth0Id` (unique) - Fast lookup by Auth0 ID
+- `firebaseUid` (unique) - Fast lookup by Firebase UID
 - `email` (unique) - Fast lookup by email
 
 **Example Document**:
 ```json
 {
   "_id": "507f1f77bcf86cd799439011",
-  "auth0Id": "auth0|123456789abcdef",
+  "firebaseUid": "firebase-uid-123456789abcdef",
   "email": "john.doe@example.com",
   "name": "John Doe",
   "profilePicture": "https://example.com/avatar.jpg",
@@ -218,7 +218,7 @@ All data is isolated by `userId` to ensure users can only access their own data.
 ```
 ┌─────────────────┐
 │     User        │
-│  auth0Id (UK)   │
+│  firebaseUid (UK)   │
 │  email (UK)     │
 │  name           │
 └────────┬────────┘
@@ -275,12 +275,12 @@ All data is isolated by `userId` to ensure users can only access their own data.
 ### User Collection Indexes
 
 ```javascript
-users.createIndex({ auth0Id: 1 }, { unique: true })
+users.createIndex({ firebaseUid: 1 }, { unique: true })
 users.createIndex({ email: 1 }, { unique: true })
 ```
 
 **Purpose**:
-- Fast authentication lookup by Auth0 ID
+- Fast authentication lookup by Firebase UID
 - Fast email-based queries
 - Enforce uniqueness constraints
 
@@ -341,10 +341,10 @@ Destination.find({
 ### User Registration Flow
 
 ```
-1. User authenticates with Auth0 → Receives JWT
+1. User authenticates with Firebase Auth → Receives ID token
 2. Frontend calls POST /api/auth/register with JWT
-3. Backend extracts auth0Id from JWT
-4. Check if User with auth0Id exists
+3. Backend extracts firebaseUid from ID token
+4. Check if User with firebaseUid exists
    - YES: Return existing user (200)
    - NO: Create new User document (201)
 5. Return user data to frontend
@@ -491,7 +491,7 @@ mongorestore --uri="mongodb+srv://..." backup/
 
 | Collection | Field | Rules |
 |------------|-------|-------|
-| User | auth0Id | Required, unique, string |
+| User | firebaseUid | Required, unique, string |
 | User | email | Required, unique, email format |
 | User | name | Required, string |
 | Travel | title | Required, min 3 chars |

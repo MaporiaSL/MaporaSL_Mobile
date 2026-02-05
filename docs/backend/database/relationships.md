@@ -17,7 +17,7 @@ This document describes how the Mongoose models in MAPORIA relate to each other,
 ## Relationship Overview
 
 MAPORIA uses a hybrid referencing approach:
-- **String-based foreign keys** for User references (Auth0 ID)
+- **String-based foreign keys** for User references (Firebase UID)
 - **ObjectId references** for document relationships (Travel ↔ Destination)
 - **No embedded documents** - all relationships are via references
 
@@ -39,7 +39,7 @@ MAPORIA uses a hybrid referencing approach:
 │       User          │
 │  (Auth Provider)    │
 ├─────────────────────┤
-│ auth0Id (PK)        │◄──────────────┐
+│ firebaseUid (PK)    │◄──────────────┐
 │ email               │               │
 │ name                │               │
 │ profilePicture      │               │
@@ -97,32 +97,32 @@ MAPORIA uses a hybrid referencing approach:
 ```javascript
 // Travel schema
 userId: {
-  type: String,      // Auth0 ID, not ObjectId
+  type: String,      // Firebase UID, not ObjectId
   required: true,
   index: true
 }
 ```
 
 **Why String instead of ObjectId?**
-- User authentication is handled by Auth0 (external provider)
-- `auth0Id` is the primary identifier, not MongoDB's `_id`
+- User authentication is handled by Firebase Auth (external provider)
+- `firebaseUid` is the primary identifier, not MongoDB's `_id`
 - Avoids needing to store duplicate user records in MongoDB
 
 **Query Examples**:
 ```javascript
 // Get all trips for a user
-const trips = await Travel.find({ userId: 'auth0|123456789' });
+const trips = await Travel.find({ userId: 'firebase-uid-123456789' });
 
 // Get user's upcoming trips
 const upcoming = await Travel.find({ 
-  userId: 'auth0|123456789',
+  userId: 'firebase-uid-123456789',
   startDate: { $gte: new Date() }
 }).sort({ startDate: 1 });
 ```
 
 **Navigation**:
-- Forward: `User.auth0Id` → `Travel.userId` (requires manual join)
-- Backward: `Travel.userId` → `User.auth0Id` (string match)
+- Forward: `User.firebaseUid` → `Travel.userId` (requires manual join)
+- Backward: `Travel.userId` → `User.firebaseUid` (string match)
 
 ---
 
@@ -134,7 +134,7 @@ const upcoming = await Travel.find({
 ```javascript
 // Destination schema
 userId: {
-  type: String,      // Auth0 ID
+  type: String,      // Firebase UID
   required: true,
   index: true
 }
@@ -148,17 +148,17 @@ userId: {
 **Query Examples**:
 ```javascript
 // Get all user destinations
-const allDests = await Destination.find({ userId: 'auth0|123456789' });
+const allDests = await Destination.find({ userId: 'firebase-uid-123456789' });
 
 // Get user's visited destinations
 const visited = await Destination.find({ 
-  userId: 'auth0|123456789',
+  userId: 'firebase-uid-123456789',
   visited: true 
 });
 
 // Count destinations by district (for achievements)
 const colomboVisits = await Destination.countDocuments({
-  userId: 'auth0|123456789',
+  userId: 'firebase-uid-123456789',
   districtId: 'colombo',
   visited: true
 });
@@ -246,7 +246,7 @@ await newTrip.save();
 ### Pattern 1: User's Complete Travel History
 
 ```javascript
-const userId = 'auth0|123456789';
+const userId = 'firebase-uid-123456789';
 
 // Step 1: Get all user trips
 const trips = await Travel.find({ userId }).sort({ startDate: -1 });
@@ -275,7 +275,7 @@ const tripMap = trips.map(trip => ({
 ### Pattern 2: District Achievement Progress
 
 ```javascript
-const userId = 'auth0|123456789';
+const userId = 'firebase-uid-123456789';
 const districtId = 'colombo';
 
 // Count visited destinations in district
@@ -287,7 +287,7 @@ const visitedCount = await Destination.countDocuments({
 
 // Update user achievement
 await User.updateOne(
-  { auth0Id: userId },
+  { firebaseUid: userId },
   { 
     $addToSet: { unlockedDistricts: districtId },
     $inc: { totalPlacesVisited: visitedCount }
@@ -340,12 +340,12 @@ const nearby = await Destination.find({
 ```javascript
 // Add to backend/src/controllers/userController.js
 async deleteUser(req, res) {
-  const userId = req.user.auth0Id;
+  const userId = req.user.firebaseUid;
   
   // Manual cascade delete
   await Destination.deleteMany({ userId });
   await Travel.deleteMany({ userId });
-  await User.deleteOne({ auth0Id: userId });
+  await User.deleteOne({ firebaseUid: userId });
   
   res.json({ message: 'User and all data deleted' });
 }
@@ -368,7 +368,7 @@ const travel = await Travel.findById(req.body.travelId);
 if (!travel) {
   return res.status(404).json({ error: 'Travel not found' });
 }
-if (travel.userId !== req.user.auth0Id) {
+if (travel.userId !== req.user.firebaseUid) {
   return res.status(403).json({ error: 'Unauthorized' });
 }
 ```
@@ -389,7 +389,7 @@ async function reconcileUserStats(userId) {
   });
   
   await User.updateOne(
-    { auth0Id: userId },
+    { firebaseUid: userId },
     { totalPlacesVisited: visitedCount }
   );
 }
@@ -422,7 +422,7 @@ bookmarkedTrips: [{
 userSchema.index({ 'bookmarkedTrips': 1 });
 
 // 3. Query pattern
-const user = await User.findOne({ auth0Id: userId })
+const user = await User.findOne({ firebaseUid: userId })
   .populate('bookmarkedTrips');
 ```
 

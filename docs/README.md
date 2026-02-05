@@ -70,7 +70,7 @@ common/
 │   └── api-design-principles.md
 └── setup-guides/                      # Environment setup
     ├── local-development.md
-    ├── auth0-setup.md
+   ├── firebase-auth-setup.md
     └── environment-variables.md
 ```
 
@@ -254,7 +254,7 @@ Each feature has documentation across the three tiers:
 | **Frontend** | Flutter (Dart) | [Frontend Docs](frontend/) |
 | **Backend** | Node.js + Express.js | [Backend Docs](backend/) |
 | **Database** | MongoDB | [Database Docs](backend/database/) |
-| **Authentication** | Auth0 + JWT | [Auth Docs](backend/middleware-validation/jwt-authentication.md) |
+| **Authentication** | Firebase Auth + ID tokens | [Auth Docs](backend/middleware-validation/jwt-authentication.md) |
 | **File Storage** | Firebase Storage | [Setup Guide](common/setup-guides/) |
 | **Maps** | Mapbox | [Maps Integration](frontend/location-maps/mapbox-integration.md) |
 | **State Management** | Riverpod | [Riverpod Guide](frontend/state-management/riverpod-patterns.md) |
@@ -338,7 +338,7 @@ Each feature has documentation across the three tiers:
 **Purpose**: Environment setup and configuration
 
 - ✅ [local-development.md](setup-guides/local-development.md) - Complete local setup from scratch
-- ✅ [auth0-setup.md](setup-guides/auth0-setup.md) - Auth0 configuration step-by-step
+- ✅ [firebase-auth-setup.md](setup-guides/firebase-auth-setup.md) - Firebase Auth configuration
 - 📋 testing-guide.md - Testing workflows (To be created)
 - 📋 deployment.md - Production deployment guide (To be created)
 
@@ -365,7 +365,7 @@ Each feature has documentation across the three tiers:
 1. **Start here**: Read [project-source-of-truth.md](core/project-source-of-truth.md) ⭐ ESSENTIAL
 2. **Understand the stack**: Read [tech-stack.md](core/tech-stack.md) ⭐ ESSENTIAL
 3. **Setup environment**: Follow [local-development.md](setup-guides/local-development.md)
-4. **Configure Auth0**: Follow [auth0-setup.md](setup-guides/auth0-setup.md)
+4. **Configure Firebase Auth**: Follow [firebase-auth-setup.md](setup-guides/firebase-auth-setup.md)
 5. **API Reference**: Check [api-reference.md](api/api-reference.md)
 6. **Features**: Browse [features/](features/) folder for all feature specifications
 
@@ -570,7 +570,7 @@ What to do after completing this
 - [Flutter Docs](https://flutter.dev/docs)
 - [Express.js Guide](https://expressjs.com/)
 - [MongoDB Manual](https://docs.mongodb.com/)
-- [Auth0 Docs](https://auth0.com/docs)
+- [Firebase Auth Docs](https://firebase.google.com/docs/auth)
 - [Mapbox Documentation](https://docs.mapbox.com/)
 
 ### Learning Resources

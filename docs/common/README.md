@@ -81,7 +81,7 @@ Architecture documentation explains **how components connect** and **why certain
 - **Frontend**: Flutter (cross-platform, hot reload, rich UI)
 - **Backend**: Node.js + Express.js (JavaScript ecosystem, real-time capable)
 - **Database**: MongoDB (flexible schema, geospatial queries for maps)
-- **Authentication**: Auth0 + JWT (secure, scalable, industry standard)
+- **Authentication**: Firebase Auth + ID tokens (native SDKs, simple setup)
 - **State Management**: Riverpod (modern, reactive, testable)
 
 See [Tech Stack](core/tech-stack.md) for detailed rationale.
@@ -149,7 +149,7 @@ common/
 │
 └── setup-guides/                 # Environment setup
     ├── local-development.md
-    ├── auth0-setup.md
+   ├── firebase-auth-setup.md
     └── environment-variables.md
 
 To implement a feature:

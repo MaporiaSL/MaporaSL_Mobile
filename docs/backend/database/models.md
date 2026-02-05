@@ -18,13 +18,13 @@ This document provides comprehensive documentation for all Mongoose models used 
 **File Location:** `backend/src/models/User.js`
 
 ### Purpose
-Stores user account information and gamification progress. Integrated with Auth0 for authentication and tracks district/province exploration progress.
+Stores user account information and gamification progress. Integrated with Firebase Auth for authentication and tracks district/province exploration progress.
 
 ### Schema Structure
 
 | Field | Type | Required | Default | Indexed | Description |
 |-------|------|----------|---------|---------|-------------|
-| `auth0Id` | String | ✓ | - | ✓ (unique) | Auth0 user identifier |
+| `firebaseUid` | String | ✓ | - | ✓ (unique) | Firebase user identifier |
 | `email` | String | ✓ | - | ✓ (unique) | User email (lowercase) |
 | `name` | String | ✓ | - | - | User's display name |
 | `profilePicture` | String | - | null | - | URL to profile image |
@@ -40,7 +40,7 @@ Stores user account information and gamification progress. Integrated with Auth0
 
 ### Validation Rules
 
-- **auth0Id**: Must be unique across all users
+- **firebaseUid**: Must be unique across all users
 - **email**: Must be unique, automatically converted to lowercase
 - **name**: Required for user identification
 
@@ -48,7 +48,7 @@ Stores user account information and gamification progress. Integrated with Auth0
 
 ```javascript
 // Single field indexes
-auth0Id: unique, indexed  // Fast Auth0 lookup
+firebaseUid: unique, indexed  // Fast Firebase UID lookup
 email: unique, indexed     // Fast email lookup
 ```
 
@@ -68,7 +68,7 @@ userSchema.pre('save', function(next) {
 **Create a new user:**
 ```javascript
 const user = new User({
-  auth0Id: 'auth0|123456789',
+  firebaseUid: 'firebase-uid-123456789',
   email: 'john@example.com',
   name: 'John Doe',
   profilePicture: 'https://example.com/profile.jpg'
@@ -78,7 +78,7 @@ await user.save();
 
 **Update gamification progress:**
 ```javascript
-const user = await User.findOne({ auth0Id: 'auth0|123456789' });
+const user = await User.findOne({ firebaseUid: 'firebase-uid-123456789' });
 user.unlockedDistricts.push('colombo');
 user.totalPlacesVisited += 1;
 await user.save(); // updatedAt automatically set
@@ -86,7 +86,7 @@ await user.save(); // updatedAt automatically set
 
 **Track achievement progress:**
 ```javascript
-const user = await User.findOne({ auth0Id: 'auth0|123456789' });
+const user = await User.findOne({ firebaseUid: 'firebase-uid-123456789' });
 user.achievements.push({
   districtId: 'colombo',
   progress: 75,
@@ -112,7 +112,7 @@ Represents a travel trip or journey planned by a user. Contains trip metadata an
 
 | Field | Type | Required | Default | Indexed | Description |
 |-------|------|----------|---------|---------|-------------|
-| `userId` | String | ✓ | - | ✓ | Auth0 user identifier (foreign key) |
+| `userId` | String | ✓ | - | ✓ | Firebase UID (foreign key) |
 | `title` | String | ✓ | - | - | Trip title (min 3 chars) |
 | `description` | String | - | null | - | Optional trip description |
 | `startDate` | Date | ✓ | - | ✓ (compound) | Trip start date |
@@ -153,7 +153,7 @@ travelSchema.pre('save', function(next) {
 **Create a new trip:**
 ```javascript
 const travel = new Travel({
-  userId: 'auth0|123456789',
+  userId: 'firebase-uid-123456789',
   title: 'Sri Lanka Cultural Triangle',
   description: 'Exploring ancient cities of Anuradhapura, Polonnaruwa, and Sigiriya',
   startDate: new Date('2024-07-01'),
@@ -165,7 +165,7 @@ await travel.save();
 
 **Query user's trips chronologically:**
 ```javascript
-const trips = await Travel.find({ userId: 'auth0|123456789' })
+const trips = await Travel.find({ userId: 'firebase-uid-123456789' })
   .sort({ startDate: -1 }); // Uses compound index
 ```
 
@@ -194,7 +194,7 @@ Represents individual destinations/places within a trip. Supports geospatial que
 
 | Field | Type | Required | Default | Indexed | Description |
 |-------|------|----------|---------|---------|-------------|
-| `userId` | String | ✓ | - | ✓ (compound) | Auth0 user identifier |
+| `userId` | String | ✓ | - | ✓ (compound) | Firebase UID |
 | `travelId` | ObjectId | ✓ | - | ✓ (compound) | Reference to Travel document |
 | `name` | String | ✓ | - | - | Destination name (min 2 chars) |
 | `latitude` | Number | ✓ | - | - | Latitude coordinate (-90 to 90) |
@@ -253,7 +253,7 @@ destinationSchema.pre('save', function(next) {
 **Create a new destination:**
 ```javascript
 const destination = new Destination({
-  userId: 'auth0|123456789',
+  userId: 'firebase-uid-123456789',
   travelId: ObjectId('60a7b8c9d1e2f3g4h5i6j7k8'),
   name: 'Sigiriya Rock Fortress',
   latitude: 7.9570,
@@ -391,11 +391,11 @@ const totalXP = selectedTrips.reduce((sum, trip) => sum + trip.xpReward, 0);
 All models use `createdAt` and `updatedAt` fields with automatic timestamp management via pre-save hooks.
 
 ### User Ownership
-Three models (`User`, `Travel`, `Destination`) use `userId` (Auth0 ID string) for user association. This enables multi-tenant data isolation and fast user-specific queries.
+Three models (`User`, `Travel`, `Destination`) use `userId` (Firebase UID string) for user association. This enables multi-tenant data isolation and fast user-specific queries.
 
 ### Soft References
-- `Travel.userId` → `User.auth0Id` (string reference)
-- `Destination.userId` → `User.auth0Id` (string reference)
+- `Travel.userId` → `User.firebaseUid` (string reference)
+- `Destination.userId` → `User.firebaseUid` (string reference)
 - `Destination.travelId` → `Travel._id` (ObjectId reference)
 
 ### Geospatial Data

@@ -32,7 +32,7 @@
 
 2. **Set up environment variables**
    - Copy `.env.example` to `.env`
-   - Fill in your MongoDB URI, Auth0 credentials, etc.
+   - Fill in your MongoDB URI, Firebase Auth credentials, etc.
    - See [Environment Variables](../common/setup-guides/environment-variables.md)
 
 3. **Start development server**
@@ -315,7 +315,7 @@ backend/
 - [Express.js Docs](https://expressjs.com/)
 - [Mongoose Docs](https://mongoosejs.com/)
 - [MongoDB Docs](https://docs.mongodb.com/)
-- [Auth0 Docs](https://auth0.com/docs/)
+- [Firebase Auth Docs](https://firebase.google.com/docs/auth)
 
 ---
 

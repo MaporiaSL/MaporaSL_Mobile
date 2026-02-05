@@ -49,7 +49,7 @@ Sync user from Firebase to MongoDB database. Call this after Firebase login to c
   "message": "User registered successfully",
   "user": {
     "_id": "60a7b8c9d1e2f3g4h5i6j7k8",
-    "auth0Id": "firebase-uid-123456789",
+    "firebaseUid": "firebase-uid-123456789",
     "email": "user@example.com",
     "name": "John Doe",
     "profilePicture": "https://example.com/avatar.jpg",
@@ -118,7 +118,7 @@ No request body. User ID extracted from Firebase ID token.
 ```json
 {
   "_id": "60a7b8c9d1e2f3g4h5i6j7k8",
-  "auth0Id": "firebase-uid-123456789",
+  "firebaseUid": "firebase-uid-123456789",
   "email": "user@example.com",
   "name": "John Doe",
   "profilePicture": "https://example.com/avatar.jpg",

@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import '../../../../core/config/app_config.dart';
 import '../models/trip_model.dart';
 import '../models/trip_stats_model.dart';
 import '../models/trip_dto.dart';
@@ -13,7 +14,7 @@ class TripsApi {
     // For Android emulator: 10.0.2.2 maps to host machine's localhost
     // For iOS simulator: localhost works
     // For physical device: use your computer's IP address
-    this.baseUrl = 'http://10.0.2.2:5000/api',
+    this.baseUrl = AppConfig.apiBaseUrl,
   }) : _dio = dio;
 
   /// Fetch paginated list of trips
@@ -22,7 +23,7 @@ class TripsApi {
     try {
       final skip = (page - 1) * limit;
       final response = await _dio.get(
-        '$baseUrl/travel',
+        '$baseUrl/api/travel',
         queryParameters: {'skip': skip, 'limit': limit},
       );
 
@@ -44,7 +45,7 @@ class TripsApi {
   /// GET /api/travel/:id
   Future<TripModel> fetchTripById(String id) async {
     try {
-      final response = await _dio.get('$baseUrl/travel/$id');
+      final response = await _dio.get('$baseUrl/api/travel/$id');
       final map = Map<String, dynamic>.from(
         response.data['travel'] as Map<String, dynamic>,
       );
@@ -61,7 +62,10 @@ class TripsApi {
   /// POST /api/travel
   Future<TripModel> createTrip(CreateTripDto dto) async {
     try {
-      final response = await _dio.post('$baseUrl/travel', data: dto.toJson());
+      final response = await _dio.post(
+        '$baseUrl/api/travel',
+        data: dto.toJson(),
+      );
       final map = Map<String, dynamic>.from(
         response.data['travel'] as Map<String, dynamic>,
       );
@@ -79,7 +83,7 @@ class TripsApi {
   Future<TripModel> updateTrip(String id, UpdateTripDto dto) async {
     try {
       final response = await _dio.patch(
-        '$baseUrl/travel/$id',
+        '$baseUrl/api/travel/$id',
         data: dto.toJson(),
       );
       final map = Map<String, dynamic>.from(
@@ -98,7 +102,7 @@ class TripsApi {
   /// DELETE /api/travel/:id
   Future<void> deleteTrip(String id) async {
     try {
-      await _dio.delete('$baseUrl/travel/$id');
+      await _dio.delete('$baseUrl/api/travel/$id');
     } on DioException catch (e) {
       throw _handleError(e);
     }

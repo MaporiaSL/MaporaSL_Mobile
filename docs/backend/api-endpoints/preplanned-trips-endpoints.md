@@ -128,7 +128,7 @@ Retrieve complete details including all destinations for a specific template.
   "rating": 4.8,
   "ratingCount": 342,
   "createdBy": {
-    "_id": "auth0|admin123",
+    "_id": "firebase-uid-admin-123",
     "name": "Travel Admin"
   },
   "itinerary": [
@@ -197,7 +197,7 @@ curl "http://localhost:5000/api/preplannedtrips/5f8d3c2a1b4e5f6a7b8c9d0e" \
 Create a user's personal trip by copying a pre-planned trip template.
 
 **Endpoint**: `POST /api/preplannedtrips/:templateId/use`  
-**Auth**: Required (JWT)  
+**Auth**: Required (Firebase ID token)  
 **Controller**: `preplannedTripsController.createTripFromTemplate`
 
 #### URL Parameters
@@ -224,7 +224,7 @@ Create a user's personal trip by copying a pre-planned trip template.
 ```json
 {
   "_id": "679f5e8d3c2a1b4e5f6a7b8c",
-  "userId": "auth0|user123",
+  "userId": "firebase-uid-user-123",
   "title": "My Sri Lanka Adventure",
   "description": "A comprehensive two-week journey across Sri Lanka exploring beaches, mountains, and culture",
   "startDate": "2025-12-01T00:00:00.000Z",

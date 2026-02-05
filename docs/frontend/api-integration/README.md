@@ -146,32 +146,38 @@ class ApiClient {
 
 ## Authentication Flow
 
-### 1. Login with Auth0
+### 1. Login with Firebase Auth
 
 ```dart
 // File: mobile/lib/core/services/auth_service.dart
 
-import 'package:flutter_auth0/flutter_auth0.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthService {
-  final Auth0 _auth0 = Auth0('your-domain.auth0.com', 'your-client-id');
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   final ApiClient _apiClient;
   
   AuthService(this._apiClient);
   
-  Future<void> login() async {
-    // 1. Auth0 login
-    final credentials = await _auth0.webAuthentication().login();
-    
-    // 2. Store JWT token
-    await _storage.write(key: 'access_token', value: credentials.accessToken);
-    
+  Future<void> login(String email, String password) async {
+    // 1. Firebase login
+    final credentials = await _auth.signInWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
+
+    // 2. Store ID token
+    final token = await credentials.user?.getIdToken();
+    if (token != null) {
+      await _storage.write(key: 'access_token', value: token);
+    }
+
     // 3. Sync user to backend
     await _apiClient.post('/api/auth/register', data: {
-      'auth0Id': credentials.user.id,
-      'email': credentials.user.email,
-      'name': credentials.user.name,
-      'profilePicture': credentials.user.picture,
+      'firebaseUid': credentials.user?.uid,
+      'email': credentials.user?.email,
+      'name': credentials.user?.displayName ?? 'Unknown',
+      'profilePicture': credentials.user?.photoURL,
     });
   }
 }
@@ -187,7 +193,7 @@ class AuthService {
 
 ```dart
 final response = await apiClient.post('/api/auth/register', data: {
-  'auth0Id': 'auth0|123',
+  'firebaseUid': 'firebase-uid-123',
   'email': 'user@example.com',
   'name': 'John Doe',
 });

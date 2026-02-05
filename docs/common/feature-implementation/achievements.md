@@ -92,7 +92,7 @@ exports.markDestinationVisited = async (req, res) => {
   );
   
   // Achievement logic
-  const user = await User.findOne({ auth0Id: req.user.auth0Id });
+  const user = await User.findOne({ firebaseUid: req.user.firebaseUid });
   
   // 1. Unlock district if not already unlocked
   if (dest.districtId && !user.unlockedDistricts.includes(dest.districtId)) {
@@ -150,7 +150,7 @@ exports.markDestinationVisited = async (req, res) => {
 
 ```javascript
 exports.getUserAchievements = async (req, res) => {
-  const user = await User.findOne({ auth0Id: req.user.auth0Id });
+  const user = await User.findOne({ firebaseUid: req.user.firebaseUid });
   
   // Calculate completion percentage
   const totalDistricts = 25; // Sri Lanka has 25 districts
@@ -333,7 +333,7 @@ const BADGES = {
 **Check badge eligibility**:
 ```javascript
 async function checkAndAwardBadges(userId) {
-  const user = await User.findOne({ auth0Id: userId });
+  const user = await User.findOne({ firebaseUid: userId });
   
   // Count temple visits
   const templeVisits = await Destination.countDocuments({

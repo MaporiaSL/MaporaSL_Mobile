@@ -96,7 +96,7 @@ Use Firebase Authentication (email/password or provider) to obtain an ID token:
 
 ### Create Travel
 **Endpoint**: `POST /api/travel`  
-**Auth**: Required (JWT) – bypassed in dev via mock auth middleware
+**Auth**: Required (Firebase ID token) – bypassed in dev via mock auth middleware
 
 **Request**:
 ```json
@@ -112,7 +112,7 @@ Use Firebase Authentication (email/password or provider) to obtain an ID token:
 ```json
 {
   "_id": "679f5e8d3c2a1b4e5f6a7b8c",
-  "userId": "auth0|user123",
+  "userId": "firebase-uid-user123",
   "name": "Sri Lanka Adventure",
   "description": "Two week tropical island adventure",
   "startDate": "2025-12-01T00:00:00.000Z",
@@ -124,7 +124,7 @@ Use Firebase Authentication (email/password or provider) to obtain an ID token:
 
 ### List Travels
 **Endpoint**: `GET /api/travel`  
-**Auth**: Required (JWT) – bypassed in dev via mock auth middleware
+**Auth**: Required (Firebase ID token) – bypassed in dev via mock auth middleware
 
 **Query Parameters**:
 - `skip` (optional) - Offset for pagination (default 0)
@@ -150,13 +150,13 @@ Use Firebase Authentication (email/password or provider) to obtain an ID token:
 
 ### Get Travel
 **Endpoint**: `GET /api/travel/:travelId`  
-**Auth**: Required (JWT) – bypassed in dev via mock auth middleware
+**Auth**: Required (Firebase ID token) – bypassed in dev via mock auth middleware
 
 **Response** (200):
 ```json
 {
   "_id": "679f5e8d3c2a1b4e5f6a7b8c",
-  "userId": "auth0|user123",
+  "userId": "firebase-uid-user123",
   "name": "Sri Lanka Adventure",
   "description": "Two week tropical island adventure",
   "startDate": "2025-12-01T00:00:00.000Z",
@@ -205,7 +205,7 @@ Use Firebase Authentication (email/password or provider) to obtain an ID token:
 
 ### Create Destination
 **Endpoint**: `POST /api/travel/:travelId/destinations`  
-**Auth**: Required (JWT)
+**Auth**: Required (Firebase ID token)
 
 **Request**:
 ```json
@@ -223,7 +223,7 @@ Use Firebase Authentication (email/password or provider) to obtain an ID token:
 ```json
 {
   "_id": "679f5e8d3c2a1b4e5f6a7b8d",
-  "userId": "auth0|user123",
+  "userId": "firebase-uid-user123",
   "travelId": "679f5e8d3c2a1b4e5f6a7b8c",
   "name": "Colombo Fort",
   "latitude": 6.9271,
@@ -236,7 +236,7 @@ Use Firebase Authentication (email/password or provider) to obtain an ID token:
 
 ### List Destinations
 **Endpoint**: `GET /api/travel/:travelId/destinations`  
-**Auth**: Required (JWT)
+**Auth**: Required (Firebase ID token)
 
 **Response** (200):
 ```json
@@ -256,7 +256,7 @@ Use Firebase Authentication (email/password or provider) to obtain an ID token:
 
 ### Get Destination
 **Endpoint**: `GET /api/travel/:travelId/destinations/:destId`  
-**Auth**: Required (JWT)
+**Auth**: Required (Firebase ID token)
 
 ### Update Destination
 **Endpoint**: `PATCH /api/travel/:travelId/destinations/:destId`  

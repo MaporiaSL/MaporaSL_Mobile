@@ -103,13 +103,6 @@ All code will be:
 docs/
 ├── map-feature-redesign-plan.md        (Vision & 4 phases)
 └── phase1-implementation-plan.md       (Detailed Phase 1)
-
-mobile/lib/features/map/
-├── presentation/
-│   └── map_screen.dart                 (Fresh start)
-├── data/
-│   └── regions_data.dart               (9 provinces + metadata)
-└── [widgets, utils - coming next]
 ```
 
 ---
@@ -127,4 +120,3 @@ Snapshot: f40959a - snapshot: previous implementation
 ## Ready to Begin?
 
 When you're ready, just say "start phase 1" or "implement cartoon map" and we'll dive into building the beautiful cartoonish map! 🗺️
-

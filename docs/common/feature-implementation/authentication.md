@@ -28,15 +28,15 @@ Authentication in MAPORIA uses **Firebase Authentication** with **Firebase ID to
          ▼
 ┌─────────────────┐
 │  Flutter App    │
-│  Stores JWT     │
+│  Stores ID token│
 └────────┬────────┘
-         │ 3. API calls with JWT in header
+         │ 3. API calls with ID token in header
          ▼
 ┌─────────────────┐
 │  Backend API    │
 │  (Express.js)   │
 └────────┬────────┘
-         │ 4. Validates JWT
+         │ 4. Validates ID token
          ▼
 ┌─────────────────┐
 │    MongoDB      │  ← Stores user profile & gamification data
@@ -55,13 +55,13 @@ Authentication in MAPORIA uses **Firebase Authentication** with **Firebase ID to
 | **User.js** | User model schema | `backend/src/models/User.js` |
 | **authController.js** | Auth logic | `backend/src/controllers/authController.js` |
 | **authRoutes.js** | Auth endpoints | `backend/src/routes/authRoutes.js` |
-| **auth.js** | JWT middleware | `backend/src/middleware/auth.js` |
+| **auth.js** | ID token middleware | `backend/src/middleware/auth.js` |
 | **.env** | Firebase config | `backend/.env` |
 
 ### 1. User Model (`backend/src/models/User.js`)
 
 **Key Fields**:
-- `auth0Id`: External auth UID (Firebase `uid`, unique, indexed)
+- `firebaseUid`: External auth UID (Firebase `uid`, unique, indexed)
 - `email`: User email (unique, indexed)
 - `name`: Display name
 - `profilePicture`: Avatar URL
@@ -101,7 +101,7 @@ const userSchema = new mongoose.Schema({
 ```javascript
 exports.getMe = async (req, res) => {
   try {
-    const user = await User.findOne({ auth0Id: req.userId });
+    const user = await User.findOne({ firebaseUid: req.userId });
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
@@ -128,7 +128,7 @@ exports.getMe = async (req, res) => {
 router.post('/update-profile', checkJwt, extractUserId, updateUserProfile);
 ```
 
-### 4. JWT Middleware (`backend/src/middleware/auth.js`)
+### 4. ID Token Middleware (`backend/src/middleware/auth.js`)
 
 **Functions**:
 - `checkJwt`: Validates Firebase ID token using Firebase Admin SDK
@@ -158,7 +158,7 @@ if (process.env.NODE_ENV !== 'production') {
 |------|---------|----------|
 | **auth_service.dart** | Firebase Auth integration | `mobile/lib/core/services/auth_service.dart` |
 | **auth_provider.dart** | Auth state management | `mobile/lib/providers/auth_provider.dart` |
-| **api_client.dart** | HTTP client with JWT | `mobile/lib/core/services/api_client.dart` |
+| **api_client.dart** | HTTP client with ID token | `mobile/lib/core/services/api_client.dart` |
 | **login_screen.dart** | Login UI | `mobile/lib/features/auth/screens/login_screen.dart` |
 
 ### 1. Auth Service (`mobile/lib/core/services/auth_service.dart`)
@@ -168,7 +168,7 @@ if (process.env.NODE_ENV !== 'production') {
 **Key Methods**:
 - `login()`: Initiates Firebase login flow
 - `logout()`: Clears tokens and logs out
-- `getAccessToken()`: Retrieves JWT for API calls
+- `getAccessToken()`: Retrieves Firebase ID token for API calls
 - `getIdToken()`: Gets user identity token
 - `isAuthenticated()`: Checks if user is logged in
 
@@ -200,7 +200,7 @@ final authProvider = StateNotifierProvider<AuthNotifier, AuthState>((ref) {
 
 ### 3. API Client (`mobile/lib/core/services/api_client.dart`)
 
-**Purpose**: HTTP client that automatically attaches JWT tokens to requests.
+**Purpose**: HTTP client that automatically attaches ID tokens to requests.
 
 **Where to Make Changes**:
 - **Add token refresh logic**: Implement token refresh
@@ -311,7 +311,7 @@ const userSchema = new mongoose.Schema({
 **Middleware** (`backend/src/middleware/checkRole.js`):
 ```javascript
 exports.checkAdmin = async (req, res, next) => {
-  const user = await User.findOne({ auth0Id: req.userId });
+  const user = await User.findOne({ firebaseUid: req.userId });
   if (user.role !== 'admin') {
     return res.status(403).json({ error: 'Forbidden' });
   }
@@ -326,7 +326,7 @@ exports.checkAdmin = async (req, res, next) => {
 exports.updateProfile = async (req, res) => {
   const { name, profilePicture } = req.body;
   const user = await User.findOneAndUpdate(
-    { auth0Id: req.userId },
+    { firebaseUid: req.userId },
     { name, profilePicture },
     { new: true }
   );
@@ -362,9 +362,9 @@ curl -X POST http://localhost:5000/api/auth/register \
   -H "Content-Type: application/json" \
   -d '{"email":"test@example.com","name":"Test User"}'
 
-# Test get current user (with JWT)
+# Test get current user (with Firebase ID token)
 curl -X GET http://localhost:5000/api/auth/me \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+  -H "Authorization: Bearer YOUR_ID_TOKEN"
 ```
 
 ### Frontend Testing
@@ -387,7 +387,7 @@ await authService.logout();
 
 ### "Unauthorized" Error
 
-**Cause**: JWT token missing or invalid
+**Cause**: ID token missing or invalid
 
 **Solutions**:
 - Check if token is stored after login
@@ -409,7 +409,7 @@ await apiClient.post('/api/auth/register', data: {
 
 ### Token Expired
 
-**Cause**: JWT expired (default 24h)
+**Cause**: ID token expired (typically about 1 hour)
 
 **Solution**: Implement token refresh or re-login
 

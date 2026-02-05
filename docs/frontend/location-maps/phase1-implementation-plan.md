@@ -198,22 +198,4 @@ MapScreen
 ---
 
 ## Testing Plan
-
-### Manual Testing
-1. Open map screen
-2. Tap each region in sequence
-3. Verify info panel updates
-4. Verify no crashes
-5. Test on different screen sizes
-
-### Visual Testing
-- [ ] Regions render correctly
-- [ ] Colors match spec
-- [ ] Text is readable
-- [ ] Transitions are smooth
-
----
-
-## Next: Start Implementation
-Ready to begin with `CartoonMapPainter`! 🎨
-
+```

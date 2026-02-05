@@ -49,11 +49,6 @@ class BottomNavBar extends StatelessWidget {
           activeIcon: Icon(Icons.shopping_bag),
           label: 'Shop',
         ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.person_outline),
-          activeIcon: Icon(Icons.person),
-          label: 'Profile',
-        ),
       ],
     );
   }
