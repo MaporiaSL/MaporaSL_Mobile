@@ -8,15 +8,20 @@ import '../painters/cartoon_map_painter.dart';
 class CartoonMapCanvas extends StatefulWidget {
   final List<SriLankaRegion> regions;
   final String? selectedRegionId;
+  final String? selectedDistrictName;
   final VoidCallback? onRegionTapped;
   final Function(String regionId)? onRegionSelected;
+  final void Function(String districtName, String? provinceName)?
+  onDistrictSelected;
 
   const CartoonMapCanvas({
     super.key,
     required this.regions,
     this.selectedRegionId,
+    this.selectedDistrictName,
     this.onRegionTapped,
     this.onRegionSelected,
+    this.onDistrictSelected,
   });
 
   @override
@@ -27,6 +32,7 @@ class _CartoonMapCanvasState extends State<CartoonMapCanvas> {
   late List<SriLankaRegion> _regions;
   Map<String, List<List<Offset>>> _provinceBoundaries = {};
   Map<String, List<List<Offset>>> _districtBoundaries = {};
+  Map<String, String> _districtToProvince = {};
   bool _boundariesLoaded = false;
 
   @override
@@ -40,10 +46,11 @@ class _CartoonMapCanvasState extends State<CartoonMapCanvas> {
   Future<void> _loadBoundaries() async {
     try {
       final provinces = await GeoJsonParser.loadProvinceBoundaries();
-      final districts = await GeoJsonParser.loadDistrictBoundaries();
+      final districtData = await GeoJsonParser.loadDistrictBoundaryData();
       setState(() {
         _provinceBoundaries = provinces;
-        _districtBoundaries = districts;
+        _districtBoundaries = districtData.boundaries;
+        _districtToProvince = districtData.districtToProvince;
         _boundariesLoaded = true;
       });
     } catch (e) {
@@ -66,19 +73,39 @@ class _CartoonMapCanvasState extends State<CartoonMapCanvas> {
     const maxLat = 9.95;
     const minLon = 79.65;
     const maxLon = 81.95;
+    final lon = minLon + (position.dx / size.width) * (maxLon - minLon);
+    final lat = maxLat - (position.dy / size.height) * (maxLat - minLat);
+    final tapPoint = Offset(lon, lat);
 
-    const tapRadius = 50.0; // Tap detection radius in pixels
-
-    for (final region in _regions) {
-      final x = ((region.longitude - minLon) / (maxLon - minLon)) * size.width;
-      final y = ((maxLat - region.latitude) / (maxLat - minLat)) * size.height;
-
-      final distance = (position - Offset(x, y)).distance;
-      if (distance < tapRadius) {
-        return region.id;
+    for (final entry in _districtBoundaries.entries) {
+      for (final polygon in entry.value) {
+        if (_isPointInPolygon(tapPoint, polygon)) {
+          return entry.key;
+        }
       }
     }
+
     return null;
+  }
+
+  bool _isPointInPolygon(Offset point, List<Offset> polygon) {
+    if (polygon.length < 3) return false;
+
+    bool inside = false;
+    for (int i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+      final xi = polygon[i].dx;
+      final yi = polygon[i].dy;
+      final xj = polygon[j].dx;
+      final yj = polygon[j].dy;
+
+      final intersect = ((yi > point.dy) != (yj > point.dy)) &&
+          (point.dx <
+              (xj - xi) * (point.dy - yi) / ((yj - yi) == 0 ? 1 : (yj - yi)) +
+                  xi);
+      if (intersect) inside = !inside;
+    }
+
+    return inside;
   }
 
   @override
@@ -95,7 +122,9 @@ class _CartoonMapCanvasState extends State<CartoonMapCanvas> {
 
         final tappedRegionId = _getTappedRegion(details.localPosition, size);
         if (tappedRegionId != null) {
+          final provinceName = _districtToProvince[tappedRegionId];
           widget.onRegionSelected?.call(tappedRegionId);
+          widget.onDistrictSelected?.call(tappedRegionId, provinceName);
           widget.onRegionTapped?.call();
         }
       },
@@ -103,6 +132,7 @@ class _CartoonMapCanvasState extends State<CartoonMapCanvas> {
         painter: CartoonMapPainter(
           regions: _regions,
           selectedRegionId: widget.selectedRegionId,
+          selectedDistrictName: widget.selectedDistrictName,
           provinceBoundaries: _provinceBoundaries,
           districtBoundaries: _districtBoundaries,
           paintBuilder: (color, isSelected) {
