@@ -90,17 +90,25 @@ coverage/
 **/doc/api/
 **/ios/Flutter/.last_build_id
 .dart_tool/
+**/.dart_tool/
 .flutter-plugins
+**/.flutter-plugins
 .flutter-plugins-dependencies
+**/.flutter-plugins-dependencies
 .packages
+**/.packages
 .pub-cache/
+**/.pub-cache/
 .pub/
+**/.pub/
 build/
+**/build/
 **/android/.gradle/
 flutter_*.png
 linked_*.ds
 unlinked.ds
 unlinked_spec.ds
+**/GeneratedPluginRegistrant.*
 
 # Android related
 **/android/**/gradle-wrapper.jar

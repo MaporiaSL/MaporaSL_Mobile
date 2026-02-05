@@ -211,12 +211,12 @@ class _TripsScreenState extends ConsumerState<TripsScreen>
           ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 12),
-        Card(
+        const Card(
           child: Padding(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
+              children: [
                 _AchievementItem(
                   icon: '🏔️',
                   title: 'Mountain Explorer',
@@ -307,7 +307,7 @@ class _TripsScreenState extends ConsumerState<TripsScreen>
                 Chip(label: Text('${template.durationDays} days')),
                 Chip(label: Text('${template.xpReward} XP')),
                 Chip(label: Text(template.difficulty)),
-                ...template.tags.map((tag) => Chip(label: Text(tag))).toList(),
+                ...template.tags.map((tag) => Chip(label: Text(tag))),
               ],
             ),
             const SizedBox(height: 12),
@@ -435,7 +435,7 @@ class _FilterDropdown extends StatelessWidget {
         DropdownMenuItem(value: null, child: Text('$label (Any)')),
         ...options.map((opt) {
           return DropdownMenuItem(value: opt, child: Text(opt));
-        }).toList(),
+        }),
       ],
       onChanged: onChanged,
     );

@@ -2,7 +2,7 @@
 
 **Base URL**: `http://localhost:5000` (Dev) / `http://10.0.2.2:5000` (Android Emulator)  
 **Version**: 1.0.1  
-**Last Updated**: February 1, 2026
+**Last Updated**: February 5, 2026
 
 ---
 
@@ -16,7 +16,7 @@ This document provides a quick reference to all available API endpoints. For det
 
 | Method | Endpoint | Description | Auth Required | Docs |
 |--------|----------|-------------|---------------|------|
-| POST | `/api/auth/register` | Register/sync user from Auth0 | No | [auth-endpoints.md](./auth-endpoints.md#register-user) |
+| POST | `/api/auth/register` | Register/sync user from Firebase | Yes | [auth-endpoints.md](./auth-endpoints.md#register-user) |
 | GET | `/api/auth/me` | Get current user profile | Yes | [auth-endpoints.md](./auth-endpoints.md#get-current-user) |
 | POST | `/api/auth/logout` | Logout user | Yes | [auth-endpoints.md](./auth-endpoints.md#logout) |
 

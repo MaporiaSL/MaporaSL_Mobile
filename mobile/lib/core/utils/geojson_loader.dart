@@ -15,7 +15,7 @@ class GeoJsonLoader {
 
       // Validate GeoJSON structure
       if (!_isValidGeoJSON(geojson)) {
-        throw FormatException('Invalid GeoJSON structure');
+        throw const FormatException('Invalid GeoJSON structure');
       }
 
       print('✅ Loaded ${geojson['features']?.length ?? 0} district boundaries');

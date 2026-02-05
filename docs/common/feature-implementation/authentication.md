@@ -1,13 +1,13 @@
 # Authentication Feature Implementation
 
 **Feature**: User Authentication & Authorization  
-**Last Updated**: February 1, 2026
+**Last Updated**: February 5, 2026
 
 ---
 
 ## Overview
 
-Authentication in MAPORIA uses **Auth0** as the identity provider with **JWT tokens** for API authorization. The backend validates tokens and syncs user data with MongoDB.
+Authentication in MAPORIA uses **Firebase Authentication** with **Firebase ID tokens** for API authorization. The backend validates tokens and syncs user data with MongoDB.
 
 ---
 
@@ -18,13 +18,13 @@ Authentication in MAPORIA uses **Auth0** as the identity provider with **JWT tok
 │  Flutter App    │
 │  (Frontend)     │
 └────────┬────────┘
-         │ 1. Login with Auth0
+         │ 1. Login with Firebase Auth
          ▼
 ┌─────────────────┐
-│     Auth0       │  ← External Identity Provider
-│  (auth0.com)    │
+│   Firebase      │  ← External Identity Provider
+│ (firebase.google.com)
 └────────┬────────┘
-         │ 2. Returns JWT
+         │ 2. Returns ID Token
          ▼
 ┌─────────────────┐
 │  Flutter App    │
@@ -56,12 +56,12 @@ Authentication in MAPORIA uses **Auth0** as the identity provider with **JWT tok
 | **authController.js** | Auth logic | `backend/src/controllers/authController.js` |
 | **authRoutes.js** | Auth endpoints | `backend/src/routes/authRoutes.js` |
 | **auth.js** | JWT middleware | `backend/src/middleware/auth.js` |
-| **.env** | Auth0 config | `backend/.env` |
+| **.env** | Firebase config | `backend/.env` |
 
 ### 1. User Model (`backend/src/models/User.js`)
 
 **Key Fields**:
-- `auth0Id`: External Auth0 identifier (unique, indexed)
+- `auth0Id`: External auth UID (Firebase `uid`, unique, indexed)
 - `email`: User email (unique, indexed)
 - `name`: Display name
 - `profilePicture`: Avatar URL
@@ -88,7 +88,7 @@ const userSchema = new mongoose.Schema({
 ### 2. Auth Controller (`backend/src/controllers/authController.js`)
 
 **Functions**:
-- `registerUser(req, res)`: Create/update user from Auth0 data
+- `registerUser(req, res)`: Create/update user from Firebase data
 - `getMe(req, res)`: Get current user profile
 - `logoutUser(req, res)`: Logout (placeholder)
 
@@ -101,7 +101,7 @@ const userSchema = new mongoose.Schema({
 ```javascript
 exports.getMe = async (req, res) => {
   try {
-    const user = await User.findOne({ auth0Id: req.user.auth0Id });
+    const user = await User.findOne({ auth0Id: req.userId });
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
@@ -115,7 +115,7 @@ exports.getMe = async (req, res) => {
 ### 3. Auth Routes (`backend/src/routes/authRoutes.js`)
 
 **Endpoints**:
-- `POST /api/auth/register` - Register/sync user (public)
+- `POST /api/auth/register` - Register/sync user (protected)
 - `GET /api/auth/me` - Get current user (protected)
 - `POST /api/auth/logout` - Logout (protected)
 
@@ -131,8 +131,8 @@ router.post('/update-profile', checkJwt, extractUserId, updateUserProfile);
 ### 4. JWT Middleware (`backend/src/middleware/auth.js`)
 
 **Functions**:
-- `checkJwt`: Validates JWT token using Auth0 JWKS
-- `extractUserId`: Extracts `auth0Id` from JWT and attaches to `req.user`
+- `checkJwt`: Validates Firebase ID token using Firebase Admin SDK
+- `extractUserId`: Extracts `uid` and attaches to `req.userId`
 
 **Where to Make Changes**:
 - **Change token validation**: Modify `checkJwt` configuration
@@ -143,7 +143,7 @@ router.post('/update-profile', checkJwt, extractUserId, updateUserProfile);
 ```javascript
 // In checkJwt middleware
 if (process.env.NODE_ENV !== 'production') {
-  req.user = { auth0Id: 'auth0|dev-user-123' }; // Mock user
+  req.user = { uid: 'dev-user-123' }; // Mock user
   return next();
 }
 ```
@@ -156,25 +156,25 @@ if (process.env.NODE_ENV !== 'production') {
 
 | File | Purpose | Location |
 |------|---------|----------|
-| **auth_service.dart** | Auth0 integration | `mobile/lib/core/services/auth_service.dart` |
+| **auth_service.dart** | Firebase Auth integration | `mobile/lib/core/services/auth_service.dart` |
 | **auth_provider.dart** | Auth state management | `mobile/lib/providers/auth_provider.dart` |
 | **api_client.dart** | HTTP client with JWT | `mobile/lib/core/services/api_client.dart` |
 | **login_screen.dart** | Login UI | `mobile/lib/features/auth/screens/login_screen.dart` |
 
 ### 1. Auth Service (`mobile/lib/core/services/auth_service.dart`)
 
-**Purpose**: Manages Auth0 SDK integration and token storage.
+**Purpose**: Manages Firebase Auth integration and token storage.
 
 **Key Methods**:
-- `login()`: Initiates Auth0 login flow
+- `login()`: Initiates Firebase login flow
 - `logout()`: Clears tokens and logs out
 - `getAccessToken()`: Retrieves JWT for API calls
 - `getIdToken()`: Gets user identity token
 - `isAuthenticated()`: Checks if user is logged in
 
 **Where to Make Changes**:
-- **Change Auth0 config**: Modify domain/client ID
-- **Add social login**: Update Auth0 configuration
+- **Change Firebase config**: Update Firebase project settings
+- **Add social login**: Enable providers in Firebase Auth
 - **Change token storage**: Modify secure storage logic
 
 ### 2. Auth Provider (`mobile/lib/providers/auth_provider.dart`)
@@ -219,7 +219,7 @@ options.headers['Authorization'] = 'Bearer $token';
 
 **Where to Make Changes**:
 - **Change UI design**: Modify Widget tree
-- **Add social login buttons**: Add Auth0 connection buttons
+- **Add social login buttons**: Add Firebase provider buttons
 - **Change login flow**: Modify onPressed handlers
 
 ---
@@ -243,18 +243,18 @@ See detailed API documentation:
 **File**: `backend/.env`
 
 ```env
-# Auth0 Configuration
-AUTH0_DOMAIN=your-tenant.auth0.com
-AUTH0_AUDIENCE=https://api.maporia.com
-AUTH0_ISSUER=https://your-tenant.auth0.com/
+# Firebase Admin Configuration
+FIREBASE_PROJECT_ID=your-project-id
+FIREBASE_CLIENT_EMAIL=your-service-account@your-project-id.iam.gserviceaccount.com
+FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
 
 # Environment
-NODE_ENV=development  # Use 'production' to enable JWT validation
+NODE_ENV=development  # Use 'production' to enforce token validation
 ```
 
 **Where to Make Changes**:
-- **Switch Auth0 tenant**: Update `AUTH0_DOMAIN`
-- **Change API audience**: Update `AUTH0_AUDIENCE`
+- **Switch Firebase project**: Update `FIREBASE_PROJECT_ID`
+- **Rotate service account**: Update `FIREBASE_CLIENT_EMAIL` + `FIREBASE_PRIVATE_KEY`
 - **Enable/disable dev bypass**: Change `NODE_ENV`
 
 ### Frontend Environment
@@ -262,9 +262,8 @@ NODE_ENV=development  # Use 'production' to enable JWT validation
 **File**: `mobile/lib/core/config/env_config.dart` or `.env`
 
 ```dart
-static const auth0Domain = 'your-tenant.auth0.com';
-static const auth0ClientId = 'your-client-id';
-static const auth0Audience = 'https://api.maporia.com';
+// Use FlutterFire CLI to generate firebase_options.dart
+// Then initialize Firebase with FirebaseOptions.currentPlatform
 ```
 
 ---
@@ -276,7 +275,8 @@ static const auth0Audience = 'https://api.maporia.com';
 **Backend** (`authController.js`):
 ```javascript
 exports.registerUser = async (req, res) => {
-  const { auth0Id, email, emailVerified } = req.body;
+  const { email, emailVerified } = req.body;
+  const authId = req.userId;
   
   if (!emailVerified) {
     return res.status(400).json({ error: 'Email not verified' });
@@ -311,7 +311,7 @@ const userSchema = new mongoose.Schema({
 **Middleware** (`backend/src/middleware/checkRole.js`):
 ```javascript
 exports.checkAdmin = async (req, res, next) => {
-  const user = await User.findOne({ auth0Id: req.user.auth0Id });
+  const user = await User.findOne({ auth0Id: req.userId });
   if (user.role !== 'admin') {
     return res.status(403).json({ error: 'Forbidden' });
   }
@@ -326,7 +326,7 @@ exports.checkAdmin = async (req, res, next) => {
 exports.updateProfile = async (req, res) => {
   const { name, profilePicture } = req.body;
   const user = await User.findOneAndUpdate(
-    { auth0Id: req.user.auth0Id },
+    { auth0Id: req.userId },
     { name, profilePicture },
     { new: true }
   );
@@ -358,8 +358,9 @@ Future<void> updateProfile(String name, String? profilePicture) async {
 ```bash
 # Test registration
 curl -X POST http://localhost:5000/api/auth/register \
+  -H "Authorization: Bearer YOUR_FIREBASE_ID_TOKEN" \
   -H "Content-Type: application/json" \
-  -d '{"auth0Id":"auth0|123","email":"test@example.com","name":"Test User"}'
+  -d '{"email":"test@example.com","name":"Test User"}'
 
 # Test get current user (with JWT)
 curl -X GET http://localhost:5000/api/auth/me \
@@ -390,18 +391,17 @@ await authService.logout();
 
 **Solutions**:
 - Check if token is stored after login
-- Verify Auth0 domain/audience match between frontend and backend
+- Verify Firebase project credentials between frontend and backend
 - Check if `NODE_ENV=production` (disables dev bypass)
 
 ### "User not found" after login
 
 **Cause**: User not synced to MongoDB
 
-**Solution**: Ensure `/api/auth/register` is called after Auth0 login:
+**Solution**: Ensure `/api/auth/register` is called after Firebase login:
 ```dart
-// After Auth0 login
+// After Firebase login
 await apiClient.post('/api/auth/register', data: {
-  'auth0Id': credentials.user.id,
   'email': credentials.user.email,
   'name': credentials.user.name,
 });
@@ -417,7 +417,7 @@ await apiClient.post('/api/auth/register', data: {
 
 ## See Also
 
-- [Auth0 Setup Guide](../setup-guides/auth0-setup.md)
+- [Firebase Auth Setup Guide](../setup-guides/firebase-auth-setup.md)
 - [Auth API Endpoints](../../backend/api-endpoints/auth-endpoints.md)
 - [Frontend API Integration](../../frontend/api-integration/README.md)
 - [User Model Documentation](../../backend/database/models.md#user-model)

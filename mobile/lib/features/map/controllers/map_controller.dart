@@ -358,7 +358,7 @@ class MapController {
         'visibility',
         visibility,
       );
-      debugPrint('✅ Set ${layerId} visibility to: $visible');
+      debugPrint('✅ Set $layerId visibility to: $visible');
     } catch (e) {
       debugPrint('❌ Error setting layer visibility: $e');
     }

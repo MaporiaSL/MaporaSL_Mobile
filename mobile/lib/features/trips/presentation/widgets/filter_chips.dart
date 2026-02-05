@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../data/models/trip_model.dart';
 import '../providers/trips_filter_provider.dart';
 
 /// Filter chips for trip status filtering

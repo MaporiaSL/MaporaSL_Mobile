@@ -86,7 +86,7 @@ class _ProgressSection extends StatelessWidget {
               children: [
                 const Icon(Icons.flag, color: Colors.orange),
                 const SizedBox(width: 8),
-                Text('Objectives cleared'),
+                const Text('Objectives cleared'),
                 const Spacer(),
                 Text('$pct%'),
               ],

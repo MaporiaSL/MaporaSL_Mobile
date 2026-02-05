@@ -106,8 +106,8 @@ Setup guides help developers **configure their environment** and **get the proje
 **New to the project?**
 
 1. [Local Development Setup](setup-guides/local-development.md) - Get everything running
-2. [Auth0 Configuration](setup-guides/auth0-setup.md) - Set up authentication
-3. [Environment Variables](setup-guides/environment-variables.md) - Configure your environment
+2. [Firebase Auth Setup](setup-guides/firebase-auth-setup.md) - Set up authentication
+3. [Auth Migration Plan](feature-implementation/authentication-firebase-migration.md) - Track migration steps
 
 ---
 

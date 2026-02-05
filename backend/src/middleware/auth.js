@@ -1,33 +1,39 @@
-const { expressjwt: jwt } = require('express-jwt');
-const jwksRsa = require('jwks-rsa');
+const admin = require('../config/firebaseAdmin');
 
 // Development mode: bypass auth for testing
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
-// Validates JWT from Auth0 and attaches payload to req.auth
-const checkJwt = isDevelopment 
+// Validates Firebase ID token and attaches payload to req.auth
+const checkJwt = isDevelopment
   ? (req, res, next) => {
       // In development, create a mock auth object
-      req.auth = { sub: 'dev-user-123' };
+      req.auth = { uid: 'dev-user-123' };
       next();
     }
-  : jwt({
-      secret: jwksRsa.expressJwtSecret({
-        cache: true,
-        rateLimit: true,
-        jwksRequestsPerMinute: 5,
-        jwksUri: `https://${process.env.AUTH0_DOMAIN}/.well-known/jwks.json`
-      }),
-      audience: process.env.AUTH0_AUDIENCE,
-      issuer: `https://${process.env.AUTH0_DOMAIN}/`,
-      algorithms: ['RS256']
-    });
+  : async (req, res, next) => {
+      try {
+        const authHeader = req.headers.authorization || '';
+        const token = authHeader.startsWith('Bearer ')
+          ? authHeader.slice(7)
+          : null;
 
-// Extracts the userId from the JWT `sub` claim
+        if (!token) {
+          return res.status(401).json({ error: 'Unauthorized: Missing Bearer token' });
+        }
+
+        const decoded = await admin.auth().verifyIdToken(token);
+        req.auth = decoded;
+        next();
+      } catch (error) {
+        return res.status(401).json({ error: 'Unauthorized: Invalid token' });
+      }
+    };
+
+// Extracts the userId from the Firebase token
 function extractUserId(req, res, next) {
-  const sub = req?.auth?.sub;
-  if (!sub) return res.status(401).json({ error: 'Unauthorized: Missing sub claim' });
-  req.userId = sub;
+  const uid = req?.auth?.uid || req?.auth?.sub;
+  if (!uid) return res.status(401).json({ error: 'Unauthorized: Missing uid' });
+  req.userId = uid;
   next();
 }
 
