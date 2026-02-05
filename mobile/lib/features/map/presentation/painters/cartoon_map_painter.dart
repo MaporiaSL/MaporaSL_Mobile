@@ -54,6 +54,9 @@ class CartoonMapPainter extends CustomPainter {
       _drawRegionWithBoundaries(canvas, size, region, fillPaint, isSelected);
     }
 
+    // Selected district highlight fill/glow
+    _drawSelectedDistrictHighlight(canvas);
+
     // Draw district boundaries on top
     _drawDistrictBoundaries(canvas);
 
@@ -95,6 +98,29 @@ class CartoonMapPainter extends CustomPainter {
           isSelected ? selectedBorderPaint : districtBorderPaint,
         );
       }
+    }
+  }
+
+  void _drawSelectedDistrictHighlight(Canvas canvas) {
+    if (selectedDistrictName == null) return;
+    final paths = districtPaths[selectedDistrictName!];
+    if (paths == null || paths.isEmpty) return;
+
+    final highlightColor = theme.selectedDistrictBorderColor;
+    final fillPaint = Paint()
+      ..color = highlightColor.withOpacity(0.14 + (pulseValue * 0.16))
+      ..style = PaintingStyle.fill
+      ..maskFilter = MaskFilter.blur(BlurStyle.normal, 6 + pulseValue * 6);
+
+    final glowPaint = Paint()
+      ..color = highlightColor.withOpacity(0.6)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = theme.selectedDistrictBorderWidth + 4
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10);
+
+    for (final path in paths) {
+      canvas.drawPath(path, fillPaint);
+      canvas.drawPath(path, glowPaint);
     }
   }
 
