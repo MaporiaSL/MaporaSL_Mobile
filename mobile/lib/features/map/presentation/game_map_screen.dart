@@ -13,7 +13,6 @@ class GameMapScreen extends StatefulWidget {
 }
 
 class _GameMapScreenState extends State<GameMapScreen> {
-  MapboxMap? _mapboxMap;
   bool _isStyleLoaded = false;
   int _selectedBottomNavIndex = 0;
 
@@ -126,8 +125,6 @@ class _GameMapScreenState extends State<GameMapScreen> {
   }
 
   void _onMapCreated(MapboxMap mapboxMap) async {
-    _mapboxMap = mapboxMap;
-
     // Load custom game style
     await mapboxMap.loadStyleURI(MapConstants.gameStyleUrl);
 
@@ -149,7 +146,6 @@ class _GameMapScreenState extends State<GameMapScreen> {
 
   @override
   void dispose() {
-    _mapboxMap = null;
     super.dispose();
   }
 }

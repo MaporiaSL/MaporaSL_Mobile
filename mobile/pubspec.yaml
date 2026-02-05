@@ -27,7 +27,6 @@ dependencies:
   
   cupertino_icons: ^1.0.8
   # Theming & fonts
-  google_fonts: ^6.1.0
   # Permissions & location groundwork
   # State management
   google_maps_flutter: ^2.7.0
@@ -41,6 +40,7 @@ dependencies:
   dio: ^5.7.0
   intl: ^0.19.0
   json_annotation: ^4.10.0
+  mapbox_maps_flutter: ^2.6.0
 
 dev_dependencies:
   flutter_test:

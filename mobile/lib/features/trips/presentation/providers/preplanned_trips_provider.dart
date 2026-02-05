@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:dio/dio.dart';
 import '../../data/models/preplanned_trip_model.dart';
 import '../../data/models/trip_model.dart';
 import '../../data/datasources/preplanned_trips_api.dart';

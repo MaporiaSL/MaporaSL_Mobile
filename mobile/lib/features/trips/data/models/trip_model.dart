@@ -91,7 +91,6 @@ class TripModel {
       case TripStatus.completed:
         return 'Completed';
     }
-    return 'Planned';
   }
 
   /// Emoji for trip status
@@ -104,7 +103,6 @@ class TripModel {
       case TripStatus.completed:
         return '✅';
     }
-    return '📅';
   }
 
   /// Duration in days
