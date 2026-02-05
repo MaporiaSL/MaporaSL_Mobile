@@ -14,7 +14,8 @@ class MapScreen extends ConsumerStatefulWidget {
 }
 
 class _MapScreenState extends ConsumerState<MapScreen> {
-  String? selectedRegion;
+  String? selectedDistrict;
+  String? selectedProvince;
 
   @override
   void initState() {
@@ -47,62 +48,45 @@ class _MapScreenState extends ConsumerState<MapScreen> {
       ),
       body: SafeArea(
         top: false,
-        child: Column(
+        child: Stack(
           children: [
-            // Cartoonish map canvas
-            Expanded(
-              child: CartoonMapCanvas(
-                regions: sriLankaRegions,
-                selectedRegionId: selectedRegion,
-                onRegionSelected: (regionId) {
-                  setState(() => selectedRegion = regionId);
-                },
-              ),
+            CartoonMapCanvas(
+              regions: sriLankaRegions,
+              selectedRegionId: selectedProvince,
+              selectedDistrictName: selectedDistrict,
+              onDistrictSelected: (districtName, provinceName) {
+                setState(() {
+                  selectedDistrict = districtName;
+                  selectedProvince =
+                      (provinceName != null && provinceName.isNotEmpty)
+                          ? provinceName
+                          : null;
+                });
+              },
             ),
-
-            // Bottom info panel
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(16),
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 8,
+            if (selectedProvince != null || selectedDistrict != null)
+              Positioned(
+                top: 16,
+                left: 16,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
                   ),
-                ],
-              ),
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Trip Progress',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.6),
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  const SizedBox(height: 8),
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: LinearProgressIndicator(
-                      value: 0.0,
-                      minHeight: 8,
-                      backgroundColor: Colors.grey.shade200,
-                      valueColor: AlwaysStoppedAnimation(Colors.blue.shade400),
+                  child: Text(
+                    selectedProvince ?? selectedDistrict ?? '',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
-                  const SizedBox(height: 8),
-                  Text(
-                    selectedRegion != null
-                        ? 'Selected: $selectedRegion'
-                        : 'Tap a region to start',
-                    style: const TextStyle(fontSize: 14, color: Colors.grey),
-                  ),
-                ],
+                ),
               ),
-            ),
           ],
         ),
       ),

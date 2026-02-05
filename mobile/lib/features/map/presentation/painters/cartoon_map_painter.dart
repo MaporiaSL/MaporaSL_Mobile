@@ -8,6 +8,7 @@ class CartoonMapPainter extends CustomPainter {
   final String? selectedRegionId;
   final Map<String, List<List<Offset>>> provinceBoundaries;
   final Map<String, List<List<Offset>>> districtBoundaries;
+  final String? selectedDistrictName;
   final Paint Function(HexColor color, bool isSelected) paintBuilder;
 
   CartoonMapPainter({
@@ -15,6 +16,7 @@ class CartoonMapPainter extends CustomPainter {
     this.selectedRegionId,
     required this.provinceBoundaries,
     required this.districtBoundaries,
+    this.selectedDistrictName,
     required this.paintBuilder,
   });
 
@@ -53,9 +55,20 @@ class CartoonMapPainter extends CustomPainter {
       ..strokeWidth = 1
       ..style = PaintingStyle.stroke;
 
+    final selectedBorderPaint = Paint()
+      ..color = const Color(0xFFFFD54F)
+      ..strokeWidth = 3
+      ..style = PaintingStyle.stroke;
+
     for (final entry in districtBoundaries.entries) {
+      final isSelected = entry.key == selectedDistrictName;
       for (final polygon in entry.value) {
-        _drawPolygonBorder(canvas, size, polygon, districtBorderPaint);
+        _drawPolygonBorder(
+          canvas,
+          size,
+          polygon,
+          isSelected ? selectedBorderPaint : districtBorderPaint,
+        );
       }
     }
   }
@@ -234,6 +247,7 @@ class CartoonMapPainter extends CustomPainter {
     return oldDelegate.selectedRegionId != selectedRegionId ||
         oldDelegate.regions != regions ||
         oldDelegate.provinceBoundaries != provinceBoundaries ||
-        oldDelegate.districtBoundaries != districtBoundaries;
+        oldDelegate.districtBoundaries != districtBoundaries ||
+        oldDelegate.selectedDistrictName != selectedDistrictName;
   }
 }
