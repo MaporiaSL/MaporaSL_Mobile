@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:ui';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 /// Parses GeoJSON boundary data
@@ -61,7 +62,7 @@ class GeoJsonParser {
         districtToProvince: districtToProvince,
       );
     } catch (e) {
-      print('Error loading GeoJSON from $assetPath: $e');
+      debugPrint('Error loading GeoJSON from $assetPath: $e');
       return const DistrictBoundaryData(
         boundaries: {},
         districtToProvince: {},
