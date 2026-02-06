@@ -55,6 +55,7 @@ Track per user:
 - XP weights and bonus range are configurable without app updates.
 - Use a shared XP pool with source tags for map exploration vs general visits.
 - Track XP events in a ledger for auditing and rollback.
+- Track XP events in a ledger for auditing and rollback.
 
 ## Reroll Policy
 - Show a dedicated “Your Exploration Map” onboarding screen after account creation.

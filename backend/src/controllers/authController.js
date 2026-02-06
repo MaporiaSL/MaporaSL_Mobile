@@ -1,14 +1,17 @@
 const User = require('../models/User');
+const { assignExplorationForUser } = require('./explorationController');
 
 // Register or sync user (called after Firebase login)
 async function registerUser(req, res) {
   try {
-    const { email, name, profilePicture } = req.body;
+    const { email, name, profilePicture, hometownDistrict } = req.body;
     const authProviderId = req.userId;
 
     // Validate required fields
-    if (!authProviderId || !email || !name) {
-      return res.status(400).json({ error: 'Missing required fields: email, name' });
+    if (!authProviderId || !email || !name || !hometownDistrict) {
+      return res.status(400).json({
+        error: 'Missing required fields: email, name, hometownDistrict'
+      });
     }
 
     // Check if user exists
@@ -26,10 +29,20 @@ async function registerUser(req, res) {
       auth0Id: authProviderId,
       email,
       name,
-      profilePicture
+      profilePicture,
+      hometownDistrict
     });
 
     await user.save();
+
+    try {
+      await assignExplorationForUser(authProviderId, hometownDistrict);
+    } catch (assignmentError) {
+      await User.deleteOne({ auth0Id: authProviderId });
+      return res.status(500).json({
+        error: 'Failed to create exploration assignments'
+      });
+    }
 
     res.status(201).json({
       message: 'User registered successfully',
