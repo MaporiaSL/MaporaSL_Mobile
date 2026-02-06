@@ -37,4 +37,9 @@ function extractUserId(req, res, next) {
   next();
 }
 
-module.exports = { checkJwt, extractUserId };
+function requireAdmin(req, res, next) {
+  if (req?.auth?.admin === true) return next();
+  return res.status(403).json({ error: 'Forbidden: Admin access required' });
+}
+
+module.exports = { checkJwt, extractUserId, requireAdmin };

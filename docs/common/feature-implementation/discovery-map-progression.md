@@ -117,18 +117,20 @@ Implement personalized per-user location assignments per district, visit verific
 - XP reward scales with distance from hometown district.
 - Same district: lowest XP.
 - Same province: low XP.
-- Neighboring provinces: medium XP.
-- Distant provinces: highest XP.
+- Other provinces: highest XP.
 - Apply a small random bonus on top of the tier.
 - XP weights and bonus range are configurable.
 - Use a shared XP pool with source tags for map exploration vs general visits.
 - Track XP events in a ledger for auditing and rollback.
+  - Default values (tunable):
+    - Same district: base 10 + bonus 0-4
+    - Same province: base 12 + bonus 0-4
+    - Other provinces: base 15 + bonus 0-4
 
 ### Weighting Model (configurable)
 - Same district: highest weight
 - Same province: high weight
-- Neighboring provinces: medium weight
-- Distant provinces: low weight
+- Other provinces: low weight
 
 ## Phase 3: API Endpoints
 ### Admin/Seed
