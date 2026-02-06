@@ -4,6 +4,8 @@ import 'package:vector_math/vector_math_64.dart' as vm;
 import '../data/regions_data.dart';
 import 'widgets/cartoon_map_canvas.dart';
 import 'theme/map_visual_theme.dart';
+import '../../exploration/providers/exploration_provider.dart';
+import '../../exploration/data/models/exploration_models.dart';
 
 /// Cartoonish map screen displaying trip with stylized Sri Lanka map
 class MapScreen extends ConsumerStatefulWidget {
@@ -23,9 +25,8 @@ class _MapScreenState extends ConsumerState<MapScreen>
   Offset _parallax = Offset.zero;
   bool _panelExpanded = true;
 
-  bool _isLocked(String? district) {
-    if (district == null) return false;
-    return _lockedDistricts.contains(district);
+  String _normalizeKey(String? value) {
+    return value?.toString().trim().toLowerCase() ?? '';
   }
 
   Offset _clampOffset(Offset value, double limit) {
@@ -33,14 +34,6 @@ class _MapScreenState extends ConsumerState<MapScreen>
     final dy = value.dy.clamp(-limit, limit).toDouble();
     return Offset(dx, dy);
   }
-
-  static const Set<String> _lockedDistricts = <String>{
-    'Jaffna',
-    'Kilinochchi',
-    'Mullaitivu',
-    'Mannar',
-    'Vavuniya',
-  };
 
   static const MapVisualTheme _mapTheme = MapVisualTheme(
     oceanColor: Color(0xFF071624),
@@ -59,7 +52,6 @@ class _MapScreenState extends ConsumerState<MapScreen>
     rimLightWidth: 2.2,
     fogOpacity: 0.86,
     fogShadowBlur: 14,
-    lockedDistrictIds: _lockedDistricts,
     labelStyle: TextStyle(
       color: Colors.white,
       fontSize: 12,
@@ -78,6 +70,11 @@ class _MapScreenState extends ConsumerState<MapScreen>
       vsync: this,
       duration: const Duration(milliseconds: 1400),
     )..repeat(reverse: true);
+
+    Future.microtask(() {
+      if (!mounted) return;
+      ref.read(explorationProvider.notifier).loadAssignments();
+    });
   }
 
   @override
@@ -88,7 +85,63 @@ class _MapScreenState extends ConsumerState<MapScreen>
 
   @override
   Widget build(BuildContext context) {
-    final districtLocked = _isLocked(selectedDistrict);
+    ref.listen<ExplorationState>(explorationProvider, (previous, next) {
+      final error = next.error;
+      if (error != null && error.isNotEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(error)),
+        );
+      }
+    });
+
+    final explorationState = ref.watch(explorationProvider);
+    final assignments = explorationState.assignments;
+    final lockedDistricts = assignments
+        .where((assignment) => assignment.unlockedAt == null)
+        .map((assignment) => assignment.district)
+        .toSet();
+
+    final selectedAssignment = assignments.firstWhere(
+      (assignment) =>
+          _normalizeKey(assignment.district) ==
+          _normalizeKey(selectedDistrict),
+      orElse: () => DistrictAssignment(
+        district: selectedDistrict ?? '',
+        province: selectedProvince ?? '',
+        assignedCount: 0,
+        visitedCount: 0,
+        unlockedAt: null,
+        locations: const <ExplorationLocation>[],
+      ),
+    );
+
+    final districtLocked = selectedDistrict == null
+        ? false
+        : lockedDistricts
+            .map(_normalizeKey)
+            .contains(_normalizeKey(selectedDistrict));
+
+    final theme = MapVisualTheme(
+      oceanColor: _mapTheme.oceanColor,
+      coastlineColor: _mapTheme.coastlineColor,
+      oceanGlowColor: _mapTheme.oceanGlowColor,
+      provinceBorderColor: _mapTheme.provinceBorderColor,
+      districtBorderColor: _mapTheme.districtBorderColor,
+      selectedDistrictBorderColor: _mapTheme.selectedDistrictBorderColor,
+      selectedProvinceBorderColor: _mapTheme.selectedProvinceBorderColor,
+      runeGlowColor: _mapTheme.runeGlowColor,
+      extrusionSideColor: _mapTheme.extrusionSideColor,
+      extrusionDepth: _mapTheme.extrusionDepth,
+      shadowOffset: _mapTheme.shadowOffset,
+      shadowBlur: _mapTheme.shadowBlur,
+      rimLightColor: _mapTheme.rimLightColor,
+      rimLightWidth: _mapTheme.rimLightWidth,
+      fogOpacity: _mapTheme.fogOpacity,
+      fogShadowBlur: _mapTheme.fogShadowBlur,
+      labelStyle: _mapTheme.labelStyle,
+      lockedDistrictIds: lockedDistricts.toSet(),
+    );
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('🗺️ Discover Sri Lanka'),
@@ -135,7 +188,7 @@ class _MapScreenState extends ConsumerState<MapScreen>
                       regions: sriLankaRegions,
                       selectedRegionId: selectedProvince,
                       selectedDistrictName: selectedDistrict,
-                      theme: _mapTheme,
+                      theme: theme,
                       pulseValue: _pulseController.value,
                       onDistrictSelected: (districtName, provinceName) {
                         setState(() {
@@ -152,13 +205,6 @@ class _MapScreenState extends ConsumerState<MapScreen>
               ),
             ),
             Positioned(
-              top: 16,
-              right: 16,
-              child: IgnorePointer(
-                child: _HudCard(level: 7, xp: 320, nextLevelXp: 500),
-              ),
-            ),
-            Positioned(
               bottom: 20,
               left: 16,
               right: 16,
@@ -171,6 +217,15 @@ class _MapScreenState extends ConsumerState<MapScreen>
                   district: selectedDistrict,
                   province: selectedProvince,
                   locked: districtLocked,
+                  isLoading: explorationState.isLoading,
+                  assignedCount: selectedAssignment.assignedCount,
+                  visitedCount: selectedAssignment.visitedCount,
+                  locations: selectedAssignment.locations,
+                  onVerifyLocation: (location) {
+                    ref
+                        .read(explorationProvider.notifier)
+                        .verifyLocation(location);
+                  },
                   onToggle: () {
                     setState(() => _panelExpanded = !_panelExpanded);
                   },
@@ -227,6 +282,8 @@ class _MapScreenState extends ConsumerState<MapScreen>
                   ),
                 ),
               ),
+            if (explorationState.isVerifying)
+              const _VerificationOverlay(),
           ],
         ),
       ),
@@ -306,20 +363,30 @@ class _DistrictActionPanel extends StatelessWidget {
   final String? province;
   final bool locked;
   final VoidCallback onToggle;
+  final bool isLoading;
+  final int assignedCount;
+  final int visitedCount;
+  final List<ExplorationLocation> locations;
+  final ValueChanged<ExplorationLocation> onVerifyLocation;
 
   const _DistrictActionPanel({
     required this.district,
     required this.province,
     required this.locked,
     required this.onToggle,
+    required this.isLoading,
+    required this.assignedCount,
+    required this.visitedCount,
+    required this.locations,
+    required this.onVerifyLocation,
   });
 
   @override
   Widget build(BuildContext context) {
     final title = district ?? 'Select a district';
     final subtitle = district == null
-        ? 'Tap a district to reveal quests and rewards'
-        : (province == null ? 'Unknown province' : 'Province: $province');
+      ? 'Tap a district to reveal quests and rewards'
+      : (province == null ? 'Unknown province' : 'Province: $province');
 
     return AnimatedOpacity(
       opacity: district == null ? 0.7 : 1.0,
@@ -342,105 +409,207 @@ class _DistrictActionPanel extends StatelessWidget {
             ),
           ],
         ),
-        child: Row(
+        child: Column(
           children: [
-            Container(
-              width: 44,
-              height: 44,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: LinearGradient(
-                  colors: locked
-                      ? [Colors.redAccent, Colors.deepOrangeAccent]
-                      : [Colors.cyanAccent, Colors.blueAccent],
-                ),
-              ),
-              child: Icon(
-                locked ? Icons.lock : Icons.shield_moon,
-                color: Colors.black87,
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    subtitle,
-                    style: TextStyle(
-                      color: Colors.white.withOpacity(0.7),
-                      fontSize: 12,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(width: 8),
-            Column(
+            Row(
               children: [
+                Container(
+                  width: 44,
+                  height: 44,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: LinearGradient(
+                      colors: locked
+                          ? [Colors.redAccent, Colors.deepOrangeAccent]
+                          : [Colors.cyanAccent, Colors.blueAccent],
+                    ),
+                  ),
+                  child: Icon(
+                    locked ? Icons.lock : Icons.shield_moon,
+                    color: Colors.black87,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        subtitle,
+                        style: TextStyle(
+                          color: Colors.white.withOpacity(0.7),
+                          fontSize: 12,
+                        ),
+                      ),
+                      if (district != null)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 6),
+                          child: Text(
+                            'Progress: $visitedCount / $assignedCount',
+                            style: TextStyle(
+                              color: Colors.white.withOpacity(0.7),
+                              fontSize: 12,
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 8),
                 IconButton(
                   onPressed: onToggle,
                   icon: const Icon(Icons.keyboard_arrow_down),
                   color: Colors.white.withOpacity(0.7),
                   tooltip: 'Minimize',
                 ),
-                const SizedBox(height: 2),
-                ElevatedButton.icon(
-                  onPressed: district == null
-                      ? null
-                      : () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                locked
-                                    ? 'District locked. Complete quests to unlock.'
-                                    : 'Quest board opened for $title',
-                              ),
-                            ),
-                          );
-                        },
-                  icon: const Icon(Icons.flag, size: 16),
-                  label: const Text('Quests'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: locked
-                        ? Colors.redAccent
-                        : Colors.cyanAccent,
-                    foregroundColor: Colors.black,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 8,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 6),
-                OutlinedButton(
-                  onPressed: district == null
-                      ? null
-                      : () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Tracking $title')),
-                          );
-                        },
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: Colors.white,
-                    side: BorderSide(color: Colors.white.withOpacity(0.5)),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 6,
-                    ),
-                  ),
-                  child: const Text('Track'),
-                ),
               ],
+            ),
+            if (district != null)
+              _AssignedLocationList(
+                isLoading: isLoading,
+                locations: locations,
+                onVerify: onVerifyLocation,
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _AssignedLocationList extends StatelessWidget {
+  final bool isLoading;
+  final List<ExplorationLocation> locations;
+  final ValueChanged<ExplorationLocation> onVerify;
+
+  const _AssignedLocationList({
+    required this.isLoading,
+    required this.locations,
+    required this.onVerify,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    if (isLoading) {
+      return const Padding(
+        padding: EdgeInsets.only(top: 12),
+        child: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    if (locations.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.only(top: 12),
+        child: Text(
+          'No assigned locations yet.',
+          style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 12),
+        ),
+      );
+    }
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 12),
+      child: SizedBox(
+        height: 140,
+        child: ListView.separated(
+          itemCount: locations.length,
+          separatorBuilder: (_, __) => const SizedBox(height: 8),
+          itemBuilder: (context, index) {
+            final location = locations[index];
+            return Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.08),
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: Colors.white.withOpacity(0.15)),
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    location.visited ? Icons.check_circle : Icons.place,
+                    color:
+                        location.visited ? Colors.greenAccent : Colors.white70,
+                    size: 18,
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          location.name,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 12,
+                          ),
+                        ),
+                        Text(
+                          location.type,
+                          style: TextStyle(
+                            color: Colors.white.withOpacity(0.7),
+                            fontSize: 10,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  ElevatedButton(
+                    onPressed: location.visited ? null : () => onVerify(location),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: location.visited
+                          ? Colors.grey
+                          : Colors.cyanAccent,
+                      foregroundColor: Colors.black,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 6,
+                      ),
+                      textStyle: const TextStyle(fontSize: 11),
+                    ),
+                    child: Text(location.visited ? 'Done' : 'Verify'),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class _VerificationOverlay extends StatelessWidget {
+  const _VerificationOverlay();
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned.fill(
+      child: Container(
+        color: Colors.white,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: const [
+            SizedBox(
+              width: 36,
+              height: 36,
+              child: CircularProgressIndicator(strokeWidth: 3),
+            ),
+            SizedBox(height: 16),
+            Text(
+              'Scanning location...\nPlease stay still',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
             ),
           ],
         ),
