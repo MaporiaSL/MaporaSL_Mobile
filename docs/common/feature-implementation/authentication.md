@@ -9,6 +9,64 @@
 
 Authentication in MAPORIA uses **Firebase Authentication** with **Firebase ID tokens** for API authorization. The backend validates tokens and syncs user data with MongoDB.
 
+Supported sign-in methods:
+
+- Email + Password
+- Google OAuth (Firebase provider)
+
+---
+
+## Google Login (Firebase OAuth)
+
+Google Sign-In uses Firebase Auth and the same backend token validation
+pipeline as email/password. The only change is how the Flutter app obtains
+the Firebase ID token.
+
+### Firebase Console Setup
+
+1. Enable **Google** provider in Firebase Authentication.
+2. Add Android SHA-1/SHA-256 fingerprints in Firebase project settings.
+3. Download updated `google-services.json` (Android) and
+   `GoogleService-Info.plist` (iOS).
+4. Ensure the OAuth consent screen is configured in Google Cloud.
+
+### Android Configuration
+
+- Place `google-services.json` in `mobile/android/app/`.
+- Ensure Gradle applies the Google Services plugin.
+- Confirm the app package name matches Firebase settings.
+
+### iOS Configuration
+
+- Place `GoogleService-Info.plist` in `mobile/ios/Runner/`.
+- Add the **REVERSED_CLIENT_ID** under `CFBundleURLTypes` in `Info.plist`.
+
+### Flutter Integration
+
+Add dependency:
+
+```yaml
+dependencies:
+  google_sign_in: ^6.2.1
+```
+
+Auth service flow:
+
+```dart
+final googleUser = await GoogleSignIn().signIn();
+final googleAuth = await googleUser?.authentication;
+final credential = GoogleAuthProvider.credential(
+  accessToken: googleAuth?.accessToken,
+  idToken: googleAuth?.idToken,
+);
+await FirebaseAuth.instance.signInWithCredential(credential);
+```
+
+### Backend Impact
+
+No backend changes are required beyond existing Firebase ID token validation.
+All API calls still use the Firebase ID token via the `Authorization` header.
+
 ---
 
 ## Architecture
