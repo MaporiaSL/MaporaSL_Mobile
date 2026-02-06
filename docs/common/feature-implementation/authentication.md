@@ -73,7 +73,13 @@ All API calls still use the Firebase ID token via the `Authorization` header.
 For local development, you can bypass the login screen while keeping the
 Firebase token flow intact for production builds.
 
-Run the app with:
+Copy `mobile/.env.example` to `mobile/.env` (recommended):
+
+```text
+AUTH_BYPASS=true
+```
+
+Or via dart-define:
 
 ```bash
 flutter run --dart-define=AUTH_BYPASS=true

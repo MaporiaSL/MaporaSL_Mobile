@@ -8,8 +8,9 @@ class PrePlannedTripsApi {
   final Dio _dio;
   final String baseUrl;
 
-  PrePlannedTripsApi({required Dio dio, this.baseUrl = AppConfig.apiBaseUrl})
-    : _dio = dio;
+  PrePlannedTripsApi({required Dio dio, String? baseUrl})
+    : _dio = dio,
+      baseUrl = baseUrl ?? AppConfig.apiBaseUrl;
 
   /// GET /api/preplanned-trips
   Future<List<PrePlannedTripModel>> fetchTemplates({

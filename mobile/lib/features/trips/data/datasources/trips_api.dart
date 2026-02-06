@@ -14,8 +14,9 @@ class TripsApi {
     // For Android emulator: 10.0.2.2 maps to host machine's localhost
     // For iOS simulator: localhost works
     // For physical device: use your computer's IP address
-    this.baseUrl = AppConfig.apiBaseUrl,
-  }) : _dio = dio;
+    String? baseUrl,
+  })  : _dio = dio,
+        baseUrl = baseUrl ?? AppConfig.apiBaseUrl;
 
   /// Fetch paginated list of trips
   /// GET /api/travel?skip=0&limit=20

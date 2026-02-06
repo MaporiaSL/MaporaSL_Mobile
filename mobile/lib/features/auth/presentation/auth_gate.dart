@@ -1,16 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import '../../../core/config/app_config.dart';
 import '../../home/presentation/home_screen.dart';
 import 'login_screen.dart';
 
 class AuthGate extends StatelessWidget {
   const AuthGate({super.key});
-
-  static const bool _authBypass = bool.fromEnvironment(
-    'AUTH_BYPASS',
-    defaultValue: false,
-  );
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +20,7 @@ class AuthGate extends StatelessWidget {
         }
 
         if (snapshot.data == null) {
-          if (kDebugMode && _authBypass) {
+          if (kDebugMode && AppConfig.authBypass) {
             return const HomeScreen();
           }
           return const LoginScreen();
