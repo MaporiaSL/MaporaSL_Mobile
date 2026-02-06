@@ -65,7 +65,7 @@ Frontend implementation guides are now consolidated with backend guides in the c
 
 | Feature | Screen/UI | Provider/State | Service | Model |
 |---------|-----------|----------------|---------|-------|
-| **Authentication** | `login_screen.dart` | `auth_provider.dart` | `auth_service.dart` | `user_model.dart` |
+| **Authentication** | `login_screen.dart` (Google) | `auth_provider.dart` | `auth_service.dart` | `user_model.dart` |
 | **Places & Attractions** | `places_screen.dart`, `place_details_screen.dart` | `places_provider.dart` | - | `place_model.dart` |
 | **Trip Planning** | `trips_screen.dart`, `trip_details_screen.dart`, `create_trip_screen.dart` | `trips_provider.dart` | - | `trip_model.dart` |
 | **Album & Photos** | *To be created* | *To be created* | - | *To be created* |
@@ -99,7 +99,7 @@ Each feature guide tells you **exactly which files to modify**:
 
 | Feature | Screens | Providers | API Calls | Details |
 |---------|---------|-----------|-----------|---------|
-| **Authentication** | auth_screen.dart, login_screen.dart | authProvider | login, register | [Implementation](feature-implementation/authentication.md) |
+| **Authentication** | login_screen.dart | authProvider | Google login | [Implementation](feature-implementation/authentication.md) |
 | **Places & Attractions** | places_screen.dart, place_detail_screen.dart | placesProvider | places API | [Implementation](feature-implementation/places-attractions.md) |
 | **Trip Planning** | trips_screen.dart, trip_detail_screen.dart | tripsProvider | trips API | [Implementation](feature-implementation/trip-planning.md) |
 | **Album & Photos** | album_screen.dart, photo_capture_screen.dart | albumProvider, cameraProvider | photos API | [Implementation](feature-implementation/album-photos.md) |

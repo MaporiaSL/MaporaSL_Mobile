@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../../map/presentation/map_screen.dart';
 import '../../album/presentation/album_page.dart';
 import '../../trips/presentation/trips_page.dart';
@@ -41,10 +42,18 @@ class _HomeScreenState extends State<HomeScreen> {
         _isCheckingProfile = false;
       });
     } catch (_) {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        if (!mounted) return;
+        setState(() => _isCheckingProfile = false);
+        return;
+      }
+      final email = user.email ?? 'unknown@local.test';
+      final name = user.displayName ?? email.split('@').first;
       try {
         await AuthApi().registerUser(
-          email: 'dev@local.test',
-          name: 'Dev User',
+          email: email,
+          name: name,
           hometownDistrict: 'Colombo',
         );
       } catch (_) {

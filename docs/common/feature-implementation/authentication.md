@@ -11,7 +11,6 @@ Authentication in MAPORIA uses **Firebase Authentication** with **Firebase ID to
 
 Supported sign-in methods:
 
-- Email + Password
 - Google OAuth (Firebase provider)
 
 ---
@@ -66,6 +65,24 @@ await FirebaseAuth.instance.signInWithCredential(credential);
 
 No backend changes are required beyond existing Firebase ID token validation.
 All API calls still use the Firebase ID token via the `Authorization` header.
+
+---
+
+## Development Auth Bypass
+
+For local development, you can bypass the login screen while keeping the
+Firebase token flow intact for production builds.
+
+Run the app with:
+
+```bash
+flutter run --dart-define=AUTH_BYPASS=true
+```
+
+Notes:
+
+- Bypass is only enabled in debug builds.
+- Use real Google login for staging or production.
 
 ---
 

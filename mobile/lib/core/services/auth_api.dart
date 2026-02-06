@@ -1,21 +1,12 @@
-import 'package:dio/dio.dart';
-import '../config/app_config.dart';
+import 'api_client.dart';
 
 class AuthApi {
-  final Dio _dio;
+  final ApiClient _client;
 
-  AuthApi({Dio? dio})
-      : _dio = dio ??
-            Dio(
-              BaseOptions(
-                baseUrl: AppConfig.apiBaseUrl,
-                connectTimeout: const Duration(seconds: 10),
-                receiveTimeout: const Duration(seconds: 10),
-              ),
-            );
+  AuthApi({ApiClient? client}) : _client = client ?? ApiClient();
 
   Future<Map<String, dynamic>?> getMe() async {
-    final response = await _dio.get('/api/auth/me');
+    final response = await _client.get('/api/auth/me');
     return response.data as Map<String, dynamic>;
   }
 
@@ -24,10 +15,13 @@ class AuthApi {
     required String name,
     required String hometownDistrict,
   }) async {
-    await _dio.post('/api/auth/register', data: {
-      'email': email,
-      'name': name,
-      'hometownDistrict': hometownDistrict,
-    });
+    await _client.post(
+      '/api/auth/register',
+      data: {
+        'email': email,
+        'name': name,
+        'hometownDistrict': hometownDistrict,
+      },
+    );
   }
 }
