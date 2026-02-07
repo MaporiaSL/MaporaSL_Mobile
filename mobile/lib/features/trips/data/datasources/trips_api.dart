@@ -15,8 +15,8 @@ class TripsApi {
     // For iOS simulator: localhost works
     // For physical device: use your computer's IP address
     String? baseUrl,
-  })  : _dio = dio,
-        baseUrl = baseUrl ?? AppConfig.apiBaseUrl;
+  }) : _dio = dio,
+       baseUrl = baseUrl ?? AppConfig.apiBaseUrl;
 
   /// Fetch paginated list of trips
   /// GET /api/travel?skip=0&limit=20
