@@ -88,7 +88,7 @@ See [Common Feature Implementation](../common/feature-implementation/) for step-
 
 **"Where do I make changes?"** → Find your feature below
 
-Dev note: copy mobile/.env.example to mobile/.env and set `AUTH_BYPASS=true` to bypass login in debug.
+Dev note: use `--dart-define=AUTH_BYPASS=true` to bypass login in debug.
 
 Each feature guide tells you **exactly which files to modify**:
 - Which screens need changes
