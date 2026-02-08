@@ -24,6 +24,24 @@ const upload = multer({
 // Auth required for all photo routes
 router.use(checkJwt, extractUserId);
 
+// POST /api/albums/:albumId/photos - upload single photo
+router.post('/', upload.single('photo'), photoController.uploadPhoto);
+
+// POST /api/albums/:albumId/photos/bulk - upload multiple photos
+router.post('/bulk', upload.array('photos', 20), photoController.uploadMultiplePhotos);
+
+// GET /api/albums/:albumId/photos - get all photos
+router.get('/', photoController.getPhotos);
+
+// GET /api/albums/:albumId/photos/:photoId - get single photo
+router.get('/:photoId', photoController.getPhoto);
+
+// PATCH /api/albums/:albumId/photos/:photoId - update photo
+router.patch('/:photoId', photoController.updatePhoto);
+
+// DELETE /api/albums/:albumId/photos/:photoId - delete photo
+router.delete('/:photoId', photoController.deletePhoto);
+
 // Multer error handling
 router.use((err, req, res, next) => {
   if (err instanceof multer.MulterError) {
