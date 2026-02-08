@@ -288,7 +288,7 @@ class ShopConfig {
 ---
 
 ## File References
-- [Implementation Plan](./SHOP_IMPLEMENTATION.md)
+- [Implementation pPlan](./SHOP_IMPLEMENTATION.md)
 - [Project Roadmap](../01_planning/PROJECT_SOURCE_OF_TRUTH.md)
 - [API Reference](../04_api/API_REFERENCE.md)
 
