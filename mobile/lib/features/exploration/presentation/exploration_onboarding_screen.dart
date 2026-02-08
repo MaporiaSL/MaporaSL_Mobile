@@ -98,7 +98,7 @@ class _ExplorationOnboardingScreenState
             ),
             const SizedBox(height: 12),
             DropdownButtonFormField<String>(
-              value: _selectedDistrict,
+              initialValue: _selectedDistrict,
               items: sriLankaDistricts
                   .map(
                     (district) => DropdownMenuItem(

@@ -597,9 +597,9 @@ class _VerificationOverlay extends StatelessWidget {
     return Positioned.fill(
       child: Container(
         color: Colors.white,
-        child: Column(
+        child: const Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
+          children: [
             SizedBox(
               width: 36,
               height: 36,
