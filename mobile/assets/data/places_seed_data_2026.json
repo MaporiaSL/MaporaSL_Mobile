@@ -1,0 +1,321 @@
+{
+  "country": "Sri Lanka",
+  "total_districts": 25,
+  "data_source": "Gemini Tourism Database 2026",
+  "districts": [
+    {
+      "district": "Colombo",
+      "province": "Western",
+      "attractions": [
+        { "name": "Gangaramaya Temple", "type": "Buddhist Temple", "lat": 6.9148, "lon": 79.8577 },
+        { "name": "Galle Face Green", "type": "Urban Park / Beach", "lat": 6.9271, "lon": 79.8441 },
+        { "name": "National Museum of Colombo", "type": "Museum", "lat": 6.9103, "lon": 79.8609 },
+        { "name": "Lotus Tower", "type": "Observation Tower", "lat": 6.9298, "lon": 79.8578 },
+        { "name": "Independence Memorial Hall", "type": "Monument", "lat": 6.9042, "lon": 79.8651 },
+        { "name": "Viharamahadevi Park", "type": "Urban Park", "lat": 6.9128, "lon": 79.8612 },
+        { "name": "Pettah Floating Market", "type": "Market", "lat": 6.9332, "lon": 79.8546 },
+        { "name": "Kelaniya Raja Maha Vihara", "type": "Ancient Temple", "lat": 6.9525, "lon": 79.9173 },
+        { "name": "Dehiwala Zoological Gardens", "type": "Zoo", "lat": 6.8521, "lon": 79.8732 }
+      ]
+    },
+    {
+      "district": "Kandy",
+      "province": "Central",
+      "attractions": [
+        { "name": "Temple of the Sacred Tooth Relic", "type": "Religious Site", "lat": 7.2936, "lon": 80.6413 },
+        { "name": "Royal Botanical Gardens, Peradeniya", "type": "Botanical Garden", "lat": 7.2719, "lon": 80.5961 },
+        { "name": "Kandy Lake", "type": "Man-made Lake", "lat": 7.2923, "lon": 80.6418 },
+        { "name": "Bahirawakanda Buddha Statue", "type": "Religious Landmark", "lat": 7.2911, "lon": 80.6305 },
+        { "name": "Udawattakele Sanctuary", "type": "Forest Reserve", "lat": 7.3000, "lon": 80.6400 },
+        { "name": "Ambakke Devalaya", "type": "Ancient Wood Carving Site", "lat": 7.2183, "lon": 80.5675 },
+        { "name": "Knuckles Mountain Range", "type": "Mountain / Trekking", "lat": 7.4525, "lon": 80.7850 },
+        { "name": "Hanthana Mountain Range", "type": "Mountain / Trekking", "lat": 7.2561, "lon": 80.6272 }
+      ]
+    },
+    {
+      "district": "Matale",
+      "province": "Central",
+      "attractions": [
+        { "name": "Sigiriya Rock Fortress", "type": "Ancient Fortress", "lat": 7.9570, "lon": 80.7603 },
+        { "name": "Dambulla Royal Cave Temple", "type": "Cave Temple", "lat": 7.8562, "lon": 80.6482 },
+        { "name": "Pidurangala Rock", "type": "Mountain / Hiking", "lat": 7.9653, "lon": 80.7628 },
+        { "name": "Nalanda Gedige", "type": "Ancient Hybrid Structure", "lat": 7.6698, "lon": 80.6457 },
+        { "name": "Riverston Peak", "type": "Mountain / Viewpoint", "lat": 7.5255, "lon": 80.7363 },
+        { "name": "Aluvihare Rock Temple", "type": "Ancient Temple", "lat": 7.4914, "lon": 80.6214 },
+        { "name": "Wasgamuwa National Park", "type": "National Park", "lat": 7.7214, "lon": 80.9547 }
+      ]
+    },
+    {
+      "district": "Nuwara Eliya",
+      "province": "Central",
+      "attractions": [
+        { "name": "Gregory Lake", "type": "Lake", "lat": 6.9631, "lon": 80.7761 },
+        { "name": "Horton Plains National Park", "type": "Highland Plateau", "lat": 6.8028, "lon": 80.8091 },
+        { "name": "World's End", "type": "Cliff / Viewpoint", "lat": 6.7865, "lon": 80.7915 },
+        { "name": "Hakgala Botanical Garden", "type": "Botanical Garden", "lat": 6.9250, "lon": 80.8167 },
+        { "name": "Victoria Park", "type": "Urban Park", "lat": 6.9714, "lon": 80.7672 },
+        { "name": "St. Clair's Falls", "type": "Waterfall", "lat": 6.9388, "lon": 80.6258 },
+        { "name": "Devon Falls", "type": "Waterfall", "lat": 6.9358, "lon": 80.6322 },
+        { "name": "Pedro Tea Estate", "type": "Tea Plantation", "lat": 6.9734, "lon": 80.7963 }
+      ]
+    },
+    {
+      "district": "Galle",
+      "province": "Southern",
+      "attractions": [
+        { "name": "Galle Dutch Fort", "type": "World Heritage Site", "lat": 6.0263, "lon": 80.2166 },
+        { "name": "Unawatuna Beach", "type": "Beach", "lat": 6.0174, "lon": 80.2489 },
+        { "name": "Hikkaduwa Marine National Park", "type": "Coral Reef", "lat": 6.1395, "lon": 80.1063 },
+        { "name": "Rumassala Sanctuary", "type": "Coastal Hill / Forest", "lat": 6.0135, "lon": 80.2405 },
+        { "name": "Jungle Beach", "type": "Secluded Beach", "lat": 6.0163, "lon": 80.2392 },
+        { "name": "Koggala Lake", "type": "Freshwater Lagoon", "lat": 5.9928, "lon": 80.3546 },
+        { "name": "Ahungalla Beach", "type": "Beach", "lat": 6.3050, "lon": 80.0270 },
+        { "name": "Maduganga River Safari", "type": "Wetland / Mangroves", "lat": 6.2736, "lon": 80.0571 }
+      ]
+    },
+    {
+      "district": "Matara",
+      "province": "Southern",
+      "attractions": [
+        { "name": "Mirissa Beach", "type": "Beach / Whale Watching", "lat": 5.9483, "lon": 80.4716 },
+        { "name": "Dondra Head Lighthouse", "type": "Lighthouse", "lat": 5.9229, "lon": 80.5872 },
+        { "name": "Polhena Beach", "type": "Beach / Snorkeling", "lat": 5.9366, "lon": 80.5255 },
+        { "name": "Matara Star Fort", "type": "Fortress", "lat": 5.9497, "lon": 80.5452 },
+        { "name": "Paravi Duwa Temple", "type": "Religious Site on Island", "lat": 5.9423, "lon": 80.5445 },
+        { "name": "Coconut Tree Hill", "type": "Viewpoint", "lat": 5.9431, "lon": 80.4632 },
+        { "name": "Secret Beach Mirissa", "type": "Beach", "lat": 5.9458, "lon": 80.4512 }
+      ]
+    },
+    {
+      "district": "Hambantota",
+      "province": "Southern",
+      "attractions": [
+        { "name": "Yala National Park", "type": "Wildlife Sanctuary", "lat": 6.3686, "lon": 81.4722 },
+        { "name": "Bundala National Park", "type": "Wetland / Birding", "lat": 6.2023, "lon": 81.1873 },
+        { "name": "Kataragama Sacred City", "type": "Religious Complex", "lat": 6.4150, "lon": 81.3328 },
+        { "name": "Ridiyagama Safari Park", "type": "Open Zoo", "lat": 6.2291, "lon": 81.0125 },
+        { "name": "Madunagala Hot Springs", "type": "Geothermal Spring", "lat": 6.2014, "lon": 81.0183 },
+        { "name": "Shangri-La's Golf Resort", "type": "Luxury Resort / Golf", "lat": 6.1367, "lon": 81.0425 },
+        { "name": "Mulkirigala Rock Temple", "type": "Ancient Rock Temple", "lat": 6.1625, "lon": 80.7397 }
+      ]
+    },
+    {
+      "district": "Jaffna",
+      "province": "Northern",
+      "attractions": [
+        { "name": "Nallur Kandaswamy Kovil", "type": "Hindu Temple", "lat": 9.6744, "lon": 80.0303 },
+        { "name": "Jaffna Fort", "type": "Historic Fortress", "lat": 9.6617, "lon": 80.0075 },
+        { "name": "Casuarina Beach", "type": "Beach", "lat": 9.7567, "lon": 79.8864 },
+        { "name": "Nagadeepa Purana Vihara", "type": "Buddhist Temple on Island", "lat": 9.6133, "lon": 79.7758 },
+        { "name": "Kantharodai Ruins", "type": "Ancient Mini Stupas", "lat": 9.7423, "lon": 80.0031 },
+        { "name": "Keerimalai Hot Springs", "type": "Sacred Spring", "lat": 9.8155, "lon": 80.0104 },
+        { "name": "Point Pedro", "type": "Northernmost Tip", "lat": 9.8245, "lon": 80.2450 },
+        { "name": "Delft Island", "type": "Island / Wild Horses", "lat": 9.5083, "lon": 79.6833 },
+        { "name": "Jaffna Public Library", "type": "Iconic Architecture", "lat": 9.6628, "lon": 80.0135 }
+      ]
+    },
+    {
+      "district": "Anuradhapura",
+      "province": "North Central",
+      "attractions": [
+        { "name": "Jaya Sri Maha Bodhi", "type": "Sacred Tree", "lat": 8.3449, "lon": 80.3971 },
+        { "name": "Ruwanwelisaya", "type": "Great Stupa", "lat": 8.3501, "lon": 80.3965 },
+        { "name": "Mihintale", "type": "Mountain / Birthplace of Buddhism", "lat": 8.3514, "lon": 80.5181 },
+        { "name": "Abhayagiri Dagoba", "type": "Ancient Monastery", "lat": 8.3712, "lon": 80.3951 },
+        { "name": "Jetavanaramaya", "type": "Ancient Brick Stupa", "lat": 8.3516, "lon": 80.4035 },
+        { "name": "Isurumuniya Temple", "type": "Rock Temple", "lat": 8.3344, "lon": 80.3904 },
+        { "name": "Thuparamaya", "type": "Oldest Stupa", "lat": 8.3551, "lon": 80.3959 },
+        { "name": "Wilpattu National Park", "type": "National Park", "lat": 8.4333, "lon": 80.0000 }
+      ]
+    },
+    {
+      "district": "Polonnaruwa",
+      "province": "North Central",
+      "attractions": [
+        { "name": "Gal Vihara", "type": "Rock-cut Buddhas", "lat": 7.9658, "lon": 81.0003 },
+        { "name": "Parakrama Samudra", "type": "Ancient Reservoir", "lat": 7.9145, "lon": 80.9765 },
+        { "name": "Vatadage", "type": "Circular Relic House", "lat": 7.9479, "lon": 81.0004 },
+        { "name": "Minneriya National Park", "type": "Wildlife / Elephant Gathering", "lat": 7.9786, "lon": 80.8872 },
+        { "name": "Lankatilaka Image House", "type": "Ancient Temple Ruins", "lat": 7.9547, "lon": 81.0012 },
+        { "name": "Royal Palace of King Parakramabahu", "type": "Ruins", "lat": 7.9392, "lon": 80.9995 },
+        { "name": "Kaudulla National Park", "type": "National Park", "lat": 8.1367, "lon": 80.9167 }
+      ]
+    },
+    {
+      "district": "Trincomalee",
+      "province": "Eastern",
+      "attractions": [
+        { "name": "Nilaveli Beach", "type": "Beach", "lat": 8.6874, "lon": 81.1895 },
+        { "name": "Pigeon Island National Park", "type": "Marine Park / Snorkeling", "lat": 8.7183, "lon": 81.2033 },
+        { "name": "Fort Frederick", "type": "Dutch Fort", "lat": 8.5776, "lon": 81.2396 },
+        { "name": "Koneswaram Temple", "type": "Cliffside Hindu Temple", "lat": 8.5833, "lon": 81.2442 },
+        { "name": "Marble Beach", "type": "Pristine Beach", "lat": 8.4975, "lon": 81.2183 },
+        { "name": "Kanniya Hot Springs", "type": "Natural Hot Wells", "lat": 8.5891, "lon": 81.1834 },
+        { "name": "Uppuveli Beach", "type": "Beach / Tourist Hub", "lat": 8.6083, "lon": 81.2167 }
+      ]
+    },
+    {
+      "district": "Ampara",
+      "province": "Eastern",
+      "attractions": [
+        { "name": "Arugam Bay", "type": "Surfing Destination", "lat": 6.8400, "lon": 81.8333 },
+        { "name": "Kumana National Park", "type": "Wildlife / Birding", "lat": 6.5167, "lon": 81.7167 },
+        { "name": "Muhudu Maha Viharaya", "type": "Ancient Temple on Dunes", "lat": 6.8778, "lon": 81.8483 },
+        { "name": "Gal Oya National Park", "type": "National Park / Boat Safari", "lat": 7.2167, "lon": 81.4500 },
+        { "name": "Buddhangala Monastery", "type": "Ancient Hermitage", "lat": 7.3333, "lon": 81.7000 },
+        { "name": "Panama Beach", "type": "Secluded Beach", "lat": 6.7583, "lon": 81.8083 },
+        { "name": "Magul Maha Viharaya", "type": "Historic Forest Temple", "lat": 6.8375, "lon": 81.7214 }
+      ]
+    },
+    {
+      "district": "Badulla",
+      "province": "Uva",
+      "attractions": [
+        { "name": "Nine Arches Bridge", "type": "Railroad Bridge / Landmark", "lat": 6.8768, "lon": 81.0608 },
+        { "name": "Little Adam's Peak", "type": "Mountain / Viewpoint", "lat": 6.8647, "lon": 81.0622 },
+        { "name": "Ella Rock", "type": "Mountain / Trekking", "lat": 6.8624, "lon": 81.0453 },
+        { "name": "Dunhinda Falls", "type": "Waterfall", "lat": 7.0169, "lon": 81.0619 },
+        { "name": "Ravana Falls", "type": "Waterfall", "lat": 6.8414, "lon": 81.0550 },
+        { "name": "Diyaluma Falls", "type": "Waterfall / Natural Pools", "lat": 6.7269, "lon": 81.0319 },
+        { "name": "Lipton's Seat", "type": "Tea Plantation Viewpoint", "lat": 6.7867, "lon": 81.0183 },
+        { "name": "Adisham Bungalow", "type": "Historic Monastery", "lat": 6.7833, "lon": 80.9333 },
+        { "name": "Muthiyangana Raja Maha Vihara", "type": "Ancient Temple", "lat": 6.9855, "lon": 81.0594 }
+      ]
+    },
+    {
+      "district": "Ratnapura",
+      "province": "Sabaragamuwa",
+      "attractions": [
+        { "name": "Adam's Peak (Sri Pada)", "type": "Sacred Mountain", "lat": 6.8096, "lon": 80.4994 },
+        { "name": "Sinharaja Forest Reserve", "type": "Rainforest", "lat": 6.3833, "lon": 80.4167 },
+        { "name": "Bopath Ella", "type": "Waterfall", "lat": 6.7865, "lon": 80.3542 },
+        { "name": "Udawalawe National Park", "type": "Wildlife / Elephant Safari", "lat": 6.4744, "lon": 80.8906 },
+        { "name": "Ratnapura Gem Museum", "type": "Museum", "lat": 6.6828, "lon": 80.3992 },
+        { "name": "Kirindi Ella", "type": "Waterfall", "lat": 6.6433, "lon": 80.5283 }
+      ]
+    },
+    {
+      "district": "Kegalle",
+      "province": "Sabaragamuwa",
+      "attractions": [
+        { "name": "Pinnawala Elephant Orphanage", "type": "Elephant Sanctuary", "lat": 7.3000, "lon": 80.3833 },
+        { "name": "Belilena Cave", "type": "Prehistoric Site", "lat": 6.9917, "lon": 80.4333 },
+        { "name": "Saradiel Village", "type": "Theme Park", "lat": 7.2333, "lon": 80.4333 },
+        { "name": "Kitulgala White Water Rafting", "type": "Adventure Sports", "lat": 6.9933, "lon": 80.4183 },
+        { "name": "Utuwankanda (Saradiel Rock)", "type": "Mountain / Hiking", "lat": 7.2405, "lon": 80.4286 }
+      ]
+    },
+    {
+      "district": "Kurunegala",
+      "province": "North Western",
+      "attractions": [
+        { "name": "Yapahuwa Rock Fortress", "type": "Ancient Capital / Rock", "lat": 7.8286, "lon": 80.2528 },
+        { "name": "Ethagala (Elephant Rock)", "type": "Landmark Mountain", "lat": 7.4870, "lon": 80.3680 },
+        { "name": "Ridi Viharaya", "type": "Ancient Silver Temple", "lat": 7.5647, "lon": 80.4851 },
+        { "name": "Panduvasnuwara Ancient City", "type": "Ruins", "lat": 7.6625, "lon": 80.0167 },
+        { "name": "Arankele Monastery", "type": "Ancient Forest Hermitage", "lat": 7.7667, "lon": 80.3833 },
+        { "name": "Dambadeniya Ancient City", "type": "Ruins", "lat": 7.3614, "lon": 80.1417 }
+      ]
+    },
+    {
+      "district": "Puttalam",
+      "province": "North Western",
+      "attractions": [
+        { "name": "Kalpitiya Beach", "type": "Beach / Dolphin Watching", "lat": 8.2333, "lon": 79.7667 },
+        { "name": "Munneswaram Temple", "type": "Ancient Hindu Temple", "lat": 7.5852, "lon": 79.8336 },
+        { "name": "St. Anne's Church, Talawila", "type": "Christian Shrine", "lat": 8.0833, "lon": 79.7167 },
+        { "name": "Anawilundawa Bird Sanctuary", "type": "Wetland", "lat": 7.7050, "lon": 79.8167 },
+        { "name": "Wilpattu Entrance (Eluwankulama)", "type": "National Park Entry", "lat": 8.2611, "lon": 79.8472 }
+      ]
+    },
+    {
+      "district": "Batticaloa",
+      "province": "Eastern",
+      "attractions": [
+        { "name": "Pasikudah Beach", "type": "Shallow Sea Beach", "lat": 7.9228, "lon": 81.5644 },
+        { "name": "Kalkudah Beach", "type": "Beach", "lat": 7.9167, "lon": 81.5833 },
+        { "name": "Batticaloa Fort", "type": "Historic Fort", "lat": 7.7180, "lon": 81.6960 },
+        { "name": "Kallady Beach", "type": "Beach", "lat": 7.7100, "lon": 81.7167 },
+        { "name": "Batticaloa Lighthouse", "type": "Lighthouse", "lat": 7.7500, "lon": 81.6833 }
+      ]
+    },
+    {
+      "district": "Moneragala",
+      "province": "Uva",
+      "attractions": [
+        { "name": "Maligawila Buddha Statue", "type": "Colossal Statue", "lat": 6.7417, "lon": 81.3628 },
+        { "name": "Buduruwagala Rock Carvings", "type": "Ancient Mahayana Sculptures", "lat": 6.6850, "lon": 81.0825 },
+        { "name": "Yala East (Kumana Entrance)", "type": "National Park", "lat": 6.5167, "lon": 81.7167 },
+        { "name": "Bibile Rubber Plantations", "type": "Agriculture", "lat": 7.1583, "lon": 81.2167 },
+        { "name": "Senanayake Samudra", "type": "Reservoir / Dam", "lat": 7.1833, "lon": 81.5333 }
+      ]
+    },
+    {
+      "district": "Kalutara",
+      "province": "Western",
+      "attractions": [
+        { "name": "Kalutara Bodhiya", "type": "Stupa", "lat": 6.5850, "lon": 79.9592 },
+        { "name": "Richmond Castle", "type": "Historic Mansion", "lat": 6.6111, "lon": 79.9705 },
+        { "name": "Brief Garden by Bevis Bawa", "type": "Landscaped Garden", "lat": 6.4500, "lon": 80.0000 },
+        { "name": "Bentota Beach (North Side)", "type": "Beach Resort Area", "lat": 6.4250, "lon": 79.9917 },
+        { "name": "Thudugala Ella", "type": "Waterfall", "lat": 6.6167, "lon": 80.0333 }
+      ]
+    },
+    {
+      "district": "Gampaha",
+      "province": "Western",
+      "attractions": [
+        { "name": "Negombo Beach", "type": "Beach / Fishing Hub", "lat": 7.2081, "lon": 79.8358 },
+        { "name": "Maligatenna Raja Maha Vihara", "type": "Ancient Temple / Viewpoint", "lat": 7.0861, "lon": 80.0867 },
+        { "name": "Dutch Canal Negombo", "type": "Historical Waterway", "lat": 7.2100, "lon": 79.8400 },
+        { "name": "Henarathgoda Botanical Garden", "type": "Botanical Garden", "lat": 7.0944, "lon": 79.9917 },
+        { "name": "Angurukaramulla Temple", "type": "Ornate Buddhist Temple", "lat": 7.2125, "lon": 79.8550 }
+      ]
+    },
+    {
+      "district": "Mannar",
+      "province": "Northern",
+      "attractions": [
+        { "name": "Adam's Bridge (Rama Setu)", "type": "Limestone Shoals", "lat": 9.0700, "lon": 79.5100 },
+        { "name": "Talaimannar Pier & Lighthouse", "type": "Lighthouse / Ferry Point", "lat": 9.1000, "lon": 79.7333 },
+        { "name": "Mannar Baobab Tree", "type": "800-year-old Tree", "lat": 8.9814, "lon": 79.9122 },
+        { "name": "Mannar Fort", "type": "Portuguese/Dutch Fort", "lat": 8.9817, "lon": 79.9133 },
+        { "name": "Shrine of Our Lady of Madhu", "type": "Sacred Pilgrimage Site", "lat": 8.8500, "lon": 80.2000 },
+        { "name": "Thiruketheeswaram Temple", "type": "Ancient Hindu Temple", "lat": 8.9500, "lon": 79.9333 }
+      ]
+    },
+    {
+      "district": "Kilinochchi",
+      "province": "Northern",
+      "attractions": [
+        { "name": "Iranamadu Tank", "type": "Reservoir", "lat": 9.3100, "lon": 80.4300 },
+        { "name": "Elephant Pass War Memorial", "type": "Monument", "lat": 9.5317, "lon": 80.4144 },
+        { "name": "Pooneryn Fort", "type": "Historic Dutch Fort", "lat": 9.5000, "lon": 80.2000 },
+        { "name": "Chundikulam Bird Sanctuary", "type": "Wetland", "lat": 9.5000, "lon": 80.5000 },
+        { "name": "Murukandy Pillayar Temple", "type": "Hindu Temple", "lat": 9.2431, "lon": 80.3956 }
+      ]
+    },
+    {
+      "district": "Vavuniya",
+      "province": "Northern",
+      "attractions": [
+        { "name": "Madukanda Vihara", "type": "Ancient Buddhist Ruins", "lat": 8.7444, "lon": 80.5517 },
+        { "name": "Vavuniya Archaeological Museum", "type": "Museum", "lat": 8.7500, "lon": 80.4917 },
+        { "name": "Kandasamy Kovil", "type": "Hindu Temple", "lat": 8.7511, "lon": 80.4950 },
+        { "name": "Grand Juma Mosque", "type": "Religious Site", "lat": 8.7550, "lon": 80.4981 },
+        { "name": "Kaludiya Pokuna Vavuniya", "type": "Ancient Forest Site", "lat": 8.7000, "lon": 80.6000 }
+      ]
+    },
+    {
+      "district": "Mullaitivu",
+      "province": "Northern",
+      "attractions": [
+        { "name": "Mullaitivu Beach", "type": "Pristine Coastline", "lat": 9.2833, "lon": 81.3000 },
+        { "name": "Nanthikadal Lagoon", "type": "Lagoon / Scenic Area", "lat": 9.2500, "lon": 81.2500 },
+        { "name": "Oddusuddan Thaanthonreeswarar Kovil", "type": "Hindu Temple", "lat": 9.1481, "lon": 80.6558 },
+        { "name": "Victory Monument Puthukkudiyiruppu", "type": "Monument", "lat": 9.3167, "lon": 80.6833 },
+        { "name": "Nayaru Lagoon", "type": "Nature / Lagoon", "lat": 9.1667, "lon": 80.8333 }
+      ]
+    }
+  ]
+}

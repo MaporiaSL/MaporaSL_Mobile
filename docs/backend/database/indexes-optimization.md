@@ -33,7 +33,7 @@ This document analyzes all indexes in MAPORIA's MongoDB database, their performa
 
 - **Single Field**: Fast lookups on one field (e.g., `userId`)
 - **Compound**: Optimizes multi-field queries (e.g., `{ userId: 1, travelId: 1 }`)
-- **Unique**: Enforces uniqueness (e.g., `auth0Id`, `email`)
+- **Unique**: Enforces uniqueness (e.g., `firebaseUid`, `email`)
 - **Geospatial (2dsphere)**: Enables location-based queries
 - **Sparse**: No sparse indexes currently used
 
@@ -48,8 +48,8 @@ This document analyzes all indexes in MAPORIA's MongoDB database, their performa
 #### Indexes
 
 ```javascript
-// 1. Unique auth0Id index
-auth0Id: { type: String, unique: true, index: true }
+// 1. Unique firebaseUid index
+firebaseUid: { type: String, unique: true, index: true }
 
 // 2. Unique email index
 email: { type: String, unique: true, lowercase: true, index: true }
@@ -59,15 +59,15 @@ email: { type: String, unique: true, lowercase: true, index: true }
 
 | Index | Type | Cardinality | Read Performance | Write Performance |
 |-------|------|-------------|------------------|-------------------|
-| `auth0Id` | Unique | High (1:1) | O(log n) | O(log n) |
+| `firebaseUid` | Unique | High (1:1) | O(log n) | O(log n) |
 | `email` | Unique | High (1:1) | O(log n) | O(log n) |
 
 #### Common Queries
 
 ```javascript
-// Query 1: Auth0 login lookup (OPTIMIZED)
-User.findOne({ auth0Id: 'auth0|123456789' })
-// Uses: auth0Id index
+// Query 1: Firebase UID lookup (OPTIMIZED)
+User.findOne({ firebaseUid: 'firebase-uid-123456789' })
+// Uses: firebaseUid index
 
 // Query 2: Email verification (OPTIMIZED)
 User.findOne({ email: 'john@example.com' })
@@ -80,7 +80,7 @@ User.find({ totalPlacesVisited: { $gte: 100 } })
 
 #### Optimization Notes
 
-- ✅ Auth0 lookup is instant (unique index)
+- ✅ Firebase UID lookup is instant (unique index)
 - ✅ Email uniqueness enforced at database level
 - ⚠️ No index on `totalPlacesVisited` - leaderboard queries may be slow with large user base
 
@@ -111,19 +111,19 @@ travelSchema.index({ userId: 1, startDate: 1 });
 
 ```javascript
 // Query 1: All user trips (OPTIMIZED)
-Travel.find({ userId: 'auth0|123456789' })
+Travel.find({ userId: 'firebase-uid-123456789' })
 // Uses: userId index OR compound index (index prefix)
 
 // Query 2: User's upcoming trips (OPTIMIZED)
 Travel.find({ 
-  userId: 'auth0|123456789',
+  userId: 'firebase-uid-123456789',
   startDate: { $gte: new Date() }
 }).sort({ startDate: 1 })
 // Uses: compound index { userId: 1, startDate: 1 }
 
 // Query 3: Search by title (NOT OPTIMIZED)
 Travel.find({ 
-  userId: 'auth0|123456789',
+  userId: 'firebase-uid-123456789',
   title: /cultural/i 
 })
 // Uses: userId index, then regex scan
@@ -189,14 +189,14 @@ Destination.find({ travelId: ObjectId('...') })
 
 // Query 2: User's destinations for specific trip (OPTIMIZED)
 Destination.find({ 
-  userId: 'auth0|123456789',
+  userId: 'firebase-uid-123456789',
   travelId: ObjectId('...')
 })
 // Uses: compound index { userId: 1, travelId: 1 }
 
 // Query 3: District gamification (OPTIMIZED)
 Destination.find({ 
-  userId: 'auth0|123456789',
+  userId: 'firebase-uid-123456789',
   districtId: 'colombo',
   visited: true 
 })
@@ -215,7 +215,7 @@ Destination.find({
 
 // Query 5: All visited destinations (PARTIALLY OPTIMIZED)
 Destination.find({ 
-  userId: 'auth0|123456789',
+  userId: 'firebase-uid-123456789',
   visited: true 
 })
 // Uses: userId index, then filter on visited
@@ -336,8 +336,8 @@ Total:                ~3.3ms
 #### Scenario 1: User Login
 
 ```javascript
-// Without index on auth0Id
-User.findOne({ auth0Id: 'auth0|123456789' })
+// Without index on firebaseUid
+User.findOne({ firebaseUid: 'firebase-uid-123456789' })
 // Performance: O(n) - scans all users
 
 // With unique index (current)
@@ -381,7 +381,7 @@ MongoDB can use multiple indexes simultaneously:
 ```javascript
 // Uses both districtId and userId indexes
 Destination.find({ 
-  userId: 'auth0|123456789',
+  userId: 'firebase-uid-123456789',
   districtId: 'colombo' 
 })
 ```
@@ -396,7 +396,7 @@ Query results entirely from index (no document fetch):
 
 ```javascript
 // NOT covered (needs document fetch)
-Travel.find({ userId: 'auth0|123' }, { title: 1, startDate: 1 })
+Travel.find({ userId: 'firebase-uid-123' }, { title: 1, startDate: 1 })
 
 // To make covered, add projection index:
 travelSchema.index({ userId: 1, startDate: 1, title: 1 })
@@ -410,11 +410,11 @@ travelSchema.index({ userId: 1, startDate: 1, title: 1 })
 
 ```javascript
 // Optimized sort (uses compound index)
-Travel.find({ userId: 'auth0|123' }).sort({ startDate: 1 })
+Travel.find({ userId: 'firebase-uid-123' }).sort({ startDate: 1 })
 // Uses: { userId: 1, startDate: 1 } index for sorting
 
 // Unoptimized sort (in-memory)
-Travel.find({ userId: 'auth0|123' }).sort({ title: 1 })
+Travel.find({ userId: 'firebase-uid-123' }).sort({ title: 1 })
 // Fetches docs, sorts in RAM (slow for large results)
 ```
 

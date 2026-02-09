@@ -1,7 +1,11 @@
 # Auth0 Setup Guide
 
+**Status**: Deprecated (project migrating to Firebase Auth)  
 **Last Updated**: January 24, 2026  
 **Auth0 Version**: Latest (2026)
+
+> This project is moving to Firebase Authentication for native in‑app login.
+> Use the new guide: [Firebase Auth Setup](firebase-auth-setup.md)
 
 ---
 

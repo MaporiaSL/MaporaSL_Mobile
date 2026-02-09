@@ -48,9 +48,9 @@ Install the following before starting:
 - **Note**: We use cloud MongoDB, not local installation
 - See [MongoDB Atlas Setup](#mongodb-atlas-setup) section below
 
-#### 5. Auth0 Account (Free)
-- **Sign up**: [https://auth0.com/signup](https://auth0.com/signup)
-- See [Auth0 Setup Guide](./AUTH0_SETUP.md) for detailed instructions
+#### 5. Firebase Project (Free)
+- **Sign up**: [https://console.firebase.google.com/](https://console.firebase.google.com/)
+- See [Firebase Auth Setup Guide](./firebase-auth-setup.md) for detailed instructions
 
 ---
 
@@ -94,8 +94,7 @@ found 0 vulnerabilities
 **Installed Packages**:
 - `express` - Web framework
 - `mongoose` - MongoDB ODM
-- `express-jwt` - JWT authentication middleware
-- `jwks-rsa` - Auth0 public key fetching
+- `firebase-admin` - Firebase Admin SDK for ID token verification
 - `express-validator` - Input validation
 - `cors` - CORS middleware
 - `helmet` - Security middleware
@@ -152,19 +151,18 @@ found 0 vulnerabilities
 
 ---
 
-### Step 2: Auth0 Setup
+### Step 2: Firebase Auth Setup
 
-Follow the detailed guide: [AUTH0_SETUP.md](./AUTH0_SETUP.md)
+Follow the detailed guide: [firebase-auth-setup.md](./firebase-auth-setup.md)
 
 **Quick summary**:
-1. Create Auth0 account
-2. Create Machine-to-Machine Application
-3. Create API with identifier (audience)
+1. Create a Firebase project
+2. Enable sign-in providers (Email/Password or others)
+3. Create a service account and download the JSON key
 4. Note down:
-   - Domain (e.g., `your-tenant.us.auth0.com`)
-   - Audience (e.g., `https://api.gemified-travel.com`)
-   - Client ID
-   - Client Secret
+   - Project ID
+   - Client email
+   - Private key
 
 ---
 
@@ -189,17 +187,16 @@ CLIENT_ORIGIN=http://localhost:3000
 # MongoDB Atlas Connection
 MONGODB_URI=mongodb+srv://username:password@cluster0.xxxxx.mongodb.net/gemified-travel?retryWrites=true&w=majority
 
-# Auth0 Configuration
-AUTH0_DOMAIN=your-tenant.us.auth0.com
-AUTH0_AUDIENCE=https://api.gemified-travel.com
-AUTH0_CLIENT_ID=your_client_id_here
-AUTH0_CLIENT_SECRET=your_client_secret_here
+# Firebase Admin Configuration
+FIREBASE_PROJECT_ID=your-project-id
+FIREBASE_CLIENT_EMAIL=your-service-account@your-project-id.iam.gserviceaccount.com
+FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
 ```
 
 **Important**:
 - Replace ALL placeholder values with your actual credentials
 - Do NOT commit `.env` to git (it's in `.gitignore`)
-- Keep `CLIENT_SECRET` confidential
+- Keep the private key confidential
 
 ---
 
@@ -209,14 +206,14 @@ Create a test script to verify MongoDB connection:
 
 ```bash
 # In backend directory
-node -e "require('dotenv').config(); console.log('✅ Environment loaded'); console.log('MongoDB URI:', process.env.MONGODB_URI ? '✅ Set' : '❌ Missing'); console.log('Auth0 Domain:', process.env.AUTH0_DOMAIN ? '✅ Set' : '❌ Missing');"
+node -e "require('dotenv').config(); console.log('✅ Environment loaded'); console.log('MongoDB URI:', process.env.MONGODB_URI ? '✅ Set' : '❌ Missing'); console.log('Firebase Project ID:', process.env.FIREBASE_PROJECT_ID ? '✅ Set' : '❌ Missing');"
 ```
 
 **Expected output**:
 ```
 ✅ Environment loaded
 MongoDB URI: ✅ Set
-Auth0 Domain: ✅ Set
+Firebase Project ID: ✅ Set
 ```
 
 ---
@@ -246,7 +243,7 @@ Server running on port 5000
 - Watches `.js`, `.json` files
 - Type `rs` to manually restart
 
-**Dev auth bypass**: When `NODE_ENV !== 'production'`, `backend/src/middleware/auth.js` injects a mock user so you can call APIs without Auth0 setup.
+**Dev auth bypass**: When `NODE_ENV !== 'production'`, `backend/src/middleware/auth.js` injects a mock user so you can call APIs without Firebase Auth setup.
 
 **Android emulator base URL**: From the emulator, use `http://10.0.2.2:5000` to reach the backend running on your host machine.
 
@@ -290,25 +287,24 @@ curl http://localhost:5000/health
 
 ## Testing the API
 
-### Step 1: Get Auth0 Token
+### Step 1: Get Firebase ID Token
 
 **Using PowerShell**:
 
 ```powershell
-# Replace with your credentials
+# Replace with your Firebase project values
 $body = @{
-    client_id = "YOUR_CLIENT_ID"
-    client_secret = "YOUR_CLIENT_SECRET"
-    audience = "YOUR_AUTH0_AUDIENCE"
-    grant_type = "client_credentials"
+   email = "test@example.com"
+   password = "YOUR_TEST_PASSWORD"
+   returnSecureToken = $true
 } | ConvertTo-Json
 
-$response = Invoke-RestMethod -Uri "https://YOUR_AUTH0_DOMAIN/oauth/token" `
+$response = Invoke-RestMethod -Uri "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=YOUR_FIREBASE_API_KEY" `
     -Method POST `
     -ContentType "application/json" `
     -Body $body
 
-$TOKEN = $response.access_token
+$TOKEN = $response.idToken
 Write-Host "Token obtained: $TOKEN"
 ```
 
@@ -341,7 +337,7 @@ $response | ConvertTo-Json -Depth 5
   "message": "User registered successfully",
   "user": {
     "_id": "...",
-    "auth0Id": "auth0|...",
+   "firebaseUid": "firebase-uid-...",
     "email": "test@example.com",
     "name": "Test User",
     "createdAt": "...",
@@ -501,7 +497,7 @@ backend/
 │   ├── config/
 │   │   └── db.js              # MongoDB connection
 │   ├── middleware/
-│   │   └── auth.js            # JWT validation
+│   │   └── auth.js            # ID token validation
 │   ├── models/
 │   │   ├── User.js            # User schema
 │   │   ├── Travel.js          # Travel schema
@@ -614,13 +610,13 @@ MongooseServerSelectionError: Could not connect to any servers in your MongoDB A
    Invoke-RestMethod -Uri "http://localhost:5000/api/travel" -Headers @{ "Authorization" = "Bearer $TOKEN" }
    ```
 
-2. **Wrong Auth0 Configuration**:
-   - Verify `AUTH0_DOMAIN` in `.env`
-   - Verify `AUTH0_AUDIENCE` matches API identifier
-   - Check application is authorized for API in Auth0 Dashboard
+2. **Wrong Firebase Configuration**:
+   - Verify `FIREBASE_PROJECT_ID` in `.env`
+   - Verify service account values match your Firebase project
+   - Check Firebase Auth providers are enabled
 
 3. **Expired Token**:
-   - Tokens expire after 24 hours (default)
+   - Tokens expire after about 1 hour
    - Get a new token
 
 ---
@@ -710,7 +706,7 @@ After successful setup:
 - [Express.js Documentation](https://expressjs.com/)
 - [Mongoose Documentation](https://mongoosejs.com/)
 - [MongoDB Atlas Documentation](https://www.mongodb.com/docs/atlas/)
-- [Auth0 Documentation](https://auth0.com/docs)
+- [Firebase Auth Documentation](https://firebase.google.com/docs/auth)
 - [Node.js Documentation](https://nodejs.org/docs/)
 
 ---
@@ -722,7 +718,7 @@ If you encounter issues:
 1. Check this guide's [Common Issues](#common-issues) section
 2. Review server logs in terminal
 3. Check MongoDB Atlas connection in dashboard
-4. Verify Auth0 configuration in dashboard
+4. Verify Firebase Auth configuration in dashboard
 5. Consult project documentation in `docs/`
 6. Search existing issues in project repository
 

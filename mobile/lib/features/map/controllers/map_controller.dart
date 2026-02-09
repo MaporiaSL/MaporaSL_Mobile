@@ -1,20 +1,22 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
+import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart' as mapbox;
 import '../models/map_models.dart';
 
 /// Manages Mapbox map instance and layer interactions
 class MapController {
-  MapboxMap? _mapboxMap;
+  mapbox.MapboxMap? _mapboxMap;
   final List<String> _activeLayers = [];
   final List<String> _activeSources = [];
 
   /// Initialize with MapboxMap instance
-  void initialize(MapboxMap mapboxMap) {
+  void initialize(mapbox.MapboxMap mapboxMap) {
     _mapboxMap = mapboxMap;
   }
 
   /// Get the underlying Mapbox map instance
-  MapboxMap? get mapboxMap => _mapboxMap;
+  mapbox.MapboxMap? get mapboxMap => _mapboxMap;
 
   /// Check if map is initialized
   bool get isInitialized => _mapboxMap != null;
@@ -25,7 +27,7 @@ class MapController {
     String sourceId = 'trip-source',
     bool showRoute = true,
     bool showBoundary = true,
-    bool fitBounds = true,
+    bool shouldFitBounds = true,
   }) async {
     if (_mapboxMap == null) return;
 
@@ -57,7 +59,7 @@ class MapController {
             ['get', 'type'],
             'route',
           ],
-          lineColor: '#8b5cf6',
+          lineColor: 0xFF8B5CF6,
           lineWidth: 3.0,
         );
       }
@@ -72,13 +74,13 @@ class MapController {
             ['get', 'type'],
             'boundary',
           ],
-          fillColor: '#8b5cf6',
+          fillColor: 0xFF8B5CF6,
           fillOpacity: 0.1,
         );
       }
 
       // Fit camera to bounds if requested
-      if (fitBounds && geoJson.properties.destinationCount >= 2) {
+      if (shouldFitBounds && geoJson.properties.destinationCount >= 2) {
         // Calculate bounds from features
         double minLat = 90, maxLat = -90, minLng = 180, maxLng = -180;
 
@@ -102,9 +104,10 @@ class MapController {
         minLng -= padding;
         maxLng += padding;
 
-        final bounds = CoordinateBounds(
-          southwest: Point(coordinates: Position(minLng, minLat)),
-          northeast: Point(coordinates: Position(maxLng, maxLat)),
+        final bounds = mapbox.CoordinateBounds(
+          southwest: mapbox.Point(coordinates: mapbox.Position(minLng, minLat)),
+          northeast: mapbox.Point(coordinates: mapbox.Position(maxLng, maxLat)),
+          infiniteBounds: false,
         );
 
         await fitBounds(bounds);
@@ -128,7 +131,10 @@ class MapController {
       }
 
       // Create GeoJsonSource from data
-      final source = GeoJsonSource(id: sourceId, data: geoJson);
+      final source = mapbox.GeoJsonSource(
+        id: sourceId,
+        data: jsonEncode(geoJson),
+      );
 
       // Add source to map
       await _mapboxMap!.style.addSource(source);
@@ -149,23 +155,17 @@ class MapController {
     if (_mapboxMap == null) return;
 
     try {
-      final layer = SymbolLayer(
+      final layer = mapbox.SymbolLayer(
         id: layerId,
         sourceId: sourceId,
         iconImage: 'marker-15',
         iconSize: 1.5,
-        iconColor: [
-          'match',
-          ['get', 'visited'],
-          true,
-          '#10b981',
-          '#ef4444',
-        ],
-        textField: ['get', 'name'],
+        iconColor: 0xFF10B981,
+        textField: '{name}',
         textSize: 12.0,
-        textColor: '#333333',
+        textColor: 0xFF333333,
         textOffset: [0.0, 1.5],
-        filter: filter,
+        filter: filter == null ? null : List<Object>.from(filter),
       );
 
       await _mapboxMap!.style.addLayer(layer);
@@ -182,20 +182,20 @@ class MapController {
     required String sourceId,
     required String layerId,
     List<dynamic>? filter,
-    String lineColor = '#8b5cf6',
+    int lineColor = 0xFF8B5CF6,
     double lineWidth = 2.0,
   }) async {
     if (_mapboxMap == null) return;
 
     try {
-      final layer = LineLayer(
+      final layer = mapbox.LineLayer(
         id: layerId,
         sourceId: sourceId,
         lineColor: lineColor,
         lineWidth: lineWidth,
-        lineCap: LineCap.ROUND,
-        lineJoin: LineJoin.ROUND,
-        filter: filter,
+        lineCap: mapbox.LineCap.ROUND,
+        lineJoin: mapbox.LineJoin.ROUND,
+        filter: filter == null ? null : List<Object>.from(filter),
       );
 
       await _mapboxMap!.style.addLayer(layer);
@@ -212,18 +212,18 @@ class MapController {
     required String sourceId,
     required String layerId,
     List<dynamic>? filter,
-    String fillColor = '#8b5cf6',
+    int fillColor = 0xFF8B5CF6,
     double fillOpacity = 0.3,
   }) async {
     if (_mapboxMap == null) return;
 
     try {
-      final layer = FillLayer(
+      final layer = mapbox.FillLayer(
         id: layerId,
         sourceId: sourceId,
         fillColor: fillColor,
         fillOpacity: fillOpacity,
-        filter: filter,
+        filter: filter == null ? null : List<Object>.from(filter),
       );
 
       await _mapboxMap!.style.addLayer(layer);
@@ -240,7 +240,7 @@ class MapController {
     if (_mapboxMap == null) return;
 
     try {
-      await _mapboxMap!.style.removeLayer(layerId);
+      await (_mapboxMap!.style as dynamic).removeLayer(layerId);
       _activeLayers.remove(layerId);
       debugPrint('✅ Removed layer: $layerId');
     } catch (e) {
@@ -263,7 +263,7 @@ class MapController {
       }
 
       // Remove the source
-      await _mapboxMap!.style.removeSource(sourceId);
+      await (_mapboxMap!.style as dynamic).removeSource(sourceId);
       _activeSources.remove(sourceId);
       debugPrint('✅ Removed source: $sourceId');
     } catch (e) {
@@ -279,9 +279,12 @@ class MapController {
     if (_mapboxMap == null) return;
 
     try {
-      final source = GeoJsonSource(id: sourceId, data: geoJson);
+      final source = mapbox.GeoJsonSource(
+        id: sourceId,
+        data: jsonEncode(geoJson),
+      );
 
-      await _mapboxMap!.style.updateSource(source);
+      await (_mapboxMap!.style as dynamic).updateSource(source);
       debugPrint('✅ Updated GeoJSON source: $sourceId');
     } catch (e) {
       debugPrint('❌ Error updating GeoJSON source: $e');
@@ -290,14 +293,24 @@ class MapController {
 
   /// Fit map bounds with optional padding
   Future<void> fitBounds(
-    CoordinateBounds bounds, {
+    mapbox.CoordinateBounds bounds, {
     EdgeInsets padding = const EdgeInsets.all(100),
     int duration = 1000,
   }) async {
     if (_mapboxMap == null) return;
 
     try {
-      final options = CameraOptions(bounds: bounds, padding: padding);
+      final southwest = bounds.southwest.coordinates;
+      final northeast = bounds.northeast.coordinates;
+
+      final centerLng = (southwest.lng + northeast.lng) / 2;
+      final centerLat = (southwest.lat + northeast.lat) / 2;
+
+      final options = mapbox.CameraOptions(
+        center: mapbox.Point(
+          coordinates: mapbox.Position(centerLng, centerLat),
+        ),
+      );
 
       await _mapboxMap!.setCamera(options);
       debugPrint('✅ Fitted camera to bounds');
@@ -311,8 +324,8 @@ class MapController {
     if (_mapboxMap == null) return;
 
     try {
-      final options = CameraOptions(
-        center: Point(coordinates: Position(longitude, latitude)),
+      final options = mapbox.CameraOptions(
+        center: mapbox.Point(coordinates: mapbox.Position(longitude, latitude)),
       );
 
       await _mapboxMap!.setCamera(options);
@@ -327,7 +340,7 @@ class MapController {
     if (_mapboxMap == null) return;
 
     try {
-      final options = CameraOptions(zoom: zoom);
+      final options = mapbox.CameraOptions(zoom: zoom);
       await _mapboxMap!.setCamera(options);
       debugPrint('✅ Set zoom to: $zoom');
     } catch (e) {
@@ -336,7 +349,7 @@ class MapController {
   }
 
   /// Get current camera position
-  Future<CameraState?> getCameraPosition() async {
+  Future<mapbox.CameraState?> getCameraPosition() async {
     if (_mapboxMap == null) return null;
 
     try {
@@ -352,13 +365,15 @@ class MapController {
     if (_mapboxMap == null || !_activeLayers.contains(layerId)) return;
 
     try {
-      final visibility = visible ? Visibility.VISIBLE : Visibility.NONE;
-      await _mapboxMap!.style.setLayerProperty(
+      final visibility = visible
+          ? mapbox.Visibility.VISIBLE
+          : mapbox.Visibility.NONE;
+      await (_mapboxMap!.style as dynamic).setLayerProperty(
         layerId,
         'visibility',
         visibility,
       );
-      debugPrint('✅ Set ${layerId} visibility to: $visible');
+      debugPrint('✅ Set $layerId visibility to: $visible');
     } catch (e) {
       debugPrint('❌ Error setting layer visibility: $e');
     }

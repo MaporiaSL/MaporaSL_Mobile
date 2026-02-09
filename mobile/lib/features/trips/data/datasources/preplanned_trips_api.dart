@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import '../../../../core/config/app_config.dart';
 import '../models/preplanned_trip_model.dart';
 import '../models/trip_model.dart';
 
@@ -7,10 +8,9 @@ class PrePlannedTripsApi {
   final Dio _dio;
   final String baseUrl;
 
-  PrePlannedTripsApi({
-    required Dio dio,
-    this.baseUrl = 'http://10.0.2.2:5000/api',
-  }) : _dio = dio;
+  PrePlannedTripsApi({required Dio dio, String? baseUrl})
+    : _dio = dio,
+      baseUrl = baseUrl ?? AppConfig.apiBaseUrl;
 
   /// GET /api/preplanned-trips
   Future<List<PrePlannedTripModel>> fetchTemplates({
@@ -24,7 +24,7 @@ class PrePlannedTripsApi {
   }) async {
     try {
       final response = await _dio.get(
-        '$baseUrl/preplanned-trips',
+        '$baseUrl/api/preplanned-trips',
         queryParameters: {
           if (duration != null) 'duration': duration,
           if (type != null) 'type': type,
@@ -53,7 +53,7 @@ class PrePlannedTripsApi {
   /// GET /api/preplanned/:id
   Future<PrePlannedTripModel> fetchTemplateById(String id) async {
     try {
-      final response = await _dio.get('$baseUrl/preplanned/$id');
+      final response = await _dio.get('$baseUrl/api/preplanned/$id');
       final map = Map<String, dynamic>.from(
         response.data as Map<String, dynamic>,
       );
@@ -72,7 +72,7 @@ class PrePlannedTripsApi {
   }) async {
     try {
       final response = await _dio.post(
-        '$baseUrl/preplanned/$templateId/clone',
+        '$baseUrl/api/preplanned/$templateId/clone',
         data: {
           'startDate': startDate.toIso8601String(),
           'endDate': endDate.toIso8601String(),

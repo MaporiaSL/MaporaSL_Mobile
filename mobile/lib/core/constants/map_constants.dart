@@ -1,14 +1,11 @@
-import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
+import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart' as mapbox;
 
 class MapConstants {
   // Mapbox Style - Custom "Game" aesthetic
-  // TODO: Replace with your actual custom style URL created in Mapbox Studio
   // Format: mapbox://styles/YOUR_USERNAME/YOUR_STYLE_ID
-  // For now, using a stylized template. Update this after creating custom style.
   static const String gameStyleUrl = 'mapbox://styles/mapbox/outdoors-v12';
 
   // Mapbox Access Tokens
-  // TODO: Move to environment variables for production
   static const String publicAccessToken = String.fromEnvironment(
     'MAPBOX_PUBLIC_TOKEN',
     defaultValue: 'pk.YOUR_PUBLIC_TOKEN_HERE',
@@ -20,12 +17,14 @@ class MapConstants {
   );
 
   // Sri Lanka geographic center
-  static final sriLankaCenter = Point(coordinates: Position(80.7718, 7.8731));
+  static final sriLankaCenter = mapbox.Point(
+    coordinates: mapbox.Position(80.7718, 7.8731),
+  );
 
   // Sri Lanka bounding box
-  static final sriLankaBounds = CoordinateBounds(
-    southwest: Point(coordinates: Position(79.65, 5.92)), // bottom-left
-    northeast: Point(coordinates: Position(81.89, 9.83)), // top-right
+  static final sriLankaBounds = mapbox.CoordinateBounds(
+    southwest: mapbox.Point(coordinates: mapbox.Position(79.65, 5.92)),
+    northeast: mapbox.Point(coordinates: mapbox.Position(81.89, 9.83)),
     infiniteBounds: false,
   );
 

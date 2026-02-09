@@ -2,7 +2,7 @@
 
 **Base URL**: `http://localhost:5000` (Dev) / `http://10.0.2.2:5000` (Android Emulator)  
 **Version**: 1.0.1  
-**Last Updated**: February 1, 2026
+**Last Updated**: February 5, 2026
 
 ---
 
@@ -16,7 +16,7 @@ This document provides a quick reference to all available API endpoints. For det
 
 | Method | Endpoint | Description | Auth Required | Docs |
 |--------|----------|-------------|---------------|------|
-| POST | `/api/auth/register` | Register/sync user from Auth0 | No | [auth-endpoints.md](./auth-endpoints.md#register-user) |
+| POST | `/api/auth/register` | Register/sync user from Firebase | Yes | [auth-endpoints.md](./auth-endpoints.md#register-user) |
 | GET | `/api/auth/me` | Get current user profile | Yes | [auth-endpoints.md](./auth-endpoints.md#get-current-user) |
 | POST | `/api/auth/logout` | Logout user | Yes | [auth-endpoints.md](./auth-endpoints.md#logout) |
 
@@ -120,7 +120,7 @@ This document provides a quick reference to all available API endpoints. For det
 | 200 | OK | Request successful |
 | 201 | Created | Resource created successfully |
 | 400 | Bad Request | Invalid parameters or missing required fields |
-| 401 | Unauthorized | Missing or invalid JWT token |
+| 401 | Unauthorized | Missing or invalid Firebase ID token |
 | 403 | Forbidden | Access denied |
 | 404 | Not Found | Resource not found |
 | 500 | Internal Server Error | Server error occurred |
@@ -149,13 +149,13 @@ Examples:
 
 ## Authentication
 
-### Getting a JWT Token
+### Getting a Firebase ID Token
 
-Use Auth0 to obtain a JWT token. In the Flutter app:
+Use Firebase Auth to obtain an ID token. In the Flutter app:
 
 ```dart
-final credentials = await auth0.webAuthentication().login();
-final token = credentials.accessToken;
+final user = FirebaseAuth.instance.currentUser;
+final token = await user?.getIdToken();
 ```
 
 ### Using the Token
@@ -163,7 +163,7 @@ final token = credentials.accessToken;
 Include the token in the `Authorization` header:
 
 ```http
-Authorization: Bearer <your-jwt-token>
+Authorization: Bearer <your-id-token>
 ```
 
 Example with cURL:
@@ -193,11 +193,11 @@ Future breaking changes will be introduced under different URL paths (e.g., `/ap
 
 ### Dev Mode Auth Bypass
 
-When `NODE_ENV !== 'production'`, JWT validation is bypassed with a mock user:
+When `NODE_ENV !== 'production'`, token validation is bypassed with a mock user:
 
 ```javascript
 // Injected mock user
-req.user = { auth0Id: 'auth0|dev-user-123' };
+req.user = { firebaseUid: 'firebase-uid-dev-user-123' };
 ```
 
 **To enable authentication**: Set `NODE_ENV=production` in `backend/.env`

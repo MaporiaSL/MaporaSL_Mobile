@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../constants/app_colors.dart';
 
 class AppTheme {
@@ -10,7 +9,7 @@ class AppTheme {
         seedColor: AppColors.primary,
         brightness: Brightness.light,
       ),
-      textTheme: GoogleFonts.poppinsTextTheme(),
+      textTheme: ThemeData.light().textTheme,
       useMaterial3: true,
     );
   }
@@ -22,7 +21,7 @@ class AppTheme {
         seedColor: AppColors.primaryLight,
         brightness: Brightness.dark,
       ),
-      textTheme: GoogleFonts.poppinsTextTheme(ThemeData.dark().textTheme),
+      textTheme: ThemeData.dark().textTheme,
       useMaterial3: true,
     );
   }

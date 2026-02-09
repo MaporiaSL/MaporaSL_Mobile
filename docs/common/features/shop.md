@@ -187,7 +187,7 @@ DELETE /api/admin/store/items/:id    - Delete product
 - Anomaly detection (flag 3x normal spend)
 - Admin audit logging for all actions
 - Firebase Storage for image upload
-- JWT authentication required
+- Firebase ID token authentication required
 - No P2W mechanics in in-app shop
 - Stock verification before checkout
 - Cart expiration cleanup
@@ -235,7 +235,7 @@ DELETE /api/admin/store/items/:id    - Delete product
 **Storage**: Firebase Storage  
 **Currency**: LKR (Sri Lankan Rupees)  
 **Payment**: Manual bank transfer (Phase 1), gateways (Phase 5)  
-**Authentication**: Auth0 + dev bypass  
+**Authentication**: Firebase Auth + dev bypass  
 
 ---
 

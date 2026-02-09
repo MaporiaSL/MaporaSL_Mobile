@@ -18,7 +18,7 @@ Destination endpoints handle individual places/attractions within a trip. Users 
 Add a new destination/place to a trip.
 
 **Endpoint**: `POST /api/travel/:travelId/destinations`  
-**Auth**: Required (JWT)  
+**Auth**: Required (Firebase ID token)  
 **Controller**: `destinationController.createDestination`
 
 #### URL Parameters
@@ -53,7 +53,7 @@ Add a new destination/place to a trip.
 ```json
 {
   "_id": "679f5e8d3c2a1b4e5f6a7b8d",
-  "userId": "auth0|user123",
+  "userId": "firebase-uid-user123",
   "travelId": "679f5e8d3c2a1b4e5f6a7b8c",
   "name": "Colombo Fort",
   "latitude": 6.9271,
@@ -109,7 +109,7 @@ curl -X POST "http://localhost:5000/api/travel/679f5e8d3c2a1b4e5f6a7b8c/destinat
 Get all destinations for a trip.
 
 **Endpoint**: `GET /api/travel/:travelId/destinations`  
-**Auth**: Required (JWT)  
+**Auth**: Required (Firebase ID token)  
 **Controller**: `destinationController.getAllDestinations`
 
 #### URL Parameters
@@ -161,7 +161,7 @@ curl "http://localhost:5000/api/travel/679f5e8d3c2a1b4e5f6a7b8c/destinations" \
 Retrieve details of a specific destination.
 
 **Endpoint**: `GET /api/travel/:travelId/destinations/:destId`  
-**Auth**: Required (JWT)  
+**Auth**: Required (Firebase ID token)  
 **Controller**: `destinationController.getDestinationById`
 
 #### URL Parameters
@@ -176,7 +176,7 @@ Retrieve details of a specific destination.
 ```json
 {
   "_id": "679f5e8d3c2a1b4e5f6a7b8d",
-  "userId": "auth0|user123",
+  "userId": "firebase-uid-user123",
   "travelId": "679f5e8d3c2a1b4e5f6a7b8c",
   "name": "Colombo Fort",
   "latitude": 6.9271,
@@ -217,7 +217,7 @@ curl "http://localhost:5000/api/travel/679f5e8d3c2a1b4e5f6a7b8c/destinations/679
 Update destination details (mark as visited, add notes).
 
 **Endpoint**: `PATCH /api/travel/:travelId/destinations/:destId`  
-**Auth**: Required (JWT)  
+**Auth**: Required (Firebase ID token)  
 **Controller**: `destinationController.updateDestination`
 
 #### Request
@@ -237,7 +237,7 @@ Update destination details (mark as visited, add notes).
 ```json
 {
   "_id": "679f5e8d3c2a1b4e5f6a7b8d",
-  "userId": "auth0|user123",
+  "userId": "firebase-uid-user123",
   "travelId": "679f5e8d3c2a1b4e5f6a7b8c",
   "name": "Colombo Fort Museum",
   "latitude": 6.9271,

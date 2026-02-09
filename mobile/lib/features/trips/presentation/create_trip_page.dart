@@ -224,7 +224,7 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage> {
           const SizedBox(height: 16),
           // Transportation Mode
           DropdownButtonFormField<String>(
-            value: _selectedTransport,
+            initialValue: _selectedTransport,
             decoration: const InputDecoration(
               labelText: 'Primary Mode of Transportation',
               border: OutlineInputBorder(),

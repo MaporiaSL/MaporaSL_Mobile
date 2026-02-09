@@ -211,12 +211,12 @@ class _TripsScreenState extends ConsumerState<TripsScreen>
           ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 12),
-        Card(
+        const Card(
           child: Padding(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
+              children: [
                 _AchievementItem(
                   icon: '🏔️',
                   title: 'Mountain Explorer',
@@ -307,7 +307,7 @@ class _TripsScreenState extends ConsumerState<TripsScreen>
                 Chip(label: Text('${template.durationDays} days')),
                 Chip(label: Text('${template.xpReward} XP')),
                 Chip(label: Text(template.difficulty)),
-                ...template.tags.map((tag) => Chip(label: Text(tag))).toList(),
+                ...template.tags.map((tag) => Chip(label: Text(tag))),
               ],
             ),
             const SizedBox(height: 12),
@@ -435,7 +435,7 @@ class _FilterDropdown extends StatelessWidget {
         DropdownMenuItem(value: null, child: Text('$label (Any)')),
         ...options.map((opt) {
           return DropdownMenuItem(value: opt, child: Text(opt));
-        }).toList(),
+        }),
       ],
       onChanged: onChanged,
     );
@@ -504,113 +504,6 @@ class _ThemeMultiSelectState extends State<_ThemeMultiSelect> {
       updated.add(theme);
     }
     widget.onChanged(updated);
-  }
-}
-
-class _FilterCategory extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final List<Widget> children;
-
-  const _FilterCategory({
-    required this.icon,
-    required this.title,
-    required this.children,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey.shade300),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      padding: const EdgeInsets.all(12),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(icon, size: 20, color: Colors.blue),
-              const SizedBox(width: 8),
-              Text(
-                title,
-                style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.blue,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          ...children,
-        ],
-      ),
-    );
-  }
-}
-
-class _FilterSection extends StatelessWidget {
-  final String title;
-  final List<String> options;
-  final String? selected;
-  final List<String>? selectedList;
-  final bool multiSelect;
-  final ValueChanged<String?>? onSelect;
-  final ValueChanged<List<String>>? onSelectList;
-
-  const _FilterSection({
-    required this.title,
-    required this.options,
-    this.selected,
-    this.selectedList,
-    this.multiSelect = false,
-    this.onSelect,
-    this.onSelectList,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: Theme.of(
-            context,
-          ).textTheme.labelMedium?.copyWith(fontWeight: FontWeight.w600),
-        ),
-        const SizedBox(height: 8),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: options.map((opt) {
-            if (multiSelect) {
-              final current = selectedList ?? [];
-              final isSelected = current.contains(opt);
-              return FilterChip(
-                label: Text(opt),
-                selected: isSelected,
-                onSelected: (_) {
-                  final next = List<String>.from(current);
-                  if (isSelected) {
-                    next.remove(opt);
-                  } else {
-                    next.add(opt);
-                  }
-                  onSelectList?.call(next);
-                },
-              );
-            }
-            return ChoiceChip(
-              label: Text(opt),
-              selected: selected == opt,
-              onSelected: (_) => onSelect?.call(selected == opt ? null : opt),
-            );
-          }).toList(),
-        ),
-      ],
-    );
   }
 }
 

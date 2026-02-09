@@ -42,9 +42,9 @@ cp .env.example .env
 **Required variables**:
 ```
 MONGODB_URI=mongodb+srv://user:password@cluster.mongodb.net/dbname
-AUTH0_DOMAIN=your-domain.auth0.com
-AUTH0_CLIENT_ID=your_client_id
-AUTH0_CLIENT_SECRET=your_client_secret
+FIREBASE_PROJECT_ID=your-project-id
+FIREBASE_CLIENT_EMAIL=your-service-account@your-project-id.iam.gserviceaccount.com
+FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
 JWT_SECRET=your_jwt_secret
 PORT=5000
 NODE_ENV=development
@@ -166,10 +166,10 @@ npm install
 # Check credentials are correct
 ```
 
-### "Auth0 error"
+### "Firebase auth error"
 ```bash
-# Verify AUTH0_DOMAIN and AUTH0_CLIENT_ID in .env
-# Check Auth0 app is created
+# Verify FIREBASE_PROJECT_ID and FIREBASE_CLIENT_EMAIL in .env
+# Check Firebase service account JSON is valid
 ```
 
 ---

@@ -1,4 +1,5 @@
-require('dotenv').config();
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '../../.env') });
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
@@ -14,6 +15,8 @@ const geoRoutes = require('./routes/geoRoutes');
 const userRoutes = require('./routes/userRoutes');
 const preplannedTripsRoutes = require('./routes/preplannedTripsRoutes');
 const albumRoutes = require('./routes/albumRoutes');
+const explorationRoutes = require('./routes/explorationRoutes');
+const explorationAdminRoutes = require('./routes/explorationAdminRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -49,6 +52,11 @@ app.use('/api/districts', userRoutes);
 
 // Album and photo routes (JWT protected)
 app.use('/api/albums', albumRoutes);
+// Exploration routes (JWT protected)
+app.use('/api/exploration', explorationRoutes);
+
+// Admin exploration routes (JWT + admin)
+app.use('/api/admin', explorationAdminRoutes);
 
 // Boot: connect to DB first, then start server
 (async () => {

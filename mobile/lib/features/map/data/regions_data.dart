@@ -1,6 +1,7 @@
 /// Sri Lanka regions/districts data for cartoonish map
 ///
 /// Contains all 9 provinces with their metadata, colors, and landmark locations
+library;
 
 import 'package:flutter/material.dart';
 

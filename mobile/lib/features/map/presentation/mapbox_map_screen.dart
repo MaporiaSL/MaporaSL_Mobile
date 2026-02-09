@@ -9,8 +9,6 @@ class MapboxMapScreen extends StatefulWidget {
 }
 
 class _MapboxMapScreenState extends State<MapboxMapScreen> {
-  MapboxMap? _mapboxMap;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,7 +17,8 @@ class _MapboxMapScreenState extends State<MapboxMapScreen> {
         key: const ValueKey("mapWidget"),
         cameraOptions: CameraOptions(
           center: Point(
-              coordinates: Position(80.7718, 7.8731)), // Center of Sri Lanka
+            coordinates: Position(80.7718, 7.8731),
+          ), // Center of Sri Lanka
           zoom: 6.5,
         ),
         onMapCreated: _onMapCreated,
@@ -28,8 +27,6 @@ class _MapboxMapScreenState extends State<MapboxMapScreen> {
   }
 
   void _onMapCreated(MapboxMap mapboxMap) {
-    _mapboxMap = mapboxMap;
-
     // ✅ Load Mapbox’s default “streets” style
     mapboxMap.loadStyleURI("mapbox://styles/mapbox/streets-v12");
   }

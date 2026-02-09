@@ -88,7 +88,7 @@ const destinationSchema = new mongoose.Schema({
 exports.searchDestinations = async (req, res) => {
   const { query, districtId } = req.query;
   const filter = {
-    userId: req.user.auth0Id,
+    userId: req.user.firebaseUid,
     name: { $regex: query, $options: 'i' }
   };
   if (districtId) filter.districtId = districtId;
@@ -306,7 +306,7 @@ category: {
 
 **Controller** (add filtering):
 ```javascript
-const filter = { userId: req.user.auth0Id };
+const filter = { userId: req.user.firebaseUid };
 if (req.query.category) filter.category = req.query.category;
 ```
 
@@ -378,7 +378,7 @@ exports.markVisited = async (req, res) => {
   );
   
   // Update user achievements
-  const user = await User.findOne({ auth0Id: req.user.auth0Id });
+  const user = await User.findOne({ firebaseUid: req.user.firebaseUid });
   if (!user.unlockedDistricts.includes(dest.districtId)) {
     user.unlockedDistricts.push(dest.districtId);
     await user.save();

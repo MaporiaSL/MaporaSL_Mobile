@@ -137,14 +137,14 @@ class _MemoryLanePageState extends ConsumerState<MemoryLanePage>
     }
 
     // Group trips
-    List<TripModel> _byStatus(String key) => trips.where((t) {
+    List<TripModel> byStatus(String key) => trips.where((t) {
       final s = _statusKey(t);
       return s == key;
     }).toList();
 
-    final scheduled = _byStatus('scheduled');
-    final planned = _byStatus('planned') + _byStatus('active');
-    final completed = _byStatus('completed');
+    final scheduled = byStatus('scheduled');
+    final planned = byStatus('planned') + byStatus('active');
+    final completed = byStatus('completed');
 
     return RefreshIndicator(
       onRefresh: () async =>

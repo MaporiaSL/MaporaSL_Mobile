@@ -5,11 +5,14 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text(
-        '🏆 Profile & Achievements Coming Soon',
-        style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-        textAlign: TextAlign.center,
+    return Scaffold(
+      appBar: AppBar(title: const Text('Profile')),
+      body: const Center(
+        child: Text(
+          '🏆 Profile & Achievements Coming Soon',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+          textAlign: TextAlign.center,
+        ),
       ),
     );
   }

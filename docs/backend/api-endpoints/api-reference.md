@@ -21,29 +21,22 @@
 
 ## Authentication
 
-All endpoints except `POST /api/auth/register` require JWT authentication via Auth0.
+All endpoints require Firebase ID token authentication.
 
 ### Headers Required
 
 ```
-Authorization: Bearer <JWT_TOKEN>
+Authorization: Bearer <FIREBASE_ID_TOKEN>
 Content-Type: application/json
 ```
 
 ### Getting a Token
 
-Use Auth0 Client Credentials flow:
+Use Firebase Authentication (email/password or provider) to obtain an ID token:
 
 ```bash
-curl --request POST \
-  --url https://YOUR_AUTH0_DOMAIN/oauth/token \
-  --header 'content-type: application/json' \
-  --data '{
-    "client_id": "YOUR_CLIENT_ID",
-    "client_secret": "YOUR_CLIENT_SECRET",
-    "audience": "YOUR_API_AUDIENCE",
-    "grant_type": "client_credentials"
-  }'
+// Use the Firebase SDK on the client to sign in and retrieve an ID token.
+// Then attach it as: Authorization: Bearer <FIREBASE_ID_TOKEN>
 ```
 
 ---
@@ -52,13 +45,13 @@ curl --request POST \
 
 ### Register
 **Endpoint**: `POST /api/auth/register`  
-**Auth**: Not required
+**Auth**: Required (Firebase ID token)
 
 **Request**:
 ```json
 {
   "email": "user@example.com",
-  "password": "securePassword123"
+  "name": "John Doe"
 }
 ```
 
@@ -74,12 +67,12 @@ curl --request POST \
 
 ### Get Current User
 **Endpoint**: `GET /api/auth/me`  
-**Auth**: Required (JWT)
+**Auth**: Required (Firebase ID token)
 
 **Response** (200):
 ```json
 {
-  "sub": "auth0|user123",
+  "sub": "firebase-uid-123",
   "email": "user@example.com",
   "email_verified": true,
   "name": "John Doe"
@@ -88,7 +81,7 @@ curl --request POST \
 
 ### Logout
 **Endpoint**: `POST /api/auth/logout`  
-**Auth**: Required (JWT)
+**Auth**: Required (Firebase ID token)
 
 **Response** (200):
 ```json
@@ -103,7 +96,7 @@ curl --request POST \
 
 ### Create Travel
 **Endpoint**: `POST /api/travel`  
-**Auth**: Required (JWT) – bypassed in dev via mock auth middleware
+**Auth**: Required (Firebase ID token) – bypassed in dev via mock auth middleware
 
 **Request**:
 ```json
@@ -119,7 +112,7 @@ curl --request POST \
 ```json
 {
   "_id": "679f5e8d3c2a1b4e5f6a7b8c",
-  "userId": "auth0|user123",
+  "userId": "firebase-uid-user123",
   "name": "Sri Lanka Adventure",
   "description": "Two week tropical island adventure",
   "startDate": "2025-12-01T00:00:00.000Z",
@@ -131,7 +124,7 @@ curl --request POST \
 
 ### List Travels
 **Endpoint**: `GET /api/travel`  
-**Auth**: Required (JWT) – bypassed in dev via mock auth middleware
+**Auth**: Required (Firebase ID token) – bypassed in dev via mock auth middleware
 
 **Query Parameters**:
 - `skip` (optional) - Offset for pagination (default 0)
@@ -157,13 +150,13 @@ curl --request POST \
 
 ### Get Travel
 **Endpoint**: `GET /api/travel/:travelId`  
-**Auth**: Required (JWT) – bypassed in dev via mock auth middleware
+**Auth**: Required (Firebase ID token) – bypassed in dev via mock auth middleware
 
 **Response** (200):
 ```json
 {
   "_id": "679f5e8d3c2a1b4e5f6a7b8c",
-  "userId": "auth0|user123",
+  "userId": "firebase-uid-user123",
   "name": "Sri Lanka Adventure",
   "description": "Two week tropical island adventure",
   "startDate": "2025-12-01T00:00:00.000Z",
@@ -212,7 +205,7 @@ curl --request POST \
 
 ### Create Destination
 **Endpoint**: `POST /api/travel/:travelId/destinations`  
-**Auth**: Required (JWT)
+**Auth**: Required (Firebase ID token)
 
 **Request**:
 ```json
@@ -230,7 +223,7 @@ curl --request POST \
 ```json
 {
   "_id": "679f5e8d3c2a1b4e5f6a7b8d",
-  "userId": "auth0|user123",
+  "userId": "firebase-uid-user123",
   "travelId": "679f5e8d3c2a1b4e5f6a7b8c",
   "name": "Colombo Fort",
   "latitude": 6.9271,
@@ -243,7 +236,7 @@ curl --request POST \
 
 ### List Destinations
 **Endpoint**: `GET /api/travel/:travelId/destinations`  
-**Auth**: Required (JWT)
+**Auth**: Required (Firebase ID token)
 
 **Response** (200):
 ```json
@@ -263,7 +256,7 @@ curl --request POST \
 
 ### Get Destination
 **Endpoint**: `GET /api/travel/:travelId/destinations/:destId`  
-**Auth**: Required (JWT)
+**Auth**: Required (Firebase ID token)
 
 ### Update Destination
 **Endpoint**: `PATCH /api/travel/:travelId/destinations/:destId`  

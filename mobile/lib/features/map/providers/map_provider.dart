@@ -1,16 +1,16 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart' as mapbox;
 import '../models/map_models.dart';
-import '../../trips/models/trip_model.dart';
-import '../../destinations/models/destination_model.dart';
+import '../../trips/data/models/trip_model.dart';
 
 /// Map state containing current trip, GeoJSON, and UI state
 class MapState {
-  final Trip? currentTrip;
+  final TripModel? currentTrip;
   final TripGeoJson? tripGeoJson;
   final TripStats? tripStats;
   final List<DestinationDetail> destinations;
-  final mapbox.LatLng? userLocation;
+  final mapbox.Point? userLocation;
   final MapStyle mapStyle;
   final bool isLoading;
   final String? error;
@@ -34,11 +34,11 @@ class MapState {
 
   /// Create copy with updated fields
   MapState copyWith({
-    Trip? currentTrip,
+    TripModel? currentTrip,
     TripGeoJson? tripGeoJson,
     TripStats? tripStats,
     List<DestinationDetail>? destinations,
-    mapbox.LatLng? userLocation,
+    mapbox.Point? userLocation,
     MapStyle? mapStyle,
     bool? isLoading,
     String? error,
@@ -93,11 +93,8 @@ class MapStateNotifier extends StateNotifier<MapState> {
   MapStateNotifier() : super(MapState());
 
   /// Set current trip and load GeoJSON
-  void setCurrentTrip(Trip trip) {
-    state = state.copyWith(
-      currentTrip: trip,
-      isLoading: true,
-    );
+  void setCurrentTrip(TripModel trip) {
+    state = state.copyWith(currentTrip: trip, isLoading: true);
   }
 
   /// Update with loaded GeoJSON data
@@ -119,7 +116,9 @@ class MapStateNotifier extends StateNotifier<MapState> {
   /// Update user location
   void setUserLocation(double latitude, double longitude) {
     state = state.copyWith(
-      userLocation: mapbox.LatLng(latitude, longitude),
+      userLocation: mapbox.Point(
+        coordinates: mapbox.Position(longitude, latitude),
+      ),
     );
   }
 
@@ -145,10 +144,7 @@ class MapStateNotifier extends StateNotifier<MapState> {
 
   /// Set error message
   void setError(String error) {
-    state = state.copyWith(
-      error: error,
-      isLoading: false,
-    );
+    state = state.copyWith(error: error, isLoading: false);
   }
 
   /// Clear error
@@ -166,28 +162,26 @@ class MapStateNotifier extends StateNotifier<MapState> {
     final destinations = <DestinationDetail>[];
 
     for (final feature in geoJson.features) {
-      if (feature is Map<String, dynamic>) {
-        final geometry = feature['geometry'] as Map<String, dynamic>;
-        final properties = feature['properties'] as Map<String, dynamic>;
+      final geometry = feature['geometry'] as Map<String, dynamic>;
+      final properties = feature['properties'] as Map<String, dynamic>;
 
-        // Only process Point features (not routes or boundaries)
-        if (geometry['type'] == 'Point' && properties['type'] != 'route') {
-          final coords = geometry['coordinates'] as List;
-          
-          try {
-            final destination = DestinationDetail(
-              id: properties['id']?.toString() ?? '',
-              name: properties['name']?.toString() ?? 'Unknown',
-              latitude: coords[1] as double,
-              longitude: coords[0] as double,
-              visited: properties['visited'] == true,
-              districtId: properties['districtId']?.toString(),
-              travelId: properties['travelId']?.toString(),
-            );
-            destinations.add(destination);
-          } catch (e) {
-            debugPrint('Error parsing destination: $e');
-          }
+      // Only process Point features (not routes or boundaries)
+      if (geometry['type'] == 'Point' && properties['type'] != 'route') {
+        final coords = geometry['coordinates'] as List;
+
+        try {
+          final destination = DestinationDetail(
+            id: properties['id']?.toString() ?? '',
+            name: properties['name']?.toString() ?? 'Unknown',
+            latitude: coords[1] as double,
+            longitude: coords[0] as double,
+            visited: properties['visited'] == true,
+            districtId: properties['districtId']?.toString(),
+            travelId: properties['travelId']?.toString(),
+          );
+          destinations.add(destination);
+        } catch (e) {
+          debugPrint('Error parsing destination: $e');
         }
       }
     }
@@ -204,7 +198,7 @@ final mapStateProvider = StateNotifierProvider<MapStateNotifier, MapState>(
 );
 
 /// Get current trip
-final currentTripProvider = Provider<Trip?>((ref) {
+final currentTripProvider = Provider<TripModel?>((ref) {
   return ref.watch(mapStateProvider).currentTrip;
 });
 
@@ -224,7 +218,7 @@ final destinationsProvider = Provider<List<DestinationDetail>>((ref) {
 });
 
 /// Get user location
-final userLocationProvider = Provider<mapbox.LatLng?>((ref) {
+final userLocationProvider = Provider<mapbox.Point?>((ref) {
   return ref.watch(mapStateProvider).userLocation;
 });
 
@@ -262,5 +256,3 @@ final showRouteProvider = Provider<bool>((ref) {
 final showBoundaryProvider = Provider<bool>((ref) {
   return ref.watch(mapStateProvider).showBoundary;
 });
-
-import 'package:flutter/foundation.dart';

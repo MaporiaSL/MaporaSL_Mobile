@@ -18,7 +18,7 @@ Travel endpoints handle trip/journey creation, management, and retrieval. Each t
 Create a new trip for the current user.
 
 **Endpoint**: `POST /api/travel`  
-**Auth**: Required (JWT)  
+**Auth**: Required (Firebase ID token)  
 **Controller**: `travelController.createTravel`
 
 #### Request
@@ -42,7 +42,7 @@ Create a new trip for the current user.
 ```json
 {
   "_id": "679f5e8d3c2a1b4e5f6a7b8c",
-  "userId": "auth0|user123",
+  "userId": "firebase-uid-user-123",
   "title": "Sri Lanka Adventure",
   "description": "Two week tropical island adventure",
   "startDate": "2025-12-01T00:00:00.000Z",
@@ -73,7 +73,7 @@ Create a new trip for the current user.
 
 ```bash
 curl -X POST http://localhost:5000/api/travel \
-  -H "Authorization: Bearer TOKEN" \
+  -H "Authorization: Bearer ID_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
     "title": "Sri Lanka Adventure",
@@ -90,7 +90,7 @@ curl -X POST http://localhost:5000/api/travel \
 Get all trips for the current user with pagination.
 
 **Endpoint**: `GET /api/travel`  
-**Auth**: Required (JWT)  
+**Auth**: Required (Firebase ID token)  
 **Controller**: `travelController.getAllTravels`
 
 #### Query Parameters
@@ -107,7 +107,7 @@ Get all trips for the current user with pagination.
   "travels": [
     {
       "_id": "679f5e8d3c2a1b4e5f6a7b8c",
-      "userId": "auth0|user123",
+      "userId": "firebase-uid-user-123",
       "title": "Sri Lanka Adventure",
       "description": "Two week tropical island adventure",
       "startDate": "2025-12-01T00:00:00.000Z",
@@ -127,7 +127,7 @@ Get all trips for the current user with pagination.
 
 ```bash
 curl "http://localhost:5000/api/travel?limit=10&skip=0" \
-  -H "Authorization: Bearer TOKEN"
+  -H "Authorization: Bearer ID_TOKEN"
 ```
 
 ---
@@ -137,7 +137,7 @@ curl "http://localhost:5000/api/travel?limit=10&skip=0" \
 Retrieve details of a specific trip.
 
 **Endpoint**: `GET /api/travel/:travelId`  
-**Auth**: Required (JWT)  
+**Auth**: Required (Firebase ID token)  
 **Controller**: `travelController.getTravelById`
 
 #### URL Parameters
@@ -151,7 +151,7 @@ Retrieve details of a specific trip.
 ```json
 {
   "_id": "679f5e8d3c2a1b4e5f6a7b8c",
-  "userId": "auth0|user123",
+  "userId": "firebase-uid-user-123",
   "title": "Sri Lanka Adventure",
   "description": "Two week tropical island adventure",
   "startDate": "2025-12-01T00:00:00.000Z",
@@ -175,7 +175,7 @@ Retrieve details of a specific trip.
 
 ```bash
 curl "http://localhost:5000/api/travel/679f5e8d3c2a1b4e5f6a7b8c" \
-  -H "Authorization: Bearer TOKEN"
+  -H "Authorization: Bearer ID_TOKEN"
 ```
 
 ---
@@ -185,7 +185,7 @@ curl "http://localhost:5000/api/travel/679f5e8d3c2a1b4e5f6a7b8c" \
 Update trip details (title, description, dates).
 
 **Endpoint**: `PATCH /api/travel/:travelId`  
-**Auth**: Required (JWT)  
+**Auth**: Required (Firebase ID token)  
 **Controller**: `travelController.updateTravel`
 
 #### Request
@@ -206,7 +206,7 @@ Update trip details (title, description, dates).
 ```json
 {
   "_id": "679f5e8d3c2a1b4e5f6a7b8c",
-  "userId": "auth0|user123",
+  "userId": "firebase-uid-user-123",
   "title": "Updated Trip Title",
   "description": "Updated description",
   "startDate": "2025-12-02T00:00:00.000Z",
@@ -221,7 +221,7 @@ Update trip details (title, description, dates).
 
 ```bash
 curl -X PATCH "http://localhost:5000/api/travel/679f5e8d3c2a1b4e5f6a7b8c" \
-  -H "Authorization: Bearer TOKEN" \
+  -H "Authorization: Bearer ID_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
     "title": "Updated Title",
@@ -236,7 +236,7 @@ curl -X PATCH "http://localhost:5000/api/travel/679f5e8d3c2a1b4e5f6a7b8c" \
 Delete a trip and all associated destinations.
 
 **Endpoint**: `DELETE /api/travel/:travelId`  
-**Auth**: Required (JWT)  
+**Auth**: Required (Firebase ID token)  
 **Controller**: `travelController.deleteTravel`
 
 #### Response (200 OK)
@@ -267,7 +267,7 @@ Delete a trip and all associated destinations.
 
 ```bash
 curl -X DELETE "http://localhost:5000/api/travel/679f5e8d3c2a1b4e5f6a7b8c" \
-  -H "Authorization: Bearer TOKEN"
+  -H "Authorization: Bearer ID_TOKEN"
 ```
 
 ---

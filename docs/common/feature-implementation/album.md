@@ -148,7 +148,7 @@ const albumSchema = new mongoose.Schema({
      const url = await uploadToCloud(req.file);
      
      const photo = new Photo({
-       userId: req.user.auth0Id,
+      userId: req.user.firebaseUid,
        url: url,
        travelId: req.body.travelId,
        caption: req.body.caption
