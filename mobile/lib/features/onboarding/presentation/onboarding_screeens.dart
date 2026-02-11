@@ -21,7 +21,47 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-      body: Text("Onboarding Screens"),
+      body: SafeArea(
+        child: Stack(
+          children: [
+            PageView(
+              controller: _pageController,
+              physics: const ClampingScrollPhysics(),
+              onPageChanged: (index) {
+                setState(() {
+                  currentIndex = index;
+                });
+              },
+              children: [
+                onboardPage(
+                  image: images[0],
+                  title: "Life is short and the world is ",
+                  highlight: "wide",
+                  description:
+                      "At Friends tours and travel, we customize reliable and trustworthy educational tours to destinations all over the world",
+                  buttonText: "Next",
+                ),
+                onboardPage(
+                  image: images[1],
+                  title: "It’s a big world out there go ",
+                  highlight: "explore",
+                  description:
+                      "To get the best of your adventure you just need to leave and go where you like. we are waiting for you",
+                  buttonText: "Next",
+                ),
+                onboardPage(
+                  image: images[2],
+                  title: "People don't take trips, trips take ",
+                  highlight: "people",
+                  description:
+                      "To get the best of your adventure you just need to leave and go where you like. we are waiting for you",
+                  buttonText: "Get Started",
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
     );
   }
 
