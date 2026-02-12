@@ -5,17 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="85c81345-a34b-4cea-a4e8-41472e7b44b3" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/gemified-travel-portfolio.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gemified-travel-portfolio.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/backend/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/server.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/server.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/env" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/mobile/lib/features/exploration/presentation/exploration_onboarding_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/lib/features/exploration/presentation/exploration_onboarding_screen.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mobile/lib/features/map/data/geojson_parser.dart" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/lib/features/map/data/geojson_parser.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mobile/lib/features/map/presentation/map_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/lib/features/map/presentation/map_screen.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mobile/lib/features/shop/presentation/shop_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/lib/features/shop/presentation/shop_page.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
