@@ -59,6 +59,54 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 ),
               ],
             ),
+            
+            Positioned(
+              top: 16,
+              right: 16,
+              child: AnimatedOpacity(
+                opacity: currentIndex < 2 ? 1.0 : 0.0,
+                duration: const Duration(milliseconds: 300),
+                child: AnimatedSlide(
+                  offset: currentIndex < 2
+                      ? Offset.zero
+                      : const Offset(0, -0.5),
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeInOut,
+                  child: IgnorePointer(
+                    ignoring: currentIndex >= 2,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.3),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: TextButton(
+                        onPressed: () {
+                          _pageController.animateToPage(
+                            2,
+                            duration: const Duration(milliseconds: 400),
+                            curve: Curves.easeInOut,
+                          );
+                        },
+                        style: TextButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
+                        ),
+                        child: const Text(
+                          'Skip',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -197,4 +245,65 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       ),
     );
   }
+}
+
+class BrushHighlight extends StatelessWidget {
+  final String text;
+
+  const BrushHighlight(this.text, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      alignment: Alignment.center,
+      clipBehavior: Clip.none,
+      children: [
+        Positioned(
+          bottom: -6,
+          child: CustomPaint(
+            size: Size(text.length * 16.0, 14),
+            painter: BrushUnderlinePainter(),
+          ),
+        ),
+        Text(
+          text,
+          style: const TextStyle(
+            fontSize: 28,
+            fontWeight: FontWeight.w700,
+            color: Color(0xFFFF6B35),
+          ),
+          textAlign: TextAlign.center,
+        ),
+      ],
+    );
+  }
+}
+
+class BrushUnderlinePainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = const Color(0xFFFF6B35)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 6
+      ..strokeCap = StrokeCap.round;
+
+    final path = Path();
+
+    // Start left
+    path.moveTo(0, size.height * 0.6);
+
+    // Smooth upward curve (thicker center illusion)
+    path.quadraticBezierTo(
+      size.width * 0.5,
+      size.height * 0.2,
+      size.width,
+      size.height * 0.6,
+    );
+
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
