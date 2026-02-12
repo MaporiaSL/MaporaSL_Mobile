@@ -13,6 +13,7 @@ const destinationRoutes = require('./routes/destinationRoutes');
 const mapRoutes = require('./routes/mapRoutes');
 const geoRoutes = require('./routes/geoRoutes');
 const userRoutes = require('./routes/userRoutes');
+const realStoreRoutes = require('./routes/realStoreRoutes');
 const preplannedTripsRoutes = require('./routes/preplannedTripsRoutes');
 const albumRoutes = require('./routes/albumRoutes');
 const explorationRoutes = require('./routes/explorationRoutes');
@@ -57,6 +58,9 @@ app.use('/api/exploration', explorationRoutes);
 
 // Admin exploration routes (JWT + admin)
 app.use('/api/admin', explorationAdminRoutes);
+
+// Real store (shop) routes
+app.use('/api/store', realStoreRoutes);
 
 // Boot: connect to DB first, then start server
 (async () => {
