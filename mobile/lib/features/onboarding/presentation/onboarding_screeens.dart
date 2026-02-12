@@ -102,7 +102,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 ),
                 children: [
                   TextSpan(text: title + " "), // normal text
-                  TextSpan(text: highlight), // highlighted text
+                  WidgetSpan(
+                    alignment: PlaceholderAlignment.baseline,
+                    baseline: TextBaseline.alphabetic,
+                    child: BrushHighlight(highlight),
+                  ),
                 ],
               ),
             ),
@@ -171,6 +175,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     );
                   } else {
                     // Navigate to main app screen
+                    // TODO: Replace with your home screen
+                    // Example: Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomeScreen()));
                     Navigator.pop(context);
                   }
                 },
