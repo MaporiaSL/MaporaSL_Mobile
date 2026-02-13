@@ -22,3 +22,22 @@ class PhotoLocation {
     };
   }
 }
+
+/// Photo model representing a single photo in an album
+class PhotoModel {
+  final String id;
+  final String url;
+  final String originalName;
+  final String? caption;
+  final PhotoLocation? location;
+  final DateTime? createdAt;
+
+  const PhotoModel({
+    required this.id,
+    required this.url,
+    required this.originalName,
+    this.caption,
+    this.location,
+    this.createdAt,
+  });
+}
