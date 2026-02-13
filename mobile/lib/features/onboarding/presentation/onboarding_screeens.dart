@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gemified_travel_portfolio/features/onboarding/widgets/brush_highlight.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -12,9 +13,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   int currentIndex = 0;
 
   final List<String> images = [
-    "assets/onboarding_image1.png",
-    "assets/onboarding_image2.png",
-    "assets/onboarding_image3.png",
+    "assets/images/onboarding_image1.png",
+    "assets/images/onboarding_image2.png",
+    "assets/images/onboarding_image3.png",
   ];
 
   @override
