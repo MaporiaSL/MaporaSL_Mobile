@@ -1,3 +1,4 @@
+/// Photo location data
 class PhotoLocation {
   final double? latitude;
   final double? longitude;
@@ -11,5 +12,13 @@ class PhotoLocation {
       longitude: json['longitude']?.toDouble(),
       placeName: json['placeName'] as String?,
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      if (latitude != null) 'latitude': latitude,
+      if (longitude != null) 'longitude': longitude,
+      if (placeName != null) 'placeName': placeName,
+    };
   }
 }
