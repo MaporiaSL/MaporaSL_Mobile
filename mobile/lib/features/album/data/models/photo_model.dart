@@ -55,4 +55,15 @@ class PhotoModel {
           : null,
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'url': url,
+      'originalName': originalName,
+      if (caption != null) 'caption': caption,
+      if (location != null) 'location': location!.toJson(),
+      if (createdAt != null) 'createdAt': createdAt!.toIso8601String(),
+    };
+  }
 }
