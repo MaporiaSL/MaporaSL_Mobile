@@ -27,4 +27,28 @@ class AlbumModel {
     this.createdAt,
     this.updatedAt,
   });
+
+  factory AlbumModel.fromJson(Map<String, dynamic> json) {
+    return AlbumModel(
+      id: json['id']?.toString() ?? json['_id']?.toString() ?? '',
+      name: json['name'] as String? ?? '',
+      description: json['description'] as String?,
+      coverPhotoUrl: json['coverPhotoUrl'] as String?,
+      tags: (json['tags'] as List<dynamic>?)?.cast<String>() ?? [],
+      districtId: json['districtId'] as String?,
+      provinceId: json['provinceId'] as String?,
+      photoCount: json['photoCount'] as int? ?? 0,
+      photos: json['photos'] != null
+          ? (json['photos'] as List<dynamic>)
+                .map((p) => PhotoModel.fromJson(p as Map<String, dynamic>))
+                .toList()
+          : null,
+      createdAt: json['createdAt'] != null
+          ? DateTime.tryParse(json['createdAt'] as String)
+          : null,
+      updatedAt: json['updatedAt'] != null
+          ? DateTime.tryParse(json['updatedAt'] as String)
+          : null,
+    );
+  }
 }
