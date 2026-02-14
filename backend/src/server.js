@@ -15,7 +15,7 @@ const geoRoutes = require('./routes/geoRoutes');
 const userRoutes = require('./routes/userRoutes');
 const realStoreRoutes = require('./routes/realStoreRoutes');
 const preplannedTripsRoutes = require('./routes/preplannedTripsRoutes');
-const albumRoutes = require('./routes/albumRoutes');
+const albumRoutes = require('./routes/albumRoute');
 const explorationRoutes = require('./routes/explorationRoutes');
 const explorationAdminRoutes = require('./routes/explorationAdminRoutes');
 
