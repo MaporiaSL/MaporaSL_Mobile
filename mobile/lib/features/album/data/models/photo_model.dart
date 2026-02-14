@@ -40,4 +40,19 @@ class PhotoModel {
     this.location,
     this.createdAt,
   });
+
+  factory PhotoModel.fromJson(Map<String, dynamic> json) {
+    return PhotoModel(
+      id: json['id']?.toString() ?? json['_id']?.toString() ?? '',
+      url: json['url'] as String? ?? '',
+      originalName: json['originalName'] as String? ?? '',
+      caption: json['caption'] as String?,
+      location: json['location'] != null
+          ? PhotoLocation.fromJson(json['location'] as Map<String, dynamic>)
+          : null,
+      createdAt: json['createdAt'] != null
+          ? DateTime.tryParse(json['createdAt'] as String)
+          : null,
+    );
+  }
 }
