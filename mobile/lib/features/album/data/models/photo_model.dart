@@ -66,4 +66,22 @@ class PhotoModel {
       if (createdAt != null) 'createdAt': createdAt!.toIso8601String(),
     };
   }
+
+  PhotoModel copyWith({
+    String? id,
+    String? url,
+    String? originalName,
+    String? caption,
+    PhotoLocation? location,
+    DateTime? createdAt,
+  }) {
+    return PhotoModel(
+      id: id ?? this.id,
+      url: url ?? this.url,
+      originalName: originalName ?? this.originalName,
+      caption: caption ?? this.caption,
+      location: location ?? this.location,
+      createdAt: createdAt ?? this.createdAt,
+    );
+  }
 }
