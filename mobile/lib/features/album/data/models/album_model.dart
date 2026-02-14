@@ -67,4 +67,32 @@ class AlbumModel {
       if (updatedAt != null) 'updatedAt': updatedAt!.toIso8601String(),
     };
   }
+
+  AlbumModel copyWith({
+    String? id,
+    String? name,
+    String? description,
+    String? coverPhotoUrl,
+    List<String>? tags,
+    String? districtId,
+    String? provinceId,
+    int? photoCount,
+    List<PhotoModel>? photos,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) {
+    return AlbumModel(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      description: description ?? this.description,
+      coverPhotoUrl: coverPhotoUrl ?? this.coverPhotoUrl,
+      tags: tags ?? this.tags,
+      districtId: districtId ?? this.districtId,
+      provinceId: provinceId ?? this.provinceId,
+      photoCount: photoCount ?? this.photoCount,
+      photos: photos ?? this.photos,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
 }
