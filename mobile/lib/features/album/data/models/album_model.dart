@@ -51,4 +51,20 @@ class AlbumModel {
           : null,
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      if (description != null) 'description': description,
+      if (coverPhotoUrl != null) 'coverPhotoUrl': coverPhotoUrl,
+      'tags': tags,
+      if (districtId != null) 'districtId': districtId,
+      if (provinceId != null) 'provinceId': provinceId,
+      'photoCount': photoCount,
+      if (photos != null) 'photos': photos!.map((p) => p.toJson()).toList(),
+      if (createdAt != null) 'createdAt': createdAt!.toIso8601String(),
+      if (updatedAt != null) 'updatedAt': updatedAt!.toIso8601String(),
+    };
+  }
 }
