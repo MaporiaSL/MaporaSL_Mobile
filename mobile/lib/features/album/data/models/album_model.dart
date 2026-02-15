@@ -147,4 +147,14 @@ class CreateAlbumDto {
     this.districtId,
     this.provinceId,
   });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      if (description != null) 'description': description,
+      if (tags != null) 'tags': tags,
+      if (districtId != null) 'districtId': districtId,
+      if (provinceId != null) 'provinceId': provinceId,
+    };
+  }
 }
