@@ -9,19 +9,56 @@ class ShopPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final itemsAsync = ref.watch(realStoreItemsProvider);
+    final cartAsync = ref.watch(shoppingCartProvider);
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Shop'),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.shopping_cart),
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const ShoppingCartPage()),
+          cartAsync.when(
+            data: (cart) {
+              final count = cart.items.fold<int>(
+                0,
+                (sum, item) => sum + item.quantity,
+              );
+              return IconButton(
+                icon: Badge(
+                  label: Text('$count'),
+                  isLabelVisible: count > 0,
+                  child: const Icon(Icons.shopping_cart),
+                ),
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => const ShoppingCartPage(),
+                    ),
+                  );
+                },
               );
             },
+            loading: () => IconButton(
+              icon: const Icon(Icons.shopping_cart),
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => const ShoppingCartPage(),
+                  ),
+                );
+              },
+            ),
+            error: (_, __) => IconButton(
+              icon: const Icon(Icons.shopping_cart),
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => const ShoppingCartPage(),
+                  ),
+                );
+              },
+            ),
           ),
+          // Reserve space for overlay profile icon so cart stays visible
+          const SizedBox(width: 56),
         ],
       ),
       body: itemsAsync.when(

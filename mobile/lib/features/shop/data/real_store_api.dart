@@ -12,7 +12,7 @@ class RealStoreApi {
     String? district,
     String? category,
     int skip = 0,
-    int limit = 20,
+    int limit = 60,
   }) async {
     final Response response = await _client.get(
       '/api/store/items',
