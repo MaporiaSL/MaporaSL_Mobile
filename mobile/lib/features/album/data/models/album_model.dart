@@ -96,3 +96,20 @@ class AlbumModel {
     );
   }
 }
+
+/// Album statistics model
+class AlbumStatsModel {
+  final int totalAlbums;
+  final int totalPhotos;
+  final double totalStorageMB;
+  final Map<String, int> photosByDistrict;
+  final List<AlbumModel> recentAlbums;
+
+  const AlbumStatsModel({
+    required this.totalAlbums,
+    required this.totalPhotos,
+    required this.totalStorageMB,
+    required this.photosByDistrict,
+    required this.recentAlbums,
+  });
+}
