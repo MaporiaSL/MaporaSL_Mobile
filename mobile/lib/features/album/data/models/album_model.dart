@@ -112,4 +112,22 @@ class AlbumStatsModel {
     required this.photosByDistrict,
     required this.recentAlbums,
   });
+
+  factory AlbumStatsModel.fromJson(Map<String, dynamic> json) {
+    return AlbumStatsModel(
+      totalAlbums: json['totalAlbums'] as int? ?? 0,
+      totalPhotos: json['totalPhotos'] as int? ?? 0,
+      totalStorageMB: (json['totalStorageMB'] as num?)?.toDouble() ?? 0.0,
+      photosByDistrict:
+          (json['photosByDistrict'] as Map<String, dynamic>?)?.map(
+            (key, value) => MapEntry(key, value as int),
+          ) ??
+          {},
+      recentAlbums:
+          (json['recentAlbums'] as List<dynamic>?)
+              ?.map((a) => AlbumModel.fromJson(a as Map<String, dynamic>))
+              .toList() ??
+          [],
+    );
+  }
 }
