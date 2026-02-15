@@ -158,3 +158,24 @@ class CreateAlbumDto {
     };
   }
 }
+
+/// DTO for finding or creating album by location
+class FindOrCreateAlbumDto {
+  final String locationName;
+  final String? districtId;
+  final String? provinceId;
+
+  const FindOrCreateAlbumDto({
+    required this.locationName,
+    this.districtId,
+    this.provinceId,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'locationName': locationName,
+      if (districtId != null) 'districtId': districtId,
+      if (provinceId != null) 'provinceId': provinceId,
+    };
+  }
+}
