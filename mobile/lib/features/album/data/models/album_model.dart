@@ -131,3 +131,20 @@ class AlbumStatsModel {
     );
   }
 }
+
+/// DTO for creating a new album
+class CreateAlbumDto {
+  final String name;
+  final String? description;
+  final List<String>? tags;
+  final String? districtId;
+  final String? provinceId;
+
+  const CreateAlbumDto({
+    required this.name,
+    this.description,
+    this.tags,
+    this.districtId,
+    this.provinceId,
+  });
+}
