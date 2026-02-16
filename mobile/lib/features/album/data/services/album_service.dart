@@ -124,4 +124,13 @@ class AlbumService {
       throw Exception('Failed to upload photo: $e');
     }
   }
+
+  /// Delete photo from album
+  Future<void> deletePhoto(String albumId, String photoId) async {
+    try {
+      await _dio.delete('$baseUrl/albums/$albumId/photos/$photoId');
+    } catch (e) {
+      throw Exception('Failed to delete photo: $e');
+    }
+  }
 }
