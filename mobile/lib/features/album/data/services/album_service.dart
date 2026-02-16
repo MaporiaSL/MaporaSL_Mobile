@@ -81,4 +81,47 @@ class AlbumService {
       throw Exception('Failed to find/create album: $e');
     }
   }
+
+  /// Upload photo to album
+  Future<PhotoModel> uploadPhoto(
+    String albumId,
+    File photoFile, {
+    String? caption,
+    double? latitude,
+    double? longitude,
+    String? placeName,
+  }) async {
+    try {
+      final fileName = photoFile.path.split('/').last;
+      final extension = fileName.split('.').last.toLowerCase();
+
+      String mimeType = 'image/jpeg';
+      if (extension == 'png') mimeType = 'image/png';
+      if (extension == 'gif') mimeType = 'image/gif';
+      if (extension == 'webp') mimeType = 'image/webp';
+
+      final formData = FormData.fromMap({
+        'photo': await MultipartFile.fromFile(
+          photoFile.path,
+          filename: fileName,
+          contentType: MediaType.parse(mimeType),
+        ),
+        if (caption != null) 'caption': caption,
+        if (latitude != null) 'latitude': latitude.toString(),
+        if (longitude != null) 'longitude': longitude.toString(),
+        if (placeName != null) 'placeName': placeName,
+      });
+
+      final response = await _dio.post(
+        '$baseUrl/albums/$albumId/photos',
+        data: formData,
+      );
+
+      return PhotoModel.fromJson(
+        Map<String, dynamic>.from(response.data['photo']),
+      );
+    } catch (e) {
+      throw Exception('Failed to upload photo: $e');
+    }
+  }
 }
