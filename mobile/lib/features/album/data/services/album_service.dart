@@ -57,6 +57,13 @@ class AlbumService {
       throw Exception('Failed to create album: $e');
     }
   }
+
+  /// Delete album
+  Future<void> deleteAlbum(String id) async {
+    try {
+      await _dio.delete('$baseUrl/albums/$id');
+    } catch (e) {
+      throw Exception('Failed to delete album: $e');
+    }
+  }
 }
-
-
