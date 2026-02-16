@@ -66,4 +66,19 @@ class AlbumService {
       throw Exception('Failed to delete album: $e');
     }
   }
+
+  /// Find or create album by location name
+  Future<AlbumModel> findOrCreateAlbumByLocation(String locationName) async {
+    try {
+      final response = await _dio.post(
+        '$baseUrl/albums/find-or-create',
+        data: {'locationName': locationName},
+      );
+      return AlbumModel.fromJson(
+        Map<String, dynamic>.from(response.data['album']),
+      );
+    } catch (e) {
+      throw Exception('Failed to find/create album: $e');
+    }
+  }
 }
