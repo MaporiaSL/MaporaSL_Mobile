@@ -1,0 +1,41 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import '../models/place.dart';
+
+class PlacesRepository {
+  final String baseUrl;
+
+  PlacesRepository({String? baseUrl}) 
+      : baseUrl = baseUrl ?? dotenv.env['API_URL'] ?? 'http://10.0.2.2:5000/api';
+
+  Future<List<Place>> getPlaces({
+    int page = 1, 
+    int limit = 20, 
+    String? search, 
+    String? category
+  }) async {
+    try {
+      final queryParams = {
+        'page': page.toString(),
+        'limit': limit.toString(),
+        if (search != null && search.isNotEmpty) 'search': search,
+        if (category != null && category.isNotEmpty) 'category': category,
+      };
+
+      final uri = Uri.parse('$baseUrl/places').replace(queryParameters: queryParams);
+      
+      final response = await http.get(uri);
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final List<dynamic> placesJson = data['places'];
+        return placesJson.map((json) => Place.fromJson(json)).toList();
+      } else {
+        throw Exception('Failed to load places: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Error fetching places: $e');
+    }
+  }
+}
