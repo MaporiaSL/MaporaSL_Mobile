@@ -27,4 +27,17 @@ class AlbumService {
       throw Exception('Failed to load albums: $e');
     }
   }
+
+  /// Get single album with photos
+  Future<AlbumModel> getAlbum(String id) async {
+    try {
+      final response = await _dio.get('$baseUrl/albums/$id');
+      return AlbumModel.fromJson(
+        Map<String, dynamic>.from(response.data as Map<String, dynamic>),
+      );
+    } catch (e) {
+      throw Exception('Failed to load album: $e');
+    }
+  }
 }
+
