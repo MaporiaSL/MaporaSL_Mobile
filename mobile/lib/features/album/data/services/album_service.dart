@@ -39,5 +39,24 @@ class AlbumService {
       throw Exception('Failed to load album: $e');
     }
   }
+
+  /// Create new album
+  Future<AlbumModel> createAlbum(String name, {String? description}) async {
+    try {
+      final response = await _dio.post(
+        '$baseUrl/albums',
+        data: {
+          'name': name,
+          if (description != null) 'description': description,
+        },
+      );
+      return AlbumModel.fromJson(
+        Map<String, dynamic>.from(response.data['album']),
+      );
+    } catch (e) {
+      throw Exception('Failed to create album: $e');
+    }
+  }
 }
+
 
