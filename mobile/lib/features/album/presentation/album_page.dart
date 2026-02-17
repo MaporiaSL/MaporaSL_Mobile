@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import '../data/services/album_service.dart';
 import '../data/models/album_model.dart';
 
+/// Main Album page - shows all albums with camera button
 class AlbumPage extends StatefulWidget {
   const AlbumPage({super.key});
 
@@ -47,11 +48,70 @@ class _AlbumPageState extends State<AlbumPage> {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text(
-        'Albumn Screen Placeholder\n Albums Coming Soon',
-        style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-        textAlign: TextAlign.center,
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('My Albums'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.add),
+            onPressed: () => {
+
+            },
+          ),
+        ],
+      ),
+      body: _buildBody(),
+      floatingActionButton: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          FloatingActionButton(
+            heroTag: 'gallery',
+            onPressed: () => {
+
+            },
+            child: const Icon(Icons.photo_library),
+          ),
+          const SizedBox(height: 16),
+          FloatingActionButton.large(
+            heroTag: 'camera',
+            onPressed: () => {
+
+            },
+            child: const Icon(Icons.camera_alt, size: 36),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBody() {
+    if (_isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    return RefreshIndicator(
+      onRefresh: _loadAlbums,
+      child: GridView.builder(
+        padding: const EdgeInsets.all(16),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          mainAxisSpacing: 16,
+          crossAxisSpacing: 16,
+          childAspectRatio: 0.85,
+        ),
+        itemCount: _albums.length,
+        itemBuilder: (_, index) {
+          final album = _albums[index];
+          return _AlbumCard(
+            album: album,
+            onTap: () => () => {
+
+            },
+            onLongPress: () => () => {
+
+            },
+          );
+        },
       ),
     );
   }
