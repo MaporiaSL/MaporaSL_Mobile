@@ -150,4 +150,21 @@ class AlbumService {
 
     return Geolocator.getCurrentPosition();
   }
+
+  /// Get location name from coordinates
+  Future<String?> getLocationName(double lat, double lng) async {
+    try {
+      final placemarks = await placemarkFromCoordinates(lat, lng);
+      if (placemarks.isNotEmpty) {
+        final place = placemarks.first;
+        return place.locality ??
+            place.subAdministrativeArea ??
+            place.administrativeArea ??
+            'Unknown Location';
+      }
+    } catch (e) {
+      // Geocoding failed
+    }
+    return null;
+  }
 }
