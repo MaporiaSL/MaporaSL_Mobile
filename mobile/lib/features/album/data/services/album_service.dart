@@ -167,4 +167,36 @@ class AlbumService {
     }
     return null;
   }
+
+  /// Upload photo to album based on current location
+  Future<({AlbumModel album, PhotoModel photo})> uploadPhotoToLocationAlbum(
+    File photoFile,
+  ) async {
+    // Get current location
+    final position = await getCurrentLocation();
+
+    // Get location name
+    final locationName = await getLocationName(
+      position.latitude,
+      position.longitude,
+    );
+
+    if (locationName == null) {
+      throw Exception('Unable to determine location');
+    }
+
+    // Find or create album for this location
+    final album = await findOrCreateAlbumByLocation(locationName);
+
+    // Upload photo
+    final photo = await uploadPhoto(
+      album.id,
+      photoFile,
+      latitude: position.latitude,
+      longitude: position.longitude,
+      placeName: locationName,
+    );
+
+    return (album: album, photo: photo);
+  }
 }
