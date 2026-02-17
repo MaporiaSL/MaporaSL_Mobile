@@ -6,13 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="85c81345-a34b-4cea-a4e8-41472e7b44b3" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/backend/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/data/realStoreSampleProducts.json" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/data/realStoreSampleProducts.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/models/Order.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/models/Order.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/models/RealStoreItem.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/models/RealStoreItem.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mobile/lib/features/shop/data/real_store_api.dart" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/lib/features/shop/data/real_store_api.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mobile/lib/features/shop/presentation/shop_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/lib/features/shop/presentation/shop_page.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mobile/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/pubspec.lock" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -60,16 +53,5 @@
       <updated>1761493930406</updated>
     </task>
     <servers />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="Dart">
-          <url>file://$PROJECT_DIR$/mobile/lib/features/shop/presentation/shop_page.dart</url>
-          <line>4</line>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
 </project>
