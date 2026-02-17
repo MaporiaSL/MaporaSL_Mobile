@@ -46,19 +46,23 @@ class _AlbumPageState extends State<AlbumPage> {
     }
   }
 
+  Future<void> _openCamera() async {
+    final result = await Navigator.push<bool>(
+      context,
+      MaterialPageRoute(builder: (_) => const CameraPage()),
+    );
+
+    if (result == true) {
+      _loadAlbums();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('My Albums'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: () => {
-
-            },
-          ),
-        ],
+        actions: [IconButton(icon: const Icon(Icons.add), onPressed: () => {})],
       ),
       body: _buildBody(),
       floatingActionButton: Column(
@@ -66,17 +70,13 @@ class _AlbumPageState extends State<AlbumPage> {
         children: [
           FloatingActionButton(
             heroTag: 'gallery',
-            onPressed: () => {
-
-            },
+            onPressed: () => {},
             child: const Icon(Icons.photo_library),
           ),
           const SizedBox(height: 16),
           FloatingActionButton.large(
             heroTag: 'camera',
-            onPressed: () => {
-
-            },
+            onPressed: () => {},
             child: const Icon(Icons.camera_alt, size: 36),
           ),
         ],
@@ -87,6 +87,41 @@ class _AlbumPageState extends State<AlbumPage> {
   Widget _buildBody() {
     if (_isLoading) {
       return const Center(child: CircularProgressIndicator());
+    }
+
+    if (_error != null) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.error_outline, size: 64, color: Colors.grey),
+            const SizedBox(height: 16),
+            Text('Failed to load albums'),
+            ElevatedButton(onPressed: _loadAlbums, child: const Text('Retry')),
+          ],
+        ),
+      );
+    }
+
+    if (_albums.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.photo_album, size: 80, color: Colors.grey),
+            const SizedBox(height: 16),
+            const Text('No albums yet', style: TextStyle(fontSize: 20)),
+            const SizedBox(height: 8),
+            const Text('Take a photo to get started!'),
+            const SizedBox(height: 24),
+            ElevatedButton.icon(
+              onPressed: () {},
+              icon: const Icon(Icons.camera_alt),
+              label: const Text('Take Photo'),
+            ),
+          ],
+        ),
+      );
     }
 
     return RefreshIndicator(
@@ -104,12 +139,10 @@ class _AlbumPageState extends State<AlbumPage> {
           final album = _albums[index];
           return _AlbumCard(
             album: album,
-            onTap: () => () => {
-
-            },
-            onLongPress: () => () => {
-
-            },
+            onTap: () =>
+                () => {},
+            onLongPress: () =>
+                () => {},
           );
         },
       ),
