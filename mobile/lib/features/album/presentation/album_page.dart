@@ -57,6 +57,35 @@ class _AlbumPageState extends State<AlbumPage> {
     }
   }
 
+  Future<void> _pickFromGallery() async {
+    try {
+      final XFile? image = await _picker.pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 85,
+      );
+
+      if (image == null) return;
+
+      // Show loading
+      _showLoading('Uploading photo...');
+
+      final result = await _service.uploadPhotoToLocationAlbum(
+        File(image.path),
+      );
+
+      if (mounted) {
+        Navigator.pop(context); // Close loading
+        _loadAlbums();
+        _showMessage('Photo saved to "${result.album.name}"');
+      }
+    } catch (e) {
+      if (mounted) {
+        Navigator.pop(context); // Close loading
+        _showMessage('Failed: $e');
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
