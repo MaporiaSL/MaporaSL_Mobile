@@ -73,7 +73,7 @@ const destinationSchema = new mongoose.Schema({
   },
   rating: {
     average: { type: Number, default: 0, min: 0, max: 5 },
-    count: { type: Number, default: 0 }
+    reviewCount: { type: Number, default: 0 }
   },
   photos: {
     type: [String],

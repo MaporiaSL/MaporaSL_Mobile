@@ -1,5 +1,5 @@
-const path = require('path');
-require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
+const nodePath = require('path');
+require('dotenv').config({ path: nodePath.resolve(__dirname, '../.env') });
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
@@ -50,24 +50,17 @@ app.use('/api/districts', userRoutes);
 
 // Boot: connect to DB first, then start server
 (async () => {
-  await connectDB();
-
-  // Initialize Firebase for photo storage
   try {
-    // initializeFirebase(); // implementation missing in this context, commenting out or checks if function exists
-    // For now, assuming initializeFirebase needs to be imported if used. 
-    // Looking at the file, initializeFirebase is NOT imported. 
-    // SAFEST BET: Comment it out or remove it if not sure. 
-    // BUT the stash had it. Let's try to keep it but catch error if missing.
-    // Actually, I don't see `initializeFirebase` imported anywhere. 
-    // I will keep the log but comment out the call to avoid crash if undefined.
-    console.log('Firebase initialization skipped (function not imported)');
+    await connectDB();
+    console.log('MongoDB Connected');
+
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+    });
   } catch (error) {
-    console.warn('Firebase initialization failed:', error.message);
+    console.error('Failed to start server:', error.message);
+    process.exit(1);
   }
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-  });
 })();
 
 module.exports = app;

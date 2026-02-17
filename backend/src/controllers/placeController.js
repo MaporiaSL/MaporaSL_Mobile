@@ -14,10 +14,10 @@ exports.getPlaces = async (req, res) => {
 
         const query = { isSystemPlace: true };
 
-        // Search by name or description
+        // Search by name (starts with) or description (contains)
         if (search) {
             query.$or = [
-                { name: { $regex: search, $options: 'i' } },
+                { name: { $regex: `^${search}`, $options: 'i' } },
                 { description: { $regex: search, $options: 'i' } }
             ];
         }
@@ -27,6 +27,7 @@ exports.getPlaces = async (req, res) => {
         if (province) query.province = province;
         if (district) query.districtId = { $regex: district, $options: 'i' };
 
+        console.log(`[PlacesAPI] Search: "${search || ''}", Query: ${JSON.stringify(query)}`);
         const places = await Destination.find(query)
             .limit(limit * 1)
             .skip((page - 1) * limit)

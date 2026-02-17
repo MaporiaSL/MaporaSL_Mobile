@@ -24,8 +24,10 @@ class PlacesRepository {
       };
 
       final uri = Uri.parse('$baseUrl/places').replace(queryParameters: queryParams);
+      print('Fetching places from: $uri');
       
       final response = await http.get(uri);
+      print('Response status: ${response.statusCode}');
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -35,6 +37,7 @@ class PlacesRepository {
         throw Exception('Failed to load places: ${response.statusCode}');
       }
     } catch (e) {
+      print('Error in getPlaces: $e');
       throw Exception('Error fetching places: $e');
     }
   }

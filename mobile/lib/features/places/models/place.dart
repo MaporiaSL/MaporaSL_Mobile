@@ -50,7 +50,7 @@ class Place {
       googleMapsUrl: json['googleMapsUrl'],
       address: json['address'],
       rating: json['rating'] != null ? (json['rating']['average'] ?? 0.0).toDouble() : null,
-      reviewCount: json['rating'] != null ? (json['rating']['count'] ?? 0) : null,
+      reviewCount: json['rating'] != null ? (json['rating']['reviewCount'] ?? 0) : null,
       photos: List<String>.from(json['photos'] ?? []),
       accessibility: json['accessibility'],
       tags: List<String>.from(json['tags'] ?? []),
