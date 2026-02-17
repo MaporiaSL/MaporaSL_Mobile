@@ -133,4 +133,21 @@ class AlbumService {
       throw Exception('Failed to delete photo: $e');
     }
   }
+
+  /// Get current location
+  Future<Position> getCurrentLocation() async {
+    bool enabled = await Geolocator.isLocationServiceEnabled();
+    if (!enabled) throw Exception('Location services are disabled');
+
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      throw Exception('Location permissions are permanently denied');
+    }
+
+    return Geolocator.getCurrentPosition();
+  }
 }
