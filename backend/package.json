@@ -5,7 +5,8 @@
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
-    "dev": "nodemon src/server.js", "seed": "node seed-real-store.js"
+    "dev": "nodemon src/server.js",
+    "seed": "node seed-real-store.js"
   },
   "dependencies": {
     "@turf/turf": "^7.3.2",
@@ -17,7 +18,8 @@
     "helmet": "^7.1.0",
     "mongodb": "^7.0.0",
     "mongoose": "^8.0.3",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "multer": "^2.0.2"
   },
   "devDependencies": {
     "nodemon": "^3.0.2"
