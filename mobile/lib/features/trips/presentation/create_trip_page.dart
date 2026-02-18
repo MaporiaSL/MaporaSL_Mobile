@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 
 import '../data/models/trip_model.dart';
 import 'providers/trips_provider.dart';
+import '../../places/widgets/destination_picker.dart';
 
 /// Create/Edit custom trip page
 class CreateTripPage extends ConsumerStatefulWidget {
@@ -23,7 +24,6 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage> {
   late DateTime _endDate;
   late List<String> _places;
   late String _selectedTransport;
-  final _placeCtrl = TextEditingController();
 
   final _transportModes = [
     'Train',
@@ -60,18 +60,9 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage> {
     _titleCtrl.dispose();
     _descriptionCtrl.dispose();
     _startingLocationCtrl.dispose();
-    _placeCtrl.dispose();
     super.dispose();
   }
 
-  void _addPlace() {
-    if (_placeCtrl.text.isNotEmpty) {
-      setState(() {
-        _places.add(_placeCtrl.text);
-        _placeCtrl.clear();
-      });
-    }
-  }
 
   void _removePlace(int index) {
     setState(() => _places.removeAt(index));
@@ -243,25 +234,14 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage> {
             style: Theme.of(context).textTheme.titleMedium,
           ),
           const SizedBox(height: 12),
-          Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  controller: _placeCtrl,
-                  decoration: const InputDecoration(
-                    hintText: 'Add destination...',
-                    border: OutlineInputBorder(),
-                    isDense: true,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 8),
-              ElevatedButton.icon(
-                onPressed: _addPlace,
-                icon: const Icon(Icons.add),
-                label: const Text('Add'),
-              ),
-            ],
+          DestinationPicker(
+            onDestinationSelected: (name) {
+              setState(() {
+                if (!_places.contains(name)) {
+                  _places.add(name);
+                }
+              });
+            },
           ),
           const SizedBox(height: 12),
           // List of places
