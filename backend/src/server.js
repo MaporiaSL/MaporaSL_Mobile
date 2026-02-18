@@ -64,6 +64,13 @@ app.use('/api/admin', explorationAdminRoutes);
 // Real store (shop) routes
 app.use('/api/store', realStoreRoutes);
 
+// File upload routes
+const uploadRoutes = require('./routes/uploadRoutes');
+app.use('/api/upload', uploadRoutes);
+
+// Serve static uploads
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+
 // Boot: connect to DB first, then start server
 (async () => {
   await connectDB();
