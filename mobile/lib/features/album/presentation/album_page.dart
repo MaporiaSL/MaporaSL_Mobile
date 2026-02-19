@@ -156,6 +156,13 @@ class _AlbumPageState extends State<AlbumPage> {
     }
   }
 
+  void _openAlbum(AlbumModel album) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => AlbumDetailPage(album: album)),
+    ).then((_) => _loadAlbums());
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
