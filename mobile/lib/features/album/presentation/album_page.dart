@@ -322,3 +322,50 @@ class _AlbumCard extends StatelessWidget {
     );
   }
 }
+
+class _CreateAlbumDialog extends StatefulWidget {
+  const _CreateAlbumDialog();
+
+  @override
+  State<_CreateAlbumDialog> createState() => _CreateAlbumDialogState();
+}
+
+class _CreateAlbumDialogState extends State<_CreateAlbumDialog> {
+  final _controller = TextEditingController();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Create Album'),
+      content: TextField(
+        controller: _controller,
+        decoration: const InputDecoration(
+          labelText: 'Album Name',
+          hintText: 'e.g., Summer Trip',
+        ),
+        autofocus: true,
+        textCapitalization: TextCapitalization.words,
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Cancel'),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            if (_controller.text.trim().isNotEmpty) {
+              Navigator.pop(context, _controller.text.trim());
+            }
+          },
+          child: const Text('Create'),
+        ),
+      ],
+    );
+  }
+}
