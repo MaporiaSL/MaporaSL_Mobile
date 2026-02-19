@@ -108,6 +108,23 @@ class _AlbumPageState extends State<AlbumPage> {
     );
   }
 
+  Future<void> _createAlbum() async {
+    final name = await showDialog<String>(
+      context: context,
+      builder: (_) => const _CreateAlbumDialog(),
+    );
+
+    if (name != null && name.isNotEmpty) {
+      try {
+        await _service.createAlbum(name);
+        _loadAlbums();
+        _showMessage('Album "$name" created');
+      } catch (e) {
+        _showMessage('Failed to create album: $e');
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
