@@ -125,6 +125,37 @@ class _AlbumPageState extends State<AlbumPage> {
     }
   }
 
+  Future<void> _deleteAlbum(AlbumModel album) async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('Delete Album?'),
+        content: Text('Delete "${album.name}" and all its photos?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm == true) {
+      try {
+        await _service.deleteAlbum(album.id);
+        _loadAlbums();
+        _showMessage('Album deleted');
+      } catch (e) {
+        _showMessage('Failed to delete: $e');
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
