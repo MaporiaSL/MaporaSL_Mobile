@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:camera/camera.dart';
 
 class CameraPage extends StatefulWidget {
   const CameraPage({super.key});
@@ -8,6 +9,17 @@ class CameraPage extends StatefulWidget {
 }
 
 class _CameraPageState extends State<CameraPage> {
+  CameraController? _controller;
+  List<CameraDescription>? _cameras;
+
+  bool _isInitialized = false;
+  bool _isCapturing = false;
+
+  FlashMode _flashMode = FlashMode.auto;
+  int _cameraIndex = 0;
+
+  String? _error;
+
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
