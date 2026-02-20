@@ -21,11 +21,27 @@ class _CameraPageState extends State<CameraPage> {
   String? _error;
 
   @override
+  void initState() {
+    super.initState();
+    _initCamera();
+  }
+
+  @override
+  void dispose() {
+    _controller?.dispose();
+    super.dispose();
+  }
+
+  Future<void> _initCamera() async {
+    // Will implement in future
+  }
+
+  @override
   Widget build(BuildContext context) {
     return const Scaffold(
       body: Center(
         child: Text(
-          "Camera Page",
+          "Initializing Camera...",
           style: TextStyle(fontSize: 20),
         ),
       ),
