@@ -1,5 +1,7 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
+import 'package:path_provider/path_provider.dart';
 
 class CameraPage extends StatefulWidget {
   const CameraPage({super.key});
@@ -35,12 +37,10 @@ class _CameraPageState extends State<CameraPage> {
   Future<void> _initCamera() async {
     try {
       _cameras = await availableCameras();
-
       if (_cameras == null || _cameras!.isEmpty) {
         setState(() => _error = "No cameras available");
         return;
       }
-
       await _setupCamera(_cameras![_cameraIndex]);
     } catch (e) {
       setState(() => _error = "Failed to initialize camera: $e");
@@ -59,7 +59,6 @@ class _CameraPageState extends State<CameraPage> {
     try {
       await _controller!.initialize();
       await _controller!.setFlashMode(_flashMode);
-
       if (mounted) {
         setState(() {
           _isInitialized = true;
@@ -71,7 +70,27 @@ class _CameraPageState extends State<CameraPage> {
     }
   }
 
-  Future<void> _takePhoto() async {}
+  Future<void> _takePhoto() async {
+    if (_controller == null || !_controller!.value.isInitialized) return;
+
+    setState(() => _isCapturing = true);
+
+    try {
+      final XFile photo = await _controller!.takePicture();
+      final dir = await getApplicationDocumentsDirectory();
+      final path = "${dir.path}/photos";
+      await Directory(path).create(recursive: true);
+
+      final filePath =
+          "$path/${DateTime.now().millisecondsSinceEpoch}.jpg";
+
+      await photo.saveTo(filePath);
+
+      setState(() => _isCapturing = false);
+    } catch (e) {
+      setState(() => _isCapturing = false);
+    }
+  }
 
   void _toggleFlash() async {
     if (_controller == null) return;
@@ -129,4 +148,29 @@ class _CameraPageState extends State<CameraPage> {
             right: 20,
             child: IconButton(
               icon: Icon(_flashIcon(), color: Colors.white),
-              onPressed: _toggleF_
+              onPressed: _toggleFlash,
+            ),
+          ),
+          Positioned(
+            bottom: 40,
+            left: 0,
+            right: 0,
+            child: Center(
+              child: GestureDetector(
+                onTap: _takePhoto,
+                child: Container(
+                  width: 80,
+                  height: 80,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(color: Colors.white, width: 4),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
