@@ -71,6 +71,8 @@ class _CameraPageState extends State<CameraPage> {
     }
   }
 
+  Future<void> _takePhoto() async {}
+
   void _toggleFlash() async {
     if (_controller == null) return;
 
@@ -121,17 +123,10 @@ class _CameraPageState extends State<CameraPage> {
     return Scaffold(
       body: Stack(
         children: [
-          CameraPreview(_controller!),
+          Positioned.fill(child: CameraPreview(_controller!)),
           Positioned(
             top: 40,
             right: 20,
             child: IconButton(
               icon: Icon(_flashIcon(), color: Colors.white),
-              onPressed: _toggleFlash,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
+              onPressed: _toggleF_
