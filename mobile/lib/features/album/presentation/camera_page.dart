@@ -33,17 +33,36 @@ class _CameraPageState extends State<CameraPage> {
   }
 
   Future<void> _initCamera() async {
-    // Will implement in future
+    try {
+      _cameras = await availableCameras();
+
+      if (_cameras == null || _cameras!.isEmpty) {
+        setState(() => _error = "No cameras available");
+        return;
+      }
+
+      await _setupCamera(_cameras![_cameraIndex]);
+    } catch (e) {
+      setState(() => _error = "Failed to initialize camera: $e");
+    }
+  }
+
+  Future<void> _setupCamera(CameraDescription camera) async {
+    // Implement in future
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_error != null) {
+      return Scaffold(
+        appBar: AppBar(title: const Text("Camera")),
+        body: Center(child: Text(_error!)),
+      );
+    }
+
     return const Scaffold(
       body: Center(
-        child: Text(
-          "Initializing Camera...",
-          style: TextStyle(fontSize: 20),
-        ),
+        child: CircularProgressIndicator(),
       ),
     );
   }
