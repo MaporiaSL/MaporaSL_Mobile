@@ -48,7 +48,27 @@ class _CameraPageState extends State<CameraPage> {
   }
 
   Future<void> _setupCamera(CameraDescription camera) async {
-    // Implement in future
+    _controller?.dispose();
+
+    _controller = CameraController(
+      camera,
+      ResolutionPreset.high,
+      enableAudio: false,
+    );
+
+    try {
+      await _controller!.initialize();
+      await _controller!.setFlashMode(_flashMode);
+
+      if (mounted) {
+        setState(() {
+          _isInitialized = true;
+          _error = null;
+        });
+      }
+    } catch (e) {
+      setState(() => _error = "Camera error: $e");
+    }
   }
 
   @override
@@ -60,10 +80,14 @@ class _CameraPageState extends State<CameraPage> {
       );
     }
 
-    return const Scaffold(
-      body: Center(
-        child: CircularProgressIndicator(),
-      ),
+    if (!_isInitialized || _controller == null) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    return Scaffold(
+      body: CameraPreview(_controller!),
     );
   }
 }
