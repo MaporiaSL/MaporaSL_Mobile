@@ -1,8 +1,11 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../data/services/album_service.dart';
 import '../data/models/album_model.dart';
+import 'camera_page.dart';
+import 'album_detail_page.dart';
 
 /// Main Album page - shows all albums with camera button
 class AlbumPage extends StatefulWidget {
@@ -69,9 +72,7 @@ class _AlbumPageState extends State<AlbumPage> {
       // Show loading
       _showLoading('Uploading photo...');
 
-      final result = await _service.uploadPhotoToLocationAlbum(
-        File(image.path),
-      );
+      final result = await _service.uploadPhotoToLocationAlbum(File(image.path));
 
       if (mounted) {
         Navigator.pop(context); // Close loading
@@ -84,12 +85,6 @@ class _AlbumPageState extends State<AlbumPage> {
         _showMessage('Failed: $e');
       }
     }
-  }
-
-  void _showMessage(String message) {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(message)));
   }
 
   void _showLoading(String message) {
@@ -105,6 +100,12 @@ class _AlbumPageState extends State<AlbumPage> {
           ],
         ),
       ),
+    );
+  }
+
+  void _showMessage(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
     );
   }
 
@@ -168,7 +169,12 @@ class _AlbumPageState extends State<AlbumPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('My Albums'),
-        actions: [IconButton(icon: const Icon(Icons.add), onPressed: () => {})],
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.add),
+            onPressed: _createAlbum,
+          ),
+        ],
       ),
       body: _buildBody(),
       floatingActionButton: Column(
@@ -176,13 +182,13 @@ class _AlbumPageState extends State<AlbumPage> {
         children: [
           FloatingActionButton(
             heroTag: 'gallery',
-            onPressed: () => {},
+            onPressed: _pickFromGallery,
             child: const Icon(Icons.photo_library),
           ),
           const SizedBox(height: 16),
           FloatingActionButton.large(
             heroTag: 'camera',
-            onPressed: () => {},
+            onPressed: _openCamera,
             child: const Icon(Icons.camera_alt, size: 36),
           ),
         ],
@@ -221,7 +227,7 @@ class _AlbumPageState extends State<AlbumPage> {
             const Text('Take a photo to get started!'),
             const SizedBox(height: 24),
             ElevatedButton.icon(
-              onPressed: () {},
+              onPressed: _openCamera,
               icon: const Icon(Icons.camera_alt),
               label: const Text('Take Photo'),
             ),
@@ -245,10 +251,8 @@ class _AlbumPageState extends State<AlbumPage> {
           final album = _albums[index];
           return _AlbumCard(
             album: album,
-            onTap: () =>
-                () => {},
-            onLongPress: () =>
-                () => {},
+            onTap: () => _openAlbum(album),
+            onLongPress: () => _deleteAlbum(album),
           );
         },
       ),
@@ -323,6 +327,7 @@ class _AlbumCard extends StatelessWidget {
   }
 }
 
+/// Simple dialog to create album
 class _CreateAlbumDialog extends StatefulWidget {
   const _CreateAlbumDialog();
 
