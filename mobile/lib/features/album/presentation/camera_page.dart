@@ -71,6 +71,38 @@ class _CameraPageState extends State<CameraPage> {
     }
   }
 
+  void _toggleFlash() async {
+    if (_controller == null) return;
+
+    FlashMode next;
+    switch (_flashMode) {
+      case FlashMode.off:
+        next = FlashMode.auto;
+        break;
+      case FlashMode.auto:
+        next = FlashMode.always;
+        break;
+      default:
+        next = FlashMode.off;
+    }
+
+    await _controller!.setFlashMode(next);
+    setState(() => _flashMode = next);
+  }
+
+  IconData _flashIcon() {
+    switch (_flashMode) {
+      case FlashMode.off:
+        return Icons.flash_off;
+      case FlashMode.auto:
+        return Icons.flash_auto;
+      case FlashMode.always:
+        return Icons.flash_on;
+      default:
+        return Icons.flash_auto;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_error != null) {
@@ -87,7 +119,19 @@ class _CameraPageState extends State<CameraPage> {
     }
 
     return Scaffold(
-      body: CameraPreview(_controller!),
+      body: Stack(
+        children: [
+          CameraPreview(_controller!),
+          Positioned(
+            top: 40,
+            right: 20,
+            child: IconButton(
+              icon: Icon(_flashIcon(), color: Colors.white),
+              onPressed: _toggleFlash,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
