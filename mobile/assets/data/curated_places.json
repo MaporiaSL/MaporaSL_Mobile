@@ -1,0 +1,3302 @@
+[
+  {
+    "id": "15a9e638-d14e-4d78-a66a-64c4c09c82bf",
+    "name": "Sigiriya Rock Fortress",
+    "description": "A popular tourist attraction in Sri Lanka: Sigiriya Rock Fortress.",
+    "category": "historical",
+    "province": "Central Province",
+    "district": "Matale",
+    "latitude": 7.957,
+    "longitude": 80.7603,
+    "googleMapsUrl": "https://www.google.com/maps?q=7.957,80.7603",
+    "address": "Sigiriya Rock Fortress, Sri Lanka",
+    "rating": 4.0,
+    "reviewCount": 105,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 510,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "5faa99b9-9bfc-4acc-ba40-eeb6e643ac9f",
+    "name": "Temple of the Tooth",
+    "description": "A popular tourist attraction in Sri Lanka: Temple of the Tooth.",
+    "category": "temple",
+    "province": "Central Province",
+    "district": "Kandy",
+    "latitude": 7.2936,
+    "longitude": 80.6413,
+    "googleMapsUrl": "https://www.google.com/maps?q=7.2936,80.6413",
+    "address": "Temple of the Tooth, Sri Lanka",
+    "rating": 4.1,
+    "reviewCount": 110,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 520,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "d2981a7c-c0d4-498d-89a2-dea8b732b3e5",
+    "name": "Ella Rock",
+    "description": "A popular tourist attraction in Sri Lanka: Ella Rock.",
+    "category": "mountain",
+    "province": "Uva Province",
+    "district": "Badulla",
+    "latitude": 6.8667,
+    "longitude": 81.0466,
+    "googleMapsUrl": "https://www.google.com/maps?q=6.8667,81.0466",
+    "address": "Ella Rock, Sri Lanka",
+    "rating": 4.2,
+    "reviewCount": 115,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 530,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "1894ed59-b6d9-431d-a9f7-81acdcbf2206",
+    "name": "Nine Arches Bridge",
+    "description": "A popular tourist attraction in Sri Lanka: Nine Arches Bridge.",
+    "category": "historical",
+    "province": "Uva Province",
+    "district": "Badulla",
+    "latitude": 6.8786,
+    "longitude": 81.0606,
+    "googleMapsUrl": "https://www.google.com/maps?q=6.8786,81.0606",
+    "address": "Nine Arches Bridge, Sri Lanka",
+    "rating": 4.2,
+    "reviewCount": 120,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 540,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "72e7d844-3671-407c-bfb0-141956d1b7a8",
+    "name": "Yala National Park",
+    "description": "A popular tourist attraction in Sri Lanka: Yala National Park.",
+    "category": "park",
+    "province": "Southern Province",
+    "district": "Hambantota",
+    "latitude": 6.3667,
+    "longitude": 81.5167,
+    "googleMapsUrl": "https://www.google.com/maps?q=6.3667,81.5167",
+    "address": "Yala National Park, Sri Lanka",
+    "rating": 4.2,
+    "reviewCount": 125,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 550,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "17b48c48-6d81-4fcb-8130-c56020ec76d4",
+    "name": "Udawalawa National Park",
+    "description": "A popular tourist attraction in Sri Lanka: Udawalawa National Park.",
+    "category": "park",
+    "province": "Sabaragamuwa Province",
+    "district": "Ratnapura",
+    "latitude": 6.45,
+    "longitude": 80.8889,
+    "googleMapsUrl": "https://www.google.com/maps?q=6.45,80.8889",
+    "address": "Udawalawa National Park, Sri Lanka",
+    "rating": 4.3,
+    "reviewCount": 130,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 560,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "a36d0383-61e3-4280-8b19-fc5b6909d8f4",
+    "name": "Horton Plains",
+    "description": "A popular tourist attraction in Sri Lanka: Horton Plains.",
+    "category": "park",
+    "province": "Central Province",
+    "district": "Nuwara Eliya",
+    "latitude": 6.8,
+    "longitude": 80.8,
+    "googleMapsUrl": "https://www.google.com/maps?q=6.8,80.8",
+    "address": "Horton Plains, Sri Lanka",
+    "rating": 4.3,
+    "reviewCount": 135,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 570,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "900d70f4-3beb-4ffc-8435-87a29f4330f6",
+    "name": "Adam's Peak",
+    "description": "A popular tourist attraction in Sri Lanka: Adam's Peak.",
+    "category": "mountain",
+    "province": "Sabaragamuwa Province",
+    "district": "Ratnapura",
+    "latitude": 6.8096,
+    "longitude": 80.4994,
+    "googleMapsUrl": "https://www.google.com/maps?q=6.8096,80.4994",
+    "address": "Adam's Peak, Sri Lanka",
+    "rating": 4.4,
+    "reviewCount": 140,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 580,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "25c9edb7-dfa3-478b-a801-c1b879ed9b98",
+    "name": "Galle Fort",
+    "description": "A popular tourist attraction in Sri Lanka: Galle Fort.",
+    "category": "historical",
+    "province": "Southern Province",
+    "district": "Galle",
+    "latitude": 6.026,
+    "longitude": 80.217,
+    "googleMapsUrl": "https://www.google.com/maps?q=6.026,80.217",
+    "address": "Galle Fort, Sri Lanka",
+    "rating": 4.5,
+    "reviewCount": 145,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 590,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "8f9b9e9c-8da3-416c-bfa5-a3a7dc2e27ac",
+    "name": "Mirissa Beach",
+    "description": "A popular tourist attraction in Sri Lanka: Mirissa Beach.",
+    "category": "beach",
+    "province": "Southern Province",
+    "district": "Matara",
+    "latitude": 5.9485,
+    "longitude": 80.4585,
+    "googleMapsUrl": "https://www.google.com/maps?q=5.9485,80.4585",
+    "address": "Mirissa Beach, Sri Lanka",
+    "rating": 4.0,
+    "reviewCount": 150,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 600,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "dc2373fe-0049-4f62-8380-840a9341e2d3",
+    "name": "Unawatuna Beach",
+    "description": "A popular tourist attraction in Sri Lanka: Unawatuna Beach.",
+    "category": "beach",
+    "province": "Southern Province",
+    "district": "Galle",
+    "latitude": 6.0108,
+    "longitude": 80.25,
+    "googleMapsUrl": "https://www.google.com/maps?q=6.0108,80.25",
+    "address": "Unawatuna Beach, Sri Lanka",
+    "rating": 4.0,
+    "reviewCount": 155,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 610,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "d322d8dc-d588-411e-808d-6aff52e73da3",
+    "name": "Hikkaduwa Beach",
+    "description": "A popular tourist attraction in Sri Lanka: Hikkaduwa Beach.",
+    "category": "beach",
+    "province": "Southern Province",
+    "district": "Galle",
+    "latitude": 6.1407,
+    "longitude": 80.1012,
+    "googleMapsUrl": "https://www.google.com/maps?q=6.1407,80.1012",
+    "address": "Hikkaduwa Beach, Sri Lanka",
+    "rating": 4.1,
+    "reviewCount": 160,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 620,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "01d3e36e-40e1-4624-958a-c9db1133beec",
+    "name": "Arugam Bay",
+    "description": "A popular tourist attraction in Sri Lanka: Arugam Bay.",
+    "category": "beach",
+    "province": "Eastern Province",
+    "district": "Ampara",
+    "latitude": 6.84,
+    "longitude": 81.836,
+    "googleMapsUrl": "https://www.google.com/maps?q=6.84,81.836",
+    "address": "Arugam Bay, Sri Lanka",
+    "rating": 4.2,
+    "reviewCount": 165,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 630,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "5f52321b-4bf6-46e0-ac82-52ac50e4a0d3",
+    "name": "Nilaveli Beach",
+    "description": "A popular tourist attraction in Sri Lanka: Nilaveli Beach.",
+    "category": "beach",
+    "province": "Eastern Province",
+    "district": "Trincomalee",
+    "latitude": 8.7,
+    "longitude": 81.2,
+    "googleMapsUrl": "https://www.google.com/maps?q=8.7,81.2",
+    "address": "Nilaveli Beach, Sri Lanka",
+    "rating": 4.2,
+    "reviewCount": 170,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 640,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "4c69cee6-2095-4dd0-939f-e0df88e8655a",
+    "name": "Pigeon Island",
+    "description": "A popular tourist attraction in Sri Lanka: Pigeon Island.",
+    "category": "park",
+    "province": "Eastern Province",
+    "district": "Trincomalee",
+    "latitude": 8.72,
+    "longitude": 81.205,
+    "googleMapsUrl": "https://www.google.com/maps?q=8.72,81.205",
+    "address": "Pigeon Island, Sri Lanka",
+    "rating": 4.2,
+    "reviewCount": 175,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 650,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "23f75d1d-fab0-45cd-ab70-9072128db71c",
+    "name": "Dambulla Cave Temple",
+    "description": "A popular tourist attraction in Sri Lanka: Dambulla Cave Temple.",
+    "category": "temple",
+    "province": "Central Province",
+    "district": "Matale",
+    "latitude": 7.8567,
+    "longitude": 80.649,
+    "googleMapsUrl": "https://www.google.com/maps?q=7.8567,80.649",
+    "address": "Dambulla Cave Temple, Sri Lanka",
+    "rating": 4.3,
+    "reviewCount": 180,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 660,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "6711890a-d705-4616-81cc-c4cf4c182374",
+    "name": "Knuckles View Point",
+    "description": "A popular tourist attraction in Sri Lanka: Knuckles View Point.",
+    "category": "mountain",
+    "province": "Central Province",
+    "district": "Kandy",
+    "latitude": 7.45,
+    "longitude": 80.8,
+    "googleMapsUrl": "https://www.google.com/maps?q=7.45,80.8",
+    "address": "Knuckles View Point, Sri Lanka",
+    "rating": 4.3,
+    "reviewCount": 185,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 670,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "ab21cf2a-f29d-403f-948f-734224c55bf4",
+    "name": "Wasgamuwa National Park",
+    "description": "A popular tourist attraction in Sri Lanka: Wasgamuwa National Park.",
+    "category": "park",
+    "province": "Central Province",
+    "district": "Matale",
+    "latitude": 7.7,
+    "longitude": 80.9,
+    "googleMapsUrl": "https://www.google.com/maps?q=7.7,80.9",
+    "address": "Wasgamuwa National Park, Sri Lanka",
+    "rating": 4.4,
+    "reviewCount": 190,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 680,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "313ed3e7-3fd5-4913-8690-618a2b423b3f",
+    "name": "Sinharaja Forest Reserve",
+    "description": "A popular tourist attraction in Sri Lanka: Sinharaja Forest Reserve.",
+    "category": "forest",
+    "province": "Sabaragamuwa Province",
+    "district": "Ratnapura",
+    "latitude": 6.406,
+    "longitude": 80.452,
+    "googleMapsUrl": "https://www.google.com/maps?q=6.406,80.452",
+    "address": "Sinharaja Forest Reserve, Sri Lanka",
+    "rating": 4.5,
+    "reviewCount": 195,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 690,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "19c9fd72-2a48-4803-8871-5a4037147274",
+    "name": "Bundala National Park",
+    "description": "A popular tourist attraction in Sri Lanka: Bundala National Park.",
+    "category": "park",
+    "province": "Southern Province",
+    "district": "Hambantota",
+    "latitude": 6.2,
+    "longitude": 81.2,
+    "googleMapsUrl": "https://www.google.com/maps?q=6.2,81.2",
+    "address": "Bundala National Park, Sri Lanka",
+    "rating": 4.0,
+    "reviewCount": 200,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 700,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "e0ab70d1-7356-41cf-983f-2f4749870cb9",
+    "name": "Sigiriya Rock Fortress Area 21",
+    "description": "A popular tourist attraction in Sri Lanka: Sigiriya Rock Fortress.",
+    "category": "historical",
+    "province": "Central Province",
+    "district": "Matale",
+    "latitude": 7.957,
+    "longitude": 80.7603,
+    "googleMapsUrl": "https://www.google.com/maps?q=7.957,80.7603",
+    "address": "Sigiriya Rock Fortress, Sri Lanka",
+    "rating": 4.0,
+    "reviewCount": 205,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 710,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "2db299a8-aa46-4cb8-901f-97ae2c6ab293",
+    "name": "Temple of the Tooth Area 22",
+    "description": "A popular tourist attraction in Sri Lanka: Temple of the Tooth.",
+    "category": "temple",
+    "province": "Central Province",
+    "district": "Kandy",
+    "latitude": 7.2936,
+    "longitude": 80.6413,
+    "googleMapsUrl": "https://www.google.com/maps?q=7.2936,80.6413",
+    "address": "Temple of the Tooth, Sri Lanka",
+    "rating": 4.1,
+    "reviewCount": 210,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 720,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "2ef513ba-6ba9-43cf-b4d0-203958bbc508",
+    "name": "Ella Rock Area 23",
+    "description": "A popular tourist attraction in Sri Lanka: Ella Rock.",
+    "category": "mountain",
+    "province": "Uva Province",
+    "district": "Badulla",
+    "latitude": 6.8667,
+    "longitude": 81.0466,
+    "googleMapsUrl": "https://www.google.com/maps?q=6.8667,81.0466",
+    "address": "Ella Rock, Sri Lanka",
+    "rating": 4.2,
+    "reviewCount": 215,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 730,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "580fabe9-989a-4c46-9791-0320c89bffda",
+    "name": "Nine Arches Bridge Area 24",
+    "description": "A popular tourist attraction in Sri Lanka: Nine Arches Bridge.",
+    "category": "historical",
+    "province": "Uva Province",
+    "district": "Badulla",
+    "latitude": 6.8786,
+    "longitude": 81.0606,
+    "googleMapsUrl": "https://www.google.com/maps?q=6.8786,81.0606",
+    "address": "Nine Arches Bridge, Sri Lanka",
+    "rating": 4.2,
+    "reviewCount": 220,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 740,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "bee1d479-652b-4310-a1ae-f95d088beb35",
+    "name": "Yala National Park Area 25",
+    "description": "A popular tourist attraction in Sri Lanka: Yala National Park.",
+    "category": "park",
+    "province": "Southern Province",
+    "district": "Hambantota",
+    "latitude": 6.3667,
+    "longitude": 81.5167,
+    "googleMapsUrl": "https://www.google.com/maps?q=6.3667,81.5167",
+    "address": "Yala National Park, Sri Lanka",
+    "rating": 4.2,
+    "reviewCount": 225,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 750,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "f488f5de-7a02-441a-ac0e-128424b83da8",
+    "name": "Udawalawa National Park Area 26",
+    "description": "A popular tourist attraction in Sri Lanka: Udawalawa National Park.",
+    "category": "park",
+    "province": "Sabaragamuwa Province",
+    "district": "Ratnapura",
+    "latitude": 6.45,
+    "longitude": 80.8889,
+    "googleMapsUrl": "https://www.google.com/maps?q=6.45,80.8889",
+    "address": "Udawalawa National Park, Sri Lanka",
+    "rating": 4.3,
+    "reviewCount": 230,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 760,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "92aca657-03e3-4acd-9dbf-daf31616d530",
+    "name": "Horton Plains Area 27",
+    "description": "A popular tourist attraction in Sri Lanka: Horton Plains.",
+    "category": "park",
+    "province": "Central Province",
+    "district": "Nuwara Eliya",
+    "latitude": 6.8,
+    "longitude": 80.8,
+    "googleMapsUrl": "https://www.google.com/maps?q=6.8,80.8",
+    "address": "Horton Plains, Sri Lanka",
+    "rating": 4.3,
+    "reviewCount": 235,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 770,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "eeaa50d1-297a-42e5-80da-e5479b931f23",
+    "name": "Adam's Peak Area 28",
+    "description": "A popular tourist attraction in Sri Lanka: Adam's Peak.",
+    "category": "mountain",
+    "province": "Sabaragamuwa Province",
+    "district": "Ratnapura",
+    "latitude": 6.8096,
+    "longitude": 80.4994,
+    "googleMapsUrl": "https://www.google.com/maps?q=6.8096,80.4994",
+    "address": "Adam's Peak, Sri Lanka",
+    "rating": 4.4,
+    "reviewCount": 240,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 780,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "5fcec97e-ba92-41de-8989-13789797a1b0",
+    "name": "Galle Fort Area 29",
+    "description": "A popular tourist attraction in Sri Lanka: Galle Fort.",
+    "category": "historical",
+    "province": "Southern Province",
+    "district": "Galle",
+    "latitude": 6.026,
+    "longitude": 80.217,
+    "googleMapsUrl": "https://www.google.com/maps?q=6.026,80.217",
+    "address": "Galle Fort, Sri Lanka",
+    "rating": 4.5,
+    "reviewCount": 245,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 790,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "d95f8b7e-bd30-4989-b758-2cab74dce275",
+    "name": "Mirissa Beach Area 30",
+    "description": "A popular tourist attraction in Sri Lanka: Mirissa Beach.",
+    "category": "beach",
+    "province": "Southern Province",
+    "district": "Matara",
+    "latitude": 5.9485,
+    "longitude": 80.4585,
+    "googleMapsUrl": "https://www.google.com/maps?q=5.9485,80.4585",
+    "address": "Mirissa Beach, Sri Lanka",
+    "rating": 4.0,
+    "reviewCount": 250,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 800,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "e23fc40d-dfb6-43d3-9b45-3dcc8539077c",
+    "name": "Unawatuna Beach Area 31",
+    "description": "A popular tourist attraction in Sri Lanka: Unawatuna Beach.",
+    "category": "beach",
+    "province": "Southern Province",
+    "district": "Galle",
+    "latitude": 6.0108,
+    "longitude": 80.25,
+    "googleMapsUrl": "https://www.google.com/maps?q=6.0108,80.25",
+    "address": "Unawatuna Beach, Sri Lanka",
+    "rating": 4.0,
+    "reviewCount": 255,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 810,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "85e3b7da-35d7-4a0c-9070-3d8ec1e918b2",
+    "name": "Hikkaduwa Beach Area 32",
+    "description": "A popular tourist attraction in Sri Lanka: Hikkaduwa Beach.",
+    "category": "beach",
+    "province": "Southern Province",
+    "district": "Galle",
+    "latitude": 6.1407,
+    "longitude": 80.1012,
+    "googleMapsUrl": "https://www.google.com/maps?q=6.1407,80.1012",
+    "address": "Hikkaduwa Beach, Sri Lanka",
+    "rating": 4.1,
+    "reviewCount": 260,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 820,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "cd089b1e-176b-41c6-9bb6-46f65a39a594",
+    "name": "Arugam Bay Area 33",
+    "description": "A popular tourist attraction in Sri Lanka: Arugam Bay.",
+    "category": "beach",
+    "province": "Eastern Province",
+    "district": "Ampara",
+    "latitude": 6.84,
+    "longitude": 81.836,
+    "googleMapsUrl": "https://www.google.com/maps?q=6.84,81.836",
+    "address": "Arugam Bay, Sri Lanka",
+    "rating": 4.2,
+    "reviewCount": 265,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 830,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "2dfd915d-eb3d-421d-a9d2-904f69edeee4",
+    "name": "Nilaveli Beach Area 34",
+    "description": "A popular tourist attraction in Sri Lanka: Nilaveli Beach.",
+    "category": "beach",
+    "province": "Eastern Province",
+    "district": "Trincomalee",
+    "latitude": 8.7,
+    "longitude": 81.2,
+    "googleMapsUrl": "https://www.google.com/maps?q=8.7,81.2",
+    "address": "Nilaveli Beach, Sri Lanka",
+    "rating": 4.2,
+    "reviewCount": 270,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 840,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "fe18d0ad-fa50-473c-a868-de0e0e6147c4",
+    "name": "Pigeon Island Area 35",
+    "description": "A popular tourist attraction in Sri Lanka: Pigeon Island.",
+    "category": "park",
+    "province": "Eastern Province",
+    "district": "Trincomalee",
+    "latitude": 8.72,
+    "longitude": 81.205,
+    "googleMapsUrl": "https://www.google.com/maps?q=8.72,81.205",
+    "address": "Pigeon Island, Sri Lanka",
+    "rating": 4.2,
+    "reviewCount": 275,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 850,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "966e9f28-312c-4946-a96a-9ac8b40f9c09",
+    "name": "Dambulla Cave Temple Area 36",
+    "description": "A popular tourist attraction in Sri Lanka: Dambulla Cave Temple.",
+    "category": "temple",
+    "province": "Central Province",
+    "district": "Matale",
+    "latitude": 7.8567,
+    "longitude": 80.649,
+    "googleMapsUrl": "https://www.google.com/maps?q=7.8567,80.649",
+    "address": "Dambulla Cave Temple, Sri Lanka",
+    "rating": 4.3,
+    "reviewCount": 280,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 860,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "696d1d27-3659-4cef-984e-53213e67d374",
+    "name": "Knuckles View Point Area 37",
+    "description": "A popular tourist attraction in Sri Lanka: Knuckles View Point.",
+    "category": "mountain",
+    "province": "Central Province",
+    "district": "Kandy",
+    "latitude": 7.45,
+    "longitude": 80.8,
+    "googleMapsUrl": "https://www.google.com/maps?q=7.45,80.8",
+    "address": "Knuckles View Point, Sri Lanka",
+    "rating": 4.3,
+    "reviewCount": 285,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 870,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "0fa99439-435e-4bf1-85a4-1efbf44f4207",
+    "name": "Wasgamuwa National Park Area 38",
+    "description": "A popular tourist attraction in Sri Lanka: Wasgamuwa National Park.",
+    "category": "park",
+    "province": "Central Province",
+    "district": "Matale",
+    "latitude": 7.7,
+    "longitude": 80.9,
+    "googleMapsUrl": "https://www.google.com/maps?q=7.7,80.9",
+    "address": "Wasgamuwa National Park, Sri Lanka",
+    "rating": 4.4,
+    "reviewCount": 290,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 880,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "41f3257a-0964-4907-a2b9-3fca111dd8bb",
+    "name": "Sinharaja Forest Reserve Area 39",
+    "description": "A popular tourist attraction in Sri Lanka: Sinharaja Forest Reserve.",
+    "category": "forest",
+    "province": "Sabaragamuwa Province",
+    "district": "Ratnapura",
+    "latitude": 6.406,
+    "longitude": 80.452,
+    "googleMapsUrl": "https://www.google.com/maps?q=6.406,80.452",
+    "address": "Sinharaja Forest Reserve, Sri Lanka",
+    "rating": 4.5,
+    "reviewCount": 295,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 890,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "290efaad-b7e4-4f2f-bb0c-4530069b729b",
+    "name": "Bundala National Park Area 40",
+    "description": "A popular tourist attraction in Sri Lanka: Bundala National Park.",
+    "category": "park",
+    "province": "Southern Province",
+    "district": "Hambantota",
+    "latitude": 6.2,
+    "longitude": 81.2,
+    "googleMapsUrl": "https://www.google.com/maps?q=6.2,81.2",
+    "address": "Bundala National Park, Sri Lanka",
+    "rating": 4.0,
+    "reviewCount": 300,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 900,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "9688fa7e-dbe4-4138-9548-c83999961346",
+    "name": "Sigiriya Rock Fortress Area 41",
+    "description": "A popular tourist attraction in Sri Lanka: Sigiriya Rock Fortress.",
+    "category": "historical",
+    "province": "Central Province",
+    "district": "Matale",
+    "latitude": 7.957,
+    "longitude": 80.7603,
+    "googleMapsUrl": "https://www.google.com/maps?q=7.957,80.7603",
+    "address": "Sigiriya Rock Fortress, Sri Lanka",
+    "rating": 4.0,
+    "reviewCount": 305,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 910,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "589665ee-cdfa-491d-b22e-d9c024bcc2a3",
+    "name": "Temple of the Tooth Area 42",
+    "description": "A popular tourist attraction in Sri Lanka: Temple of the Tooth.",
+    "category": "temple",
+    "province": "Central Province",
+    "district": "Kandy",
+    "latitude": 7.2936,
+    "longitude": 80.6413,
+    "googleMapsUrl": "https://www.google.com/maps?q=7.2936,80.6413",
+    "address": "Temple of the Tooth, Sri Lanka",
+    "rating": 4.1,
+    "reviewCount": 310,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 920,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "edc6a9c6-2721-412d-a6ec-2faa5196af31",
+    "name": "Ella Rock Area 43",
+    "description": "A popular tourist attraction in Sri Lanka: Ella Rock.",
+    "category": "mountain",
+    "province": "Uva Province",
+    "district": "Badulla",
+    "latitude": 6.8667,
+    "longitude": 81.0466,
+    "googleMapsUrl": "https://www.google.com/maps?q=6.8667,81.0466",
+    "address": "Ella Rock, Sri Lanka",
+    "rating": 4.2,
+    "reviewCount": 315,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 930,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "9982c1d0-60f9-4958-9ae8-88fb85d0cf66",
+    "name": "Nine Arches Bridge Area 44",
+    "description": "A popular tourist attraction in Sri Lanka: Nine Arches Bridge.",
+    "category": "historical",
+    "province": "Uva Province",
+    "district": "Badulla",
+    "latitude": 6.8786,
+    "longitude": 81.0606,
+    "googleMapsUrl": "https://www.google.com/maps?q=6.8786,81.0606",
+    "address": "Nine Arches Bridge, Sri Lanka",
+    "rating": 4.2,
+    "reviewCount": 320,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 940,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "b8bd42f5-3209-4fd9-a61e-e85bdc54e9a7",
+    "name": "Yala National Park Area 45",
+    "description": "A popular tourist attraction in Sri Lanka: Yala National Park.",
+    "category": "park",
+    "province": "Southern Province",
+    "district": "Hambantota",
+    "latitude": 6.3667,
+    "longitude": 81.5167,
+    "googleMapsUrl": "https://www.google.com/maps?q=6.3667,81.5167",
+    "address": "Yala National Park, Sri Lanka",
+    "rating": 4.2,
+    "reviewCount": 325,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 950,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "c70636d3-d8a8-4e34-b1c2-415b3a207577",
+    "name": "Udawalawa National Park Area 46",
+    "description": "A popular tourist attraction in Sri Lanka: Udawalawa National Park.",
+    "category": "park",
+    "province": "Sabaragamuwa Province",
+    "district": "Ratnapura",
+    "latitude": 6.45,
+    "longitude": 80.8889,
+    "googleMapsUrl": "https://www.google.com/maps?q=6.45,80.8889",
+    "address": "Udawalawa National Park, Sri Lanka",
+    "rating": 4.3,
+    "reviewCount": 330,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 960,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "728efdd7-b5ee-46d2-ac4d-e41a1dcc2669",
+    "name": "Horton Plains Area 47",
+    "description": "A popular tourist attraction in Sri Lanka: Horton Plains.",
+    "category": "park",
+    "province": "Central Province",
+    "district": "Nuwara Eliya",
+    "latitude": 6.8,
+    "longitude": 80.8,
+    "googleMapsUrl": "https://www.google.com/maps?q=6.8,80.8",
+    "address": "Horton Plains, Sri Lanka",
+    "rating": 4.3,
+    "reviewCount": 335,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 970,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "6287f4be-4877-44a1-a300-a4e3c16ffdea",
+    "name": "Adam's Peak Area 48",
+    "description": "A popular tourist attraction in Sri Lanka: Adam's Peak.",
+    "category": "mountain",
+    "province": "Sabaragamuwa Province",
+    "district": "Ratnapura",
+    "latitude": 6.8096,
+    "longitude": 80.4994,
+    "googleMapsUrl": "https://www.google.com/maps?q=6.8096,80.4994",
+    "address": "Adam's Peak, Sri Lanka",
+    "rating": 4.4,
+    "reviewCount": 340,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 980,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "536736c4-842d-4865-b066-a71d140daf42",
+    "name": "Galle Fort Area 49",
+    "description": "A popular tourist attraction in Sri Lanka: Galle Fort.",
+    "category": "historical",
+    "province": "Southern Province",
+    "district": "Galle",
+    "latitude": 6.026,
+    "longitude": 80.217,
+    "googleMapsUrl": "https://www.google.com/maps?q=6.026,80.217",
+    "address": "Galle Fort, Sri Lanka",
+    "rating": 4.5,
+    "reviewCount": 345,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 990,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "4e87b364-03d8-4f03-a8d4-cc931ad15a20",
+    "name": "Mirissa Beach Area 50",
+    "description": "A popular tourist attraction in Sri Lanka: Mirissa Beach.",
+    "category": "beach",
+    "province": "Southern Province",
+    "district": "Matara",
+    "latitude": 5.9485,
+    "longitude": 80.4585,
+    "googleMapsUrl": "https://www.google.com/maps?q=5.9485,80.4585",
+    "address": "Mirissa Beach, Sri Lanka",
+    "rating": 4.0,
+    "reviewCount": 350,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 1000,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "c75ac3d9-7348-4a91-9b88-ba983dea3f3c",
+    "name": "Unawatuna Beach Area 51",
+    "description": "A popular tourist attraction in Sri Lanka: Unawatuna Beach.",
+    "category": "beach",
+    "province": "Southern Province",
+    "district": "Galle",
+    "latitude": 6.0108,
+    "longitude": 80.25,
+    "googleMapsUrl": "https://www.google.com/maps?q=6.0108,80.25",
+    "address": "Unawatuna Beach, Sri Lanka",
+    "rating": 4.0,
+    "reviewCount": 355,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 1010,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "3b9fe3d1-27f7-409a-a22a-922a2345def0",
+    "name": "Hikkaduwa Beach Area 52",
+    "description": "A popular tourist attraction in Sri Lanka: Hikkaduwa Beach.",
+    "category": "beach",
+    "province": "Southern Province",
+    "district": "Galle",
+    "latitude": 6.1407,
+    "longitude": 80.1012,
+    "googleMapsUrl": "https://www.google.com/maps?q=6.1407,80.1012",
+    "address": "Hikkaduwa Beach, Sri Lanka",
+    "rating": 4.1,
+    "reviewCount": 360,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 1020,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "fa243740-b0db-43f6-95a6-91e7b459f842",
+    "name": "Arugam Bay Area 53",
+    "description": "A popular tourist attraction in Sri Lanka: Arugam Bay.",
+    "category": "beach",
+    "province": "Eastern Province",
+    "district": "Ampara",
+    "latitude": 6.84,
+    "longitude": 81.836,
+    "googleMapsUrl": "https://www.google.com/maps?q=6.84,81.836",
+    "address": "Arugam Bay, Sri Lanka",
+    "rating": 4.2,
+    "reviewCount": 365,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 1030,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "9f2f444c-bbf1-4cdf-a7f4-5b6d8e5c9c54",
+    "name": "Nilaveli Beach Area 54",
+    "description": "A popular tourist attraction in Sri Lanka: Nilaveli Beach.",
+    "category": "beach",
+    "province": "Eastern Province",
+    "district": "Trincomalee",
+    "latitude": 8.7,
+    "longitude": 81.2,
+    "googleMapsUrl": "https://www.google.com/maps?q=8.7,81.2",
+    "address": "Nilaveli Beach, Sri Lanka",
+    "rating": 4.2,
+    "reviewCount": 370,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 1040,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "1f7c69ad-d546-4638-b41c-7e877e921aba",
+    "name": "Pigeon Island Area 55",
+    "description": "A popular tourist attraction in Sri Lanka: Pigeon Island.",
+    "category": "park",
+    "province": "Eastern Province",
+    "district": "Trincomalee",
+    "latitude": 8.72,
+    "longitude": 81.205,
+    "googleMapsUrl": "https://www.google.com/maps?q=8.72,81.205",
+    "address": "Pigeon Island, Sri Lanka",
+    "rating": 4.2,
+    "reviewCount": 375,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 1050,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "246bb301-7ad9-4012-afe7-38fdebefedc1",
+    "name": "Dambulla Cave Temple Area 56",
+    "description": "A popular tourist attraction in Sri Lanka: Dambulla Cave Temple.",
+    "category": "temple",
+    "province": "Central Province",
+    "district": "Matale",
+    "latitude": 7.8567,
+    "longitude": 80.649,
+    "googleMapsUrl": "https://www.google.com/maps?q=7.8567,80.649",
+    "address": "Dambulla Cave Temple, Sri Lanka",
+    "rating": 4.3,
+    "reviewCount": 380,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 1060,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "f9a7d2aa-1e38-4c62-adf6-7859b3b50eab",
+    "name": "Knuckles View Point Area 57",
+    "description": "A popular tourist attraction in Sri Lanka: Knuckles View Point.",
+    "category": "mountain",
+    "province": "Central Province",
+    "district": "Kandy",
+    "latitude": 7.45,
+    "longitude": 80.8,
+    "googleMapsUrl": "https://www.google.com/maps?q=7.45,80.8",
+    "address": "Knuckles View Point, Sri Lanka",
+    "rating": 4.3,
+    "reviewCount": 385,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 1070,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "5c674c48-9a56-4e8b-ac60-641da8035115",
+    "name": "Wasgamuwa National Park Area 58",
+    "description": "A popular tourist attraction in Sri Lanka: Wasgamuwa National Park.",
+    "category": "park",
+    "province": "Central Province",
+    "district": "Matale",
+    "latitude": 7.7,
+    "longitude": 80.9,
+    "googleMapsUrl": "https://www.google.com/maps?q=7.7,80.9",
+    "address": "Wasgamuwa National Park, Sri Lanka",
+    "rating": 4.4,
+    "reviewCount": 390,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 1080,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "78ccaaf8-ce52-4c0c-a549-8c73be159c53",
+    "name": "Sinharaja Forest Reserve Area 59",
+    "description": "A popular tourist attraction in Sri Lanka: Sinharaja Forest Reserve.",
+    "category": "forest",
+    "province": "Sabaragamuwa Province",
+    "district": "Ratnapura",
+    "latitude": 6.406,
+    "longitude": 80.452,
+    "googleMapsUrl": "https://www.google.com/maps?q=6.406,80.452",
+    "address": "Sinharaja Forest Reserve, Sri Lanka",
+    "rating": 4.5,
+    "reviewCount": 395,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 1090,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "b0c32497-a085-40c5-8a60-5dba596c59ef",
+    "name": "Bundala National Park Area 60",
+    "description": "A popular tourist attraction in Sri Lanka: Bundala National Park.",
+    "category": "park",
+    "province": "Southern Province",
+    "district": "Hambantota",
+    "latitude": 6.2,
+    "longitude": 81.2,
+    "googleMapsUrl": "https://www.google.com/maps?q=6.2,81.2",
+    "address": "Bundala National Park, Sri Lanka",
+    "rating": 4.0,
+    "reviewCount": 400,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 1100,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "0a7d291f-7138-403a-b943-b6f7c222bd46",
+    "name": "Sigiriya Rock Fortress Area 61",
+    "description": "A popular tourist attraction in Sri Lanka: Sigiriya Rock Fortress.",
+    "category": "historical",
+    "province": "Central Province",
+    "district": "Matale",
+    "latitude": 7.957,
+    "longitude": 80.7603,
+    "googleMapsUrl": "https://www.google.com/maps?q=7.957,80.7603",
+    "address": "Sigiriya Rock Fortress, Sri Lanka",
+    "rating": 4.0,
+    "reviewCount": 405,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 1110,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "b036abd7-f482-4267-8ac9-5399fbb4370e",
+    "name": "Temple of the Tooth Area 62",
+    "description": "A popular tourist attraction in Sri Lanka: Temple of the Tooth.",
+    "category": "temple",
+    "province": "Central Province",
+    "district": "Kandy",
+    "latitude": 7.2936,
+    "longitude": 80.6413,
+    "googleMapsUrl": "https://www.google.com/maps?q=7.2936,80.6413",
+    "address": "Temple of the Tooth, Sri Lanka",
+    "rating": 4.1,
+    "reviewCount": 410,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 1120,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "1a2c9d47-b998-4c03-b340-91939b2ac722",
+    "name": "Ella Rock Area 63",
+    "description": "A popular tourist attraction in Sri Lanka: Ella Rock.",
+    "category": "mountain",
+    "province": "Uva Province",
+    "district": "Badulla",
+    "latitude": 6.8667,
+    "longitude": 81.0466,
+    "googleMapsUrl": "https://www.google.com/maps?q=6.8667,81.0466",
+    "address": "Ella Rock, Sri Lanka",
+    "rating": 4.2,
+    "reviewCount": 415,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 1130,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "66fb3d8e-8ef5-469b-a607-8caddab4ca84",
+    "name": "Nine Arches Bridge Area 64",
+    "description": "A popular tourist attraction in Sri Lanka: Nine Arches Bridge.",
+    "category": "historical",
+    "province": "Uva Province",
+    "district": "Badulla",
+    "latitude": 6.8786,
+    "longitude": 81.0606,
+    "googleMapsUrl": "https://www.google.com/maps?q=6.8786,81.0606",
+    "address": "Nine Arches Bridge, Sri Lanka",
+    "rating": 4.2,
+    "reviewCount": 420,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 1140,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "5cbc4030-f49d-49c4-83b3-f5f99fe735d4",
+    "name": "Yala National Park Area 65",
+    "description": "A popular tourist attraction in Sri Lanka: Yala National Park.",
+    "category": "park",
+    "province": "Southern Province",
+    "district": "Hambantota",
+    "latitude": 6.3667,
+    "longitude": 81.5167,
+    "googleMapsUrl": "https://www.google.com/maps?q=6.3667,81.5167",
+    "address": "Yala National Park, Sri Lanka",
+    "rating": 4.2,
+    "reviewCount": 425,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 1150,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "a592ebac-3c70-4374-bfef-b80b399fd439",
+    "name": "Udawalawa National Park Area 66",
+    "description": "A popular tourist attraction in Sri Lanka: Udawalawa National Park.",
+    "category": "park",
+    "province": "Sabaragamuwa Province",
+    "district": "Ratnapura",
+    "latitude": 6.45,
+    "longitude": 80.8889,
+    "googleMapsUrl": "https://www.google.com/maps?q=6.45,80.8889",
+    "address": "Udawalawa National Park, Sri Lanka",
+    "rating": 4.3,
+    "reviewCount": 430,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 1160,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "41d703f8-3808-4ba9-af22-4f6a2b9d4a2b",
+    "name": "Horton Plains Area 67",
+    "description": "A popular tourist attraction in Sri Lanka: Horton Plains.",
+    "category": "park",
+    "province": "Central Province",
+    "district": "Nuwara Eliya",
+    "latitude": 6.8,
+    "longitude": 80.8,
+    "googleMapsUrl": "https://www.google.com/maps?q=6.8,80.8",
+    "address": "Horton Plains, Sri Lanka",
+    "rating": 4.3,
+    "reviewCount": 435,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 1170,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "06c8a3e9-8e11-433b-82c4-e39700b2067d",
+    "name": "Adam's Peak Area 68",
+    "description": "A popular tourist attraction in Sri Lanka: Adam's Peak.",
+    "category": "mountain",
+    "province": "Sabaragamuwa Province",
+    "district": "Ratnapura",
+    "latitude": 6.8096,
+    "longitude": 80.4994,
+    "googleMapsUrl": "https://www.google.com/maps?q=6.8096,80.4994",
+    "address": "Adam's Peak, Sri Lanka",
+    "rating": 4.4,
+    "reviewCount": 440,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 1180,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "3baa488c-99e4-4ed6-8369-4ddb014c6da4",
+    "name": "Galle Fort Area 69",
+    "description": "A popular tourist attraction in Sri Lanka: Galle Fort.",
+    "category": "historical",
+    "province": "Southern Province",
+    "district": "Galle",
+    "latitude": 6.026,
+    "longitude": 80.217,
+    "googleMapsUrl": "https://www.google.com/maps?q=6.026,80.217",
+    "address": "Galle Fort, Sri Lanka",
+    "rating": 4.5,
+    "reviewCount": 445,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 1190,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "580c7f98-c690-4c96-b983-2f5fd9f05cc7",
+    "name": "Mirissa Beach Area 70",
+    "description": "A popular tourist attraction in Sri Lanka: Mirissa Beach.",
+    "category": "beach",
+    "province": "Southern Province",
+    "district": "Matara",
+    "latitude": 5.9485,
+    "longitude": 80.4585,
+    "googleMapsUrl": "https://www.google.com/maps?q=5.9485,80.4585",
+    "address": "Mirissa Beach, Sri Lanka",
+    "rating": 4.0,
+    "reviewCount": 450,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 1200,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "88a533f5-3d54-4c42-a8f1-ae11954336f8",
+    "name": "Unawatuna Beach Area 71",
+    "description": "A popular tourist attraction in Sri Lanka: Unawatuna Beach.",
+    "category": "beach",
+    "province": "Southern Province",
+    "district": "Galle",
+    "latitude": 6.0108,
+    "longitude": 80.25,
+    "googleMapsUrl": "https://www.google.com/maps?q=6.0108,80.25",
+    "address": "Unawatuna Beach, Sri Lanka",
+    "rating": 4.0,
+    "reviewCount": 455,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 1210,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "35634671-d14b-47f5-b873-4482c6819b6e",
+    "name": "Hikkaduwa Beach Area 72",
+    "description": "A popular tourist attraction in Sri Lanka: Hikkaduwa Beach.",
+    "category": "beach",
+    "province": "Southern Province",
+    "district": "Galle",
+    "latitude": 6.1407,
+    "longitude": 80.1012,
+    "googleMapsUrl": "https://www.google.com/maps?q=6.1407,80.1012",
+    "address": "Hikkaduwa Beach, Sri Lanka",
+    "rating": 4.1,
+    "reviewCount": 460,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 1220,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "37093b51-e160-4736-a639-1f383f71226c",
+    "name": "Arugam Bay Area 73",
+    "description": "A popular tourist attraction in Sri Lanka: Arugam Bay.",
+    "category": "beach",
+    "province": "Eastern Province",
+    "district": "Ampara",
+    "latitude": 6.84,
+    "longitude": 81.836,
+    "googleMapsUrl": "https://www.google.com/maps?q=6.84,81.836",
+    "address": "Arugam Bay, Sri Lanka",
+    "rating": 4.2,
+    "reviewCount": 465,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 1230,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "a08a2c36-3c75-443a-b0be-98d1eb28418e",
+    "name": "Nilaveli Beach Area 74",
+    "description": "A popular tourist attraction in Sri Lanka: Nilaveli Beach.",
+    "category": "beach",
+    "province": "Eastern Province",
+    "district": "Trincomalee",
+    "latitude": 8.7,
+    "longitude": 81.2,
+    "googleMapsUrl": "https://www.google.com/maps?q=8.7,81.2",
+    "address": "Nilaveli Beach, Sri Lanka",
+    "rating": 4.2,
+    "reviewCount": 470,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 1240,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "15f940cc-44ec-4a27-bab0-c91a274f4646",
+    "name": "Pigeon Island Area 75",
+    "description": "A popular tourist attraction in Sri Lanka: Pigeon Island.",
+    "category": "park",
+    "province": "Eastern Province",
+    "district": "Trincomalee",
+    "latitude": 8.72,
+    "longitude": 81.205,
+    "googleMapsUrl": "https://www.google.com/maps?q=8.72,81.205",
+    "address": "Pigeon Island, Sri Lanka",
+    "rating": 4.2,
+    "reviewCount": 475,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 1250,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "b884b92e-83af-40f6-a0dd-2e40f8928ec3",
+    "name": "Dambulla Cave Temple Area 76",
+    "description": "A popular tourist attraction in Sri Lanka: Dambulla Cave Temple.",
+    "category": "temple",
+    "province": "Central Province",
+    "district": "Matale",
+    "latitude": 7.8567,
+    "longitude": 80.649,
+    "googleMapsUrl": "https://www.google.com/maps?q=7.8567,80.649",
+    "address": "Dambulla Cave Temple, Sri Lanka",
+    "rating": 4.3,
+    "reviewCount": 480,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 1260,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "770d1cda-d437-4f94-8ac1-4a381dd99083",
+    "name": "Knuckles View Point Area 77",
+    "description": "A popular tourist attraction in Sri Lanka: Knuckles View Point.",
+    "category": "mountain",
+    "province": "Central Province",
+    "district": "Kandy",
+    "latitude": 7.45,
+    "longitude": 80.8,
+    "googleMapsUrl": "https://www.google.com/maps?q=7.45,80.8",
+    "address": "Knuckles View Point, Sri Lanka",
+    "rating": 4.3,
+    "reviewCount": 485,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 1270,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "ea37faf5-c99f-429b-93bb-4c7f44668c5d",
+    "name": "Wasgamuwa National Park Area 78",
+    "description": "A popular tourist attraction in Sri Lanka: Wasgamuwa National Park.",
+    "category": "park",
+    "province": "Central Province",
+    "district": "Matale",
+    "latitude": 7.7,
+    "longitude": 80.9,
+    "googleMapsUrl": "https://www.google.com/maps?q=7.7,80.9",
+    "address": "Wasgamuwa National Park, Sri Lanka",
+    "rating": 4.4,
+    "reviewCount": 490,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 1280,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "fe848e63-00b0-4e05-9a21-6b6f17368cd5",
+    "name": "Sinharaja Forest Reserve Area 79",
+    "description": "A popular tourist attraction in Sri Lanka: Sinharaja Forest Reserve.",
+    "category": "forest",
+    "province": "Sabaragamuwa Province",
+    "district": "Ratnapura",
+    "latitude": 6.406,
+    "longitude": 80.452,
+    "googleMapsUrl": "https://www.google.com/maps?q=6.406,80.452",
+    "address": "Sinharaja Forest Reserve, Sri Lanka",
+    "rating": 4.5,
+    "reviewCount": 495,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 1290,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "6631944f-62b0-4e54-abac-19253095206f",
+    "name": "Bundala National Park Area 80",
+    "description": "A popular tourist attraction in Sri Lanka: Bundala National Park.",
+    "category": "park",
+    "province": "Southern Province",
+    "district": "Hambantota",
+    "latitude": 6.2,
+    "longitude": 81.2,
+    "googleMapsUrl": "https://www.google.com/maps?q=6.2,81.2",
+    "address": "Bundala National Park, Sri Lanka",
+    "rating": 4.0,
+    "reviewCount": 500,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 1300,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "2ecfe1a5-b7c0-4bad-84b3-6175221a3c7f",
+    "name": "Sigiriya Rock Fortress Area 81",
+    "description": "A popular tourist attraction in Sri Lanka: Sigiriya Rock Fortress.",
+    "category": "historical",
+    "province": "Central Province",
+    "district": "Matale",
+    "latitude": 7.957,
+    "longitude": 80.7603,
+    "googleMapsUrl": "https://www.google.com/maps?q=7.957,80.7603",
+    "address": "Sigiriya Rock Fortress, Sri Lanka",
+    "rating": 4.0,
+    "reviewCount": 505,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 1310,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "5b5e9957-048f-46d2-9525-a0271ec79cb2",
+    "name": "Temple of the Tooth Area 82",
+    "description": "A popular tourist attraction in Sri Lanka: Temple of the Tooth.",
+    "category": "temple",
+    "province": "Central Province",
+    "district": "Kandy",
+    "latitude": 7.2936,
+    "longitude": 80.6413,
+    "googleMapsUrl": "https://www.google.com/maps?q=7.2936,80.6413",
+    "address": "Temple of the Tooth, Sri Lanka",
+    "rating": 4.1,
+    "reviewCount": 510,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 1320,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "6f68b38d-fee8-4dde-8d27-11ed83e6ffc6",
+    "name": "Ella Rock Area 83",
+    "description": "A popular tourist attraction in Sri Lanka: Ella Rock.",
+    "category": "mountain",
+    "province": "Uva Province",
+    "district": "Badulla",
+    "latitude": 6.8667,
+    "longitude": 81.0466,
+    "googleMapsUrl": "https://www.google.com/maps?q=6.8667,81.0466",
+    "address": "Ella Rock, Sri Lanka",
+    "rating": 4.2,
+    "reviewCount": 515,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 1330,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "c893cd1c-331e-49fc-a755-35f17163ebdc",
+    "name": "Nine Arches Bridge Area 84",
+    "description": "A popular tourist attraction in Sri Lanka: Nine Arches Bridge.",
+    "category": "historical",
+    "province": "Uva Province",
+    "district": "Badulla",
+    "latitude": 6.8786,
+    "longitude": 81.0606,
+    "googleMapsUrl": "https://www.google.com/maps?q=6.8786,81.0606",
+    "address": "Nine Arches Bridge, Sri Lanka",
+    "rating": 4.2,
+    "reviewCount": 520,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 1340,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "cd941d97-eeae-4483-9d16-eb62cf2ffae1",
+    "name": "Yala National Park Area 85",
+    "description": "A popular tourist attraction in Sri Lanka: Yala National Park.",
+    "category": "park",
+    "province": "Southern Province",
+    "district": "Hambantota",
+    "latitude": 6.3667,
+    "longitude": 81.5167,
+    "googleMapsUrl": "https://www.google.com/maps?q=6.3667,81.5167",
+    "address": "Yala National Park, Sri Lanka",
+    "rating": 4.2,
+    "reviewCount": 525,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 1350,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "6c3f36b2-c2c8-4042-8ec1-ba604d51c156",
+    "name": "Udawalawa National Park Area 86",
+    "description": "A popular tourist attraction in Sri Lanka: Udawalawa National Park.",
+    "category": "park",
+    "province": "Sabaragamuwa Province",
+    "district": "Ratnapura",
+    "latitude": 6.45,
+    "longitude": 80.8889,
+    "googleMapsUrl": "https://www.google.com/maps?q=6.45,80.8889",
+    "address": "Udawalawa National Park, Sri Lanka",
+    "rating": 4.3,
+    "reviewCount": 530,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 1360,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "566854cb-8483-4a07-950a-133794d30ef1",
+    "name": "Horton Plains Area 87",
+    "description": "A popular tourist attraction in Sri Lanka: Horton Plains.",
+    "category": "park",
+    "province": "Central Province",
+    "district": "Nuwara Eliya",
+    "latitude": 6.8,
+    "longitude": 80.8,
+    "googleMapsUrl": "https://www.google.com/maps?q=6.8,80.8",
+    "address": "Horton Plains, Sri Lanka",
+    "rating": 4.3,
+    "reviewCount": 535,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 1370,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "aa0a0f63-7bef-4899-9118-5657da4da975",
+    "name": "Adam's Peak Area 88",
+    "description": "A popular tourist attraction in Sri Lanka: Adam's Peak.",
+    "category": "mountain",
+    "province": "Sabaragamuwa Province",
+    "district": "Ratnapura",
+    "latitude": 6.8096,
+    "longitude": 80.4994,
+    "googleMapsUrl": "https://www.google.com/maps?q=6.8096,80.4994",
+    "address": "Adam's Peak, Sri Lanka",
+    "rating": 4.4,
+    "reviewCount": 540,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 1380,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "b77a47c6-747d-40f4-a7af-b2e3ca5a1146",
+    "name": "Galle Fort Area 89",
+    "description": "A popular tourist attraction in Sri Lanka: Galle Fort.",
+    "category": "historical",
+    "province": "Southern Province",
+    "district": "Galle",
+    "latitude": 6.026,
+    "longitude": 80.217,
+    "googleMapsUrl": "https://www.google.com/maps?q=6.026,80.217",
+    "address": "Galle Fort, Sri Lanka",
+    "rating": 4.5,
+    "reviewCount": 545,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 1390,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "d9ea4e4b-3942-4c44-b73c-fed7d4cd5592",
+    "name": "Mirissa Beach Area 90",
+    "description": "A popular tourist attraction in Sri Lanka: Mirissa Beach.",
+    "category": "beach",
+    "province": "Southern Province",
+    "district": "Matara",
+    "latitude": 5.9485,
+    "longitude": 80.4585,
+    "googleMapsUrl": "https://www.google.com/maps?q=5.9485,80.4585",
+    "address": "Mirissa Beach, Sri Lanka",
+    "rating": 4.0,
+    "reviewCount": 550,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 1400,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "a242602f-1b01-41b4-bbfc-af51da6ba21e",
+    "name": "Unawatuna Beach Area 91",
+    "description": "A popular tourist attraction in Sri Lanka: Unawatuna Beach.",
+    "category": "beach",
+    "province": "Southern Province",
+    "district": "Galle",
+    "latitude": 6.0108,
+    "longitude": 80.25,
+    "googleMapsUrl": "https://www.google.com/maps?q=6.0108,80.25",
+    "address": "Unawatuna Beach, Sri Lanka",
+    "rating": 4.0,
+    "reviewCount": 555,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 1410,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "018381c1-3559-4a0d-8fcc-c5ad9e943f5c",
+    "name": "Hikkaduwa Beach Area 92",
+    "description": "A popular tourist attraction in Sri Lanka: Hikkaduwa Beach.",
+    "category": "beach",
+    "province": "Southern Province",
+    "district": "Galle",
+    "latitude": 6.1407,
+    "longitude": 80.1012,
+    "googleMapsUrl": "https://www.google.com/maps?q=6.1407,80.1012",
+    "address": "Hikkaduwa Beach, Sri Lanka",
+    "rating": 4.1,
+    "reviewCount": 560,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 1420,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "3822d85b-f256-4c40-8873-b50823b16955",
+    "name": "Arugam Bay Area 93",
+    "description": "A popular tourist attraction in Sri Lanka: Arugam Bay.",
+    "category": "beach",
+    "province": "Eastern Province",
+    "district": "Ampara",
+    "latitude": 6.84,
+    "longitude": 81.836,
+    "googleMapsUrl": "https://www.google.com/maps?q=6.84,81.836",
+    "address": "Arugam Bay, Sri Lanka",
+    "rating": 4.2,
+    "reviewCount": 565,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 1430,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "22edd511-c091-4160-a1bb-6aa92bceb29f",
+    "name": "Nilaveli Beach Area 94",
+    "description": "A popular tourist attraction in Sri Lanka: Nilaveli Beach.",
+    "category": "beach",
+    "province": "Eastern Province",
+    "district": "Trincomalee",
+    "latitude": 8.7,
+    "longitude": 81.2,
+    "googleMapsUrl": "https://www.google.com/maps?q=8.7,81.2",
+    "address": "Nilaveli Beach, Sri Lanka",
+    "rating": 4.2,
+    "reviewCount": 570,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 1440,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "75730638-b6ef-48fe-87bf-63952900632a",
+    "name": "Pigeon Island Area 95",
+    "description": "A popular tourist attraction in Sri Lanka: Pigeon Island.",
+    "category": "park",
+    "province": "Eastern Province",
+    "district": "Trincomalee",
+    "latitude": 8.72,
+    "longitude": 81.205,
+    "googleMapsUrl": "https://www.google.com/maps?q=8.72,81.205",
+    "address": "Pigeon Island, Sri Lanka",
+    "rating": 4.2,
+    "reviewCount": 575,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 1450,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "3c49f84a-98db-4b2f-afc4-8f8b9d81aa91",
+    "name": "Dambulla Cave Temple Area 96",
+    "description": "A popular tourist attraction in Sri Lanka: Dambulla Cave Temple.",
+    "category": "temple",
+    "province": "Central Province",
+    "district": "Matale",
+    "latitude": 7.8567,
+    "longitude": 80.649,
+    "googleMapsUrl": "https://www.google.com/maps?q=7.8567,80.649",
+    "address": "Dambulla Cave Temple, Sri Lanka",
+    "rating": 4.3,
+    "reviewCount": 580,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 1460,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "eaccb870-f7e7-42cc-84dd-1b3b57a6f325",
+    "name": "Knuckles View Point Area 97",
+    "description": "A popular tourist attraction in Sri Lanka: Knuckles View Point.",
+    "category": "mountain",
+    "province": "Central Province",
+    "district": "Kandy",
+    "latitude": 7.45,
+    "longitude": 80.8,
+    "googleMapsUrl": "https://www.google.com/maps?q=7.45,80.8",
+    "address": "Knuckles View Point, Sri Lanka",
+    "rating": 4.3,
+    "reviewCount": 585,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 1470,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "08b5fcae-d365-4acf-9624-a071bde43733",
+    "name": "Wasgamuwa National Park Area 98",
+    "description": "A popular tourist attraction in Sri Lanka: Wasgamuwa National Park.",
+    "category": "park",
+    "province": "Central Province",
+    "district": "Matale",
+    "latitude": 7.7,
+    "longitude": 80.9,
+    "googleMapsUrl": "https://www.google.com/maps?q=7.7,80.9",
+    "address": "Wasgamuwa National Park, Sri Lanka",
+    "rating": 4.4,
+    "reviewCount": 590,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 1480,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "9b0b4540-dfd2-4cb0-a088-25fc68c37f86",
+    "name": "Sinharaja Forest Reserve Area 99",
+    "description": "A popular tourist attraction in Sri Lanka: Sinharaja Forest Reserve.",
+    "category": "forest",
+    "province": "Sabaragamuwa Province",
+    "district": "Ratnapura",
+    "latitude": 6.406,
+    "longitude": 80.452,
+    "googleMapsUrl": "https://www.google.com/maps?q=6.406,80.452",
+    "address": "Sinharaja Forest Reserve, Sri Lanka",
+    "rating": 4.5,
+    "reviewCount": 595,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 1490,
+    "createdAt": "2026-01-01"
+  },
+  {
+    "id": "c3f1ff3e-92f9-4b14-8c81-af4d847d455f",
+    "name": "Bundala National Park Area 100",
+    "description": "A popular tourist attraction in Sri Lanka: Bundala National Park.",
+    "category": "park",
+    "province": "Southern Province",
+    "district": "Hambantota",
+    "latitude": 6.2,
+    "longitude": 81.2,
+    "googleMapsUrl": "https://www.google.com/maps?q=6.2,81.2",
+    "address": "Bundala National Park, Sri Lanka",
+    "rating": 4.0,
+    "reviewCount": 600,
+    "photos": [
+      "https://example.com/place1.jpg",
+      "https://example.com/place2.jpg"
+    ],
+    "source": "system",
+    "verified": true,
+    "accessibility": {
+      "season": "All year",
+      "difficulty": "Moderate",
+      "duration": "120 mins",
+      "entryFee": "LKR 1000"
+    },
+    "tags": [
+      "sri lanka",
+      "tourism",
+      "scenic"
+    ],
+    "visitCount": 1500,
+    "createdAt": "2026-01-01"
+  }
+]

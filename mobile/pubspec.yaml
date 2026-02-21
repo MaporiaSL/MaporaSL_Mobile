@@ -66,5 +66,5 @@ flutter:
     - .env
     - assets/geojson/boundaries/LK-provinces.geojson
     - assets/geojson/boundaries/LK-districts.geojson
-    - assets/data/places_seed_data_2026.json
+    - assets/data/
     - assets/images/
