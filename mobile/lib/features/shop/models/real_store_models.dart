@@ -1,4 +1,5 @@
 import 'package:meta/meta.dart';
+import '../../../core/config/app_config.dart';
 
 @immutable
 class RealStoreItem {
@@ -24,6 +25,10 @@ class RealStoreItem {
 
   factory RealStoreItem.fromJson(Map<String, dynamic> json) {
     final price = json['price'] as Map<String, dynamic>? ?? <String, dynamic>{};
+    String thumbnail = json['thumbnail'] as String? ?? '';
+    if (thumbnail.startsWith('/uploads')) {
+      thumbnail = '${AppConfig.apiBaseUrl}$thumbnail';
+    }
     return RealStoreItem(
       itemId: json['itemId'] as String? ?? '',
       name: json['name'] as String? ?? '',
@@ -32,7 +37,7 @@ class RealStoreItem {
       district: json['district'] as String? ?? '',
       category: json['category'] as String? ?? '',
       priceLkr: (price['lkr'] as num? ?? 0).toInt(),
-      thumbnail: json['thumbnail'] as String? ?? '',
+      thumbnail: thumbnail,
     );
   }
 }
@@ -88,8 +93,7 @@ class ShoppingCart {
           .toList(),
       subtotal: (json['subtotal'] as num? ?? 0).toInt(),
       tax: (json['tax'] as num? ?? 0).toInt(),
-      estimatedShipping:
-          (json['estimatedShipping'] as num? ?? 0).toInt(),
+      estimatedShipping: (json['estimatedShipping'] as num? ?? 0).toInt(),
       total: (json['total'] as num? ?? 0).toInt(),
     );
   }
@@ -156,4 +160,3 @@ class Order {
     );
   }
 }
-
