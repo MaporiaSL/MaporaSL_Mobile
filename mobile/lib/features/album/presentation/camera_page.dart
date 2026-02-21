@@ -37,12 +37,10 @@ class _CameraPageState extends State<CameraPage> {
   Future<void> _initCamera() async {
     try {
       _cameras = await availableCameras();
-
       if (_cameras == null || _cameras!.isEmpty) {
         setState(() => _error = "No cameras available");
         return;
       }
-
       await _setupCamera(_cameras![_cameraIndex]);
     } catch (e) {
       setState(() => _error = "Failed to initialize camera: $e");
@@ -51,7 +49,6 @@ class _CameraPageState extends State<CameraPage> {
 
   Future<void> _setupCamera(CameraDescription camera) async {
     _controller?.dispose();
-
     _controller = CameraController(
       camera,
       ResolutionPreset.high,
@@ -61,7 +58,6 @@ class _CameraPageState extends State<CameraPage> {
     try {
       await _controller!.initialize();
       await _controller!.setFlashMode(_flashMode);
-
       if (mounted) {
         setState(() {
           _isInitialized = true;
@@ -80,14 +76,11 @@ class _CameraPageState extends State<CameraPage> {
 
     try {
       final XFile photo = await _controller!.takePicture();
-
       final dir = await getApplicationDocumentsDirectory();
       final path = "${dir.path}/photos";
       await Directory(path).create(recursive: true);
-
       final filePath =
           "$path/${DateTime.now().millisecondsSinceEpoch}.jpg";
-
       await photo.saveTo(filePath);
 
       setState(() => _isCapturing = false);
@@ -100,32 +93,30 @@ class _CameraPageState extends State<CameraPage> {
     }
   }
 
-  void _showPreview(String path) {
+  void _showPreview(String photoPath) {
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       backgroundColor: Colors.black,
-      builder: (_) => Container(
-        height: 400,
-        padding: const EdgeInsets.all(16),
-        child: Image.file(File(path), fit: BoxFit.contain),
+      builder: (_) => _PhotoPreview(
+        photoPath: photoPath,
+        onUpload: () {},
+        onRetake: () {},
       ),
     );
   }
 
   void _switchCamera() async {
     if (_cameras == null || _cameras!.length < 2) return;
-
     setState(() {
       _cameraIndex = (_cameraIndex + 1) % _cameras!.length;
       _isInitialized = false;
     });
-
     await _setupCamera(_cameras![_cameraIndex]);
   }
 
   void _toggleFlash() async {
     if (_controller == null) return;
-
     FlashMode next;
     switch (_flashMode) {
       case FlashMode.off:
@@ -137,7 +128,6 @@ class _CameraPageState extends State<CameraPage> {
       default:
         next = FlashMode.off;
     }
-
     await _controller!.setFlashMode(next);
     setState(() => _flashMode = next);
   }
@@ -174,7 +164,6 @@ class _CameraPageState extends State<CameraPage> {
       body: Stack(
         children: [
           Positioned.fill(child: CameraPreview(_controller!)),
-
           Positioned(
             top: 40,
             right: 20,
@@ -183,17 +172,15 @@ class _CameraPageState extends State<CameraPage> {
               onPressed: _toggleFlash,
             ),
           ),
-
           Positioned(
             bottom: 40,
             left: 40,
             child: IconButton(
               icon: const Icon(Icons.flip_camera_ios,
-                  color: Colors.white, size: 32),
+                  color: Colors.white),
               onPressed: _switchCamera,
             ),
           ),
-
           Positioned(
             bottom: 40,
             left: 0,
@@ -206,12 +193,54 @@ class _CameraPageState extends State<CameraPage> {
                   height: 80,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    border: Border.all(color: Colors.white, width: 4),
+                    border:
+                        Border.all(color: Colors.white, width: 4),
                   ),
                 ),
               ),
             ),
           ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PhotoPreview extends StatelessWidget {
+  final String photoPath;
+  final VoidCallback onUpload;
+  final VoidCallback onRetake;
+
+  const _PhotoPreview({
+    required this.photoPath,
+    required this.onUpload,
+    required this.onRetake,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.85,
+      child: Column(
+        children: [
+          Expanded(
+            child: Image.file(File(photoPath),
+                fit: BoxFit.contain),
+          ),
+          Row(
+            mainAxisAlignment:
+                MainAxisAlignment.spaceEvenly,
+            children: [
+              TextButton(
+                onPressed: onRetake,
+                child: const Text("Retake"),
+              ),
+              ElevatedButton(
+                onPressed: onUpload,
+                child: const Text("Save"),
+              ),
+            ],
+          )
         ],
       ),
     );
