@@ -50,6 +50,8 @@ dependencies:
   geocoding: ^3.0.0
   http_parser: ^4.0.2
   cached_network_image: ^3.3.1
+  http: ^1.2.0
+  flutter_dotenv: ^5.2.1
 
 dev_dependencies:
   flutter_test:
@@ -61,6 +63,7 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
+    - .env
     - assets/geojson/boundaries/LK-provinces.geojson
     - assets/geojson/boundaries/LK-districts.geojson
     - assets/data/places_seed_data_2026.json
