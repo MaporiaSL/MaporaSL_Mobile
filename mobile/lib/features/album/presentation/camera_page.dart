@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:path_provider/path_provider.dart';
+import '../data/services/album_service.dart';
 
 class CameraPage extends StatefulWidget {
   const CameraPage({super.key});
@@ -11,6 +12,8 @@ class CameraPage extends StatefulWidget {
 }
 
 class _CameraPageState extends State<CameraPage> {
+  final AlbumService _service = AlbumService();
+
   CameraController? _controller;
   List<CameraDescription>? _cameras;
 
@@ -79,8 +82,10 @@ class _CameraPageState extends State<CameraPage> {
       final dir = await getApplicationDocumentsDirectory();
       final path = "${dir.path}/photos";
       await Directory(path).create(recursive: true);
+
       final filePath =
           "$path/${DateTime.now().millisecondsSinceEpoch}.jpg";
+
       await photo.saveTo(filePath);
 
       setState(() => _isCapturing = false);
@@ -93,6 +98,28 @@ class _CameraPageState extends State<CameraPage> {
     }
   }
 
+  Future<void> _uploadPhoto(String photoPath) async {
+    try {
+      final result = await _service
+          .uploadPhotoToLocationAlbum(File(photoPath));
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Saved to "${result.album.name}"'),
+          ),
+        );
+        Navigator.pop(context, true);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Upload failed: $e')),
+        );
+      }
+    }
+  }
+
   void _showPreview(String photoPath) {
     showModalBottomSheet(
       context: context,
@@ -100,7 +127,10 @@ class _CameraPageState extends State<CameraPage> {
       backgroundColor: Colors.black,
       builder: (_) => _PhotoPreview(
         photoPath: photoPath,
-        onUpload: () {},
+        onUpload: () {
+          Navigator.pop(context);
+          _uploadPhoto(photoPath);
+        },
         onRetake: () {
           Navigator.pop(context);
           File(photoPath).delete().catchError((_) {});
@@ -243,7 +273,7 @@ class _PhotoPreview extends StatelessWidget {
               ),
               ElevatedButton(
                 onPressed: onUpload,
-                child: const Text("Save"),
+                child: const Text("Save to Album"),
               ),
             ],
           )
