@@ -91,9 +91,25 @@ class _CameraPageState extends State<CameraPage> {
       await photo.saveTo(filePath);
 
       setState(() => _isCapturing = false);
+
+      if (mounted) {
+        _showPreview(filePath);
+      }
     } catch (e) {
       setState(() => _isCapturing = false);
     }
+  }
+
+  void _showPreview(String path) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.black,
+      builder: (_) => Container(
+        height: 400,
+        padding: const EdgeInsets.all(16),
+        child: Image.file(File(path), fit: BoxFit.contain),
+      ),
+    );
   }
 
   void _switchCamera() async {
@@ -159,7 +175,6 @@ class _CameraPageState extends State<CameraPage> {
         children: [
           Positioned.fill(child: CameraPreview(_controller!)),
 
-          // Flash Button
           Positioned(
             top: 40,
             right: 20,
@@ -169,7 +184,6 @@ class _CameraPageState extends State<CameraPage> {
             ),
           ),
 
-          // Switch Camera Button
           Positioned(
             bottom: 40,
             left: 40,
@@ -180,7 +194,6 @@ class _CameraPageState extends State<CameraPage> {
             ),
           ),
 
-          // Capture Button
           Positioned(
             bottom: 40,
             left: 0,
