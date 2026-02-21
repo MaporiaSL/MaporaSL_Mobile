@@ -19,6 +19,7 @@ class _CameraPageState extends State<CameraPage> {
 
   bool _isInitialized = false;
   bool _isCapturing = false;
+  bool _isUploading = false;
 
   FlashMode _flashMode = FlashMode.auto;
   int _cameraIndex = 0;
@@ -73,7 +74,9 @@ class _CameraPageState extends State<CameraPage> {
   }
 
   Future<void> _takePhoto() async {
-    if (_controller == null || !_controller!.value.isInitialized) return;
+    if (_controller == null ||
+        !_controller!.value.isInitialized ||
+        _isUploading) return;
 
     setState(() => _isCapturing = true);
 
@@ -99,6 +102,8 @@ class _CameraPageState extends State<CameraPage> {
   }
 
   Future<void> _uploadPhoto(String photoPath) async {
+    setState(() => _isUploading = true);
+
     try {
       final result = await _service
           .uploadPhotoToLocationAlbum(File(photoPath));
@@ -112,11 +117,7 @@ class _CameraPageState extends State<CameraPage> {
         Navigator.pop(context, true);
       }
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Upload failed: $e')),
-        );
-      }
+      setState(() => _isUploading = false);
     }
   }
 
@@ -197,6 +198,16 @@ class _CameraPageState extends State<CameraPage> {
       body: Stack(
         children: [
           Positioned.fill(child: CameraPreview(_controller!)),
+
+          if (_isUploading)
+            Container(
+              color: Colors.black54,
+              child: const Center(
+                child: CircularProgressIndicator(
+                  color: Colors.white,
+                ),
+              ),
+            ),
 
           Positioned(
             top: 40,
