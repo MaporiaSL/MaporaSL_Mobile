@@ -37,10 +37,12 @@ class _CameraPageState extends State<CameraPage> {
   Future<void> _initCamera() async {
     try {
       _cameras = await availableCameras();
+
       if (_cameras == null || _cameras!.isEmpty) {
         setState(() => _error = "No cameras available");
         return;
       }
+
       await _setupCamera(_cameras![_cameraIndex]);
     } catch (e) {
       setState(() => _error = "Failed to initialize camera: $e");
@@ -59,6 +61,7 @@ class _CameraPageState extends State<CameraPage> {
     try {
       await _controller!.initialize();
       await _controller!.setFlashMode(_flashMode);
+
       if (mounted) {
         setState(() {
           _isInitialized = true;
@@ -77,6 +80,7 @@ class _CameraPageState extends State<CameraPage> {
 
     try {
       final XFile photo = await _controller!.takePicture();
+
       final dir = await getApplicationDocumentsDirectory();
       final path = "${dir.path}/photos";
       await Directory(path).create(recursive: true);
@@ -90,6 +94,17 @@ class _CameraPageState extends State<CameraPage> {
     } catch (e) {
       setState(() => _isCapturing = false);
     }
+  }
+
+  void _switchCamera() async {
+    if (_cameras == null || _cameras!.length < 2) return;
+
+    setState(() {
+      _cameraIndex = (_cameraIndex + 1) % _cameras!.length;
+      _isInitialized = false;
+    });
+
+    await _setupCamera(_cameras![_cameraIndex]);
   }
 
   void _toggleFlash() async {
@@ -143,6 +158,8 @@ class _CameraPageState extends State<CameraPage> {
       body: Stack(
         children: [
           Positioned.fill(child: CameraPreview(_controller!)),
+
+          // Flash Button
           Positioned(
             top: 40,
             right: 20,
@@ -151,6 +168,19 @@ class _CameraPageState extends State<CameraPage> {
               onPressed: _toggleFlash,
             ),
           ),
+
+          // Switch Camera Button
+          Positioned(
+            bottom: 40,
+            left: 40,
+            child: IconButton(
+              icon: const Icon(Icons.flip_camera_ios,
+                  color: Colors.white, size: 32),
+              onPressed: _switchCamera,
+            ),
+          ),
+
+          // Capture Button
           Positioned(
             bottom: 40,
             left: 0,
