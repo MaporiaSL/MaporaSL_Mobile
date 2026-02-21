@@ -101,7 +101,10 @@ class _CameraPageState extends State<CameraPage> {
       builder: (_) => _PhotoPreview(
         photoPath: photoPath,
         onUpload: () {},
-        onRetake: () {},
+        onRetake: () {
+          Navigator.pop(context);
+          File(photoPath).delete().catchError((_) {});
+        },
       ),
     );
   }
@@ -164,6 +167,7 @@ class _CameraPageState extends State<CameraPage> {
       body: Stack(
         children: [
           Positioned.fill(child: CameraPreview(_controller!)),
+
           Positioned(
             top: 40,
             right: 20,
@@ -172,6 +176,7 @@ class _CameraPageState extends State<CameraPage> {
               onPressed: _toggleFlash,
             ),
           ),
+
           Positioned(
             bottom: 40,
             left: 40,
@@ -181,6 +186,7 @@ class _CameraPageState extends State<CameraPage> {
               onPressed: _switchCamera,
             ),
           ),
+
           Positioned(
             bottom: 40,
             left: 0,
