@@ -16,6 +16,22 @@ class PhotoViewerPage extends StatefulWidget {
 }
 
 class _PhotoViewerPageState extends State<PhotoViewerPage> {
+  late PageController _pageController;
+  late int _currentIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentIndex = widget.initialIndex;
+    _pageController = PageController(initialPage: widget.initialIndex);
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return const Scaffold();
