@@ -93,8 +93,7 @@ const orderSchema = new mongoose.Schema(
 
 orderSchema.index({ userId: 1, createdAt: -1 });
 orderSchema.index({ status: 1, createdAt: -1 });
-orderSchema.index({ orderId: 1 });
-orderSchema.index({ 'paymentReceipt.verificationStatus': 1 });
+// Note: orderId and paymentReceipt.verificationStatus already have index: true in schema definition
 
 module.exports = mongoose.model('Order', orderSchema);
 

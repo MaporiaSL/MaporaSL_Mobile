@@ -13,9 +13,10 @@ const destinationRoutes = require('./routes/destinationRoutes');
 const mapRoutes = require('./routes/mapRoutes');
 const geoRoutes = require('./routes/geoRoutes');
 const userRoutes = require('./routes/userRoutes');
+const placeRoutes = require('./routes/placeRoutes');
 const realStoreRoutes = require('./routes/realStoreRoutes');
 const preplannedTripsRoutes = require('./routes/preplannedTripsRoutes');
-const albumRoutes = require('./routes/albumRoutes');
+const albumRoutes = require('./routes/albumRoute');
 const explorationRoutes = require('./routes/explorationRoutes');
 const explorationAdminRoutes = require('./routes/explorationAdminRoutes');
 
@@ -49,6 +50,7 @@ app.use('/api/destinations', geoRoutes);
 
 // User progress routes (JWT protected)
 app.use('/api/users', userRoutes);
+app.use('/api/places', placeRoutes);
 app.use('/api/districts', userRoutes);
 
 // Album and photo routes (JWT protected)
@@ -61,6 +63,13 @@ app.use('/api/admin', explorationAdminRoutes);
 
 // Real store (shop) routes
 app.use('/api/store', realStoreRoutes);
+
+// File upload routes
+const uploadRoutes = require('./routes/uploadRoutes');
+app.use('/api/upload', uploadRoutes);
+
+// Serve static uploads
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 // Boot: connect to DB first, then start server
 (async () => {

@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const albumController = require('../controllers/albumController');
-const photoRoutes = require('./photoRoutes');
+const photoRoutes = require('./photoRoute');
 
 const { checkJwt, extractUserId } = require('../middleware/auth');
 

@@ -64,10 +64,8 @@ const paymentReceiptSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-paymentReceiptSchema.index({
-  verificationStatus: 1,
-  uploadedAt: -1,
-});
+// Note: verificationStatus and uploadedAt already have index: true in schema definition
+// Compound indexes can be added here if needed for query optimization
 
 module.exports = mongoose.model('PaymentReceipt', paymentReceiptSchema);
 

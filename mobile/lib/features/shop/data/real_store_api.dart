@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/services/api_client.dart';
@@ -12,7 +13,7 @@ class RealStoreApi {
     String? district,
     String? category,
     int skip = 0,
-    int limit = 20,
+    int limit = 60,
   }) async {
     final Response response = await _client.get(
       '/api/store/items',
@@ -62,14 +63,11 @@ class RealStoreApi {
   Future<Order> checkout(ShippingAddress shippingAddress) async {
     final Response response = await _client.post(
       '/api/store/checkout',
-      data: {
-        'shippingAddress': shippingAddress.toJson(),
-      },
+      data: {'shippingAddress': shippingAddress.toJson()},
     );
 
     return Order.fromJson(
-      (response.data as Map<String, dynamic>)['order']
-          as Map<String, dynamic>,
+      (response.data as Map<String, dynamic>)['order'] as Map<String, dynamic>,
     );
   }
 
@@ -80,10 +78,26 @@ class RealStoreApi {
         .map((json) => Order.fromJson(json as Map<String, dynamic>))
         .toList();
   }
+
+  Future<String> uploadImage(File file) async {
+    final formData = FormData.fromMap({
+      'file': await MultipartFile.fromFile(file.path),
+    });
+
+    final Response response = await _client.post('/api/upload', data: formData);
+
+    return response.data['fileUrl'] as String;
+  }
+
+  Future<void> uploadPaymentReceipt(String orderId, String receiptUrl) async {
+    await _client.post(
+      '/api/store/payment/upload-receipt',
+      data: {'orderId': orderId, 'receiptUrl': receiptUrl},
+    );
+  }
 }
 
 final realStoreApiProvider = Provider<RealStoreApi>((ref) {
   final client = ref.watch(apiClientProvider);
   return RealStoreApi(client);
 });
-

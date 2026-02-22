@@ -1,17 +1,7 @@
 const mongoose = require('mongoose');
 
 const destinationSchema = new mongoose.Schema({
-  userId: {
-    type: String,
-    required: true,
-    index: true
-  },
-  travelId: {
-    type: mongoose.Schema.Types.ObjectId,
-    required: true,
-    ref: 'Travel',
-    index: true
-  },
+
   name: {
     type: String,
     required: true,
@@ -57,6 +47,63 @@ const destinationSchema = new mongoose.Schema({
   updatedAt: {
     type: Date,
     default: Date.now
+  },
+  // Places Feature Fields
+  category: {
+    type: String,
+    enum: ['temple', 'beach', 'mountain', 'historical', 'wildlife', 'city', 'forest', 'park', 'waterfall', 'garden', 'food'],
+    default: null,
+    index: true
+  },
+  description: {
+    type: String,
+    default: null
+  },
+  address: {
+    type: String,
+    default: null
+  },
+  province: {
+    type: String,
+    default: null
+  },
+  googleMapsUrl: {
+    type: String,
+    default: null
+  },
+  rating: {
+    average: { type: Number, default: 0, min: 0, max: 5 },
+    reviewCount: { type: Number, default: 0 }
+  },
+  photos: {
+    type: [String],
+    default: []
+  },
+  accessibility: {
+    season: String,
+    bestTime: String,
+    difficulty: String,
+    estimatedDuration: String,
+    entryFee: String,
+    wheelchairAccessible: Boolean
+  },
+  tags: [String],
+  isSystemPlace: {
+    type: Boolean,
+    default: false,
+    index: true
+  },
+  // Modified required fields to allow system places
+  userId: {
+    type: String,
+    required: function () { return !this.isSystemPlace; },
+    index: true
+  },
+  travelId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Travel',
+    required: function () { return !this.isSystemPlace; },
+    index: true
   }
 });
 
@@ -67,7 +114,7 @@ destinationSchema.index({ userId: 1, travelId: 1 });
 destinationSchema.index({ location: '2dsphere' });
 
 // Update timestamp on save and sync location from lat/lng
-destinationSchema.pre('save', function(next) {
+destinationSchema.pre('save', function (next) {
   this.updatedAt = Date.now();
   if (this.isModified('latitude') || this.isModified('longitude')) {
     this.location = {
