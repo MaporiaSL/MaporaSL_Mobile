@@ -263,12 +263,92 @@ async function deleteAlbum(req, res) {
   }
 }
 
+/**
+ * Find an album by location name or create one if it doesn't exist
+ * POST /api/albums/find-or-create
+ * Body: { locationName: string, districtId?: string, provinceId?: string }
+ */
+async function findOrCreateByLocation(req, res) {
+  try {
+    const userId = req.userId;
+    const { locationName, districtId, provinceId } = req.body;
+
+    if (!locationName) {
+      return res.status(400).json({ error: 'Location name is required' });
+    }
+
+    // Normalize the location name (capitalize first letter of each word)
+    const normalizedName = locationName
+      .trim()
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ');
+
+    // Try to find existing album by name for this user
+    let album = await Album.findOne({ 
+      userId, 
+      name: { $regex: new RegExp(`^${normalizedName}$`, 'i') }
+    });
+
+    if (album) {
+      // Return existing album
+      return res.status(200).json({
+        message: 'Album found',
+        created: false,
+        album: {
+          id: album._id,
+          name: album.name,
+          description: album.description,
+          coverPhotoUrl: album.coverPhotoUrl,
+          tags: album.tags,
+          districtId: album.districtId,
+          provinceId: album.provinceId,
+          photoCount: album.photos.length,
+          createdAt: album.createdAt
+        }
+      });
+    }
+
+    // Create new album for this location
+    album = new Album({
+      userId,
+      name: normalizedName,
+      description: `Photos taken in ${normalizedName}`,
+      tags: ['location', normalizedName.toLowerCase()],
+      districtId: districtId || null,
+      provinceId: provinceId || null
+    });
+
+    await album.save();
+
+    res.status(201).json({
+      message: 'Album created',
+      created: true,
+      album: {
+        id: album._id,
+        name: album.name,
+        description: album.description,
+        coverPhotoUrl: null,
+        tags: album.tags,
+        districtId: album.districtId,
+        provinceId: album.provinceId,
+        photoCount: 0,
+        createdAt: album.createdAt
+      }
+    });
+  } catch (error) {
+    console.error('Find or create album error:', error);
+    res.status(500).json({ error: 'Failed to find or create album' });
+  }
+}
+
 module.exports = {
   createAlbum,
   getAlbums,
   getAlbum,
   updateAlbum,
   deleteAlbum,
+  findOrCreateByLocation, 
   getAlbumStats
 };
 
