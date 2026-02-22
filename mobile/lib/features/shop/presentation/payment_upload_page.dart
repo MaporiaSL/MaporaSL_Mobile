@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import '../models/real_store_models.dart';
-import '../providers/real_store_providers.dart';
 import '../data/real_store_api.dart';
 
 class PaymentUploadPage extends ConsumerStatefulWidget {
