@@ -5,7 +5,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import '../data/services/album_service.dart';
 import '../data/models/album_model.dart';
 import 'camera_page.dart';
-import 'album_detail_page.dart';
+//import 'album_detail_page.dart';
 
 /// Main Album page - shows all albums with camera button
 class AlbumPage extends StatefulWidget {
@@ -158,10 +158,10 @@ class _AlbumPageState extends State<AlbumPage> {
   }
 
   void _openAlbum(AlbumModel album) {
-    Navigator.push(
+   /* Navigator.push(
       context,
       MaterialPageRoute(builder: (_) => AlbumDetailPage(album: album)),
-    ).then((_) => _loadAlbums());
+    ).then((_) => _loadAlbums());*/
   }
 
   @override
