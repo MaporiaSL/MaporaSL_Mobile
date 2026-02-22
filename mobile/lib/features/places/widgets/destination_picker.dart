@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import '../../../core/services/google_places_service.dart';
 import '../data/places_repository.dart';
 import '../models/place.dart';
 
@@ -16,10 +15,8 @@ class DestinationPicker extends StatefulWidget {
 
 class _DestinationPickerState extends State<DestinationPicker> {
   final PlacesRepository _repository = PlacesRepository();
-  final GooglePlacesService _googleService = GooglePlacesService();
   final SearchController _searchController = SearchController();
   String _currentQuery = '';
-
   Future<Iterable<Widget>> _searchPlaces(BuildContext context, String query) async {
     if (query.isEmpty) return const Iterable<Widget>.empty();
     
@@ -29,101 +26,42 @@ class _DestinationPickerState extends State<DestinationPicker> {
     if (_currentQuery != query) return const Iterable<Widget>.empty();
 
     try {
-      print('DEBUG: [DestinationPicker] Starting search for: "$query"');
-      final hasKey = _googleService.apiKey != null || 
-        (dotenv.env['GOOGLE_MAPS_API_KEY'] != null && 
-         dotenv.env['GOOGLE_MAPS_API_KEY'] != 'your_google_maps_api_key_here');
+      print('DEBUG: [DestinationPicker] Searching local database for: "$query"');
 
-      print('DEBUG: [DestinationPicker] API Key Configured: $hasKey');
-
-      // Fetch from Google and internal DB in parallel
-      final results = await Future.wait([
-        _googleService.getSuggestions(query).timeout(const Duration(seconds: 5), onTimeout: () {
-          print('DEBUG: [DestinationPicker] Google Places request timed out');
-          return <GooglePlaceSuggestion>[];
-        }),
-        _repository.getPlaces(search: query, limit: 3).timeout(const Duration(seconds: 3), onTimeout: () {
+      // Fetch from internal DB (now contains 1200+ places)
+      final internalPlaces = await _repository.getPlaces(search: query, limit: 10).timeout(
+        const Duration(seconds: 5), 
+        onTimeout: () {
           print('DEBUG: [DestinationPicker] Local DB request timed out');
           return <Place>[];
-        }).catchError((e) {
-          print('DEBUG: [DestinationPicker] Local DB Error: $e');
-          return <Place>[];
-        }),
-      ]);
-
-      final googleSuggestions = results[0] as List<GooglePlaceSuggestion>;
-      final internalPlaces = results[1] as List<Place>;
+        },
+      ).catchError((e) {
+        print('DEBUG: [DestinationPicker] Local DB Error: $e');
+        return <Place>[];
+      });
       
-      print('DEBUG: [DestinationPicker] Results - Google: ${googleSuggestions.length}, Local: ${internalPlaces.length}');
+      print('DEBUG: [DestinationPicker] Found ${internalPlaces.length} results');
 
       final List<Widget> items = [];
 
-      if (!hasKey) {
-        items.add(Container(
-          padding: const EdgeInsets.all(12),
-          margin: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Colors.orange.shade50,
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: Colors.orange.shade200),
-          ),
-          child: Row(
-            children: [
-              Icon(Icons.warning_amber_rounded, color: Colors.orange.shade800),
-              const SizedBox(width: 12),
-              const Expanded(
-                child: Text(
-                  'Google Maps API key not configured in .env',
-                  style: TextStyle(fontSize: 12, color: Colors.black87),
-                ),
-              ),
-            ],
-          ),
-        ));
-      }
-
-      // Google Results - Primary
-      if (googleSuggestions.isNotEmpty) {
+      if (internalPlaces.isNotEmpty) {
         items.add(const Padding(
           padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
           child: Row(
             children: [
-              Icon(Icons.map, size: 16, color: Colors.blue),
+              Icon(Icons.location_on, size: 16, color: Colors.blue),
               SizedBox(width: 8),
-              Text('GOOGLE MAPS RESULTS', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11, letterSpacing: 0.5, color: Colors.blueGrey)),
+              Text('SUGGESTED DESTINATIONS', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11, letterSpacing: 0.5, color: Colors.blueGrey)),
             ],
           ),
         ));
-        items.addAll(googleSuggestions.map((suggestion) => ListTile(
-          leading: const Icon(Icons.place, color: Colors.blue),
-          title: Text(suggestion.description),
-          onTap: () {
-            print('DEBUG: [DestinationPicker] Selected Google suggestion: ${suggestion.description}');
-            widget.onDestinationSelected(suggestion.description);
-            _searchController.closeView(suggestion.description);
-          },
-        )));
-      }
-
-      // Curated Results - Secondary
-      if (internalPlaces.isNotEmpty) {
-        if (items.isNotEmpty) items.add(const Divider(height: 32));
-        items.add(const Padding(
-          padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
-          child: Row(
-            children: [
-              Icon(Icons.star, size: 16, color: Colors.amber),
-              SizedBox(width: 8),
-              Text('CURATED ADVENTURES', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11, letterSpacing: 0.5, color: Colors.blueGrey)),
-            ],
-          ),
-        ));
+        
         items.addAll(internalPlaces.map((place) => ListTile(
-          leading: const Icon(Icons.star, color: Colors.amber),
+          leading: const Icon(Icons.place, color: Colors.blue),
           title: Text(place.name),
           subtitle: Text('${place.district ?? ""}, ${place.province ?? ""}'),
           onTap: () {
-            print('DEBUG: [DestinationPicker] Selected local place: ${place.name}');
+            print('DEBUG: [DestinationPicker] Selected place: ${place.name}');
             widget.onDestinationSelected(place.name);
             _searchController.closeView(place.name);
           },
