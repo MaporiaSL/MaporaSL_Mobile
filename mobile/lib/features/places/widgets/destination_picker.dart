@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import '../../../core/services/google_places_service.dart';
 import '../data/places_repository.dart';
 import '../models/place.dart';
 
@@ -14,50 +16,140 @@ class DestinationPicker extends StatefulWidget {
 
 class _DestinationPickerState extends State<DestinationPicker> {
   final PlacesRepository _repository = PlacesRepository();
+  final GooglePlacesService _googleService = GooglePlacesService();
   final SearchController _searchController = SearchController();
-  Timer? _debounce;
+  String _currentQuery = '';
 
   Future<Iterable<Widget>> _searchPlaces(BuildContext context, String query) async {
     if (query.isEmpty) return const Iterable<Widget>.empty();
+    
+    _currentQuery = query;
+    // Simple debounce: wait a bit and check if query is still the same
+    await Future.delayed(const Duration(milliseconds: 300));
+    if (_currentQuery != query) return const Iterable<Widget>.empty();
 
-    // Debounce to avoid too many API calls
-    if (_debounce?.isActive ?? false) _debounce!.cancel();
-    
-    final completer = Completer<Iterable<Widget>>();
-    
-    _debounce = Timer(const Duration(milliseconds: 300), () async {
-      try {
-        final places = await _repository.getPlaces(search: query, limit: 10);
-        
-        final suggestions = places.map((place) => ListTile(
+    try {
+      print('Searching for: $query');
+      final hasKey = _googleService.apiKey != null || 
+        (dotenv.env['GOOGLE_MAPS_API_KEY'] != null && 
+         dotenv.env['GOOGLE_MAPS_API_KEY'] != 'your_google_maps_api_key_here');
+
+      // Fetch from Google and internal DB in parallel
+      final results = await Future.wait([
+        _googleService.getSuggestions(query),
+        _repository.getPlaces(search: query, limit: 3).catchError((e) {
+          print('Local DB Error: $e');
+          return <Place>[];
+        }),
+      ]);
+
+      final googleSuggestions = results[0] as List<GooglePlaceSuggestion>;
+      final internalPlaces = results[1] as List<Place>;
+      
+      print('Google results: ${googleSuggestions.length}, Local results: ${internalPlaces.length}');
+
+      final List<Widget> items = [];
+
+      if (!hasKey) {
+        items.add(Container(
+          padding: const EdgeInsets.all(12),
+          margin: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.orange.shade50,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: Colors.orange.shade200),
+          ),
+          child: Row(
+            children: [
+              Icon(Icons.warning_amber_rounded, color: Colors.orange.shade800),
+              const SizedBox(width: 12),
+              const Expanded(
+                child: Text(
+                  'Google Maps API key not configured in .env',
+                  style: TextStyle(fontSize: 12, color: Colors.black87),
+                ),
+              ),
+            ],
+          ),
+        ));
+      }
+
+      // Google Results - Primary
+      if (googleSuggestions.isNotEmpty) {
+        items.add(const Padding(
+          padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
+          child: Row(
+            children: [
+              Icon(Icons.map, size: 16, color: Colors.blue),
+              SizedBox(width: 8),
+              Text('GOOGLE MAPS RESULTS', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11, letterSpacing: 0.5, color: Colors.blueGrey)),
+            ],
+          ),
+        ));
+        items.addAll(googleSuggestions.map((suggestion) => ListTile(
           leading: const Icon(Icons.place, color: Colors.blue),
+          title: Text(suggestion.description),
+          onTap: () {
+            widget.onDestinationSelected(suggestion.description);
+            _searchController.closeView(suggestion.description);
+          },
+        )));
+      }
+
+      // Curated Results - Secondary
+      if (internalPlaces.isNotEmpty) {
+        if (items.isNotEmpty) items.add(const Divider(height: 32));
+        items.add(const Padding(
+          padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
+          child: Row(
+            children: [
+              Icon(Icons.star, size: 16, color: Colors.amber),
+              SizedBox(width: 8),
+              Text('CURATED ADVENTURES', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11, letterSpacing: 0.5, color: Colors.blueGrey)),
+            ],
+          ),
+        ));
+        items.addAll(internalPlaces.map((place) => ListTile(
+          leading: const Icon(Icons.star, color: Colors.amber),
           title: Text(place.name),
           subtitle: Text('${place.district ?? ""}, ${place.province ?? ""}'),
           onTap: () {
             widget.onDestinationSelected(place.name);
             _searchController.closeView(place.name);
           },
-        ));
-        
-        completer.complete(suggestions);
-      } catch (e) {
-        completer.complete([
-          ListTile(
-            leading: const Icon(Icons.error, color: Colors.red),
-            title: const Text('Error loading suggestions'),
-            subtitle: Text(e.toString()),
-            isThreeLine: true,
-          )
-        ]);
+        )));
       }
-    });
 
-    return await completer.future;
+      if (items.isEmpty) {
+        items.add(const Center(
+          child: Padding(
+            padding: EdgeInsets.all(32.0),
+            child: Column(
+              children: [
+                Icon(Icons.search_off, size: 48, color: Colors.grey),
+                SizedBox(height: 16),
+                Text('No places found', style: TextStyle(color: Colors.grey)),
+              ],
+            ),
+          ),
+        ));
+      }
+      
+      return items;
+    } catch (e) {
+      print('Search Error: $e');
+      return [
+        ListTile(
+          leading: const Icon(Icons.error, color: Colors.red),
+          title: const Text('Error loading suggestions'),
+          subtitle: Text(e.toString()),
+        )
+      ];
+    }
   }
 
   @override
   void dispose() {
-    _debounce?.cancel();
     _searchController.dispose();
     super.dispose();
   }
