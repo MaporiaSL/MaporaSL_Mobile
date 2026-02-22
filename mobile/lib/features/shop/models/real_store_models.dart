@@ -12,6 +12,7 @@ class RealStoreItem {
     required this.category,
     required this.priceLkr,
     required this.thumbnail,
+    required this.stockAvailable,
   });
 
   final String itemId;
@@ -22,9 +23,11 @@ class RealStoreItem {
   final String category;
   final int priceLkr;
   final String thumbnail;
+  final int stockAvailable;
 
   factory RealStoreItem.fromJson(Map<String, dynamic> json) {
     final price = json['price'] as Map<String, dynamic>? ?? <String, dynamic>{};
+    final stock = json['stock'] as Map<String, dynamic>? ?? <String, dynamic>{};
     String thumbnail = json['thumbnail'] as String? ?? '';
     if (thumbnail.startsWith('/uploads')) {
       thumbnail = '${AppConfig.apiBaseUrl}$thumbnail';
@@ -38,6 +41,7 @@ class RealStoreItem {
       category: json['category'] as String? ?? '',
       priceLkr: (price['lkr'] as num? ?? 0).toInt(),
       thumbnail: thumbnail,
+      stockAvailable: (stock['available'] as num? ?? 0).toInt(),
     );
   }
 }
