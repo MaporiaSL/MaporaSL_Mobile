@@ -26,6 +26,9 @@ router.patch('/:albumId', albumController.updateAlbum);
 // DELETE /api/albums/:albumId - delete album
 router.delete('/:albumId', albumController.deleteAlbum);
 
+// POST /api/albums/find-or-create - find album by location or create new one
+router.post('/find-or-create', albumController.findOrCreateByLocation);
+
 // Binding the photo related routes to Album routes
 // /api/albums/:albumId/photos/* - album photos
 router.use('/:albumId/photos', photoRoutes);
