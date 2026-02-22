@@ -29,16 +29,24 @@ class _DestinationPickerState extends State<DestinationPicker> {
     if (_currentQuery != query) return const Iterable<Widget>.empty();
 
     try {
-      print('Searching for: $query');
+      print('DEBUG: [DestinationPicker] Starting search for: "$query"');
       final hasKey = _googleService.apiKey != null || 
         (dotenv.env['GOOGLE_MAPS_API_KEY'] != null && 
          dotenv.env['GOOGLE_MAPS_API_KEY'] != 'your_google_maps_api_key_here');
 
+      print('DEBUG: [DestinationPicker] API Key Configured: $hasKey');
+
       // Fetch from Google and internal DB in parallel
       final results = await Future.wait([
-        _googleService.getSuggestions(query),
-        _repository.getPlaces(search: query, limit: 3).catchError((e) {
-          print('Local DB Error: $e');
+        _googleService.getSuggestions(query).timeout(const Duration(seconds: 5), onTimeout: () {
+          print('DEBUG: [DestinationPicker] Google Places request timed out');
+          return <GooglePlaceSuggestion>[];
+        }),
+        _repository.getPlaces(search: query, limit: 3).timeout(const Duration(seconds: 3), onTimeout: () {
+          print('DEBUG: [DestinationPicker] Local DB request timed out');
+          return <Place>[];
+        }).catchError((e) {
+          print('DEBUG: [DestinationPicker] Local DB Error: $e');
           return <Place>[];
         }),
       ]);
@@ -46,7 +54,7 @@ class _DestinationPickerState extends State<DestinationPicker> {
       final googleSuggestions = results[0] as List<GooglePlaceSuggestion>;
       final internalPlaces = results[1] as List<Place>;
       
-      print('Google results: ${googleSuggestions.length}, Local results: ${internalPlaces.length}');
+      print('DEBUG: [DestinationPicker] Results - Google: ${googleSuggestions.length}, Local: ${internalPlaces.length}');
 
       final List<Widget> items = [];
 
@@ -90,6 +98,7 @@ class _DestinationPickerState extends State<DestinationPicker> {
           leading: const Icon(Icons.place, color: Colors.blue),
           title: Text(suggestion.description),
           onTap: () {
+            print('DEBUG: [DestinationPicker] Selected Google suggestion: ${suggestion.description}');
             widget.onDestinationSelected(suggestion.description);
             _searchController.closeView(suggestion.description);
           },
@@ -114,6 +123,7 @@ class _DestinationPickerState extends State<DestinationPicker> {
           title: Text(place.name),
           subtitle: Text('${place.district ?? ""}, ${place.province ?? ""}'),
           onTap: () {
+            print('DEBUG: [DestinationPicker] Selected local place: ${place.name}');
             widget.onDestinationSelected(place.name);
             _searchController.closeView(place.name);
           },
@@ -121,6 +131,7 @@ class _DestinationPickerState extends State<DestinationPicker> {
       }
 
       if (items.isEmpty) {
+        print('DEBUG: [DestinationPicker] No results found for "$query"');
         items.add(const Center(
           child: Padding(
             padding: EdgeInsets.all(32.0),
@@ -137,7 +148,7 @@ class _DestinationPickerState extends State<DestinationPicker> {
       
       return items;
     } catch (e) {
-      print('Search Error: $e');
+      print('DEBUG: [DestinationPicker] Search Critical Error: $e');
       return [
         ListTile(
           leading: const Icon(Icons.error, color: Colors.red),

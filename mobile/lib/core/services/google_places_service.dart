@@ -23,23 +23,30 @@ class GooglePlacesService {
     };
 
     final uri = Uri.https('maps.googleapis.com', '/maps/api/place/autocomplete/json', queryParameters);
+    print('Google Places Request URI: $uri');
     
     try {
-      final response = await http.get(uri);
+      final response = await http.get(uri).timeout(const Duration(seconds: 5));
+      print('Google Places Response Code: ${response.statusCode}');
+      
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
+        print('Google Places Response Status: ${data['status']}');
+        
         if (data['status'] == 'OK') {
           final predictions = data['predictions'] as List;
           return predictions.map((p) => GooglePlaceSuggestion.fromJson(p)).toList();
         } else if (data['status'] == 'REQUEST_DENIED') {
           print('Google Places Error: Request Denied - ${data['error_message']}');
+        } else if (data['status'] == 'ZERO_RESULTS') {
+          print('Google Places: No results found for "$input"');
         } else {
           print('Google Places Status: ${data['status']}');
         }
       }
       return [];
     } catch (e) {
-      print('Google Places Error: $e');
+      print('Google Places Exception: $e');
       return [];
     }
   }
