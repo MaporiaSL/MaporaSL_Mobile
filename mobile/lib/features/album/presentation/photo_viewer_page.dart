@@ -48,6 +48,16 @@ class _PhotoViewerPageState extends State<PhotoViewerPage> {
             child: CachedNetworkImage(
               imageUrl: photo.url,
               fit: BoxFit.contain,
+              placeholder: (_, __) => const Center(
+                child: CircularProgressIndicator(color: Colors.white),
+              ),
+              errorWidget: (_, __, ___) => const Center(
+                child: Icon(
+                  Icons.broken_image,
+                  size: 64,
+                  color: Colors.white54,
+                ),
+              ),
             ),
           );
         },
