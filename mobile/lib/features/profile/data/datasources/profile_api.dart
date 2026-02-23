@@ -9,7 +9,7 @@ class ProfileApi {
   /// GET /api/profile/:userId
   Future<Map<String, dynamic>> getUserProfile(String userId) async {
     try {
-      final response = await dio.get('/profile/$userId');
+      final response = await dio.get('/api/profile/$userId');
       if (response.statusCode == 200) {
         return response.data;
       }
@@ -23,7 +23,7 @@ class ProfileApi {
   /// GET /api/profile/:userId/contributions
   Future<List<dynamic>> getUserContributions(String userId) async {
     try {
-      final response = await dio.get('/profile/$userId/contributions');
+      final response = await dio.get('/api/profile/$userId/contributions');
       if (response.statusCode == 200) {
         return response.data['contributions'] ?? [];
       }
@@ -47,7 +47,7 @@ class ProfileApi {
       };
 
       final response = await dio.post(
-        '/profile/$userId',
+        '/api/profile/$userId',
         data: payload,
       );
 
