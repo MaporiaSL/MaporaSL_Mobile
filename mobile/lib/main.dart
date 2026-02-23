@@ -11,8 +11,13 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
 
-  // Load environment variables
-  await dotenv.load(fileName: ".env");
+  // Load environment variables from root directory
+  try {
+    await dotenv.load(fileName: "../.env");
+  } catch (e) {
+    // .env file is optional
+    print('Note: .env file not found, using default config');
+  }
 
   // Initialize Mapbox access token
   MapboxOptions.setAccessToken(
