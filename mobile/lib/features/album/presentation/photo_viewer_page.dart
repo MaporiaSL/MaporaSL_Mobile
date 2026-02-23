@@ -36,7 +36,19 @@ class _PhotoViewerPageState extends State<PhotoViewerPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      body: Container(),
+      body: PageView.builder(
+        controller: _pageController,
+        itemCount: widget.photos.length,
+        onPageChanged: (index) => setState(() => _currentIndex = index),
+        itemBuilder: (_, index) {
+          return Center(
+            child: Text(
+              'Photo $index',
+              style: const TextStyle(color: Colors.white),
+            ),
+          );
+        },
+      ),
     );
   }
 }
