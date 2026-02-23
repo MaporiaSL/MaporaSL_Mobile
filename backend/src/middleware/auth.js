@@ -7,7 +7,7 @@ const isDevelopment = process.env.NODE_ENV !== 'production';
 const checkJwt = isDevelopment
   ? (req, res, next) => {
       // In development, create a mock auth object
-      req.auth = { uid: 'dev-user-123' };
+      req.auth = { uid: 'test-user-123' };
       next();
     }
   : async (req, res, next) => {
