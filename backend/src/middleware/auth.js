@@ -1,15 +1,11 @@
 const { admin } = require('../config/firebase');
 
 // Validates Firebase ID token and attaches payload to req.auth
-const checkJwt = async (req, res, next) => {
-  try {
-    const authHeader = req.headers.authorization || '';
-    const token = authHeader.startsWith('Bearer ')
-      ? authHeader.slice(7)
-      : null;
-
-    if (!token) {
-      return res.status(401).json({ error: 'Unauthorized: Missing Bearer token' });
+const checkJwt = isDevelopment
+  ? (req, res, next) => {
+      // In development, create a mock auth object
+      req.auth = { uid: 'test-user-123' };
+      next();
     }
 
     const decoded = await admin.auth().verifyIdToken(token);
