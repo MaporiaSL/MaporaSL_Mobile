@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../exploration/data/models/exploration_models.dart';
+import '../../exploration/providers/exploration_provider.dart';
 
-class QuestCard extends StatelessWidget {
+class QuestCard extends ConsumerWidget {
   final DistrictAssignment assignment;
 
   const QuestCard({
@@ -10,7 +12,7 @@ class QuestCard extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final progress = assignment.assignedCount > 0
         ? assignment.visitedCount / assignment.assignedCount
         : 0.0;
@@ -37,7 +39,7 @@ class QuestCard extends StatelessWidget {
         trailing: isUnlocked
             ? const Icon(Icons.verified, color: Colors.green)
             : Text('${assignment.visitedCount}/${assignment.assignedCount}'),
-        children: assignment.locations.map((loc) => _buildLocationTile(context, loc)).toList(),
+        children: assignment.locations.map((loc) => _buildLocationTile(context, ref, loc)).toList(),
       ),
     );
   }
@@ -50,7 +52,7 @@ class QuestCard extends StatelessWidget {
         shape: BoxShape.circle,
       ),
       child: Icon(
-        isUnlocked ? Icons.map : Icons.explore_outlined,
+        isUnlocked ? Icons.stars : Icons.explore_outlined,
         color: isUnlocked ? Colors.green : Colors.orange,
       ),
     );
@@ -70,11 +72,11 @@ class QuestCard extends StatelessWidget {
     );
   }
 
-  Widget _buildLocationTile(BuildContext context, ExplorationLocation location) {
+  Widget _buildLocationTile(BuildContext context, WidgetRef ref, ExplorationLocation location) {
     return ListTile(
       dense: true,
       leading: Icon(
-        location.visited ? Icons.check_circle : Icons.radio_button_unchecked,
+        location.visited ? Icons.check_circle : Icons.location_on_outlined,
         color: location.visited ? Colors.green : Colors.grey,
         size: 20,
       ),
@@ -86,6 +88,14 @@ class QuestCard extends StatelessWidget {
         ),
       ),
       subtitle: location.type.isNotEmpty ? Text(location.type) : null,
+      trailing: !location.visited
+          ? TextButton(
+              onPressed: () {
+                ref.read(explorationProvider.notifier).verifyLocation(location);
+              },
+              child: const Text('Visit'),
+            )
+          : null,
     );
   }
 }

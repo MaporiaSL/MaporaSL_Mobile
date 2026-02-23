@@ -42,7 +42,7 @@ class _MemoryLanePageState extends ConsumerState<MemoryLanePage>
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Memory Lane'),
+        title: const Text('Quests & Trips'),
         bottom: TabBar(
           controller: _tabController,
           tabs: const [
