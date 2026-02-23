@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const UnlockLocation = require('../models/UnlockLocation');
+const Place = require('../models/Place');
 const UserDistrictAssignment = require('../models/UserDistrictAssignment');
 const User = require('../models/User');
 
@@ -137,35 +138,66 @@ async function updateExplorationProgress(userId) {
 }
 
 async function assignExplorationForUser(userId, hometownDistrict, options = {}) {
-  const locations = await UnlockLocation.find({ isActive: true });
-  if (!locations.length) {
-    throw new Error('Unlock location catalog is empty');
+  // Try to get places from the new Place collection first
+  // Falls back to UnlockLocation for backward compatibility
+  
+  let placesByDistrict = new Map();
+  let hometownEntry = null;
+  
+  // Try to use the new Place model (ever-growing list)
+  const places = await Place.find({ isActive: true });
+  
+  if (places.length > 0) {
+    // Use dynamic Place collection
+    const districtMap = new Map();
+    places.forEach((place) => {
+      const key = normalizeKey(place.district);
+      if (!districtMap.has(key)) {
+        districtMap.set(key, {
+          district: place.district,
+          province: place.province,
+          placeIds: [],
+        });
+      }
+      districtMap.get(key).placeIds.push(place._id);
+    });
+    
+    placesByDistrict = districtMap;
+    const hometownKey = normalizeKey(hometownDistrict);
+    hometownEntry = districtMap.get(hometownKey);
+  } else {
+    // Fallback to UnlockLocation for backward compatibility
+    const locations = await UnlockLocation.find({ isActive: true });
+    if (!locations.length) {
+      throw new Error('No places found in either Place or UnlockLocation collections');
+    }
+    
+    const districtMap = buildDistrictMap(locations);
+    placesByDistrict = districtMap;
+    const hometownKey = normalizeKey(hometownDistrict);
+    hometownEntry = districtMap.get(hometownKey);
   }
-
-  const districtMap = buildDistrictMap(locations);
-  const hometownKey = normalizeKey(hometownDistrict);
-  const hometownEntry = districtMap.get(hometownKey);
-
+  
   if (!hometownEntry) {
-    throw new Error('Hometown district not found in catalog');
+    throw new Error('Hometown district not found in places catalog');
   }
 
   const hometownProvinceKey = normalizeKey(hometownEntry.province);
-
   const assignments = [];
   let totalAssigned = 0;
 
-  districtMap.forEach((entry, districtKey) => {
+  placesByDistrict.forEach((entry, districtKey) => {
     const tier = resolveTier(
       districtKey,
       normalizeKey(entry.province),
-      hometownKey,
+      normalizeKey(hometownDistrict),
       hometownProvinceKey
     );
     const range = COUNT_TIERS[tier];
-    const maxPossible = entry.locationIds.length;
+    const locationIds = entry.locationIds || entry.placeIds;
+    const maxPossible = locationIds.length;
     const count = Math.min(getRandomInt(range.min, range.max), maxPossible);
-    const selected = shuffle(entry.locationIds).slice(0, count);
+    const selected = shuffle(locationIds).slice(0, count);
 
     totalAssigned += selected.length;
 
@@ -281,17 +313,43 @@ async function seedUnlockLocations(req, res) {
 
 async function getAssignments(req, res) {
   try {
-    const assignments = await UserDistrictAssignment.find({
+    let assignments = await UserDistrictAssignment.find({
       userId: req.userId,
     });
+
+    // If user has no assignments yet, initialize them
+    if (assignments.length === 0) {
+      const user = await User.findOne({ auth0Id: req.userId });
+      if (!user || !user.hometownDistrict) {
+        return res.status(400).json({
+          error: 'User must set hometown district before starting exploration',
+        });
+      }
+
+      // Create assignments for this user
+      await assignExplorationForUser(req.userId, user.hometownDistrict);
+      
+      // Fetch the newly created assignments
+      assignments = await UserDistrictAssignment.find({
+        userId: req.userId,
+      });
+    }
 
     const locationIds = assignments.flatMap(
       (assignment) => assignment.assignedLocationIds
     );
 
-    const locations = await UnlockLocation.find({
+    // Try to get locations from the new Place collection first
+    let locations = await Place.find({
       _id: { $in: locationIds },
     });
+
+    // If no places found, fall back to UnlockLocation
+    if (locations.length === 0) {
+      locations = await UnlockLocation.find({
+        _id: { $in: locationIds },
+      });
+    }
 
     const locationMap = new Map(
       locations.map((location) => [location._id.toString(), location])
@@ -308,9 +366,12 @@ async function getAssignments(req, res) {
           return {
             id: location._id,
             name: location.name,
-            type: location.type,
+            type: location.type || location.category || 'attraction',
             latitude: location.latitude,
             longitude: location.longitude,
+            description: location.description || null,
+            category: location.category || null,
+            photos: location.photos || [],
             visited,
           };
         })
@@ -354,6 +415,45 @@ async function getDistricts(req, res) {
   }
 }
 
+async function initializeExploration(req, res) {
+  try {
+    const { hometownDistrict } = req.body;
+
+    if (!hometownDistrict) {
+      return res.status(400).json({ error: 'hometownDistrict is required' });
+    }
+
+    // Check if user already has assignments
+    const existingAssignments = await UserDistrictAssignment.findOne({
+      userId: req.userId,
+    });
+
+    if (existingAssignments) {
+      return res.status(400).json({
+        error: 'Exploration already initialized for this user',
+      });
+    }
+
+    // Update user hometown
+    await User.findOneAndUpdate(
+      { auth0Id: req.userId },
+      { hometownDistrict },
+      { new: true },
+    );
+
+    // Create assignments
+    await assignExplorationForUser(req.userId, hometownDistrict);
+
+    res.status(200).json({
+      message: 'Exploration initialized',
+      hometownDistrict,
+    });
+  } catch (error) {
+    console.error('Initialize exploration error:', error);
+    res.status(500).json({ error: error.message || 'Failed to initialize exploration' });
+  }
+}
+
 async function visitLocation(req, res) {
   try {
     const { locationId, samples } = req.body;
@@ -384,7 +484,12 @@ async function visitLocation(req, res) {
       }
     }
 
-    const location = await UnlockLocation.findById(locationId);
+    // Find location from Place collection first, then UnlockLocation
+    let location = await Place.findById(locationId);
+    if (!location) {
+      location = await UnlockLocation.findById(locationId);
+    }
+
     if (!location) {
       return res.status(404).json({ error: 'Location not found' });
     }
@@ -463,13 +568,23 @@ async function visitLocation(req, res) {
 
     await assignment.save();
 
-    const hometownLocation = await UnlockLocation.findOne({
+    const hometownLocation = await Place.findOne({
       district: user.hometownDistrict,
       isActive: true,
     });
-    const hometownProvinceKey = normalizeKey(
-      hometownLocation ? hometownLocation.province : null
-    );
+    
+    let hometownProvince = null;
+    if (!hometownLocation) {
+      const unlockLocation = await UnlockLocation.findOne({
+        district: user.hometownDistrict,
+        isActive: true,
+      });
+      hometownProvince = unlockLocation?.province;
+    } else {
+      hometownProvince = hometownLocation.province;
+    }
+
+    const hometownProvinceKey = normalizeKey(hometownProvince);
 
     const tier = resolveTier(
       normalizeKey(location.district),
@@ -594,7 +709,12 @@ async function adminOverrideVisit(req, res) {
         .json({ error: 'userId, locationId, and reason are required' });
     }
 
-    const location = await UnlockLocation.findById(locationId);
+    // Find location from Place collection first, then UnlockLocation
+    let location = await Place.findById(locationId);
+    if (!location) {
+      location = await UnlockLocation.findById(locationId);
+    }
+
     if (!location) {
       return res.status(404).json({ error: 'Location not found' });
     }
@@ -647,6 +767,7 @@ module.exports = {
   assignExplorationForUser,
   getAssignments,
   getDistricts,
+  initializeExploration,
   visitLocation,
   rerollAssignments,
   adminOverrideVisit,
