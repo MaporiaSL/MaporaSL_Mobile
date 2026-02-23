@@ -19,6 +19,7 @@ const preplannedTripsRoutes = require('./routes/preplannedTripsRoutes');
 const albumRoutes = require('./routes/albumRoute');
 const explorationRoutes = require('./routes/explorationRoutes');
 const explorationAdminRoutes = require('./routes/explorationAdminRoutes');
+const profileRoutes = require('./routes/profileRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -55,6 +56,10 @@ app.use('/api/districts', userRoutes);
 
 // Album and photo routes (JWT protected)
 app.use('/api/albums', albumRoutes);
+
+// Profile routes (JWT protected)
+app.use('/api/profile', profileRoutes);
+
 // Exploration routes (JWT protected)
 app.use('/api/exploration', explorationRoutes);
 
