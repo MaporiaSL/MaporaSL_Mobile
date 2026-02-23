@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../data/models/photo_model.dart';
 
 class PhotoViewerPage extends StatefulWidget {
@@ -41,10 +42,12 @@ class _PhotoViewerPageState extends State<PhotoViewerPage> {
         itemCount: widget.photos.length,
         onPageChanged: (index) => setState(() => _currentIndex = index),
         itemBuilder: (_, index) {
+          final photo = widget.photos[index];
+
           return Center(
-            child: Text(
-              'Photo $index',
-              style: const TextStyle(color: Colors.white),
+            child: CachedNetworkImage(
+              imageUrl: photo.url,
+              fit: BoxFit.contain,
             ),
           );
         },
