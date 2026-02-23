@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../data/places_repository.dart';
 import '../models/place.dart';
 
@@ -15,49 +16,89 @@ class DestinationPicker extends StatefulWidget {
 class _DestinationPickerState extends State<DestinationPicker> {
   final PlacesRepository _repository = PlacesRepository();
   final SearchController _searchController = SearchController();
-  Timer? _debounce;
-
+  String _currentQuery = '';
   Future<Iterable<Widget>> _searchPlaces(BuildContext context, String query) async {
     if (query.isEmpty) return const Iterable<Widget>.empty();
+    
+    _currentQuery = query;
+    // Simple debounce: wait a bit and check if query is still the same
+    await Future.delayed(const Duration(milliseconds: 300));
+    if (_currentQuery != query) return const Iterable<Widget>.empty();
 
-    // Debounce to avoid too many API calls
-    if (_debounce?.isActive ?? false) _debounce!.cancel();
-    
-    final completer = Completer<Iterable<Widget>>();
-    
-    _debounce = Timer(const Duration(milliseconds: 300), () async {
-      try {
-        final places = await _repository.getPlaces(search: query, limit: 10);
+    try {
+      print('DEBUG: [DestinationPicker] Searching local database for: "$query"');
+
+      // Fetch from internal DB (now contains 1200+ places)
+      final internalPlaces = await _repository.getPlaces(search: query, limit: 10).timeout(
+        const Duration(seconds: 5), 
+        onTimeout: () {
+          print('DEBUG: [DestinationPicker] Local DB request timed out');
+          return <Place>[];
+        },
+      ).catchError((e) {
+        print('DEBUG: [DestinationPicker] Local DB Error: $e');
+        return <Place>[];
+      });
+      
+      print('DEBUG: [DestinationPicker] Found ${internalPlaces.length} results');
+
+      final List<Widget> items = [];
+
+      if (internalPlaces.isNotEmpty) {
+        items.add(const Padding(
+          padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
+          child: Row(
+            children: [
+              Icon(Icons.location_on, size: 16, color: Colors.blue),
+              SizedBox(width: 8),
+              Text('SUGGESTED DESTINATIONS', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11, letterSpacing: 0.5, color: Colors.blueGrey)),
+            ],
+          ),
+        ));
         
-        final suggestions = places.map((place) => ListTile(
+        items.addAll(internalPlaces.map((place) => ListTile(
           leading: const Icon(Icons.place, color: Colors.blue),
           title: Text(place.name),
           subtitle: Text('${place.district ?? ""}, ${place.province ?? ""}'),
           onTap: () {
+            print('DEBUG: [DestinationPicker] Selected place: ${place.name}');
             widget.onDestinationSelected(place.name);
             _searchController.closeView(place.name);
           },
-        ));
-        
-        completer.complete(suggestions);
-      } catch (e) {
-        completer.complete([
-          ListTile(
-            leading: const Icon(Icons.error, color: Colors.red),
-            title: const Text('Error loading suggestions'),
-            subtitle: Text(e.toString()),
-            isThreeLine: true,
-          )
-        ]);
+        )));
       }
-    });
 
-    return await completer.future;
+      if (items.isEmpty) {
+        print('DEBUG: [DestinationPicker] No results found for "$query"');
+        items.add(const Center(
+          child: Padding(
+            padding: EdgeInsets.all(32.0),
+            child: Column(
+              children: [
+                Icon(Icons.search_off, size: 48, color: Colors.grey),
+                SizedBox(height: 16),
+                Text('No places found', style: TextStyle(color: Colors.grey)),
+              ],
+            ),
+          ),
+        ));
+      }
+      
+      return items;
+    } catch (e) {
+      print('DEBUG: [DestinationPicker] Search Critical Error: $e');
+      return [
+        ListTile(
+          leading: const Icon(Icons.error, color: Colors.red),
+          title: const Text('Error loading suggestions'),
+          subtitle: Text(e.toString()),
+        )
+      ];
+    }
   }
 
   @override
   void dispose() {
-    _debounce?.cancel();
     _searchController.dispose();
     super.dispose();
   }
