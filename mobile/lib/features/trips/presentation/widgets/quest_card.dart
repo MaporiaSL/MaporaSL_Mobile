@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../exploration/data/models/exploration_models.dart';
-import '../../exploration/providers/exploration_provider.dart';
+import '../../../exploration/data/models/exploration_models.dart';
+import '../../../exploration/providers/exploration_provider.dart';
 
 class QuestCard extends ConsumerWidget {
   final DistrictAssignment assignment;

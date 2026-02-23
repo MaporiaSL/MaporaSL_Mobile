@@ -7,6 +7,8 @@ import '../../exploration/providers/exploration_provider.dart';
 import '../../exploration/data/models/exploration_models.dart';
 import 'widgets/quest_card.dart';
 import 'providers/trips_provider.dart';
+import 'create_trip_page.dart';
+import 'trip_detail_page.dart';
 
 /// Memory Lane - timeline of user trips with status-based grouping
 class MemoryLanePage extends ConsumerStatefulWidget {
