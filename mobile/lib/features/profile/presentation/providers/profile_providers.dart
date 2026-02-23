@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/config/app_config.dart';
 import '../../../../core/services/auth_interceptor.dart';
@@ -38,54 +37,41 @@ final profileRepositoryProvider = Provider<ProfileRepository>((ref) {
   return ProfileRepository(api: api);
 });
 
-/// Provider for current user ID with debug logging
+/// Provider for current user ID with logging
 final currentUserIdProvider = Provider<String?>((ref) {
   final authService = ref.watch(authServiceProvider);
   final currentUser = authService.currentUser;
   final userId = currentUser?.uid;
-
-  if (kDebugMode) {
-    debugPrint('[DEBUG] Current User ID: $userId');
-    debugPrint('[DEBUG] Current User Email: ${currentUser?.email}');
-  }
   
-  if (userId != null) return userId;
-
-  // Use fallback only when auth bypass is enabled in config.
-  if (AppConfig.authBypass) {
-    return AppConfig.profileFallbackUserId;
-  }
-
-  return null;
+  print('[DEBUG] Current User ID: $userId');
+  print('[DEBUG] Current User Email: ${currentUser?.email}');
+  
+  // DEVELOPMENT ONLY: Use a test user ID if no user is authenticated
+  // Remove this in production!
+  final testUserId = userId ?? 'test-user-123'; // Fallback for testing
+  
+  return testUserId;
 });
 
 /// Provider to fetch user profile
 /// Usage: ref.watch(userProfileProvider)
 final userProfileProvider = FutureProvider<UserProfile?>((ref) async {
   final userId = ref.watch(currentUserIdProvider);
-
-  if (kDebugMode) {
-    debugPrint('[DEBUG] userProfileProvider - userId: $userId');
-  }
+  
+  print('[DEBUG] userProfileProvider - userId: $userId');
   
   if (userId == null) {
-    if (kDebugMode) {
-      debugPrint('[ERROR] userId is null - user not authenticated');
-    }
+    print('[ERROR] userId is null - user not authenticated');
     throw Exception('User not authenticated. Please login first.');
   }
 
   try {
     final repository = ref.watch(profileRepositoryProvider);
     final profile = await repository.getUserProfile(userId);
-    if (kDebugMode) {
-      debugPrint('[DEBUG] Profile loaded successfully: ${profile.name}');
-    }
+    print('[DEBUG] Profile loaded successfully: ${profile.name}');
     return profile;
   } catch (e) {
-    if (kDebugMode) {
-      debugPrint('[ERROR] Failed to load profile: $e');
-    }
+    print('[ERROR] Failed to load profile: $e');
     rethrow;
   }
 });
@@ -101,9 +87,7 @@ final userContributionsProvider = FutureProvider<List<ContributedPlace>>((ref) a
     final repository = ref.watch(profileRepositoryProvider);
     return repository.getUserContributions(userId);
   } catch (e) {
-    if (kDebugMode) {
-      debugPrint('[ERROR] Failed to load contributions: $e');
-    }
+    print('[ERROR] Failed to load contributions: $e');
     return [];
   }
 });

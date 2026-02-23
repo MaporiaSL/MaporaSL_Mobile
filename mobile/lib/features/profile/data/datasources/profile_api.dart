@@ -9,7 +9,7 @@ class ProfileApi {
   /// GET /api/profile/:userId
   Future<Map<String, dynamic>> getUserProfile(String userId) async {
     try {
-      final response = await dio.get('/api/profile/$userId');
+      final response = await dio.get('/profile/$userId');
       if (response.statusCode == 200) {
         return response.data;
       }
@@ -23,7 +23,7 @@ class ProfileApi {
   /// GET /api/profile/:userId/contributions
   Future<List<dynamic>> getUserContributions(String userId) async {
     try {
-      final response = await dio.get('/api/profile/$userId/contributions');
+      final response = await dio.get('/profile/$userId/contributions');
       if (response.statusCode == 200) {
         return response.data['contributions'] ?? [];
       }
@@ -47,7 +47,7 @@ class ProfileApi {
       };
 
       final response = await dio.post(
-        '/api/profile/$userId',
+        '/profile/$userId',
         data: payload,
       );
 
@@ -64,7 +64,7 @@ class ProfileApi {
   /// POST /api/auth/logout
   Future<void> logout() async {
     try {
-      final response = await dio.post('/api/auth/logout');
+      final response = await dio.post('/auth/logout');
       if (response.statusCode != 200) {
         throw Exception('Failed to logout: ${response.statusCode}');
       }
@@ -78,7 +78,7 @@ class ProfileApi {
   Future<List<dynamic>> getTopContributors({int limit = 10}) async {
     try {
       final response = await dio.get(
-        '/api/profile/leaderboard/top',
+        '/profile/leaderboard/top',
         queryParameters: {'limit': limit},
       );
       if (response.statusCode == 200) {
