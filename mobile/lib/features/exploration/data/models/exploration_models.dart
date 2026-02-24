@@ -5,6 +5,9 @@ class ExplorationLocation {
   final double latitude;
   final double longitude;
   final bool visited;
+  final String? description;
+  final String? category;
+  final List<String> photos;
 
   ExplorationLocation({
     required this.id,
@@ -13,6 +16,9 @@ class ExplorationLocation {
     required this.latitude,
     required this.longitude,
     required this.visited,
+    this.description,
+    this.category,
+    this.photos = const [],
   });
 
   factory ExplorationLocation.fromJson(Map<String, dynamic> json) {
@@ -23,6 +29,13 @@ class ExplorationLocation {
       latitude: (json['latitude'] as num?)?.toDouble() ?? 0,
       longitude: (json['longitude'] as num?)?.toDouble() ?? 0,
       visited: json['visited'] == true,
+      description: json['description']?.toString(),
+      category: json['category']?.toString(),
+      photos:
+          (json['photos'] as List<dynamic>?)
+              ?.map((e) => e.toString())
+              .toList() ??
+          [],
     );
   }
 }
@@ -55,9 +68,11 @@ class DistrictAssignment {
           ? DateTime.tryParse(json['unlockedAt'].toString())
           : null,
       locations: locationsRaw
-          .map((entry) => ExplorationLocation.fromJson(
-                Map<String, dynamic>.from(entry as Map),
-              ))
+          .map(
+            (entry) => ExplorationLocation.fromJson(
+              Map<String, dynamic>.from(entry as Map),
+            ),
+          )
           .toList(),
     );
   }
@@ -103,8 +118,8 @@ class LocationSample {
   });
 
   Map<String, dynamic> toJson() => {
-        'latitude': latitude,
-        'longitude': longitude,
-        'accuracyMeters': accuracyMeters,
-      };
+    'latitude': latitude,
+    'longitude': longitude,
+    'accuracyMeters': accuracyMeters,
+  };
 }
