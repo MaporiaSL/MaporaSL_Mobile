@@ -19,6 +19,7 @@ class PhotoViewerPage extends StatefulWidget {
 class _PhotoViewerPageState extends State<PhotoViewerPage> {
   late PageController _pageController;
   late int _currentIndex;
+  bool _showControls = true;
 
   @override
   void initState() {
@@ -31,6 +32,10 @@ class _PhotoViewerPageState extends State<PhotoViewerPage> {
   void dispose() {
     _pageController.dispose();
     super.dispose();
+  }
+
+  void _toggleControls() {
+    setState(() => _showControls = !_showControls);
   }
 
   @override
@@ -46,34 +51,37 @@ class _PhotoViewerPageState extends State<PhotoViewerPage> {
         ),
         iconTheme: const IconThemeData(color: Colors.white),
       ),
-      body: PageView.builder(
-        controller: _pageController,
-        itemCount: widget.photos.length,
-        onPageChanged: (index) => setState(() => _currentIndex = index),
-        itemBuilder: (_, index) {
-          final photo = widget.photos[index];
+      body: GestureDetector(
+        onTap: _toggleControls,
+        child: PageView.builder(
+          controller: _pageController,
+          itemCount: widget.photos.length,
+          onPageChanged: (index) => setState(() => _currentIndex = index),
+          itemBuilder: (_, index) {
+            final photo = widget.photos[index];
 
-          return InteractiveViewer(
-            minScale: 0.5,
-            maxScale: 4.0,
-            child: Center(
-              child: CachedNetworkImage(
-                imageUrl: photo.url,
-                fit: BoxFit.contain,
-                placeholder: (_, __) => const Center(
-                  child: CircularProgressIndicator(color: Colors.white),
-                ),
-                errorWidget: (_, __, ___) => const Center(
-                  child: Icon(
-                    Icons.broken_image,
-                    size: 64,
-                    color: Colors.white54,
+            return InteractiveViewer(
+              minScale: 0.5,
+              maxScale: 4.0,
+              child: Center(
+                child: CachedNetworkImage(
+                  imageUrl: photo.url,
+                  fit: BoxFit.contain,
+                  placeholder: (_, __) => const Center(
+                    child: CircularProgressIndicator(color: Colors.white),
+                  ),
+                  errorWidget: (_, __, ___) => const Center(
+                    child: Icon(
+                      Icons.broken_image,
+                      size: 64,
+                      color: Colors.white54,
+                    ),
                   ),
                 ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }
