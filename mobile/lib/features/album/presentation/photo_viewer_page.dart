@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:intl/intl.dart';
 import '../data/models/photo_model.dart';
 
 class PhotoViewerPage extends StatefulWidget {
@@ -40,6 +41,46 @@ class _PhotoViewerPageState extends State<PhotoViewerPage> {
     setState(() => _showControls = !_showControls);
   }
 
+  void _showInfo() {
+    showModalBottomSheet(
+      context: context,
+      builder: (_) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                'Photo Details',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text('Filename: ${_currentPhoto.originalName}'),
+              if (_currentPhoto.createdAt != null)
+                Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: Text(
+                    'Date: ${DateFormat.yMMMd().add_jm().format(_currentPhoto.createdAt!)}',
+                  ),
+                ),
+              if (_currentPhoto.location?.placeName != null)
+                Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: Text(
+                    'Location: ${_currentPhoto.location!.placeName!}',
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -54,6 +95,12 @@ class _PhotoViewerPageState extends State<PhotoViewerPage> {
                 style: const TextStyle(color: Colors.white),
               ),
               iconTheme: const IconThemeData(color: Colors.white),
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.info_outline),
+                  onPressed: _showInfo,
+                ),
+              ],
             )
           : null,
       body: GestureDetector(
@@ -75,8 +122,9 @@ class _PhotoViewerPageState extends State<PhotoViewerPage> {
                       imageUrl: photo.url,
                       fit: BoxFit.contain,
                       placeholder: (_, __) => const Center(
-                        child:
-                            CircularProgressIndicator(color: Colors.white),
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                        ),
                       ),
                       errorWidget: (_, __, ___) => const Center(
                         child: Icon(
@@ -104,13 +152,17 @@ class _PhotoViewerPageState extends State<PhotoViewerPage> {
                   ),
                   child: Row(
                     children: [
-                      const Icon(Icons.location_on,
-                          color: Colors.white70, size: 20),
+                      const Icon(
+                        Icons.location_on,
+                        color: Colors.white70,
+                        size: 20,
+                      ),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
                           _currentPhoto.location!.placeName!,
-                          style: const TextStyle(color: Colors.white),
+                          style:
+                              const TextStyle(color: Colors.white),
                         ),
                       ),
                     ],
