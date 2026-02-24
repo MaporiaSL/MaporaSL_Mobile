@@ -21,6 +21,8 @@ class _PhotoViewerPageState extends State<PhotoViewerPage> {
   late int _currentIndex;
   bool _showControls = true;
 
+  PhotoModel get _currentPhoto => widget.photos[_currentIndex];
+
   @override
   void initState() {
     super.initState();
@@ -56,34 +58,66 @@ class _PhotoViewerPageState extends State<PhotoViewerPage> {
           : null,
       body: GestureDetector(
         onTap: _toggleControls,
-        child: PageView.builder(
-          controller: _pageController,
-          itemCount: widget.photos.length,
-          onPageChanged: (index) => setState(() => _currentIndex = index),
-          itemBuilder: (_, index) {
-            final photo = widget.photos[index];
+        child: Stack(
+          children: [
+            PageView.builder(
+              controller: _pageController,
+              itemCount: widget.photos.length,
+              onPageChanged: (index) => setState(() => _currentIndex = index),
+              itemBuilder: (_, index) {
+                final photo = widget.photos[index];
 
-            return InteractiveViewer(
-              minScale: 0.5,
-              maxScale: 4.0,
-              child: Center(
-                child: CachedNetworkImage(
-                  imageUrl: photo.url,
-                  fit: BoxFit.contain,
-                  placeholder: (_, __) => const Center(
-                    child: CircularProgressIndicator(color: Colors.white),
-                  ),
-                  errorWidget: (_, __, ___) => const Center(
-                    child: Icon(
-                      Icons.broken_image,
-                      size: 64,
-                      color: Colors.white54,
+                return InteractiveViewer(
+                  minScale: 0.5,
+                  maxScale: 4.0,
+                  child: Center(
+                    child: CachedNetworkImage(
+                      imageUrl: photo.url,
+                      fit: BoxFit.contain,
+                      placeholder: (_, __) => const Center(
+                        child:
+                            CircularProgressIndicator(color: Colors.white),
+                      ),
+                      errorWidget: (_, __, ___) => const Center(
+                        child: Icon(
+                          Icons.broken_image,
+                          size: 64,
+                          color: Colors.white54,
+                        ),
+                      ),
                     ),
+                  ),
+                );
+              },
+            ),
+            if (_showControls &&
+                _currentPhoto.location?.placeName != null)
+              Positioned(
+                bottom: MediaQuery.of(context).padding.bottom + 16,
+                left: 16,
+                right: 16,
+                child: Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.black54,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.location_on,
+                          color: Colors.white70, size: 20),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          _currentPhoto.location!.placeName!,
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
-            );
-          },
+          ],
         ),
       ),
     );
