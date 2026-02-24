@@ -3,6 +3,7 @@ const router = express.Router();
 const {
   getAssignments,
   getDistricts,
+  initializeExploration,
   visitLocation,
   rerollAssignments,
 } = require('../controllers/explorationController');
@@ -10,6 +11,9 @@ const { checkJwt, extractUserId } = require('../middleware/auth');
 
 router.use(checkJwt);
 router.use(extractUserId);
+
+// POST /api/exploration/initialize
+router.post('/initialize', initializeExploration);
 
 // GET /api/exploration/assignments
 router.get('/assignments', getAssignments);

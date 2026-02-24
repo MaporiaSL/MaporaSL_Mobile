@@ -40,6 +40,7 @@ dependencies:
   google_sign_in: ^6.2.1
   # Networking & models
   dio: ^5.7.0
+  flutter_dotenv: ^5.2.1
   intl: ^0.19.0
   json_annotation: ^4.10.0
   mapbox_maps_flutter: ^2.6.0
@@ -50,6 +51,7 @@ dependencies:
   geocoding: ^3.0.0
   http_parser: ^4.0.2
   cached_network_image: ^3.3.1
+  http: ^1.2.0
 
 dev_dependencies:
   flutter_test:
@@ -63,5 +65,5 @@ flutter:
   assets:
     - assets/geojson/boundaries/LK-provinces.geojson
     - assets/geojson/boundaries/LK-districts.geojson
-    - assets/data/places_seed_data_2026.json
+    - assets/data/
     - assets/images/

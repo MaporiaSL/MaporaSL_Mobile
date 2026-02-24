@@ -395,7 +395,7 @@ class _AssignedLocationList extends StatelessWidget {
                       disabledForegroundColor: AppColors.textMuted,
                     ),
                     child: Text(
-                      location.visited ? 'Done' : 'Verify',
+                      location.visited ? 'Done' : 'Mark Visited',
                       style: const TextStyle(fontSize: 11),
                     ),
                   ),
