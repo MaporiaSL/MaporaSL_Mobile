@@ -1,13 +1,12 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../models/place.dart';
 
 class PlacesRepository {
   final String baseUrl;
 
   PlacesRepository({String? baseUrl}) 
-      : baseUrl = baseUrl ?? dotenv.env['API_URL'] ?? 'http://10.0.2.2:5000/api';
+      : baseUrl = baseUrl ?? 'http://10.0.2.2:5000/api';
 
   Future<List<Place>> getPlaces({
     int page = 1, 

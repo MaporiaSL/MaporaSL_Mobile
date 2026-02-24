@@ -45,6 +45,22 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+
+	<!-- Camera permission -->
+	<key>NSCameraUsageDescription</key>
+	<string>This app needs camera access to take photos for your travel albums.</string>
+	<!-- Photo Library permission -->
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app needs photo library access to save and select photos for your albums.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>This app needs permission to save photos to your library.</string>
+	<!-- Location permissions -->
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>This app needs your location to organize photos by location and show your position on the map.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>This app needs your location to organize photos by location and show your position on the map.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>This app needs your location to organize photos by location and show your position on the map.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>We use your location to verify exploration visits and unlock districts.</string>
 </dict>
