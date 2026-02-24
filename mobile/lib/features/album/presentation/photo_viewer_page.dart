@@ -42,15 +42,18 @@ class _PhotoViewerPageState extends State<PhotoViewerPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      appBar: AppBar(
-        backgroundColor: Colors.black54,
-        elevation: 0,
-        title: Text(
-          '${_currentIndex + 1} / ${widget.photos.length}',
-          style: const TextStyle(color: Colors.white),
-        ),
-        iconTheme: const IconThemeData(color: Colors.white),
-      ),
+      extendBodyBehindAppBar: true,
+      appBar: _showControls
+          ? AppBar(
+              backgroundColor: Colors.black54,
+              elevation: 0,
+              title: Text(
+                '${_currentIndex + 1} / ${widget.photos.length}',
+                style: const TextStyle(color: Colors.white),
+              ),
+              iconTheme: const IconThemeData(color: Colors.white),
+            )
+          : null,
       body: GestureDetector(
         onTap: _toggleControls,
         child: PageView.builder(
