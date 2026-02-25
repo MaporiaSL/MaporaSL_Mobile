@@ -19,6 +19,26 @@ class _AlbumDetailPageState extends State<AlbumDetailPage> {
   bool _isLoading = true;
 
   @override
+  void initState() {
+    super.initState();
+    _loadPhotos();
+  }
+
+  Future<void> _loadPhotos() async {
+    setState(() => _isLoading = true);
+
+    try {
+      final album = await _service.getAlbum(widget.album.id);
+      setState(() {
+        _photos = album.photos ?? [];
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() => _isLoading = false);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
