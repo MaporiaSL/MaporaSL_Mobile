@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../data/services/album_service.dart';
 import '../data/models/album_model.dart';
 import '../data/models/photo_model.dart';
@@ -14,6 +15,7 @@ class AlbumDetailPage extends StatefulWidget {
 
 class _AlbumDetailPageState extends State<AlbumDetailPage> {
   final AlbumService _service = AlbumService();
+
   List<PhotoModel> _photos = [];
   bool _isLoading = true;
 
@@ -51,7 +53,15 @@ class _AlbumDetailPageState extends State<AlbumDetailPage> {
                           crossAxisCount: 3),
                   itemBuilder: (_, index) {
                     final photo = _photos[index];
-                    return Image.network(photo.url, fit: BoxFit.cover);
+                    return CachedNetworkImage(
+                      imageUrl: photo.url,
+                      fit: BoxFit.cover,
+                      placeholder: (_, __) => const Center(
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                      errorWidget: (_, __, ___) =>
+                          const Icon(Icons.broken_image),
+                    );
                   },
                 ),
     );
