@@ -44,7 +44,16 @@ class _AlbumDetailPageState extends State<AlbumDetailPage> {
           ? const Center(child: CircularProgressIndicator())
           : _photos.isEmpty
               ? const Center(child: Text("No photos yet"))
-              : const SizedBox(),
+              : GridView.builder(
+                  itemCount: _photos.length,
+                  gridDelegate:
+                      const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 3),
+                  itemBuilder: (_, index) {
+                    final photo = _photos[index];
+                    return Image.network(photo.url, fit: BoxFit.cover);
+                  },
+                ),
     );
   }
 }
