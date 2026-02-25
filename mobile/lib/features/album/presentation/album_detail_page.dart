@@ -14,7 +14,6 @@ class AlbumDetailPage extends StatefulWidget {
 
 class _AlbumDetailPageState extends State<AlbumDetailPage> {
   final AlbumService _service = AlbumService();
-
   List<PhotoModel> _photos = [];
   bool _isLoading = true;
 
@@ -26,7 +25,6 @@ class _AlbumDetailPageState extends State<AlbumDetailPage> {
 
   Future<void> _loadPhotos() async {
     setState(() => _isLoading = true);
-
     try {
       final album = await _service.getAlbum(widget.album.id);
       setState(() {
@@ -41,12 +39,10 @@ class _AlbumDetailPageState extends State<AlbumDetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.album.name),
-      ),
-      body: const Center(
-        child: Text('Album Detail Page'),
-      ),
+      appBar: AppBar(title: Text(widget.album.name)),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : const SizedBox(),
     );
   }
 }
