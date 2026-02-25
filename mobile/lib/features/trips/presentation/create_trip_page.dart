@@ -30,8 +30,7 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage> {
     'Public Transportation',
     'Vehicle (Car)',
     'Bike',
-    'Walking',
-    'Flying',
+    'Walking',    
   ];
 
   @override
