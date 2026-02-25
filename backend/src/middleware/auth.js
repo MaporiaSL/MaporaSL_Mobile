@@ -1,4 +1,4 @@
-const admin = require('../config/firebaseAdmin');
+const { admin } = require('../config/firebase');
 
 // Development mode: bypass auth for testing
 const isDevelopment = process.env.NODE_ENV !== 'production';
