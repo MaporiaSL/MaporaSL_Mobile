@@ -54,29 +54,56 @@ class _PhotoViewerPageState extends State<PhotoViewerPage> {
               const Text(
                 'Photo Details',
                 style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
+                    fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 16),
-              Text('Filename: ${_currentPhoto.originalName}'),
+              _infoRow(Icons.image, 'Filename',
+                  _currentPhoto.originalName),
               if (_currentPhoto.createdAt != null)
-                Padding(
-                  padding: const EdgeInsets.only(top: 8),
-                  child: Text(
-                    'Date: ${DateFormat.yMMMd().add_jm().format(_currentPhoto.createdAt!)}',
-                  ),
+                _infoRow(
+                  Icons.calendar_today,
+                  'Date',
+                  DateFormat.yMMMd()
+                      .add_jm()
+                      .format(_currentPhoto.createdAt!),
                 ),
               if (_currentPhoto.location?.placeName != null)
-                Padding(
-                  padding: const EdgeInsets.only(top: 8),
-                  child: Text(
-                    'Location: ${_currentPhoto.location!.placeName!}',
-                  ),
+                _infoRow(
+                  Icons.location_on,
+                  'Location',
+                  _currentPhoto.location!.placeName!,
                 ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _infoRow(
+      IconData icon, String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        children: [
+          Icon(icon, size: 20, color: Colors.grey),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment:
+                  CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: TextStyle(
+                      color: Colors.grey[600],
+                      fontSize: 12),
+                ),
+                Text(value),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -94,10 +121,12 @@ class _PhotoViewerPageState extends State<PhotoViewerPage> {
                 '${_currentIndex + 1} / ${widget.photos.length}',
                 style: const TextStyle(color: Colors.white),
               ),
-              iconTheme: const IconThemeData(color: Colors.white),
+              iconTheme:
+                  const IconThemeData(color: Colors.white),
               actions: [
                 IconButton(
-                  icon: const Icon(Icons.info_outline),
+                  icon:
+                      const Icon(Icons.info_outline),
                   onPressed: _showInfo,
                 ),
               ],
@@ -105,71 +134,40 @@ class _PhotoViewerPageState extends State<PhotoViewerPage> {
           : null,
       body: GestureDetector(
         onTap: _toggleControls,
-        child: Stack(
-          children: [
-            PageView.builder(
-              controller: _pageController,
-              itemCount: widget.photos.length,
-              onPageChanged: (index) => setState(() => _currentIndex = index),
-              itemBuilder: (_, index) {
-                final photo = widget.photos[index];
+        child: PageView.builder(
+          controller: _pageController,
+          itemCount: widget.photos.length,
+          onPageChanged: (index) =>
+              setState(() => _currentIndex = index),
+          itemBuilder: (_, index) {
+            final photo = widget.photos[index];
 
-                return InteractiveViewer(
-                  minScale: 0.5,
-                  maxScale: 4.0,
-                  child: Center(
-                    child: CachedNetworkImage(
-                      imageUrl: photo.url,
-                      fit: BoxFit.contain,
-                      placeholder: (_, __) => const Center(
-                        child: CircularProgressIndicator(
-                          color: Colors.white,
-                        ),
-                      ),
-                      errorWidget: (_, __, ___) => const Center(
-                        child: Icon(
-                          Icons.broken_image,
-                          size: 64,
-                          color: Colors.white54,
-                        ),
-                      ),
+            return InteractiveViewer(
+              minScale: 0.5,
+              maxScale: 4.0,
+              child: Center(
+                child: CachedNetworkImage(
+                  imageUrl: photo.url,
+                  fit: BoxFit.contain,
+                  placeholder: (_, __) =>
+                      const Center(
+                    child:
+                        CircularProgressIndicator(
+                            color: Colors.white),
+                  ),
+                  errorWidget:
+                      (_, __, ___) =>
+                          const Center(
+                    child: Icon(
+                      Icons.broken_image,
+                      size: 64,
+                      color: Colors.white54,
                     ),
-                  ),
-                );
-              },
-            ),
-            if (_showControls &&
-                _currentPhoto.location?.placeName != null)
-              Positioned(
-                bottom: MediaQuery.of(context).padding.bottom + 16,
-                left: 16,
-                right: 16,
-                child: Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.black54,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Row(
-                    children: [
-                      const Icon(
-                        Icons.location_on,
-                        color: Colors.white70,
-                        size: 20,
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          _currentPhoto.location!.placeName!,
-                          style:
-                              const TextStyle(color: Colors.white),
-                        ),
-                      ),
-                    ],
                   ),
                 ),
               ),
-          ],
+            );
+          },
         ),
       ),
     );
