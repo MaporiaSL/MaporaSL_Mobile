@@ -42,7 +42,9 @@ class _AlbumDetailPageState extends State<AlbumDetailPage> {
       appBar: AppBar(title: Text(widget.album.name)),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : const SizedBox(),
+          : _photos.isEmpty
+              ? const Center(child: Text("No photos yet"))
+              : const SizedBox(),
     );
   }
 }
