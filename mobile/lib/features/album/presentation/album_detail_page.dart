@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:gemified_travel_portfolio/features/album/presentation/camera_page.dart';
 import '../data/services/album_service.dart';
 import '../data/models/album_model.dart';
 import '../data/models/photo_model.dart';
@@ -38,6 +39,17 @@ class _AlbumDetailPageState extends State<AlbumDetailPage> {
     }
   }
 
+  Future<void> _openCamera() async {
+    final result = await Navigator.push<bool>(
+      context,
+      MaterialPageRoute(builder: (_) => const CameraPage()),
+    );
+
+    if (result == true) {
+      _loadPhotos();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -68,6 +80,10 @@ class _AlbumDetailPageState extends State<AlbumDetailPage> {
                     },
                   ),
                 ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _openCamera,
+        child: const Icon(Icons.camera_alt),
+      ),
     );
   }
 }
