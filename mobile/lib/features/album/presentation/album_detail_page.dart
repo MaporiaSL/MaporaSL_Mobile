@@ -46,23 +46,27 @@ class _AlbumDetailPageState extends State<AlbumDetailPage> {
           ? const Center(child: CircularProgressIndicator())
           : _photos.isEmpty
               ? const Center(child: Text("No photos yet"))
-              : GridView.builder(
-                  itemCount: _photos.length,
-                  gridDelegate:
-                      const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 3),
-                  itemBuilder: (_, index) {
-                    final photo = _photos[index];
-                    return CachedNetworkImage(
-                      imageUrl: photo.url,
-                      fit: BoxFit.cover,
-                      placeholder: (_, __) => const Center(
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      ),
-                      errorWidget: (_, __, ___) =>
-                          const Icon(Icons.broken_image),
-                    );
-                  },
+              : RefreshIndicator(
+                  onRefresh: _loadPhotos,
+                  child: GridView.builder(
+                    itemCount: _photos.length,
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 3),
+                    itemBuilder: (_, index) {
+                      final photo = _photos[index];
+                      return CachedNetworkImage(
+                        imageUrl: photo.url,
+                        fit: BoxFit.cover,
+                        placeholder: (_, __) => const Center(
+                          child:
+                              CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                        errorWidget: (_, __, ___) =>
+                            const Icon(Icons.broken_image),
+                      );
+                    },
+                  ),
                 ),
     );
   }
