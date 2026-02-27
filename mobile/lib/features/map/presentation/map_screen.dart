@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:vector_math/vector_math_64.dart' as vm;
+import '../../../core/constants/app_colors.dart';
 import '../data/regions_data.dart';
 import 'widgets/cartoon_map_canvas.dart';
+import 'widgets/map_legend.dart';
 import 'theme/map_visual_theme.dart';
 import '../../exploration/providers/exploration_provider.dart';
 import '../../exploration/data/models/exploration_models.dart';
 
-/// Cartoonish map screen displaying trip with stylized Sri Lanka map
+/// Lightweight map screen displaying stylized Sri Lanka map with exploration assignments
 class MapScreen extends ConsumerStatefulWidget {
   final String travelId;
 
@@ -17,60 +18,35 @@ class MapScreen extends ConsumerStatefulWidget {
   ConsumerState<MapScreen> createState() => _MapScreenState();
 }
 
-class _MapScreenState extends ConsumerState<MapScreen>
-    with TickerProviderStateMixin {
+class _MapScreenState extends ConsumerState<MapScreen> {
   String? selectedDistrict;
   String? selectedProvince;
-  late final AnimationController _pulseController;
-  Offset _parallax = Offset.zero;
   bool _panelExpanded = true;
 
   String _normalizeKey(String? value) {
     return value?.toString().trim().toLowerCase() ?? '';
   }
 
-  Offset _clampOffset(Offset value, double limit) {
-    final dx = value.dx.clamp(-limit, limit).toDouble();
-    final dy = value.dy.clamp(-limit, limit).toDouble();
-    return Offset(dx, dy);
+  /// Calculate district progress map from assignments (0.0-1.0 for each district)
+  Map<String, double> _calculateDistrictProgress(
+    List<DistrictAssignment> assignments,
+  ) {
+    final progress = <String, double>{};
+    for (final assignment in assignments) {
+      final percentage = assignment.assignedCount > 0
+          ? assignment.visitedCount / assignment.assignedCount
+          : 0.0;
+      progress[assignment.district.toLowerCase().trim()] = percentage;
+    }
+    return progress;
   }
 
-  static const MapVisualTheme _mapTheme = MapVisualTheme(
-    oceanColor: Color(0xFF071624),
-    coastlineColor: Color(0x66FFFFFF),
-    oceanGlowColor: Color(0x9931E6FF),
-    provinceBorderColor: Color(0x88FFFFFF),
-    districtBorderColor: Color(0x4C00E0FF),
-    selectedDistrictBorderColor: Color(0xFFFFD34E),
-    selectedProvinceBorderColor: Color(0xFF6FE7FF),
-    runeGlowColor: Color(0xFF7CFFF6),
-    extrusionSideColor: Color(0xFF1C130E),
-    extrusionDepth: 12,
-    shadowOffset: Offset(20, 26),
-    shadowBlur: 20,
-    rimLightColor: Color(0xCCFFFFFF),
-    rimLightWidth: 2.2,
-    fogOpacity: 0.86,
-    fogShadowBlur: 14,
-    labelStyle: TextStyle(
-      color: Colors.white,
-      fontSize: 12,
-      fontWeight: FontWeight.w700,
-      shadows: [
-        Shadow(offset: Offset(1, 1), blurRadius: 2, color: Colors.black87),
-      ],
-    ),
-  );
+  // Light theme map visual appearance with progressive unlock colors
+  static const MapVisualTheme _mapTheme = MapVisualTheme();
 
   @override
   void initState() {
     super.initState();
-    // TODO: Load trip data from API
-    _pulseController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1400),
-    )..repeat(reverse: true);
-
     Future.microtask(() {
       if (!mounted) return;
       ref.read(explorationProvider.notifier).loadAssignments();
@@ -79,7 +55,6 @@ class _MapScreenState extends ConsumerState<MapScreen>
 
   @override
   void dispose() {
-    _pulseController.dispose();
     super.dispose();
   }
 
@@ -88,9 +63,9 @@ class _MapScreenState extends ConsumerState<MapScreen>
     ref.listen<ExplorationState>(explorationProvider, (previous, next) {
       final error = next.error;
       if (error != null && error.isNotEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(error)),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(error)));
       }
     });
 
@@ -103,8 +78,7 @@ class _MapScreenState extends ConsumerState<MapScreen>
 
     final selectedAssignment = assignments.firstWhere(
       (assignment) =>
-          _normalizeKey(assignment.district) ==
-          _normalizeKey(selectedDistrict),
+          _normalizeKey(assignment.district) == _normalizeKey(selectedDistrict),
       orElse: () => DistrictAssignment(
         district: selectedDistrict ?? '',
         province: selectedProvince ?? '',
@@ -118,98 +92,49 @@ class _MapScreenState extends ConsumerState<MapScreen>
     final districtLocked = selectedDistrict == null
         ? false
         : lockedDistricts
-            .map(_normalizeKey)
-            .contains(_normalizeKey(selectedDistrict));
+              .map(_normalizeKey)
+              .contains(_normalizeKey(selectedDistrict));
 
-    final theme = MapVisualTheme(
-      oceanColor: _mapTheme.oceanColor,
-      coastlineColor: _mapTheme.coastlineColor,
-      oceanGlowColor: _mapTheme.oceanGlowColor,
-      provinceBorderColor: _mapTheme.provinceBorderColor,
-      districtBorderColor: _mapTheme.districtBorderColor,
-      selectedDistrictBorderColor: _mapTheme.selectedDistrictBorderColor,
-      selectedProvinceBorderColor: _mapTheme.selectedProvinceBorderColor,
-      runeGlowColor: _mapTheme.runeGlowColor,
-      extrusionSideColor: _mapTheme.extrusionSideColor,
-      extrusionDepth: _mapTheme.extrusionDepth,
-      shadowOffset: _mapTheme.shadowOffset,
-      shadowBlur: _mapTheme.shadowBlur,
-      rimLightColor: _mapTheme.rimLightColor,
-      rimLightWidth: _mapTheme.rimLightWidth,
-      fogOpacity: _mapTheme.fogOpacity,
-      fogShadowBlur: _mapTheme.fogShadowBlur,
-      labelStyle: _mapTheme.labelStyle,
-      lockedDistrictIds: lockedDistricts.toSet(),
-    );
+    // Calculate district progress (0.0-1.0 for each district)
+    final districtProgress = _calculateDistrictProgress(assignments);
+
+    // Use the default light theme with progressive colors
+    final theme = _mapTheme;
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('🗺️ Discover Sri Lanka'),
-        elevation: 2,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.info_outline),
-            onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Map feature coming soon!')),
-              );
-            },
-            tooltip: 'Info',
-          ),
-        ],
+        elevation: 0,
+        backgroundColor: AppColors.background,
+        foregroundColor: AppColors.textDark,
       ),
+      backgroundColor: AppColors.background,
       body: SafeArea(
         top: false,
         child: Stack(
           children: [
-            GestureDetector(
-              onPanUpdate: (details) {
+            CartoonMapCanvas(
+              regions: sriLankaRegions,
+              selectedRegionId: selectedProvince,
+              selectedDistrictName: selectedDistrict,
+              theme: theme,
+              districtProgress: districtProgress,
+              onDistrictSelected: (districtName, provinceName) {
                 setState(() {
-                  _parallax = _clampOffset(_parallax + details.delta, 40);
+                  selectedDistrict = districtName;
+                  selectedProvince =
+                      (provinceName != null && provinceName.isNotEmpty)
+                      ? provinceName
+                      : null;
                 });
               },
-              onPanEnd: (_) {
-                setState(() => _parallax = Offset.zero);
-              },
-              child: AnimatedBuilder(
-                animation: _pulseController,
-                builder: (context, child) {
-                  final tiltX = (_parallax.dy / 400).clamp(-0.08, 0.08);
-                  final tiltY = (_parallax.dx / 400).clamp(-0.08, 0.08);
-
-                  return Transform(
-                    alignment: Alignment.center,
-                    transform: vm.Matrix4.identity()
-                      ..setEntry(3, 2, 0.001)
-                      ..rotateX(tiltX)
-                      ..rotateY(-tiltY)
-                      ..translate(_parallax.dx * 0.2, _parallax.dy * 0.2),
-                    child: CartoonMapCanvas(
-                      regions: sriLankaRegions,
-                      selectedRegionId: selectedProvince,
-                      selectedDistrictName: selectedDistrict,
-                      theme: theme,
-                      pulseValue: _pulseController.value,
-                      onDistrictSelected: (districtName, provinceName) {
-                        setState(() {
-                          selectedDistrict = districtName;
-                          selectedProvince =
-                              (provinceName != null && provinceName.isNotEmpty)
-                              ? provinceName
-                              : null;
-                        });
-                      },
-                    ),
-                  );
-                },
-              ),
             ),
             Positioned(
-              bottom: 20,
+              bottom: 16,
               left: 16,
               right: 16,
               child: AnimatedCrossFade(
-                duration: const Duration(milliseconds: 220),
+                duration: const Duration(milliseconds: 200),
                 crossFadeState: _panelExpanded
                     ? CrossFadeState.showFirst
                     : CrossFadeState.showSecond,
@@ -239,116 +164,14 @@ class _MapScreenState extends ConsumerState<MapScreen>
                 ),
               ),
             ),
-            if (selectedProvince != null || selectedDistrict != null)
-              Positioned(
-                top: 16,
-                left: 16,
-                child: IgnorePointer(
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 8,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.6),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: districtLocked
-                            ? Colors.redAccent.withOpacity(0.6)
-                            : Colors.cyanAccent.withOpacity(0.6),
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          districtLocked ? Icons.lock : Icons.explore,
-                          size: 16,
-                          color: districtLocked
-                              ? Colors.redAccent
-                              : Colors.cyanAccent,
-                        ),
-                        const SizedBox(width: 6),
-                        Text(
-                          selectedProvince ?? selectedDistrict ?? '',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            if (explorationState.isVerifying)
-              const _VerificationOverlay(),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _HudCard extends StatelessWidget {
-  final int level;
-  final int xp;
-  final int nextLevelXp;
-
-  const _HudCard({
-    required this.level,
-    required this.xp,
-    required this.nextLevelXp,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final progress = (xp / nextLevelXp).clamp(0.0, 1.0);
-    return SizedBox(
-      width: 180,
-      child: Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: const Color(0xFF0F1C2E).withOpacity(0.85),
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: Colors.cyanAccent.withOpacity(0.4)),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.cyanAccent.withOpacity(0.25),
-              blurRadius: 12,
-              offset: const Offset(0, 6),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Explorer Lv.$level',
-              style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 6),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(999),
-              child: LinearProgressIndicator(
-                value: progress,
-                minHeight: 6,
-                backgroundColor: Colors.white.withOpacity(0.15),
-                valueColor: AlwaysStoppedAnimation<Color>(
-                  Colors.cyanAccent.withOpacity(0.8),
-                ),
-              ),
-            ),
-            const SizedBox(height: 6),
-            Text(
-              '$xp / $nextLevelXp XP',
-              style: TextStyle(
-                color: Colors.white.withOpacity(0.7),
-                fontSize: 11,
+            if (explorationState.isVerifying) const _VerificationOverlay(),
+            // Map legend
+            Positioned(
+              top: 16,
+              right: 16,
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 200),
+                child: const MapLegend(),
               ),
             ),
           ],
@@ -385,100 +208,82 @@ class _DistrictActionPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     final title = district ?? 'Select a district';
     final subtitle = district == null
-      ? 'Tap a district to reveal quests and rewards'
-      : (province == null ? 'Unknown province' : 'Province: $province');
+        ? 'Tap a district to reveal quests'
+        : 'Province: ${province ?? 'Unknown'}';
 
-    return AnimatedOpacity(
-      opacity: district == null ? 0.7 : 1.0,
-      duration: const Duration(milliseconds: 250),
-      child: Container(
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          color: const Color(0xFF0B1524).withOpacity(0.9),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: locked
-                ? Colors.redAccent.withOpacity(0.5)
-                : Colors.cyanAccent.withOpacity(0.5),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.35),
-              blurRadius: 16,
-              offset: const Offset(0, 10),
-            ),
-          ],
-        ),
+    return Card(
+      margin: EdgeInsets.zero,
+      elevation: 0,
+      color: AppColors.surface,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
             Row(
               children: [
-                Container(
-                  width: 44,
-                  height: 44,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: LinearGradient(
-                      colors: locked
-                          ? [Colors.redAccent, Colors.deepOrangeAccent]
-                          : [Colors.cyanAccent, Colors.blueAccent],
-                    ),
-                  ),
-                  child: Icon(
-                    locked ? Icons.lock : Icons.shield_moon,
-                    color: Colors.black87,
-                  ),
-                ),
-                const SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         title,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          color: AppColors.textDark,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         subtitle,
-                        style: TextStyle(
-                          color: Colors.white.withOpacity(0.7),
-                          fontSize: 12,
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: AppColors.textMuted,
                         ),
                       ),
-                      if (district != null)
-                        Padding(
-                          padding: const EdgeInsets.only(top: 6),
-                          child: Text(
-                            'Progress: $visitedCount / $assignedCount',
-                            style: TextStyle(
-                              color: Colors.white.withOpacity(0.7),
-                              fontSize: 12,
+                      if (district != null) ...[
+                        const SizedBox(height: 8),
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(6),
+                          child: LinearProgressIndicator(
+                            value:
+                                (visitedCount /
+                                        (assignedCount > 0 ? assignedCount : 1))
+                                    .clamp(0, 1),
+                            minHeight: 4,
+                            backgroundColor: AppColors.border,
+                            valueColor: AlwaysStoppedAnimation(
+                              AppColors.primary,
                             ),
                           ),
                         ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Progress: $visitedCount / $assignedCount',
+                          style: Theme.of(context).textTheme.labelSmall
+                              ?.copyWith(color: AppColors.textMuted),
+                        ),
+                      ],
                     ],
                   ),
                 ),
-                const SizedBox(width: 8),
                 IconButton(
                   onPressed: onToggle,
-                  icon: const Icon(Icons.keyboard_arrow_down),
-                  color: Colors.white.withOpacity(0.7),
-                  tooltip: 'Minimize',
+                  icon: const Icon(Icons.unfold_less),
+                  color: AppColors.textMuted,
+                  tooltip: 'Collapse',
                 ),
               ],
             ),
-            if (district != null)
+            if (district != null) ...[
+              const SizedBox(height: 12),
               _AssignedLocationList(
                 isLoading: isLoading,
                 locations: locations,
                 onVerify: onVerifyLocation,
               ),
+            ],
           ],
         ),
       ),
@@ -502,7 +307,10 @@ class _AssignedLocationList extends StatelessWidget {
     if (isLoading) {
       return const Padding(
         padding: EdgeInsets.only(top: 12),
-        child: Center(child: CircularProgressIndicator()),
+        child: SizedBox(
+          height: 60,
+          child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
+        ),
       );
     }
 
@@ -511,7 +319,9 @@ class _AssignedLocationList extends StatelessWidget {
         padding: const EdgeInsets.only(top: 12),
         child: Text(
           'No assigned locations yet.',
-          style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 12),
+          style: Theme.of(
+            context,
+          ).textTheme.bodySmall?.copyWith(color: AppColors.textMuted),
         ),
       );
     }
@@ -519,65 +329,75 @@ class _AssignedLocationList extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(top: 12),
       child: SizedBox(
-        height: 140,
+        height: 120,
         child: ListView.separated(
           itemCount: locations.length,
           separatorBuilder: (_, __) => const SizedBox(height: 8),
           itemBuilder: (context, index) {
             final location = locations[index];
             return Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.08),
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: Colors.white.withOpacity(0.15)),
+                color: AppColors.surfaceMuted,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: AppColors.border, width: 0.5),
               ),
               child: Row(
                 children: [
                   Icon(
-                    location.visited ? Icons.check_circle : Icons.place,
-                    color:
-                        location.visited ? Colors.greenAccent : Colors.white70,
+                    location.visited ? Icons.check_circle : Icons.location_on,
+                    color: location.visited
+                        ? AppColors.success
+                        : AppColors.primary,
                     size: 18,
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: 10),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
                           location.name,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 12,
-                          ),
+                          style: Theme.of(context).textTheme.labelMedium
+                              ?.copyWith(
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.textDark,
+                              ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                         Text(
                           location.type,
-                          style: TextStyle(
-                            color: Colors.white.withOpacity(0.7),
-                            fontSize: 10,
-                          ),
+                          style: Theme.of(context).textTheme.labelSmall
+                              ?.copyWith(color: AppColors.textMuted),
                         ),
                       ],
                     ),
                   ),
                   const SizedBox(width: 8),
                   ElevatedButton(
-                    onPressed: location.visited ? null : () => onVerify(location),
+                    onPressed: location.visited
+                        ? null
+                        : () => onVerify(location),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: location.visited
-                          ? Colors.grey
-                          : Colors.cyanAccent,
-                      foregroundColor: Colors.black,
                       padding: const EdgeInsets.symmetric(
                         horizontal: 10,
-                        vertical: 6,
+                        vertical: 4,
                       ),
-                      textStyle: const TextStyle(fontSize: 11),
+                      backgroundColor: location.visited
+                          ? AppColors.border
+                          : AppColors.primary,
+                      foregroundColor: location.visited
+                          ? AppColors.textMuted
+                          : Colors.white,
+                      disabledBackgroundColor: AppColors.border,
+                      disabledForegroundColor: AppColors.textMuted,
                     ),
-                    child: Text(location.visited ? 'Done' : 'Verify'),
+                    child: Text(
+                      location.visited ? 'Done' : 'Mark Visited',
+                      style: const TextStyle(fontSize: 11),
+                    ),
                   ),
                 ],
               ),
@@ -596,20 +416,23 @@ class _VerificationOverlay extends StatelessWidget {
   Widget build(BuildContext context) {
     return Positioned.fill(
       child: Container(
-        color: Colors.white,
-        child: const Column(
+        color: AppColors.background.withOpacity(0.95),
+        child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SizedBox(
-              width: 36,
-              height: 36,
-              child: CircularProgressIndicator(strokeWidth: 3),
+            const SizedBox(
+              width: 40,
+              height: 40,
+              child: CircularProgressIndicator(strokeWidth: 2),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Text(
-              'Scanning location...\nPlease stay still',
+              'Verifying location...\nPlease stay still',
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+                color: AppColors.textDark,
+              ),
             ),
           ],
         ),
@@ -631,51 +454,33 @@ class _CollapsedPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onToggle,
-        borderRadius: BorderRadius.circular(999),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-          decoration: BoxDecoration(
-            color: const Color(0xFF0B1524).withOpacity(0.85),
-            borderRadius: BorderRadius.circular(999),
-            border: Border.all(
-              color: locked
-                  ? Colors.redAccent.withOpacity(0.4)
-                  : Colors.cyanAccent.withOpacity(0.4),
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.35),
-                blurRadius: 12,
-                offset: const Offset(0, 6),
-              ),
-            ],
-          ),
+    return GestureDetector(
+      onTap: onToggle,
+      child: Card(
+        margin: EdgeInsets.zero,
+        elevation: 0,
+        color: AppColors.surface,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(
                 locked ? Icons.lock : Icons.explore,
-                size: 16,
-                color: locked ? Colors.redAccent : Colors.cyanAccent,
+                size: 18,
+                color: locked ? AppColors.error : AppColors.primary,
               ),
               const SizedBox(width: 8),
               Text(
-                district ?? 'Map Actions',
-                style: const TextStyle(
-                  color: Colors.white,
+                district ?? 'Map',
+                style: Theme.of(context).textTheme.labelLarge?.copyWith(
                   fontWeight: FontWeight.w600,
+                  color: AppColors.textDark,
                 ),
               ),
               const SizedBox(width: 6),
-              Icon(
-                Icons.keyboard_arrow_up,
-                size: 18,
-                color: Colors.white.withOpacity(0.7),
-              ),
+              Icon(Icons.unfold_more, size: 18, color: AppColors.textMuted),
             ],
           ),
         ),

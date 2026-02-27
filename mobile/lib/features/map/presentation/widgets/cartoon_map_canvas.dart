@@ -15,7 +15,9 @@ class CartoonMapCanvas extends StatefulWidget {
   final void Function(String districtName, String? provinceName)?
   onDistrictSelected;
   final MapVisualTheme theme;
-  final double pulseValue;
+
+  /// Map of district ID to completion percentage (0.0 - 1.0)
+  final Map<String, double> districtProgress;
 
   const CartoonMapCanvas({
     super.key,
@@ -26,7 +28,7 @@ class CartoonMapCanvas extends StatefulWidget {
     this.onRegionSelected,
     this.onDistrictSelected,
     this.theme = const MapVisualTheme(),
-    this.pulseValue = 0,
+    this.districtProgress = const <String, double>{},
   });
 
   @override
@@ -237,7 +239,7 @@ class _CartoonMapCanvasState extends State<CartoonMapCanvas> {
                 districtPaths: _districtPaths,
                 provinceLabelPositions: _provinceLabelPositions,
                 theme: widget.theme,
-                pulseValue: widget.pulseValue,
+                districtProgress: widget.districtProgress,
               ),
               child: Container(),
             ),

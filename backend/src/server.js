@@ -5,6 +5,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const connectDB = require('./config/db');
+const { initializeFirebase } = require('./config/firebase');
 const { checkJwt, extractUserId } = require('./middleware/auth');
 const authRoutes = require('./routes/authRoutes');
 const travelRoutes = require('./routes/travelRoutes');
@@ -12,8 +13,10 @@ const destinationRoutes = require('./routes/destinationRoutes');
 const mapRoutes = require('./routes/mapRoutes');
 const geoRoutes = require('./routes/geoRoutes');
 const userRoutes = require('./routes/userRoutes');
+const placeRoutes = require('./routes/placeRoutes');
 const realStoreRoutes = require('./routes/realStoreRoutes');
 const preplannedTripsRoutes = require('./routes/preplannedTripsRoutes');
+const albumRoutes = require('./routes/albumRoute');
 const explorationRoutes = require('./routes/explorationRoutes');
 const explorationAdminRoutes = require('./routes/explorationAdminRoutes');
 
@@ -47,8 +50,11 @@ app.use('/api/destinations', geoRoutes);
 
 // User progress routes (JWT protected)
 app.use('/api/users', userRoutes);
+app.use('/api/places', placeRoutes);
 app.use('/api/districts', userRoutes);
 
+// Album and photo routes (JWT protected)
+app.use('/api/albums', albumRoutes);
 // Exploration routes (JWT protected)
 app.use('/api/exploration', explorationRoutes);
 
@@ -68,6 +74,15 @@ app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 // Boot: connect to DB first, then start server
 (async () => {
   await connectDB();
+  
+  // Initialize Firebase for photo storage
+  try {
+    initializeFirebase();
+    console.log('Firebase initialized for photo storage');
+  } catch (error) {
+    console.warn('Firebase initialization failed - photo features will be unavailable:', error.message);
+  }
+  
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
   });

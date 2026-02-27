@@ -148,6 +148,7 @@ const realStoreItemSchema = new mongoose.Schema(
 
 realStoreItemSchema.index({ category: 1, featured: -1, displayOrder: 1 });
 realStoreItemSchema.index({ featured: -1, displayOrder: 1 });
+// Note: itemId already has index: true in schema definition
 
 module.exports = mongoose.model('RealStoreItem', realStoreItemSchema);
 

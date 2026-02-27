@@ -27,6 +27,7 @@ dependencies:
   
   cupertino_icons: ^1.0.8
   # Theming & fonts
+  google_fonts: ^6.2.1
   # Permissions & location groundwork
   # State management
   google_maps_flutter: ^2.7.0
@@ -39,11 +40,20 @@ dependencies:
   google_sign_in: ^6.2.1
   # Networking & models
   dio: ^5.7.0
+  flutter_dotenv: ^5.2.1
   intl: ^0.19.0
   json_annotation: ^4.10.0
   mapbox_maps_flutter: ^2.6.0
   image_picker: ^1.2.1
   payhere_mobilesdk_flutter: ^3.2.2
+  # Camera & Photos
+  camera: ^0.11.0+2
+  image_picker: ^1.0.7
+  path_provider: ^2.1.2
+  geocoding: ^3.0.0
+  http_parser: ^4.0.2
+  cached_network_image: ^3.3.1
+  http: ^1.2.0
 
 dev_dependencies:
   flutter_test:
@@ -57,4 +67,5 @@ flutter:
   assets:
     - assets/geojson/boundaries/LK-provinces.geojson
     - assets/geojson/boundaries/LK-districts.geojson
-    - assets/data/places_seed_data_2026.json
+    - assets/data/
+    - assets/images/

@@ -3,6 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import '../data/models/trip_model.dart';
+import '../../exploration/providers/exploration_provider.dart';
+import '../../exploration/data/models/exploration_models.dart';
+import 'widgets/quest_card.dart';
 import 'providers/trips_provider.dart';
 import 'create_trip_page.dart';
 import 'trip_detail_page.dart';
@@ -22,8 +25,11 @@ class _MemoryLanePageState extends ConsumerState<MemoryLanePage>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, initialIndex: 1, vsync: this);
-    Future.microtask(() => ref.read(tripsProvider.notifier).loadTrips());
+    _tabController = TabController(length: 2, initialIndex: 0, vsync: this);
+    Future.microtask(() {
+      ref.read(tripsProvider.notifier).loadTrips();
+      ref.read(explorationProvider.notifier).loadAssignments();
+    });
   }
 
   @override
@@ -38,7 +44,7 @@ class _MemoryLanePageState extends ConsumerState<MemoryLanePage>
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Memory Lane'),
+        title: const Text('Quests & Trips'),
         bottom: TabBar(
           controller: _tabController,
           tabs: const [
@@ -58,22 +64,62 @@ class _MemoryLanePageState extends ConsumerState<MemoryLanePage>
   }
 
   Widget _buildQuestsTab(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(Icons.stars, size: 64, color: Colors.orange),
-          const SizedBox(height: 12),
-          const Text(
-            'Quests coming soon',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Track achievements and challenges here.',
-            style: Theme.of(context).textTheme.bodyMedium,
-          ),
-        ],
+    final explorationState = ref.watch(explorationProvider);
+
+    if (explorationState.isLoading && explorationState.assignments.isEmpty) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (explorationState.error != null && explorationState.assignments.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.error_outline, size: 48, color: Colors.red),
+            const SizedBox(height: 12),
+            Text(explorationState.error!, textAlign: TextAlign.center),
+            const SizedBox(height: 12),
+            ElevatedButton.icon(
+              onPressed: () => ref.read(explorationProvider.notifier).loadAssignments(),
+              icon: const Icon(Icons.refresh),
+              label: const Text('Retry'),
+            ),
+          ],
+        ),
+      );
+    }
+
+    final quests = explorationState.assignments;
+
+    if (quests.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.stars, size: 64, color: Colors.orange),
+            const SizedBox(height: 12),
+            const Text(
+              'No quests available',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Your exploration path will appear here.',
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+          ],
+        ),
+      );
+    }
+
+    return RefreshIndicator(
+      onRefresh: () => ref.read(explorationProvider.notifier).loadAssignments(),
+      child: ListView.builder(
+        padding: const EdgeInsets.all(16),
+        itemCount: quests.length,
+        itemBuilder: (context, index) {
+          return QuestCard(assignment: quests[index]);
+        },
       ),
     );
   }
