@@ -4,6 +4,7 @@ const RealStoreItem = require('../models/RealStoreItem');
 const Order = require('../models/Order');
 const PaymentReceipt = require('../models/PaymentReceipt');
 const CartService = require('../services/cartService');
+const crypto = require('crypto');
 const { checkJwt, extractUserId } = require('../middleware/auth');
 const {
   validateCartItem,
@@ -69,6 +70,75 @@ router.get('/items/:id', async (req, res) => {
     res.json(item);
   } catch (error) {
     res.status(500).json({ error: error.message });
+  }
+});
+
+// POST /api/store/payhere/notify - Webhook for PayHere payment status
+router.post('/payhere/notify', express.urlencoded({ extended: true }), async (req, res) => {
+  try {
+    const {
+      merchant_id,
+      order_id,
+      payhere_amount,
+      payhere_currency,
+      status_code,
+      md5sig,
+      payment_id,
+    } = req.body;
+
+    const merchantSecret = process.env.PAYHERE_MERCHANT_SECRET || 'placeholder_secret';
+
+    // Validate signature
+    const hashedSecret = crypto.createHash('md5').update(merchantSecret).digest('hex').toUpperCase();
+    const hashStr = merchant_id + order_id + payhere_amount + payhere_currency + status_code + hashedSecret;
+    const computedSig = crypto.createHash('md5').update(hashStr).digest('hex').toUpperCase();
+
+    if (computedSig !== md5sig) {
+      console.error('Invalid PayHere signature for order:', order_id);
+      return res.status(400).send('Invalid Signature');
+    }
+
+    const order = await Order.findOne({ orderId: order_id });
+    if (!order) {
+      console.error('Order not found for PayHere notify:', order_id);
+      return res.status(404).send('Order Not Found');
+    }
+
+    // Status map based on standard PayHere codes:
+    // 2: Success, 0: Pending, -1: Canceled, -2: Failed, -3: Chargedback
+    let newStatus = order.status;
+    let notes = '';
+
+    if (status_code === '2') {
+      newStatus = 'PAID';
+      notes = `Payment successful (Payment ID: ${payment_id})`;
+      order.payherePaymentId = payment_id;
+      order.paymentVerifiedAt = new Date();
+    } else if (status_code === '-2') {
+      newStatus = 'FAILED';
+      notes = `Payment failed (Payment ID: ${payment_id})`;
+    } else if (status_code === '0') {
+      notes = `Payment pending (Payment ID: ${payment_id})`;
+    } else if (status_code === '-1') {
+      newStatus = 'FAILED';
+      notes = `Payment cancelled by user.`;
+    }
+
+    if (newStatus !== order.status) {
+      order.status = newStatus;
+      order.statusHistory.push({
+        status: newStatus,
+        updatedAt: new Date(),
+        notes,
+      });
+      await order.save();
+    }
+
+    // PayHere expects a 200 OK immediately
+    res.status(200).send('OK');
+  } catch (error) {
+    console.error('PayHere webhook error:', error);
+    res.status(500).send('Server Error');
   }
 });
 
@@ -141,36 +211,35 @@ router.post(
   }
 );
 
-// Helper to generate a simple orderId
+// Helper to generate a simple unique orderId
 const generateOrderId = async () => {
   const today = new Date();
   const dateStr = today.toISOString().slice(0, 10).replace(/-/g, '');
 
-  const count = await Order.countDocuments({
-    createdAt: {
-      $gte: new Date(today.setHours(0, 0, 0, 0)),
-    },
-  });
+  // Use a random or timestamp-based suffix instead of counting 
+  // to avoid race conditions and duplicate key errors (E11000)
+  const uniqueSuffix = Date.now().toString().slice(-5);
 
-  return `ORD-${dateStr}-${String(count + 1).padStart(3, '0')}`;
+  return `ORD-${dateStr}-${uniqueSuffix}`;
 };
 
-// POST /api/store/checkout - create order from cart (manual payment for now)
+// POST /api/store/checkout - create order from cart
 router.post(
   '/checkout',
   validateCheckout,
   handleValidationErrors,
   async (req, res) => {
     try {
+      console.log('CHECKOUT REQUEST BODY:', req.body);
       const { shippingAddress } = req.body;
 
       const cart = await CartService.getCart(req.userId);
+      console.log('CART CONTENTS BEFORE CHECKOUT:', JSON.stringify(cart, null, 2));
       if (!cart.items.length) {
         return res.status(400).json({ error: 'Cart is empty' });
       }
 
       const orderId = await generateOrderId();
-      const referenceId = `${orderId}-${Date.now()}`.slice(0, 20);
 
       const order = await Order.create({
         orderId,
@@ -183,20 +252,13 @@ router.post(
           total: cart.total,
           currency: 'LKR',
         },
-        bankDetails: {
-          accountName: process.env.BANK_ACCOUNT_NAME || 'MAPORIA Pvt Ltd',
-          accountNumber: process.env.BANK_ACCOUNT_NUMBER || '0000000000',
-          bankName: process.env.BANK_NAME || 'Sample Bank',
-          routingNumber: process.env.BANK_ROUTING_NUMBER || '',
-          referenceId,
-        },
         shippingAddress,
         status: 'pending_payment',
         statusHistory: [
           {
             status: 'pending_payment',
             updatedAt: new Date(),
-            notes: 'Order created; awaiting payment',
+            notes: 'Order created; awaiting PayHere payment',
             updatedBy: null,
           },
         ],
@@ -204,57 +266,31 @@ router.post(
 
       await CartService.clearCart(req.userId);
 
+      // Generate PayHere Hash
+      const merchantId = process.env.PAYHERE_MERCHANT_ID || '1234567';
+      const merchantSecret = process.env.PAYHERE_MERCHANT_SECRET || 'placeholder_secret';
+      const amount = order.pricing.total.toString();
+      const currency = order.pricing.currency || 'LKR';
+
+      const hashedSecret = crypto.createHash('md5').update(merchantSecret).digest('hex').toUpperCase();
+      const amountFormatted = parseFloat(amount).toFixed(2);
+      const hashStr = merchantId + orderId + amountFormatted + currency + hashedSecret;
+      const hash = crypto.createHash('md5').update(hashStr).digest('hex').toUpperCase();
+
       res.json({
-        order,
-        message:
-          'Order created. Please transfer the total amount and upload the payment receipt.',
+        order: {
+          ...order.toJSON(),
+          payhereHash: hash,
+          payhereMerchantId: merchantId,
+        },
+        message: 'Order created safely. Please proceed to PayHere payment.',
       });
     } catch (error) {
+      console.error('ERROR DURING CHECKOUT EXACT REASON:', error);
       res.status(400).json({ error: error.message });
     }
   }
 );
-
-// POST /api/store/payment/upload-receipt - simplified stub for now
-router.post('/payment/upload-receipt', async (req, res) => {
-  try {
-    const { orderId, receiptUrl } = req.body;
-
-    if (!orderId || !receiptUrl) {
-      return res
-        .status(400)
-        .json({ error: 'orderId and receiptUrl are required' });
-    }
-
-    const order = await Order.findOne({ orderId, userId: req.userId });
-    if (!order) {
-      return res.status(404).json({ error: 'Order not found' });
-    }
-
-    order.paymentReceipt = {
-      ...(order.paymentReceipt || {}),
-      receiptUrl,
-      uploadedAt: new Date(),
-      verificationStatus: 'pending',
-    };
-    await order.save();
-
-    await PaymentReceipt.create({
-      orderId: order._id,
-      userId: req.userId,
-      receiptUrl,
-      transferAmount: order.pricing.total,
-      verificationStatus: 'pending',
-    });
-
-    res.json({
-      message: 'Receipt recorded. Admin will verify the payment.',
-      status: 'pending_verification',
-    });
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-});
 
 // GET /api/store/orders - list current user's orders
 router.get('/orders', async (req, res) => {

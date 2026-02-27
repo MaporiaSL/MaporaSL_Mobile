@@ -53,6 +53,8 @@ const orderSchema = new mongoose.Schema(
       type: String,
       enum: [
         'pending_payment',
+        'PAID',
+        'FAILED',
         'payment_received',
         'processing',
         'shipped',
@@ -83,6 +85,7 @@ const orderSchema = new mongoose.Schema(
     estimatedDeliveryDate: Date,
     actualDeliveryDate: Date,
     deliveryNotes: String,
+    payherePaymentId: String,
     createdAt: { type: Date, default: Date.now },
     paymentVerifiedAt: Date,
     shippedAt: Date,
