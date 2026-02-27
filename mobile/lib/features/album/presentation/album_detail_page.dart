@@ -2,6 +2,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:gemified_travel_portfolio/features/album/presentation/camera_page.dart';
 import 'package:gemified_travel_portfolio/features/album/presentation/photo_viewer_page.dart';
+import 'package:gemified_travel_portfolio/features/album/widgets/album_picker_sheet.dart';
+import 'package:gemified_travel_portfolio/features/album/widgets/photo_preview.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../data/services/album_service.dart';
@@ -43,17 +45,18 @@ class _AlbumDetailPageState extends State<AlbumDetailPage> {
     } catch (e) {
       setState(() => _isLoading = false);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to load photos: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Failed to load photos: $e')));
       }
     }
   }
 
+  /// Opens camera with this album's ID so photos save here directly
   Future<void> _openCamera() async {
     final result = await Navigator.push<bool>(
       context,
-      MaterialPageRoute(builder: (_) => const CameraPage()),
+      MaterialPageRoute(builder: (_) => CameraPage(albumId: widget.album.id)),
     );
 
     if (result == true) {
@@ -78,16 +81,91 @@ class _AlbumDetailPageState extends State<AlbumDetailPage> {
       setState(() => _isUploading = false);
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Photo uploaded')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Photo uploaded')));
       }
     } catch (e) {
       setState(() => _isUploading = false);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Upload failed: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Upload failed: $e')));
+      }
+    }
+  }
+
+  /// Show options sheet for a photo: Delete or Move
+  void _showPhotoOptions(PhotoModel photo) {
+    final cs = Theme.of(context).colorScheme;
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (_) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              margin: const EdgeInsets.symmetric(vertical: 12),
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: cs.outline.withOpacity(0.4),
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            ListTile(
+              leading: Icon(Icons.drive_file_move_outline, color: cs.primary),
+              title: const Text('Move to Album'),
+              onTap: () {
+                Navigator.pop(context);
+                _movePhoto(photo);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.delete_outline, color: Colors.red),
+              title: const Text(
+                'Delete Photo',
+                style: TextStyle(color: Colors.red),
+              ),
+              onTap: () {
+                Navigator.pop(context);
+                _deletePhoto(photo);
+              },
+            ),
+            const SizedBox(height: 8),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _movePhoto(PhotoModel photo) async {
+    final targetAlbumId = await showModalBottomSheet<String>(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (_) => AlbumPickerSheet(excludeAlbumId: widget.album.id),
+    );
+
+    if (targetAlbumId == null) return;
+
+    try {
+      await _service.movePhoto(widget.album.id, photo.id, targetAlbumId);
+      _loadPhotos();
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Photo moved')));
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Move failed: $e')));
       }
     }
   }
@@ -117,15 +195,15 @@ class _AlbumDetailPageState extends State<AlbumDetailPage> {
         await _service.deletePhoto(widget.album.id, photo.id);
         _loadPhotos();
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Photo deleted')),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(const SnackBar(content: Text('Photo deleted')));
         }
       } catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Delete failed: $e')),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('Delete failed: $e')));
         }
       }
     }
@@ -149,26 +227,35 @@ class _AlbumDetailPageState extends State<AlbumDetailPage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Scaffold(
+      backgroundColor: colorScheme.surface,
       appBar: AppBar(
         title: Text(widget.album.name),
-        actions: [
-          PopupMenuButton<String>(
-            onSelected: (value) {
-              if (value == 'camera') _openCamera();
-              if (value == 'gallery') _pickFromGallery();
-            },
-            itemBuilder: (_) => [
-              const PopupMenuItem(value: 'camera', child: Text('Take photo')),
-              const PopupMenuItem(value: 'gallery', child: Text('From gallery')),
-            ],
-          ),
-        ],
+        elevation: 0,
+        backgroundColor: colorScheme.surface,
+        foregroundColor: colorScheme.onSurface,
       ),
       body: _buildBody(),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _openCamera,
-        child: const Icon(Icons.camera_alt),
+      floatingActionButton: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          FloatingActionButton.small(
+            heroTag: 'detail_gallery',
+            backgroundColor: colorScheme.secondaryContainer,
+            foregroundColor: colorScheme.onSecondaryContainer,
+            onPressed: _pickFromGallery,
+            child: const Icon(Icons.photo_library),
+          ),
+          const SizedBox(width: 10),
+          FloatingActionButton.small(
+            heroTag: 'detail_camera',
+            onPressed: _openCamera,
+            child: const Icon(Icons.camera_alt),
+          ),
+        ],
       ),
     );
   }
@@ -183,14 +270,18 @@ class _AlbumDetailPageState extends State<AlbumDetailPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.photo, size: 80, color: Colors.grey),
+            Icon(Icons.photo_outlined, size: 72, color: Colors.grey[350]),
             const SizedBox(height: 16),
-            const Text('No photos yet', style: TextStyle(fontSize: 20)),
-            const SizedBox(height: 24),
-            ElevatedButton.icon(
-              onPressed: _openCamera,
-              icon: const Icon(Icons.camera_alt),
-              label: const Text('Take Photo'),
+            Text(
+              'No photos yet',
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(color: Colors.grey[600]),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Tap the camera to add one',
+              style: TextStyle(color: Colors.grey[500]),
             ),
           ],
         ),
@@ -202,28 +293,33 @@ class _AlbumDetailPageState extends State<AlbumDetailPage> {
         RefreshIndicator(
           onRefresh: _loadPhotos,
           child: GridView.builder(
-            padding: const EdgeInsets.all(4),
+            padding: const EdgeInsets.fromLTRB(4, 4, 4, 80),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 3,
-              mainAxisSpacing: 4,
-              crossAxisSpacing: 4,
+              mainAxisSpacing: 3,
+              crossAxisSpacing: 3,
             ),
             itemCount: _photos.length,
             itemBuilder: (_, index) {
               final photo = _photos[index];
               return GestureDetector(
                 onTap: () => _openPhoto(index),
-                onLongPress: () => _deletePhoto(photo),
-                child: CachedNetworkImage(
-                  imageUrl: photo.url,
-                  fit: BoxFit.cover,
-                  placeholder: (_, __) => Container(
-                    color: Colors.grey[200],
-                    child: const Center(child: CircularProgressIndicator(strokeWidth: 2)),
-                  ),
-                  errorWidget: (_, __, ___) => Container(
-                    color: Colors.grey[200],
-                    child: const Icon(Icons.broken_image, color: Colors.grey),
+                onLongPress: () => _showPhotoOptions(photo),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(4),
+                  child: CachedNetworkImage(
+                    imageUrl: photo.url,
+                    fit: BoxFit.cover,
+                    placeholder: (_, __) => Container(
+                      color: Colors.grey[200],
+                      child: const Center(
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                    ),
+                    errorWidget: (_, __, ___) => Container(
+                      color: Colors.grey[200],
+                      child: const Icon(Icons.broken_image, color: Colors.grey),
+                    ),
                   ),
                 ),
               );
@@ -231,23 +327,27 @@ class _AlbumDetailPageState extends State<AlbumDetailPage> {
           ),
         ),
         if (_isUploading)
-          const Positioned(
+          Positioned(
             bottom: 80,
             left: 0,
             right: 0,
             child: Center(
               child: Card(
-                child: Padding(
-                  padding: EdgeInsets.all(16),
+                elevation: 4,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       SizedBox(
-                        width: 24,
-                        height: 24,
+                        width: 20,
+                        height: 20,
                         child: CircularProgressIndicator(strokeWidth: 2),
                       ),
-                      SizedBox(width: 16),
+                      SizedBox(width: 12),
                       Text('Uploading...'),
                     ],
                   ),

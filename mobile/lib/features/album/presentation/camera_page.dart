@@ -6,7 +6,10 @@ import 'package:path_provider/path_provider.dart';
 import '../data/services/album_service.dart';
 
 class CameraPage extends StatefulWidget {
-  const CameraPage({super.key});
+  /// If provided, photos are saved directly to this album.
+  final String? albumId;
+
+  const CameraPage({super.key, this.albumId});
 
   @override
   State<CameraPage> createState() => _CameraPageState();
@@ -167,25 +170,44 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
   }
 
   void _showPreview(String photoPath) {
+    final hasAlbum = widget.albumId != null;
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.transparent,
       builder: (_) => PhotoPreview(
         photoPath: photoPath,
-        onUpload: () {
-          Navigator.pop(context);
-          _uploadPhoto(photoPath);
-        },
         onRetake: () {
           Navigator.pop(context);
           File(photoPath).delete().catchError((_) {});
         },
+        // Direct save when inside an album
+        onSaveDirect: hasAlbum
+            ? () {
+                Navigator.pop(context);
+                _uploadToAlbum(photoPath, widget.albumId!);
+              }
+            : null,
+        // Save by location (only when NOT inside an album)
+        onSaveByLocation: hasAlbum
+            ? null
+            : () {
+                Navigator.pop(context);
+                _uploadByLocation(photoPath);
+              },
+        // Save to chosen album (only when NOT inside an album)
+        onSaveToAlbum: hasAlbum
+            ? null
+            : (albumId) {
+                Navigator.pop(context);
+                _uploadToAlbum(photoPath, albumId);
+              },
       ),
     );
   }
 
-  Future<void> _uploadPhoto(String photoPath) async {
+  Future<void> _uploadByLocation(String photoPath) async {
     setState(() => _isUploading = true);
 
     try {
@@ -195,7 +217,29 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Saved to "${result.album.name}"')),
         );
-        Navigator.pop(context, true); // Return true = photo uploaded
+        Navigator.pop(context, true);
+      }
+    } catch (e) {
+      setState(() => _isUploading = false);
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Upload failed: $e')));
+      }
+    }
+  }
+
+  Future<void> _uploadToAlbum(String photoPath, String albumId) async {
+    setState(() => _isUploading = true);
+
+    try {
+      await _service.uploadPhoto(albumId, File(photoPath));
+
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Photo saved')));
+        Navigator.pop(context, true);
       }
     } catch (e) {
       setState(() => _isUploading = false);
@@ -246,55 +290,49 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
 
           // Top controls
           Positioned(
-            top: MediaQuery.of(context).padding.top + 16,
-            left: 16,
-            right: 16,
+            top: MediaQuery.of(context).padding.top + 8,
+            left: 8,
+            right: 8,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                IconButton(
-                  icon: const Icon(Icons.close, color: Colors.white, size: 28),
-                  onPressed: () => Navigator.pop(context, false),
+                _circleButton(
+                  icon: Icons.close,
+                  onTap: () => Navigator.pop(context, false),
                 ),
-                IconButton(
-                  icon: Icon(_flashIcon(), color: Colors.white, size: 28),
-                  onPressed: _toggleFlash,
-                ),
+                _circleButton(icon: _flashIcon(), onTap: _toggleFlash),
               ],
             ),
           ),
 
           // Bottom controls
           Positioned(
-            bottom: MediaQuery.of(context).padding.bottom + 32,
+            bottom: MediaQuery.of(context).padding.bottom + 24,
             left: 0,
             right: 0,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 // Switch camera
-                IconButton(
-                  icon: const Icon(
-                    Icons.flip_camera_ios,
-                    color: Colors.white,
-                    size: 32,
-                  ),
-                  onPressed: _cameras != null && _cameras!.length > 1
+                _circleButton(
+                  icon: Icons.flip_camera_ios,
+                  size: 44,
+                  onTap: _cameras != null && _cameras!.length > 1
                       ? _switchCamera
                       : null,
                 ),
-                // Capture button
+                // Capture button – 64px (was 80)
                 GestureDetector(
                   onTap: _isCapturing || _isUploading ? null : _takePhoto,
                   child: Container(
-                    width: 80,
-                    height: 80,
+                    width: 64,
+                    height: 64,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white, width: 4),
+                      border: Border.all(color: Colors.white, width: 3),
                     ),
                     child: Container(
-                      margin: const EdgeInsets.all(4),
+                      margin: const EdgeInsets.all(3),
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: (_isCapturing || _isUploading)
@@ -309,7 +347,7 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
                     ),
                   ),
                 ),
-                const SizedBox(width: 48),
+                const SizedBox(width: 44), // balance
               ],
             ),
           ),
@@ -330,6 +368,25 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
               ),
             ),
         ],
+      ),
+    );
+  }
+
+  Widget _circleButton({
+    required IconData icon,
+    double size = 40,
+    VoidCallback? onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: size,
+        height: size,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: Colors.black.withOpacity(0.35),
+        ),
+        child: Icon(icon, color: Colors.white, size: size * 0.55),
       ),
     );
   }

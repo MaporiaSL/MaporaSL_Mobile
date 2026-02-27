@@ -8,6 +8,7 @@ class AlbumCard extends StatelessWidget {
   final VoidCallback onLongPress;
 
   const AlbumCard({
+    super.key,
     required this.album,
     required this.onTap,
     required this.onLongPress,
@@ -15,8 +16,16 @@ class AlbumCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
     return Card(
       clipBehavior: Clip.antiAlias,
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(color: cs.outline.withOpacity(0.12)),
+      ),
       child: InkWell(
         onTap: onTap,
         onLongPress: onLongPress,
@@ -29,27 +38,37 @@ class AlbumCard extends StatelessWidget {
                       imageUrl: album.coverPhotoUrl!,
                       fit: BoxFit.cover,
                       placeholder: (_, __) => Container(
-                        color: Colors.grey[200],
-                        child: const Center(child: CircularProgressIndicator()),
+                        color: cs.surfaceContainerHighest.withOpacity(0.3),
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: cs.primary,
+                          ),
+                        ),
                       ),
-                      errorWidget: (_, __, ___) => _placeholderIcon(),
+                      errorWidget: (_, __, ___) => _placeholderIcon(cs),
                     )
-                  : _placeholderIcon(),
+                  : _placeholderIcon(cs),
             ),
             Padding(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     album.name,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+                    style: textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
+                  const SizedBox(height: 2),
                   Text(
                     '${album.photoCount} photos',
-                    style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                    style: textTheme.bodySmall?.copyWith(
+                      color: cs.onSurfaceVariant,
+                    ),
                   ),
                 ],
               ),
@@ -60,10 +79,14 @@ class AlbumCard extends StatelessWidget {
     );
   }
 
-  Widget _placeholderIcon() {
+  Widget _placeholderIcon(ColorScheme cs) {
     return Container(
-      color: Colors.grey[200],
-      child: const Icon(Icons.photo_album, size: 48, color: Colors.grey),
+      color: cs.primaryContainer.withOpacity(0.3),
+      child: Icon(
+        Icons.photo_album_outlined,
+        size: 40,
+        color: cs.primary.withOpacity(0.5),
+      ),
     );
   }
 }
