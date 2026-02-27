@@ -1,7 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:gemified_travel_portfolio/features/album/widgets/album_card.dart';
+import 'package:gemified_travel_portfolio/features/album/widgets/create_album_dialog.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import '../data/services/album_service.dart';
 import '../data/models/album_model.dart';
 import 'camera_page.dart';
@@ -112,7 +113,7 @@ class _AlbumPageState extends State<AlbumPage> {
   Future<void> _createAlbum() async {
     final name = await showDialog<String>(
       context: context,
-      builder: (_) => const _CreateAlbumDialog(),
+      builder: (_) => const CreateAlbumDialog(),
     );
 
     if (name != null && name.isNotEmpty) {
@@ -249,128 +250,13 @@ class _AlbumPageState extends State<AlbumPage> {
         itemCount: _albums.length,
         itemBuilder: (_, index) {
           final album = _albums[index];
-          return _AlbumCard(
+          return AlbumCard(
             album: album,
             onTap: () => _openAlbum(album),
             onLongPress: () => _deleteAlbum(album),
           );
         },
       ),
-    );
-  }
-}
-
-/// Album card widget
-class _AlbumCard extends StatelessWidget {
-  final AlbumModel album;
-  final VoidCallback onTap;
-  final VoidCallback onLongPress;
-
-  const _AlbumCard({
-    required this.album,
-    required this.onTap,
-    required this.onLongPress,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: onTap,
-        onLongPress: onLongPress,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Expanded(
-              child: album.coverPhotoUrl != null
-                  ? CachedNetworkImage(
-                      imageUrl: album.coverPhotoUrl!,
-                      fit: BoxFit.cover,
-                      placeholder: (_, __) => Container(
-                        color: Colors.grey[200],
-                        child: const Center(child: CircularProgressIndicator()),
-                      ),
-                      errorWidget: (_, __, ___) => _placeholderIcon(),
-                    )
-                  : _placeholderIcon(),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    album.name,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  Text(
-                    '${album.photoCount} photos',
-                    style: TextStyle(color: Colors.grey[600], fontSize: 12),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _placeholderIcon() {
-    return Container(
-      color: Colors.grey[200],
-      child: const Icon(Icons.photo_album, size: 48, color: Colors.grey),
-    );
-  }
-}
-
-/// Simple dialog to create album
-class _CreateAlbumDialog extends StatefulWidget {
-  const _CreateAlbumDialog();
-
-  @override
-  State<_CreateAlbumDialog> createState() => _CreateAlbumDialogState();
-}
-
-class _CreateAlbumDialogState extends State<_CreateAlbumDialog> {
-  final _controller = TextEditingController();
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      title: const Text('Create Album'),
-      content: TextField(
-        controller: _controller,
-        decoration: const InputDecoration(
-          labelText: 'Album Name',
-          hintText: 'e.g., Summer Trip',
-        ),
-        autofocus: true,
-        textCapitalization: TextCapitalization.words,
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: const Text('Cancel'),
-        ),
-        ElevatedButton(
-          onPressed: () {
-            if (_controller.text.trim().isNotEmpty) {
-              Navigator.pop(context, _controller.text.trim());
-            }
-          },
-          child: const Text('Create'),
-        ),
-      ],
     );
   }
 }

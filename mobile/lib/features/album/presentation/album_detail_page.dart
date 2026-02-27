@@ -231,24 +231,24 @@ class _AlbumDetailPageState extends State<AlbumDetailPage> {
           ),
         ),
         if (_isUploading)
-          Positioned(
+          const Positioned(
             bottom: 80,
             left: 0,
             right: 0,
             child: Center(
               child: Card(
                 child: Padding(
-                  padding: const EdgeInsets.all(16),
+                  padding: EdgeInsets.all(16),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const SizedBox(
+                      SizedBox(
                         width: 24,
                         height: 24,
                         child: CircularProgressIndicator(strokeWidth: 2),
                       ),
-                      const SizedBox(width: 16),
-                      const Text('Uploading...'),
+                      SizedBox(width: 16),
+                      Text('Uploading...'),
                     ],
                   ),
                 ),
