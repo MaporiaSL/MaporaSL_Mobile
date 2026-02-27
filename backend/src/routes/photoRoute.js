@@ -42,6 +42,9 @@ router.patch('/:photoId', photoController.updatePhoto);
 // DELETE /api/albums/:albumId/photos/:photoId - delete photo
 router.delete('/:photoId', photoController.deletePhoto);
 
+// POST /api/albums/:albumId/photos/:photoId/move - move photo to another album
+router.post('/:photoId/move', photoController.movePhoto);
+
 // Multer error handling
 router.use((err, req, res, next) => {
   if (err instanceof multer.MulterError) {

@@ -421,6 +421,64 @@ async function deletePhoto(req, res) {
   }
 }
 
+/**
+ * Move a photo from one album to another
+ * POST /api/albums/:albumId/photos/:photoId/move
+ * Body: { targetAlbumId }
+ */
+async function movePhoto(req, res) {
+  try {
+    const { albumId, photoId } = req.params;
+    const { targetAlbumId } = req.body;
+    const userId = req.userId;
+
+    if (!targetAlbumId) {
+      return res.status(400).json({ error: 'targetAlbumId is required' });
+    }
+
+    const sourceAlbum = await Album.findOne({ _id: albumId, userId });
+    if (!sourceAlbum) {
+      return res.status(404).json({ error: 'Source album not found' });
+    }
+
+    const targetAlbum = await Album.findOne({ _id: targetAlbumId, userId });
+    if (!targetAlbum) {
+      return res.status(404).json({ error: 'Target album not found' });
+    }
+
+    const photo = sourceAlbum.photos.id(photoId);
+    if (!photo) {
+      return res.status(404).json({ error: 'Photo not found' });
+    }
+
+    // Add photo data to target album
+    targetAlbum.photos.push({
+      url: photo.url,
+      originalName: photo.originalName,
+      storagePath: photo.storagePath,
+      caption: photo.caption,
+      location: photo.location,
+    });
+    if (!targetAlbum.coverPhotoUrl) {
+      targetAlbum.coverPhotoUrl = photo.url;
+    }
+    await targetAlbum.save();
+
+    // Remove from source album
+    if (sourceAlbum.coverPhotoUrl === photo.url) {
+      const remaining = sourceAlbum.photos.filter(p => p._id.toString() !== photoId);
+      sourceAlbum.coverPhotoUrl = remaining.length > 0 ? remaining[0].url : null;
+    }
+    sourceAlbum.photos.pull(photoId);
+    await sourceAlbum.save();
+
+    res.status(200).json({ message: 'Photo moved successfully' });
+  } catch (error) {
+    console.error('Move photo error:', error);
+    res.status(500).json({ error: 'Failed to move photo' });
+  }
+}
+
 module.exports = {
   uploadPhoto,
   getPhoto,
@@ -428,4 +486,5 @@ module.exports = {
   updatePhoto,
   deletePhoto,
   uploadMultiplePhotos,
+  movePhoto,
 };
