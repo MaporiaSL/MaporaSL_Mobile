@@ -85,6 +85,48 @@ class _AlbumDetailPageState extends State<AlbumDetailPage> {
     }
   }
 
+  Future<void> _deletePhoto(PhotoModel photo) async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('Delete Photo?'),
+        content: const Text('This cannot be undone.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.red,
+            ),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm == true) {
+      try {
+        await _service.deletePhoto(widget.album.id, photo.id);
+        await _loadPhotos();
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Photo deleted')),
+          );
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Delete failed: $e')),
+          );
+        }
+      }
+    }
+  }
+
   Widget _buildGrid() {
     return RefreshIndicator(
       onRefresh: _loadPhotos,
@@ -99,14 +141,17 @@ class _AlbumDetailPageState extends State<AlbumDetailPage> {
         ),
         itemBuilder: (_, index) {
           final photo = _photos[index];
-          return CachedNetworkImage(
-            imageUrl: photo.url,
-            fit: BoxFit.cover,
-            placeholder: (_, __) => const Center(
-              child: CircularProgressIndicator(strokeWidth: 2),
+          return GestureDetector(
+            onLongPress: () => _deletePhoto(photo),
+            child: CachedNetworkImage(
+              imageUrl: photo.url,
+              fit: BoxFit.cover,
+              placeholder: (_, __) => const Center(
+                child: CircularProgressIndicator(strokeWidth: 2),
+              ),
+              errorWidget: (_, __, ___) =>
+                  const Icon(Icons.broken_image),
             ),
-            errorWidget: (_, __, ___) =>
-                const Icon(Icons.broken_image),
           );
         },
       ),
