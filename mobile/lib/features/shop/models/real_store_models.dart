@@ -1,4 +1,5 @@
 import 'package:meta/meta.dart';
+import '../../../core/config/app_config.dart';
 
 @immutable
 class RealStoreItem {
@@ -11,6 +12,7 @@ class RealStoreItem {
     required this.category,
     required this.priceLkr,
     required this.thumbnail,
+    required this.stockAvailable,
   });
 
   final String itemId;
@@ -21,9 +23,15 @@ class RealStoreItem {
   final String category;
   final int priceLkr;
   final String thumbnail;
+  final int stockAvailable;
 
   factory RealStoreItem.fromJson(Map<String, dynamic> json) {
     final price = json['price'] as Map<String, dynamic>? ?? <String, dynamic>{};
+    final stock = json['stock'] as Map<String, dynamic>? ?? <String, dynamic>{};
+    String thumbnail = json['thumbnail'] as String? ?? '';
+    if (thumbnail.startsWith('/uploads')) {
+      thumbnail = '${AppConfig.apiBaseUrl}$thumbnail';
+    }
     return RealStoreItem(
       itemId: json['itemId'] as String? ?? '',
       name: json['name'] as String? ?? '',
@@ -32,7 +40,8 @@ class RealStoreItem {
       district: json['district'] as String? ?? '',
       category: json['category'] as String? ?? '',
       priceLkr: (price['lkr'] as num? ?? 0).toInt(),
-      thumbnail: json['thumbnail'] as String? ?? '',
+      thumbnail: thumbnail,
+      stockAvailable: (stock['available'] as num? ?? 0).toInt(),
     );
   }
 }
@@ -88,8 +97,7 @@ class ShoppingCart {
           .toList(),
       subtotal: (json['subtotal'] as num? ?? 0).toInt(),
       tax: (json['tax'] as num? ?? 0).toInt(),
-      estimatedShipping:
-          (json['estimatedShipping'] as num? ?? 0).toInt(),
+      estimatedShipping: (json['estimatedShipping'] as num? ?? 0).toInt(),
       total: (json['total'] as num? ?? 0).toInt(),
     );
   }
@@ -136,6 +144,8 @@ class Order {
     required this.total,
     required this.currency,
     required this.status,
+    this.payhereHash,
+    this.payhereMerchantId,
   });
 
   final String orderId;
@@ -143,6 +153,8 @@ class Order {
   final int total;
   final String currency;
   final String status;
+  final String? payhereHash;
+  final String? payhereMerchantId;
 
   factory Order.fromJson(Map<String, dynamic> json) {
     final pricing =
@@ -153,7 +165,8 @@ class Order {
       total: (pricing['total'] as num? ?? 0).toInt(),
       currency: pricing['currency'] as String? ?? 'LKR',
       status: json['status'] as String? ?? '',
+      payhereHash: json['payhereHash'] as String?,
+      payhereMerchantId: json['payhereMerchantId'] as String?,
     );
   }
 }
-

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/real_store_models.dart';
 import '../providers/real_store_providers.dart';
 import 'checkout_page.dart';
+import 'product_details_page.dart';
 
 class ShopPage extends ConsumerWidget {
   const ShopPage({super.key});
@@ -103,24 +104,38 @@ class _RealStoreItemCard extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
-            child: ClipRRect(
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(12),
-              ),
-              child: item.thumbnail.isEmpty
-                  ? Container(
-                      color: Colors.grey.shade200,
-                      child: const Center(child: Icon(Icons.image, size: 32)),
-                    )
-                  : Image.network(
-                      item.thumbnail,
-                      fit: BoxFit.cover,
-                      width: double.infinity,
-                      errorBuilder: (_, __, ___) => Container(
+            child: GestureDetector(
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => ProductDetailsPage(item: item),
+                  ),
+                );
+              },
+              child: ClipRRect(
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(12),
+                ),
+                child: item.thumbnail.isEmpty
+                    ? Container(
                         color: Colors.grey.shade200,
-                        child: const Center(child: Icon(Icons.broken_image)),
+                        child: const Center(child: Icon(Icons.image, size: 32)),
+                      )
+                    : Hero(
+                        tag: 'product_image_${item.itemId}',
+                        child: Image.network(
+                          item.thumbnail,
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                          errorBuilder: (_, __, ___) => Container(
+                            color: Colors.grey.shade200,
+                            child: const Center(
+                              child: Icon(Icons.broken_image),
+                            ),
+                          ),
+                        ),
                       ),
-                    ),
+              ),
             ),
           ),
           Padding(

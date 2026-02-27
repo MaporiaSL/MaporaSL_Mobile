@@ -7,6 +7,13 @@ allprojects {
     repositories {
         google()
         mavenCentral()
+        maven { url = uri("https://test.payhere.lk/lib") }
+        maven { url = uri("https://test.payhere.lk/lib") }
+        // Note: the documentation for payhere android sdk mentions this URL:
+        maven { url = uri("https://jitpack.io") }
+        maven {
+            url = uri("https://s3.amazonaws.com/nexus-payhere/payhere-android-sdk")
+        }
     }
 }
 
