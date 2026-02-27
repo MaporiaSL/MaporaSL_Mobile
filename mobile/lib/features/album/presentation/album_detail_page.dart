@@ -66,7 +66,6 @@ class _AlbumDetailPageState extends State<AlbumDetailPage> {
       setState(() => _isUploading = true);
 
       await _service.uploadPhoto(widget.album.id, File(image.path));
-
       await _loadPhotos();
 
       setState(() => _isUploading = false);
@@ -84,6 +83,34 @@ class _AlbumDetailPageState extends State<AlbumDetailPage> {
         );
       }
     }
+  }
+
+  Widget _buildGrid() {
+    return RefreshIndicator(
+      onRefresh: _loadPhotos,
+      child: GridView.builder(
+        padding: const EdgeInsets.all(4),
+        itemCount: _photos.length,
+        gridDelegate:
+            const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 3,
+          mainAxisSpacing: 4,
+          crossAxisSpacing: 4,
+        ),
+        itemBuilder: (_, index) {
+          final photo = _photos[index];
+          return CachedNetworkImage(
+            imageUrl: photo.url,
+            fit: BoxFit.cover,
+            placeholder: (_, __) => const Center(
+              child: CircularProgressIndicator(strokeWidth: 2),
+            ),
+            errorWidget: (_, __, ___) =>
+                const Icon(Icons.broken_image),
+          );
+        },
+      ),
+    );
   }
 
   @override
@@ -110,34 +137,42 @@ class _AlbumDetailPageState extends State<AlbumDetailPage> {
           ),
         ],
       ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : _photos.isEmpty
-              ? const Center(child: Text("No photos yet"))
-              : RefreshIndicator(
-                  onRefresh: _loadPhotos,
-                  child: GridView.builder(
-                    itemCount: _photos.length,
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3,
-                      mainAxisSpacing: 4,
-                      crossAxisSpacing: 4,
-                    ),
-                    itemBuilder: (_, index) {
-                      final photo = _photos[index];
-                      return CachedNetworkImage(
-                        imageUrl: photo.url,
-                        fit: BoxFit.cover,
-                        placeholder: (_, __) => const Center(
-                          child: CircularProgressIndicator(strokeWidth: 2),
+      body: Stack(
+        children: [
+          _isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : _photos.isEmpty
+                  ? const Center(child: Text("No photos yet"))
+                  : _buildGrid(),
+          if (_isUploading)
+            Positioned(
+              bottom: 80,
+              left: 0,
+              right: 0,
+              child: Center(
+                child: Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: const [
+                        SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                          ),
                         ),
-                        errorWidget: (_, __, ___) =>
-                            const Icon(Icons.broken_image),
-                      );
-                    },
+                        SizedBox(width: 16),
+                        Text('Uploading...'),
+                      ],
+                    ),
                   ),
                 ),
+              ),
+            ),
+        ],
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: _openCamera,
         child: const Icon(Icons.camera_alt),
