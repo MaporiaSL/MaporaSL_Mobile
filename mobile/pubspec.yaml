@@ -43,6 +43,7 @@ dependencies:
   json_annotation: ^4.10.0
   mapbox_maps_flutter: ^2.6.0
   image_picker: ^1.2.1
+  payhere_mobilesdk_flutter: ^3.2.2
 
 dev_dependencies:
   flutter_test:

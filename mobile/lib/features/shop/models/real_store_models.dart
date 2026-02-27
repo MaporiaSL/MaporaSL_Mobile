@@ -144,6 +144,8 @@ class Order {
     required this.total,
     required this.currency,
     required this.status,
+    this.payhereHash,
+    this.payhereMerchantId,
   });
 
   final String orderId;
@@ -151,6 +153,8 @@ class Order {
   final int total;
   final String currency;
   final String status;
+  final String? payhereHash;
+  final String? payhereMerchantId;
 
   factory Order.fromJson(Map<String, dynamic> json) {
     final pricing =
@@ -161,6 +165,8 @@ class Order {
       total: (pricing['total'] as num? ?? 0).toInt(),
       currency: pricing['currency'] as String? ?? 'LKR',
       status: json['status'] as String? ?? '',
+      payhereHash: json['payhereHash'] as String?,
+      payhereMerchantId: json['payhereMerchantId'] as String?,
     );
   }
 }
