@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:gemified_travel_portfolio/features/album/presentation/camera_page.dart';
+import 'package:gemified_travel_portfolio/features/album/presentation/photo_viewer_page.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../data/services/album_service.dart';
@@ -32,6 +33,7 @@ class _AlbumDetailPageState extends State<AlbumDetailPage> {
 
   Future<void> _loadPhotos() async {
     setState(() => _isLoading = true);
+
     try {
       final album = await _service.getAlbum(widget.album.id);
       setState(() {
@@ -40,6 +42,11 @@ class _AlbumDetailPageState extends State<AlbumDetailPage> {
       });
     } catch (e) {
       setState(() => _isLoading = false);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to load photos: $e')),
+        );
+      }
     }
   }
 
@@ -66,7 +73,7 @@ class _AlbumDetailPageState extends State<AlbumDetailPage> {
       setState(() => _isUploading = true);
 
       await _service.uploadPhoto(widget.album.id, File(image.path));
-      await _loadPhotos();
+      _loadPhotos();
 
       setState(() => _isUploading = false);
 
@@ -98,9 +105,7 @@ class _AlbumDetailPageState extends State<AlbumDetailPage> {
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            style: TextButton.styleFrom(
-              foregroundColor: Colors.red,
-            ),
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
             child: const Text('Delete'),
           ),
         ],
@@ -110,8 +115,7 @@ class _AlbumDetailPageState extends State<AlbumDetailPage> {
     if (confirm == true) {
       try {
         await _service.deletePhoto(widget.album.id, photo.id);
-        await _loadPhotos();
-
+        _loadPhotos();
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Photo deleted')),
@@ -127,33 +131,18 @@ class _AlbumDetailPageState extends State<AlbumDetailPage> {
     }
   }
 
-  Widget _buildGrid() {
-    return RefreshIndicator(
-      onRefresh: _loadPhotos,
-      child: GridView.builder(
-        padding: const EdgeInsets.all(4),
-        itemCount: _photos.length,
-        gridDelegate:
-            const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3,
-          mainAxisSpacing: 4,
-          crossAxisSpacing: 4,
+  void _openPhoto(int index) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => PhotoViewerPage(
+          photos: _photos,
+          initialIndex: index,
+          onDelete: (photo) async {
+            await _service.deletePhoto(widget.album.id, photo.id);
+            _loadPhotos();
+          },
         ),
-        itemBuilder: (_, index) {
-          final photo = _photos[index];
-          return GestureDetector(
-            onLongPress: () => _deletePhoto(photo),
-            child: CachedNetworkImage(
-              imageUrl: photo.url,
-              fit: BoxFit.cover,
-              placeholder: (_, __) => const Center(
-                child: CircularProgressIndicator(strokeWidth: 2),
-              ),
-              errorWidget: (_, __, ___) =>
-                  const Icon(Icons.broken_image),
-            ),
-          );
-        },
       ),
     );
   }
@@ -169,59 +158,104 @@ class _AlbumDetailPageState extends State<AlbumDetailPage> {
               if (value == 'camera') _openCamera();
               if (value == 'gallery') _pickFromGallery();
             },
-            itemBuilder: (_) => const [
-              PopupMenuItem(
-                value: 'camera',
-                child: Text('Take photo'),
-              ),
-              PopupMenuItem(
-                value: 'gallery',
-                child: Text('From gallery'),
-              ),
+            itemBuilder: (_) => [
+              const PopupMenuItem(value: 'camera', child: Text('Take photo')),
+              const PopupMenuItem(value: 'gallery', child: Text('From gallery')),
             ],
           ),
         ],
       ),
-      body: Stack(
-        children: [
-          _isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : _photos.isEmpty
-                  ? const Center(child: Text("No photos yet"))
-                  : _buildGrid(),
-          if (_isUploading)
-            Positioned(
-              bottom: 80,
-              left: 0,
-              right: 0,
-              child: Center(
-                child: Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: const [
-                        SizedBox(
-                          width: 24,
-                          height: 24,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                          ),
-                        ),
-                        SizedBox(width: 16),
-                        Text('Uploading...'),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-        ],
-      ),
+      body: _buildBody(),
       floatingActionButton: FloatingActionButton(
         onPressed: _openCamera,
         child: const Icon(Icons.camera_alt),
       ),
+    );
+  }
+
+  Widget _buildBody() {
+    if (_isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (_photos.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.photo, size: 80, color: Colors.grey),
+            const SizedBox(height: 16),
+            const Text('No photos yet', style: TextStyle(fontSize: 20)),
+            const SizedBox(height: 24),
+            ElevatedButton.icon(
+              onPressed: _openCamera,
+              icon: const Icon(Icons.camera_alt),
+              label: const Text('Take Photo'),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return Stack(
+      children: [
+        RefreshIndicator(
+          onRefresh: _loadPhotos,
+          child: GridView.builder(
+            padding: const EdgeInsets.all(4),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3,
+              mainAxisSpacing: 4,
+              crossAxisSpacing: 4,
+            ),
+            itemCount: _photos.length,
+            itemBuilder: (_, index) {
+              final photo = _photos[index];
+              return GestureDetector(
+                onTap: () => _openPhoto(index),
+                onLongPress: () => _deletePhoto(photo),
+                child: CachedNetworkImage(
+                  imageUrl: photo.url,
+                  fit: BoxFit.cover,
+                  placeholder: (_, __) => Container(
+                    color: Colors.grey[200],
+                    child: const Center(child: CircularProgressIndicator(strokeWidth: 2)),
+                  ),
+                  errorWidget: (_, __, ___) => Container(
+                    color: Colors.grey[200],
+                    child: const Icon(Icons.broken_image, color: Colors.grey),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+        if (_isUploading)
+          Positioned(
+            bottom: 80,
+            left: 0,
+            right: 0,
+            child: Center(
+              child: Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                      const SizedBox(width: 16),
+                      const Text('Uploading...'),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+      ],
     );
   }
 }
