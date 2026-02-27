@@ -168,6 +168,22 @@ class AlbumService {
     return null;
   }
 
+  /// Move photo from one album to another
+  Future<void> movePhoto(
+    String sourceAlbumId,
+    String photoId,
+    String targetAlbumId,
+  ) async {
+    try {
+      await _dio.post(
+        '$baseUrl/albums/$sourceAlbumId/photos/$photoId/move',
+        data: {'targetAlbumId': targetAlbumId},
+      );
+    } catch (e) {
+      throw Exception('Failed to move photo: $e');
+    }
+  }
+
   /// Upload photo to album based on current location
   Future<({AlbumModel album, PhotoModel photo})> uploadPhotoToLocationAlbum(
     File photoFile,
