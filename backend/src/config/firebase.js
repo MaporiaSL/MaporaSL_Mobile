@@ -11,7 +11,13 @@ const REQUIRED_ENV_VARS = [
 ];
 
 const initializeFirebase = () => {
+  // Check if already initialized
   if (firebaseApp) return firebaseApp;
+  if (admin.apps.length) {
+    firebaseApp = admin.apps[0];
+    console.log('Firebase Admin SDK already initialized, reusing existing app');
+    return firebaseApp;
+  }
 
   // Validate env vars
   const missing = REQUIRED_ENV_VARS.filter(
@@ -52,10 +58,12 @@ const initializeFirebase = () => {
 
 const getStorage = () => {
   if (!firebaseApp) initializeFirebase();
-  return admin.storage().bucket();
+  // Explicitly pass bucket name in case app was initialized without storageBucket
+  return admin.storage().bucket(process.env.FIREBASE_STORAGE_BUCKET);
 };
 
 module.exports = {
+  admin,
   initializeFirebase,
   getStorage,
 };

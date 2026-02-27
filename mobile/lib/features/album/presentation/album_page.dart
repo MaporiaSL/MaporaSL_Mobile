@@ -1,11 +1,12 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:gemified_travel_portfolio/features/album/widgets/album_card.dart';
+import 'package:gemified_travel_portfolio/features/album/widgets/create_album_dialog.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import '../data/services/album_service.dart';
 import '../data/models/album_model.dart';
 import 'camera_page.dart';
-//import 'album_detail_page.dart';
+import 'album_detail_page.dart';
 
 /// Main Album page - shows all albums with camera button
 class AlbumPage extends StatefulWidget {
@@ -72,7 +73,9 @@ class _AlbumPageState extends State<AlbumPage> {
       // Show loading
       _showLoading('Uploading photo...');
 
-      final result = await _service.uploadPhotoToLocationAlbum(File(image.path));
+      final result = await _service.uploadPhotoToLocationAlbum(
+        File(image.path),
+      );
 
       if (mounted) {
         Navigator.pop(context); // Close loading
@@ -104,24 +107,39 @@ class _AlbumPageState extends State<AlbumPage> {
   }
 
   void _showMessage(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 
   Future<void> _createAlbum() async {
     final name = await showDialog<String>(
       context: context,
-      builder: (_) => const _CreateAlbumDialog(),
+      builder: (_) => const CreateAlbumDialog(),
     );
 
     if (name != null && name.isNotEmpty) {
+      // Check for duplicate name locally first (case-insensitive)
+      final duplicate = _albums.any(
+        (a) => a.name.toLowerCase() == name.toLowerCase(),
+      );
+      if (duplicate) {
+        _showMessage('An album named "$name" already exists');
+        return;
+      }
+
       try {
         await _service.createAlbum(name);
         _loadAlbums();
         _showMessage('Album "$name" created');
       } catch (e) {
-        _showMessage('Failed to create album: $e');
+        final msg = e.toString();
+        if (msg.contains('409') ||
+            msg.toLowerCase().contains('already exists')) {
+          _showMessage('An album with this name already exists');
+        } else {
+          _showMessage('Failed to create album: $e');
+        }
       }
     }
   }
@@ -158,38 +176,56 @@ class _AlbumPageState extends State<AlbumPage> {
   }
 
   void _openAlbum(AlbumModel album) {
-   /* Navigator.push(
+    Navigator.push(
       context,
       MaterialPageRoute(builder: (_) => AlbumDetailPage(album: album)),
-    ).then((_) => _loadAlbums());*/
+    ).then((_) => _loadAlbums());
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Scaffold(
+      backgroundColor: colorScheme.surface,
       appBar: AppBar(
         title: const Text('My Albums'),
+        elevation: 0,
+        backgroundColor: colorScheme.surface,
+        foregroundColor: colorScheme.onSurface,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: _createAlbum,
-          ),
+          // Reserve space for overlay profile icon
+          const SizedBox(width: 56),
         ],
       ),
       body: _buildBody(),
       floatingActionButton: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          FloatingActionButton(
+          // Create album button
+          FloatingActionButton.small(
+            heroTag: 'create',
+            backgroundColor: colorScheme.secondaryContainer,
+            foregroundColor: colorScheme.onSecondaryContainer,
+            onPressed: _createAlbum,
+            child: const Icon(Icons.add),
+          ),
+          const SizedBox(height: 10),
+          // Gallery picker
+          FloatingActionButton.small(
             heroTag: 'gallery',
+            backgroundColor: colorScheme.secondaryContainer,
+            foregroundColor: colorScheme.onSecondaryContainer,
             onPressed: _pickFromGallery,
             child: const Icon(Icons.photo_library),
           ),
-          const SizedBox(height: 16),
-          FloatingActionButton.large(
+          const SizedBox(height: 10),
+          // Camera button
+          FloatingActionButton.small(
             heroTag: 'camera',
             onPressed: _openCamera,
-            child: const Icon(Icons.camera_alt, size: 36),
+            child: const Icon(Icons.camera_alt),
           ),
         ],
       ),
@@ -206,10 +242,14 @@ class _AlbumPageState extends State<AlbumPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.error_outline, size: 64, color: Colors.grey),
-            const SizedBox(height: 16),
-            Text('Failed to load albums'),
-            ElevatedButton(onPressed: _loadAlbums, child: const Text('Retry')),
+            Icon(Icons.error_outline, size: 56, color: Colors.grey[400]),
+            const SizedBox(height: 12),
+            const Text('Failed to load albums'),
+            const SizedBox(height: 12),
+            FilledButton.tonal(
+              onPressed: _loadAlbums,
+              child: const Text('Retry'),
+            ),
           ],
         ),
       );
@@ -220,16 +260,18 @@ class _AlbumPageState extends State<AlbumPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.photo_album, size: 80, color: Colors.grey),
+            Icon(Icons.photo_album_outlined, size: 72, color: Colors.grey[350]),
             const SizedBox(height: 16),
-            const Text('No albums yet', style: TextStyle(fontSize: 20)),
+            Text(
+              'No albums yet',
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(color: Colors.grey[600]),
+            ),
             const SizedBox(height: 8),
-            const Text('Take a photo to get started!'),
-            const SizedBox(height: 24),
-            ElevatedButton.icon(
-              onPressed: _openCamera,
-              icon: const Icon(Icons.camera_alt),
-              label: const Text('Take Photo'),
+            Text(
+              'Take a photo or create an album',
+              style: TextStyle(color: Colors.grey[500]),
             ),
           ],
         ),
@@ -239,138 +281,23 @@ class _AlbumPageState extends State<AlbumPage> {
     return RefreshIndicator(
       onRefresh: _loadAlbums,
       child: GridView.builder(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 100),
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
-          mainAxisSpacing: 16,
-          crossAxisSpacing: 16,
+          mainAxisSpacing: 12,
+          crossAxisSpacing: 12,
           childAspectRatio: 0.85,
         ),
         itemCount: _albums.length,
         itemBuilder: (_, index) {
           final album = _albums[index];
-          return _AlbumCard(
+          return AlbumCard(
             album: album,
             onTap: () => _openAlbum(album),
             onLongPress: () => _deleteAlbum(album),
           );
         },
       ),
-    );
-  }
-}
-
-/// Album card widget
-class _AlbumCard extends StatelessWidget {
-  final AlbumModel album;
-  final VoidCallback onTap;
-  final VoidCallback onLongPress;
-
-  const _AlbumCard({
-    required this.album,
-    required this.onTap,
-    required this.onLongPress,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: onTap,
-        onLongPress: onLongPress,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Expanded(
-              child: album.coverPhotoUrl != null
-                  ? CachedNetworkImage(
-                      imageUrl: album.coverPhotoUrl!,
-                      fit: BoxFit.cover,
-                      placeholder: (_, __) => Container(
-                        color: Colors.grey[200],
-                        child: const Center(child: CircularProgressIndicator()),
-                      ),
-                      errorWidget: (_, __, ___) => _placeholderIcon(),
-                    )
-                  : _placeholderIcon(),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    album.name,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  Text(
-                    '${album.photoCount} photos',
-                    style: TextStyle(color: Colors.grey[600], fontSize: 12),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _placeholderIcon() {
-    return Container(
-      color: Colors.grey[200],
-      child: const Icon(Icons.photo_album, size: 48, color: Colors.grey),
-    );
-  }
-}
-
-/// Simple dialog to create album
-class _CreateAlbumDialog extends StatefulWidget {
-  const _CreateAlbumDialog();
-
-  @override
-  State<_CreateAlbumDialog> createState() => _CreateAlbumDialogState();
-}
-
-class _CreateAlbumDialogState extends State<_CreateAlbumDialog> {
-  final _controller = TextEditingController();
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      title: const Text('Create Album'),
-      content: TextField(
-        controller: _controller,
-        decoration: const InputDecoration(
-          labelText: 'Album Name',
-          hintText: 'e.g., Summer Trip',
-        ),
-        autofocus: true,
-        textCapitalization: TextCapitalization.words,
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: const Text('Cancel'),
-        ),
-        ElevatedButton(
-          onPressed: () {
-            if (_controller.text.trim().isNotEmpty) {
-              Navigator.pop(context, _controller.text.trim());
-            }
-          },
-          child: const Text('Create'),
-        ),
-      ],
     );
   }
 }

@@ -15,6 +15,16 @@ async function createAlbum(req, res) {
       return res.status(400).json({ error: 'Album name is required' });
     }
 
+    // Check for duplicate name (case-insensitive) for this user
+    const trimmedName = name.trim();
+    const existing = await Album.findOne({
+      userId,
+      name: { $regex: new RegExp(`^${trimmedName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i') }
+    });
+    if (existing) {
+      return res.status(409).json({ error: 'An album with this name already exists' });
+    }
+
     const album = new Album({
       userId,
       name,
