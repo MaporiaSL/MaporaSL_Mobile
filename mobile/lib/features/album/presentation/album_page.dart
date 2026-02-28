@@ -62,6 +62,7 @@ class _AlbumPageState extends State<AlbumPage> {
   }
 
   Future<void> _pickFromGallery() async {
+    bool isLoadingShown = false;
     try {
       final XFile? image = await _picker.pickImage(
         source: ImageSource.gallery,
@@ -72,6 +73,7 @@ class _AlbumPageState extends State<AlbumPage> {
 
       // Show loading
       _showLoading('Uploading photo...');
+      isLoadingShown = true;
 
       final result = await _service.uploadPhotoToLocationAlbum(
         File(image.path),
@@ -79,12 +81,15 @@ class _AlbumPageState extends State<AlbumPage> {
 
       if (mounted) {
         Navigator.pop(context); // Close loading
+        isLoadingShown = false;
         _loadAlbums();
         _showMessage('Photo saved to "${result.album.name}"');
       }
     } catch (e) {
       if (mounted) {
-        Navigator.pop(context); // Close loading
+        if (isLoadingShown) {
+          Navigator.pop(context); // Close loading
+        }
         _showMessage('Failed: $e');
       }
     }
