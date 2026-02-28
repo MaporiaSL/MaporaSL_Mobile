@@ -23,12 +23,14 @@ class PhotoViewerPage extends StatefulWidget {
 class _PhotoViewerPageState extends State<PhotoViewerPage> {
   late PageController _pageController;
   late int _currentIndex;
+  late List<PhotoModel> _photos;
   bool _showControls = true;
 
   @override
   void initState() {
     super.initState();
     _currentIndex = widget.initialIndex;
+    _photos = List.from(widget.photos);
     _pageController = PageController(initialPage: widget.initialIndex);
   }
 
@@ -38,7 +40,7 @@ class _PhotoViewerPageState extends State<PhotoViewerPage> {
     super.dispose();
   }
 
-  PhotoModel get _currentPhoto => widget.photos[_currentIndex];
+  PhotoModel get _currentPhoto => _photos[_currentIndex];
 
   void _toggleControls() {
     setState(() => _showControls = !_showControls);
@@ -66,28 +68,33 @@ class _PhotoViewerPageState extends State<PhotoViewerPage> {
 
     if (confirm == true && widget.onDelete != null) {
       try {
-        await widget.onDelete!(_currentPhoto);
+        final photoToDelete = _photos[_currentIndex];
+        await widget.onDelete!(photoToDelete);
 
-        if (widget.photos.length <= 1) {
+        setState(() {
+          _photos.removeAt(_currentIndex);
+          if (_photos.isEmpty) {
+            // Will pop below
+          } else if (_currentIndex >= _photos.length) {
+            _currentIndex = _photos.length - 1;
+          }
+        });
+
+        if (_photos.isEmpty) {
           if (mounted) Navigator.pop(context);
-        } else {
-          setState(() {
-            if (_currentIndex >= widget.photos.length - 1) {
-              _currentIndex = widget.photos.length - 2;
-            }
-          });
+          return;
         }
 
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Photo deleted')),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(const SnackBar(content: Text('Photo deleted')));
         }
       } catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Delete failed: $e')),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('Delete failed: $e')));
         }
       }
     }
@@ -103,14 +110,24 @@ class _PhotoViewerPageState extends State<PhotoViewerPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text('Photo Details', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              const Text(
+                'Photo Details',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
               const SizedBox(height: 16),
               _infoRow(Icons.image, 'Filename', _currentPhoto.originalName),
               if (_currentPhoto.createdAt != null)
-                _infoRow(Icons.calendar_today, 'Date',
-                    DateFormat.yMMMd().add_jm().format(_currentPhoto.createdAt!)),
+                _infoRow(
+                  Icons.calendar_today,
+                  'Date',
+                  DateFormat.yMMMd().add_jm().format(_currentPhoto.createdAt!),
+                ),
               if (_currentPhoto.location?.placeName != null)
-                _infoRow(Icons.location_on, 'Location', _currentPhoto.location!.placeName!),
+                _infoRow(
+                  Icons.location_on,
+                  'Location',
+                  _currentPhoto.location!.placeName!,
+                ),
             ],
           ),
         ),
@@ -129,7 +146,10 @@ class _PhotoViewerPageState extends State<PhotoViewerPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(label, style: TextStyle(color: Colors.grey[600], fontSize: 12)),
+                Text(
+                  label,
+                  style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                ),
                 Text(value),
               ],
             ),
@@ -149,14 +169,20 @@ class _PhotoViewerPageState extends State<PhotoViewerPage> {
               backgroundColor: Colors.black54,
               elevation: 0,
               title: Text(
-                '${_currentIndex + 1} / ${widget.photos.length}',
+                '${_currentIndex + 1} / ${_photos.length}',
                 style: const TextStyle(color: Colors.white),
               ),
               iconTheme: const IconThemeData(color: Colors.white),
               actions: [
-                IconButton(icon: const Icon(Icons.info_outline), onPressed: _showInfo),
+                IconButton(
+                  icon: const Icon(Icons.info_outline),
+                  onPressed: _showInfo,
+                ),
                 if (widget.onDelete != null)
-                  IconButton(icon: const Icon(Icons.delete), onPressed: _deletePhoto),
+                  IconButton(
+                    icon: const Icon(Icons.delete),
+                    onPressed: _deletePhoto,
+                  ),
               ],
             )
           : null,
@@ -166,10 +192,10 @@ class _PhotoViewerPageState extends State<PhotoViewerPage> {
           children: [
             PageView.builder(
               controller: _pageController,
-              itemCount: widget.photos.length,
+              itemCount: _photos.length,
               onPageChanged: (index) => setState(() => _currentIndex = index),
               itemBuilder: (_, index) {
-                final photo = widget.photos[index];
+                final photo = _photos[index];
                 return InteractiveViewer(
                   minScale: 0.5,
                   maxScale: 4.0,
@@ -181,7 +207,11 @@ class _PhotoViewerPageState extends State<PhotoViewerPage> {
                         child: CircularProgressIndicator(color: Colors.white),
                       ),
                       errorWidget: (_, __, ___) => const Center(
-                        child: Icon(Icons.broken_image, size: 64, color: Colors.white54),
+                        child: Icon(
+                          Icons.broken_image,
+                          size: 64,
+                          color: Colors.white54,
+                        ),
                       ),
                     ),
                   ),
@@ -202,7 +232,11 @@ class _PhotoViewerPageState extends State<PhotoViewerPage> {
                   ),
                   child: Row(
                     children: [
-                      const Icon(Icons.location_on, color: Colors.white70, size: 20),
+                      const Icon(
+                        Icons.location_on,
+                        color: Colors.white70,
+                        size: 20,
+                      ),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(

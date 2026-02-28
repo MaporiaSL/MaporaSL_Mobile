@@ -49,7 +49,7 @@ class _AlbumPickerSheetState extends State<AlbumPickerSheet> {
             width: 40,
             height: 4,
             decoration: BoxDecoration(
-              color: cs.outline.withOpacity(0.4),
+              color: cs.outline.withValues(alpha: 0.4),
               borderRadius: BorderRadius.circular(2),
             ),
           ),

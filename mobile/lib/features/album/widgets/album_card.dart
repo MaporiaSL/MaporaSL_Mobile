@@ -24,7 +24,7 @@ class AlbumCard extends StatelessWidget {
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: cs.outline.withOpacity(0.12)),
+        side: BorderSide(color: cs.outline.withValues(alpha: 0.12)),
       ),
       child: InkWell(
         onTap: onTap,
@@ -38,7 +38,9 @@ class AlbumCard extends StatelessWidget {
                       imageUrl: album.coverPhotoUrl!,
                       fit: BoxFit.cover,
                       placeholder: (_, __) => Container(
-                        color: cs.surfaceContainerHighest.withOpacity(0.3),
+                        color: cs.surfaceContainerHighest.withValues(
+                          alpha: 0.3,
+                        ),
                         child: Center(
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
@@ -81,11 +83,11 @@ class AlbumCard extends StatelessWidget {
 
   Widget _placeholderIcon(ColorScheme cs) {
     return Container(
-      color: cs.primaryContainer.withOpacity(0.3),
+      color: cs.primaryContainer.withValues(alpha: 0.3),
       child: Icon(
         Icons.photo_album_outlined,
         size: 40,
-        color: cs.primary.withOpacity(0.5),
+        color: cs.primary.withValues(alpha: 0.5),
       ),
     );
   }

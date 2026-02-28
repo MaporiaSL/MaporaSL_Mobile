@@ -42,7 +42,7 @@ class PhotoPreview extends StatelessWidget {
             width: 40,
             height: 4,
             decoration: BoxDecoration(
-              color: colorScheme.outline.withOpacity(0.4),
+              color: colorScheme.outline.withValues(alpha: 0.4),
               borderRadius: BorderRadius.circular(2),
             ),
           ),

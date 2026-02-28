@@ -3,6 +3,8 @@ import 'package:dio/dio.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:gemified_travel_portfolio/core/config/app_config.dart';
+import 'package:gemified_travel_portfolio/core/services/auth_interceptor.dart';
 import '../models/album_model.dart';
 import '../models/photo_model.dart';
 
@@ -12,8 +14,13 @@ class AlbumService {
   factory AlbumService() => _instance;
   AlbumService._internal();
 
-  final Dio _dio = Dio();
-  final String baseUrl = 'http://10.0.2.2:5000/api';
+  final Dio _dio = Dio(
+    BaseOptions(
+      connectTimeout: const Duration(seconds: 15),
+      receiveTimeout: const Duration(seconds: 15),
+    ),
+  )..interceptors.add(AuthInterceptor());
+  final String baseUrl = '${AppConfig.apiBaseUrl}/api';
 
   /// Get all albums
   Future<List<AlbumModel>> getAlbums() async {
