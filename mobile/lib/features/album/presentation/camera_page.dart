@@ -47,6 +47,8 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
 
     if (state == AppLifecycleState.inactive) {
       _controller?.dispose();
+      _controller = null;
+      setState(() => _isInitialized = false);
     } else if (state == AppLifecycleState.resumed) {
       _initCamera();
     }
@@ -213,7 +215,11 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
     try {
       final result = await _service.uploadPhotoToLocationAlbum(File(photoPath));
 
+      // Clean up local file after successful upload
+      File(photoPath).delete().catchError((_) {});
+
       if (mounted) {
+        setState(() => _isUploading = false);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Saved to "${result.album.name}"')),
         );
@@ -235,7 +241,11 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
     try {
       await _service.uploadPhoto(albumId, File(photoPath));
 
+      // Clean up local file after successful upload
+      File(photoPath).delete().catchError((_) {});
+
       if (mounted) {
+        setState(() => _isUploading = false);
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(const SnackBar(content: Text('Photo saved')));
@@ -384,7 +394,7 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
         height: size,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: Colors.black.withOpacity(0.35),
+          color: Colors.black.withValues(alpha: 0.35),
         ),
         child: Icon(icon, color: Colors.white, size: size * 0.55),
       ),

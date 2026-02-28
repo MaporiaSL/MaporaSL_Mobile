@@ -26,6 +26,7 @@ class _AlbumDetailPageState extends State<AlbumDetailPage> {
   List<PhotoModel> _photos = [];
   bool _isLoading = true;
   bool _isUploading = false;
+  String? _error;
 
   @override
   void initState() {
@@ -34,7 +35,10 @@ class _AlbumDetailPageState extends State<AlbumDetailPage> {
   }
 
   Future<void> _loadPhotos() async {
-    setState(() => _isLoading = true);
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
 
     try {
       final album = await _service.getAlbum(widget.album.id);
@@ -43,12 +47,10 @@ class _AlbumDetailPageState extends State<AlbumDetailPage> {
         _isLoading = false;
       });
     } catch (e) {
-      setState(() => _isLoading = false);
-      if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Failed to load photos: $e')));
-      }
+      setState(() {
+        _error = e.toString();
+        _isLoading = false;
+      });
     }
   }
 
@@ -112,7 +114,7 @@ class _AlbumDetailPageState extends State<AlbumDetailPage> {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: cs.outline.withOpacity(0.4),
+                color: cs.outline.withValues(alpha: 0.4),
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -263,6 +265,24 @@ class _AlbumDetailPageState extends State<AlbumDetailPage> {
   Widget _buildBody() {
     if (_isLoading) {
       return const Center(child: CircularProgressIndicator());
+    }
+
+    if (_error != null) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.error_outline, size: 56, color: Colors.grey[400]),
+            const SizedBox(height: 12),
+            const Text('Failed to load photos'),
+            const SizedBox(height: 12),
+            FilledButton.tonal(
+              onPressed: _loadPhotos,
+              child: const Text('Retry'),
+            ),
+          ],
+        ),
+      );
     }
 
     if (_photos.isEmpty) {
