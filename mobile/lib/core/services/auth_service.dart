@@ -13,10 +13,37 @@ class AuthService {
 
   User? get currentUser => _auth.currentUser;
 
+  bool get isEmailVerified => _auth.currentUser?.emailVerified ?? false;
+
   Future<String?> getIdToken() async {
     final user = _auth.currentUser;
     if (user == null) return null;
     return user.getIdToken();
+  }
+
+  Future<UserCredential> signInWithEmail(String email, String password) async {
+    return _auth.signInWithEmailAndPassword(email: email, password: password);
+  }
+
+  Future<UserCredential> signUpWithEmail(String email, String password) async {
+    final credential = await _auth.createUserWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
+    await credential.user?.sendEmailVerification();
+    return credential;
+  }
+
+  Future<void> sendEmailVerification() async {
+    await _auth.currentUser?.sendEmailVerification();
+  }
+
+  Future<void> reloadUser() async {
+    await _auth.currentUser?.reload();
+  }
+
+  Future<void> sendPasswordResetEmail(String email) async {
+    await _auth.sendPasswordResetEmail(email: email);
   }
 
   Future<UserCredential> signInWithGoogle() async {
