@@ -1,4 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:gemified_travel_portfolio/core/services/auth_service.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -18,6 +20,34 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   bool _obscurePassword = true;
   bool _obscureConfirm = true;
+
+  final _authService = AuthService();
+
+  bool _isLoading = false;
+
+  Future<void> _handleSignUp() async {
+
+    if (!_formKey.currentState!.validate()) return;
+
+    setState(() => _isLoading = true);
+
+    try {
+
+      final credential = await _authService.signUpWithEmail(
+        _emailController.text.trim(),
+        _passwordController.text,
+      );
+
+      await credential.user?.updateDisplayName(
+        _nameController.text.trim(),
+      );
+
+    } on FirebaseAuthException catch (e) {
+      print(e.message);
+    }
+
+    setState(() => _isLoading = false);
+  }
 
   @override
   void dispose() {
