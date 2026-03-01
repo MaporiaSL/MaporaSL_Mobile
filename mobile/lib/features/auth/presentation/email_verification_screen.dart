@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
 
-class EmailVerificationScreen extends StatelessWidget {
+class EmailVerificationScreen extends StatefulWidget {
   final String email;
   final String name;
   final String hometownDistrict;
@@ -12,6 +12,13 @@ class EmailVerificationScreen extends StatelessWidget {
     required this.name,
     required this.hometownDistrict,
   });
+
+  @override
+  State<EmailVerificationScreen> createState() =>
+      _EmailVerificationScreenState();
+}
+
+class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +64,7 @@ class EmailVerificationScreen extends StatelessWidget {
                 const SizedBox(height: 4),
 
                 Text(
-                  email,
+                  widget.email,
                   style: theme.textTheme.bodyLarge?.copyWith(
                     fontWeight: FontWeight.w600,
                   ),
