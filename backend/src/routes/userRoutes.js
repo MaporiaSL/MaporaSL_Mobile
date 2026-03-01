@@ -10,7 +10,7 @@ router.use(extractUserId);
 /**
  * @route   GET /api/users/:userId/progress
  * @desc    Get user's progress (unlocked districts, provinces, achievements)
- * @access  Private (JWT required, must match userId)
+ * @access  Private (JWT required, must match us   erId)
  */
 router.get('/:userId/progress', getUserProgress);
 

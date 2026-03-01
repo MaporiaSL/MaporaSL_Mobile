@@ -6,6 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="85c81345-a34b-4cea-a4e8-41472e7b44b3" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/data/realStoreSampleProducts.json" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/data/realStoreSampleProducts.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

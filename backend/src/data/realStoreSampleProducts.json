@@ -5,14 +5,30 @@
     "description": "Metal key tag featuring the Colombo lighthouse silhouette, perfect for urban explorers.",
     "district": "Colombo",
     "category": "souvenirs",
-    "price": { "lkr": 750 },
-    "stock": { "available": 150, "reservedInCart": 0, "sold": 0 },
-    "images": ["https://cdn.example.com/shop/colombo-lighthouse-keytag.jpg"],
-    "thumbnail": "https://cdn.example.com/shop/colombo-lighthouse-keytag-thumb.jpg",
+    "price": {
+      "lkr": 750
+    },
+    "stock": {
+      "available": 150,
+      "reservedInCart": 0,
+      "sold": 0
+    },
+    "images": [
+      "/uploads/products/Colombo_Lighthouse.png"
+    ],
+    "thumbnail": "/uploads/products/Colombo_Lighthouse.png",
     "weight": 50,
-    "dimensions": { "length": 5, "width": 3, "height": 0.5 },
+    "dimensions": {
+      "length": 5,
+      "width": 3,
+      "height": 0.5
+    },
     "shippingEstimateDays": 3,
-    "tags": ["keytag", "colombo", "lighthouse"],
+    "tags": [
+      "keytag",
+      "colombo",
+      "lighthouse"
+    ],
     "featured": true,
     "displayOrder": 1
   },
@@ -22,14 +38,30 @@
     "description": "Set of 5 premium postcards capturing sunsets at Galle Face Green.",
     "district": "Colombo",
     "category": "souvenirs",
-    "price": { "lkr": 620 },
-    "stock": { "available": 200, "reservedInCart": 0, "sold": 0 },
-    "images": ["https://cdn.example.com/shop/colombo-galleface-postcards.jpg"],
-    "thumbnail": "https://cdn.example.com/shop/colombo-galleface-postcards-thumb.jpg",
+    "price": {
+      "lkr": 620
+    },
+    "stock": {
+      "available": 200,
+      "reservedInCart": 0,
+      "sold": 0
+    },
+    "images": [
+      "/uploads/products/Galle_Face_Sunset_Postcard_Set.png"
+    ],
+    "thumbnail": "/uploads/products/Galle_Face_Sunset_Postcard_Set.png",
     "weight": 80,
-    "dimensions": { "length": 15, "width": 10, "height": 1 },
+    "dimensions": {
+      "length": 15,
+      "width": 10,
+      "height": 1
+    },
     "shippingEstimateDays": 3,
-    "tags": ["postcard", "sunset", "galle-face"],
+    "tags": [
+      "postcard",
+      "sunset",
+      "galle-face"
+    ],
     "featured": false,
     "displayOrder": 2
   },
@@ -39,14 +71,29 @@
     "description": "Colourful fridge magnet inspired by Kelaniya Raja Maha Viharaya murals.",
     "district": "Gampaha",
     "category": "souvenirs",
-    "price": { "lkr": 480 },
-    "stock": { "available": 180, "reservedInCart": 0, "sold": 0 },
-    "images": ["https://cdn.example.com/shop/gampaha-kelaniya-magnet.jpg"],
-    "thumbnail": "https://cdn.example.com/shop/gampaha-kelaniya-magnet-thumb.jpg",
+    "price": {
+      "lkr": 480
+    },
+    "stock": {
+      "available": 180,
+      "reservedInCart": 0,
+      "sold": 0
+    },
+    "images": [
+      "/uploads/products/Kelaniya_Temple_Fridge_Magnet.png"
+    ],
+    "thumbnail": "/uploads/products/Kelaniya_Temple_Fridge_Magnet.png",
     "weight": 40,
-    "dimensions": { "length": 6, "width": 6, "height": 0.8 },
+    "dimensions": {
+      "length": 6,
+      "width": 6,
+      "height": 0.8
+    },
     "shippingEstimateDays": 3,
-    "tags": ["magnet", "kelaniya"],
+    "tags": [
+      "magnet",
+      "kelaniya"
+    ],
     "featured": false,
     "displayOrder": 3
   },
@@ -56,14 +103,29 @@
     "description": "Rubber key tag depicting traditional Negombo fishing boats.",
     "district": "Gampaha",
     "category": "souvenirs",
-    "price": { "lkr": 520 },
-    "stock": { "available": 160, "reservedInCart": 0, "sold": 0 },
-    "images": ["https://cdn.example.com/shop/gampaha-negombo-boat-keytag.jpg"],
-    "thumbnail": "https://cdn.example.com/shop/gampaha-negombo-boat-keytag-thumb.jpg",
+    "price": {
+      "lkr": 520
+    },
+    "stock": {
+      "available": 160,
+      "reservedInCart": 0,
+      "sold": 0
+    },
+    "images": [
+      "/uploads/products/Negombo_Fishing_Keytag.png"
+    ],
+    "thumbnail": "/uploads/products/Negombo_Fishing_Keytag.png",
     "weight": 45,
-    "dimensions": { "length": 5, "width": 3, "height": 0.5 },
+    "dimensions": {
+      "length": 5,
+      "width": 3,
+      "height": 0.5
+    },
     "shippingEstimateDays": 3,
-    "tags": ["keytag", "negombo"],
+    "tags": [
+      "keytag",
+      "negombo"
+    ],
     "featured": false,
     "displayOrder": 4
   },
@@ -73,14 +135,29 @@
     "description": "Handcrafted wooden replica of the iconic Kalutara Bodhiya stupa.",
     "district": "Kalutara",
     "category": "handicraft",
-    "price": { "lkr": 2850 },
-    "stock": { "available": 40, "reservedInCart": 0, "sold": 0 },
-    "images": ["https://cdn.example.com/shop/kalutara-bodhiya-replica.jpg"],
-    "thumbnail": "https://cdn.example.com/shop/kalutara-bodhiya-replica-thumb.jpg",
+    "price": {
+      "lkr": 2850
+    },
+    "stock": {
+      "available": 40,
+      "reservedInCart": 0,
+      "sold": 0
+    },
+    "images": [
+      "/uploads/products/Kalutara_Bodhuya_Mini_Replica.png"
+    ],
+    "thumbnail": "/uploads/products/Kalutara_Bodhuya_Mini_Replica.png",
     "weight": 320,
-    "dimensions": { "length": 12, "width": 12, "height": 18 },
+    "dimensions": {
+      "length": 12,
+      "width": 12,
+      "height": 18
+    },
     "shippingEstimateDays": 4,
-    "tags": ["stupa", "replica"],
+    "tags": [
+      "stupa",
+      "replica"
+    ],
     "featured": true,
     "displayOrder": 5
   },
@@ -90,14 +167,29 @@
     "description": "A5 notebook with an artistic sketch of Kalutara bridge on the cover.",
     "district": "Kalutara",
     "category": "souvenirs",
-    "price": { "lkr": 690 },
-    "stock": { "available": 120, "reservedInCart": 0, "sold": 0 },
-    "images": ["https://cdn.example.com/shop/kalutara-bridge-notebook.jpg"],
-    "thumbnail": "https://cdn.example.com/shop/kalutara-bridge-notebook-thumb.jpg",
+    "price": {
+      "lkr": 690
+    },
+    "stock": {
+      "available": 120,
+      "reservedInCart": 0,
+      "sold": 0
+    },
+    "images": [
+      "/uploads/products/Kalutara_Bridge_Sketch_Notebook.png"
+    ],
+    "thumbnail": "/uploads/products/Kalutara_Bridge_Sketch_Notebook.png",
     "weight": 180,
-    "dimensions": { "length": 21, "width": 14, "height": 1 },
+    "dimensions": {
+      "length": 21,
+      "width": 14,
+      "height": 1
+    },
     "shippingEstimateDays": 3,
-    "tags": ["notebook", "kalutara"],
+    "tags": [
+      "notebook",
+      "kalutara"
+    ],
     "featured": false,
     "displayOrder": 6
   },
@@ -107,14 +199,30 @@
     "description": "Hand-painted wooden mask inspired by the Kandy Esala Perahera dancers.",
     "district": "Kandy",
     "category": "handicraft",
-    "price": { "lkr": 4200 },
-    "stock": { "available": 35, "reservedInCart": 0, "sold": 0 },
-    "images": ["https://cdn.example.com/shop/kandy-perahera-mask.jpg"],
-    "thumbnail": "https://cdn.example.com/shop/kandy-perahera-mask-thumb.jpg",
+    "price": {
+      "lkr": 4200
+    },
+    "stock": {
+      "available": 35,
+      "reservedInCart": 0,
+      "sold": 0
+    },
+    "images": [
+      "/uploads/products/Kandy_Perahera_Wooden_Mask.png"
+    ],
+    "thumbnail": "/uploads/products/Kandy_Perahera_Wooden_Mask.png",
     "weight": 280,
-    "dimensions": { "length": 20, "width": 15, "height": 8 },
+    "dimensions": {
+      "length": 20,
+      "width": 15,
+      "height": 8
+    },
     "shippingEstimateDays": 4,
-    "tags": ["mask", "kandy", "perahera"],
+    "tags": [
+      "mask",
+      "kandy",
+      "perahera"
+    ],
     "featured": true,
     "displayOrder": 7
   },
@@ -124,14 +232,29 @@
     "description": "High-quality A4 art print of the Sri Dalada Maligawa at night.",
     "district": "Kandy",
     "category": "art-prints",
-    "price": { "lkr": 1900 },
-    "stock": { "available": 60, "reservedInCart": 0, "sold": 0 },
-    "images": ["https://cdn.example.com/shop/kandy-dalada-artprint.jpg"],
-    "thumbnail": "https://cdn.example.com/shop/kandy-dalada-artprint-thumb.jpg",
+    "price": {
+      "lkr": 1900
+    },
+    "stock": {
+      "available": 60,
+      "reservedInCart": 0,
+      "sold": 0
+    },
+    "images": [
+      "/uploads/products/Temple_of_Tooth_Art.png"
+    ],
+    "thumbnail": "/uploads/products/Temple_of_Tooth_Art.png",
     "weight": 150,
-    "dimensions": { "length": 30, "width": 21, "height": 0.5 },
+    "dimensions": {
+      "length": 30,
+      "width": 21,
+      "height": 0.5
+    },
     "shippingEstimateDays": 3,
-    "tags": ["art", "dalada-maligawa"],
+    "tags": [
+      "art",
+      "dalada-maligawa"
+    ],
     "featured": false,
     "displayOrder": 8
   },
@@ -141,14 +264,29 @@
     "description": "Resin replica of Nalanda Gedige carvings mounted on a wooden base.",
     "district": "Matale",
     "category": "handicraft",
-    "price": { "lkr": 3600 },
-    "stock": { "available": 25, "reservedInCart": 0, "sold": 0 },
-    "images": ["https://cdn.example.com/shop/matale-nalanda-carving.jpg"],
-    "thumbnail": "https://cdn.example.com/shop/matale-nalanda-carving-thumb.jpg",
+    "price": {
+      "lkr": 3600
+    },
+    "stock": {
+      "available": 25,
+      "reservedInCart": 0,
+      "sold": 0
+    },
+    "images": [
+      "/uploads/products/Nalanda_Gedige_Stone_Carving_Replica.png"
+    ],
+    "thumbnail": "/uploads/products/Nalanda_Gedige_Stone_Carving_Replica.png",
     "weight": 400,
-    "dimensions": { "length": 18, "width": 10, "height": 20 },
+    "dimensions": {
+      "length": 18,
+      "width": 10,
+      "height": 20
+    },
     "shippingEstimateDays": 4,
-    "tags": ["nalanda-gedige", "replica"],
+    "tags": [
+      "nalanda-gedige",
+      "replica"
+    ],
     "featured": false,
     "displayOrder": 9
   },
@@ -158,14 +296,29 @@
     "description": "Assorted spice sachets (cinnamon, clove, pepper) from Matale gardens.",
     "district": "Matale",
     "category": "food-spices",
-    "price": { "lkr": 1450 },
-    "stock": { "available": 90, "reservedInCart": 0, "sold": 0 },
-    "images": ["https://cdn.example.com/shop/matale-spice-pack.jpg"],
-    "thumbnail": "https://cdn.example.com/shop/matale-spice-pack-thumb.jpg",
+    "price": {
+      "lkr": 1450
+    },
+    "stock": {
+      "available": 90,
+      "reservedInCart": 0,
+      "sold": 0
+    },
+    "images": [
+      "/uploads/products/Matale_Spice_Garden_Sachet_Pack.png"
+    ],
+    "thumbnail": "/uploads/products/Matale_Spice_Garden_Sachet_Pack.png",
     "weight": 220,
-    "dimensions": { "length": 18, "width": 12, "height": 5 },
+    "dimensions": {
+      "length": 18,
+      "width": 12,
+      "height": 5
+    },
     "shippingEstimateDays": 3,
-    "tags": ["spices", "matale"],
+    "tags": [
+      "spices",
+      "matale"
+    ],
     "featured": true,
     "displayOrder": 10
   },
@@ -175,14 +328,30 @@
     "description": "Eco-friendly canvas bag printed with misty tea estate scenery.",
     "district": "Nuwara Eliya",
     "category": "apparel",
-    "price": { "lkr": 1650 },
-    "stock": { "available": 110, "reservedInCart": 0, "sold": 0 },
-    "images": ["https://cdn.example.com/shop/nuwaraeliya-tea-tote.jpg"],
-    "thumbnail": "https://cdn.example.com/shop/nuwaraeliya-tea-tote-thumb.jpg",
+    "price": {
+      "lkr": 1650
+    },
+    "stock": {
+      "available": 110,
+      "reservedInCart": 0,
+      "sold": 0
+    },
+    "images": [
+      "/uploads/products/Nuwara_Eliya_Tea_Estate_Canvas_Tote.png"
+    ],
+    "thumbnail": "/uploads/products/Nuwara_Eliya_Tea_Estate_Canvas_Tote.png",
     "weight": 200,
-    "dimensions": { "length": 40, "width": 35, "height": 2 },
+    "dimensions": {
+      "length": 40,
+      "width": 35,
+      "height": 2
+    },
     "shippingEstimateDays": 3,
-    "tags": ["tote", "tea", "nuwara-eliya"],
+    "tags": [
+      "tote",
+      "tea",
+      "nuwara-eliya"
+    ],
     "featured": false,
     "displayOrder": 11
   },
@@ -192,14 +361,29 @@
     "description": "Enamel camping mug featuring a minimal illustration of Gregory Lake.",
     "district": "Nuwara Eliya",
     "category": "souvenirs",
-    "price": { "lkr": 1250 },
-    "stock": { "available": 80, "reservedInCart": 0, "sold": 0 },
-    "images": ["https://cdn.example.com/shop/nuwaraeliya-gregory-mug.jpg"],
-    "thumbnail": "https://cdn.example.com/shop/nuwaraeliya-gregory-mug-thumb.jpg",
+    "price": {
+      "lkr": 1250
+    },
+    "stock": {
+      "available": 80,
+      "reservedInCart": 0,
+      "sold": 0
+    },
+    "images": [
+      "/uploads/products/Gregory_Lake_Enamel_Mug.png"
+    ],
+    "thumbnail": "/uploads/products/Gregory_Lake_Enamel_Mug.png",
     "weight": 260,
-    "dimensions": { "length": 10, "width": 10, "height": 9 },
+    "dimensions": {
+      "length": 10,
+      "width": 10,
+      "height": 9
+    },
     "shippingEstimateDays": 3,
-    "tags": ["mug", "gregory-lake"],
+    "tags": [
+      "mug",
+      "gregory-lake"
+    ],
     "featured": false,
     "displayOrder": 12
   },
@@ -209,14 +393,29 @@
     "description": "Framed watercolour print of a classic Galle Fort street.",
     "district": "Galle",
     "category": "art-prints",
-    "price": { "lkr": 2750 },
-    "stock": { "available": 55, "reservedInCart": 0, "sold": 0 },
-    "images": ["https://cdn.example.com/shop/galle-fort-frame.jpg"],
-    "thumbnail": "https://cdn.example.com/shop/galle-fort-frame-thumb.jpg",
+    "price": {
+      "lkr": 2750
+    },
+    "stock": {
+      "available": 55,
+      "reservedInCart": 0,
+      "sold": 0
+    },
+    "images": [
+      "/uploads/products/Galle_Fort_Street_Art_Frame.png"
+    ],
+    "thumbnail": "/uploads/products/Galle_Fort_Street_Art_Frame.png",
     "weight": 320,
-    "dimensions": { "length": 32, "width": 24, "height": 2 },
+    "dimensions": {
+      "length": 32,
+      "width": 24,
+      "height": 2
+    },
     "shippingEstimateDays": 4,
-    "tags": ["galle-fort", "art"],
+    "tags": [
+      "galle-fort",
+      "art"
+    ],
     "featured": true,
     "displayOrder": 13
   },
@@ -226,14 +425,29 @@
     "description": "Compass-shaped key tag with Galle Fort coordinates on the back.",
     "district": "Galle",
     "category": "souvenirs",
-    "price": { "lkr": 820 },
-    "stock": { "available": 140, "reservedInCart": 0, "sold": 0 },
-    "images": ["https://cdn.example.com/shop/galle-compass-keytag.jpg"],
+    "price": {
+      "lkr": 820
+    },
+    "stock": {
+      "available": 140,
+      "reservedInCart": 0,
+      "sold": 0
+    },
+    "images": [
+      "https://cdn.example.com/shop/galle-compass-keytag.jpg"
+    ],
     "thumbnail": "https://cdn.example.com/shop/galle-compass-keytag-thumb.jpg",
     "weight": 60,
-    "dimensions": { "length": 4, "width": 4, "height": 0.7 },
+    "dimensions": {
+      "length": 4,
+      "width": 4,
+      "height": 0.7
+    },
     "shippingEstimateDays": 3,
-    "tags": ["keytag", "compass"],
+    "tags": [
+      "keytag",
+      "compass"
+    ],
     "featured": false,
     "displayOrder": 14
   },
@@ -243,14 +457,29 @@
     "description": "Detailed mini model of Dondra lighthouse with painted coastal base.",
     "district": "Matara",
     "category": "souvenirs",
-    "price": { "lkr": 3100 },
-    "stock": { "available": 45, "reservedInCart": 0, "sold": 0 },
-    "images": ["https://cdn.example.com/shop/matara-dondra-model.jpg"],
+    "price": {
+      "lkr": 3100
+    },
+    "stock": {
+      "available": 45,
+      "reservedInCart": 0,
+      "sold": 0
+    },
+    "images": [
+      "https://cdn.example.com/shop/matara-dondra-model.jpg"
+    ],
     "thumbnail": "https://cdn.example.com/shop/matara-dondra-model-thumb.jpg",
     "weight": 380,
-    "dimensions": { "length": 12, "width": 12, "height": 22 },
+    "dimensions": {
+      "length": 12,
+      "width": 12,
+      "height": 22
+    },
     "shippingEstimateDays": 4,
-    "tags": ["lighthouse", "dondra"],
+    "tags": [
+      "lighthouse",
+      "dondra"
+    ],
     "featured": true,
     "displayOrder": 15
   },
@@ -260,14 +489,29 @@
     "description": "Handmade bracelet using ethically collected Polhena beach shells.",
     "district": "Matara",
     "category": "handicraft",
-    "price": { "lkr": 580 },
-    "stock": { "available": 130, "reservedInCart": 0, "sold": 0 },
-    "images": ["https://cdn.example.com/shop/matara-polhena-bracelet.jpg"],
+    "price": {
+      "lkr": 580
+    },
+    "stock": {
+      "available": 130,
+      "reservedInCart": 0,
+      "sold": 0
+    },
+    "images": [
+      "https://cdn.example.com/shop/matara-polhena-bracelet.jpg"
+    ],
     "thumbnail": "https://cdn.example.com/shop/matara-polhena-bracelet-thumb.jpg",
     "weight": 30,
-    "dimensions": { "length": 7, "width": 7, "height": 1 },
+    "dimensions": {
+      "length": 7,
+      "width": 7,
+      "height": 1
+    },
     "shippingEstimateDays": 3,
-    "tags": ["bracelet", "shell"],
+    "tags": [
+      "bracelet",
+      "shell"
+    ],
     "featured": false,
     "displayOrder": 16
   },
@@ -277,14 +521,29 @@
     "description": "Recycled-paper sketchbook with Bundala National Park bird illustrations.",
     "district": "Hambantota",
     "category": "souvenirs",
-    "price": { "lkr": 980 },
-    "stock": { "available": 100, "reservedInCart": 0, "sold": 0 },
-    "images": ["https://cdn.example.com/shop/hambantota-bundala-sketchbook.jpg"],
+    "price": {
+      "lkr": 980
+    },
+    "stock": {
+      "available": 100,
+      "reservedInCart": 0,
+      "sold": 0
+    },
+    "images": [
+      "https://cdn.example.com/shop/hambantota-bundala-sketchbook.jpg"
+    ],
     "thumbnail": "https://cdn.example.com/shop/hambantota-bundala-sketchbook-thumb.jpg",
     "weight": 190,
-    "dimensions": { "length": 21, "width": 14, "height": 1 },
+    "dimensions": {
+      "length": 21,
+      "width": 14,
+      "height": 1
+    },
     "shippingEstimateDays": 3,
-    "tags": ["sketchbook", "bundala"],
+    "tags": [
+      "sketchbook",
+      "bundala"
+    ],
     "featured": false,
     "displayOrder": 17
   },
@@ -294,14 +553,29 @@
     "description": "Set of 4 cork coasters inspired by Hambantota salt pans geometry.",
     "district": "Hambantota",
     "category": "souvenirs",
-    "price": { "lkr": 1450 },
-    "stock": { "available": 70, "reservedInCart": 0, "sold": 0 },
-    "images": ["https://cdn.example.com/shop/hambantota-salt-coasters.jpg"],
+    "price": {
+      "lkr": 1450
+    },
+    "stock": {
+      "available": 70,
+      "reservedInCart": 0,
+      "sold": 0
+    },
+    "images": [
+      "https://cdn.example.com/shop/hambantota-salt-coasters.jpg"
+    ],
     "thumbnail": "https://cdn.example.com/shop/hambantota-salt-coasters-thumb.jpg",
     "weight": 220,
-    "dimensions": { "length": 10, "width": 10, "height": 4 },
+    "dimensions": {
+      "length": 10,
+      "width": 10,
+      "height": 4
+    },
     "shippingEstimateDays": 3,
-    "tags": ["coasters", "salt-pans"],
+    "tags": [
+      "coasters",
+      "salt-pans"
+    ],
     "featured": false,
     "displayOrder": 18
   },
@@ -311,14 +585,29 @@
     "description": "Brass key tag etched with Nallur Kandaswamy Kovil gopuram outline.",
     "district": "Jaffna",
     "category": "souvenirs",
-    "price": { "lkr": 980 },
-    "stock": { "available": 95, "reservedInCart": 0, "sold": 0 },
-    "images": ["https://cdn.example.com/shop/jaffna-nallur-brass-keytag.jpg"],
+    "price": {
+      "lkr": 980
+    },
+    "stock": {
+      "available": 95,
+      "reservedInCart": 0,
+      "sold": 0
+    },
+    "images": [
+      "https://cdn.example.com/shop/jaffna-nallur-brass-keytag.jpg"
+    ],
     "thumbnail": "https://cdn.example.com/shop/jaffna-nallur-brass-keytag-thumb.jpg",
     "weight": 55,
-    "dimensions": { "length": 5, "width": 3, "height": 0.5 },
+    "dimensions": {
+      "length": 5,
+      "width": 3,
+      "height": 0.5
+    },
     "shippingEstimateDays": 3,
-    "tags": ["keytag", "nallur"],
+    "tags": [
+      "keytag",
+      "nallur"
+    ],
     "featured": true,
     "displayOrder": 19
   },
@@ -328,14 +617,29 @@
     "description": "Clay miniature of traditional Jaffna palmyrah toddy pot.",
     "district": "Jaffna",
     "category": "handicraft",
-    "price": { "lkr": 1650 },
-    "stock": { "available": 50, "reservedInCart": 0, "sold": 0 },
-    "images": ["https://cdn.example.com/shop/jaffna-toddy-pot-mini.jpg"],
+    "price": {
+      "lkr": 1650
+    },
+    "stock": {
+      "available": 50,
+      "reservedInCart": 0,
+      "sold": 0
+    },
+    "images": [
+      "https://cdn.example.com/shop/jaffna-toddy-pot-mini.jpg"
+    ],
     "thumbnail": "https://cdn.example.com/shop/jaffna-toddy-pot-mini-thumb.jpg",
     "weight": 260,
-    "dimensions": { "length": 8, "width": 8, "height": 12 },
+    "dimensions": {
+      "length": 8,
+      "width": 8,
+      "height": 12
+    },
     "shippingEstimateDays": 4,
-    "tags": ["clay", "palmyrah"],
+    "tags": [
+      "clay",
+      "palmyrah"
+    ],
     "featured": false,
     "displayOrder": 20
   },
@@ -345,14 +649,29 @@
     "description": "Matte postcard featuring Iranamadu Tank at golden hour.",
     "district": "Kilinochchi",
     "category": "souvenirs",
-    "price": { "lkr": 320 },
-    "stock": { "available": 220, "reservedInCart": 0, "sold": 0 },
-    "images": ["https://cdn.example.com/shop/kilinochchi-iranamadu-postcard.jpg"],
+    "price": {
+      "lkr": 320
+    },
+    "stock": {
+      "available": 220,
+      "reservedInCart": 0,
+      "sold": 0
+    },
+    "images": [
+      "https://cdn.example.com/shop/kilinochchi-iranamadu-postcard.jpg"
+    ],
     "thumbnail": "https://cdn.example.com/shop/kilinochchi-iranamadu-postcard-thumb.jpg",
     "weight": 15,
-    "dimensions": { "length": 15, "width": 10, "height": 0.2 },
+    "dimensions": {
+      "length": 15,
+      "width": 10,
+      "height": 0.2
+    },
     "shippingEstimateDays": 3,
-    "tags": ["postcard", "iranamadu"],
+    "tags": [
+      "postcard",
+      "iranamadu"
+    ],
     "featured": false,
     "displayOrder": 21
   },
@@ -362,14 +681,29 @@
     "description": "Handwoven palmyrah bookmark with dyed border patterns.",
     "district": "Kilinochchi",
     "category": "handicraft",
-    "price": { "lkr": 260 },
-    "stock": { "available": 260, "reservedInCart": 0, "sold": 0 },
-    "images": ["https://cdn.example.com/shop/kilinochchi-palmyrah-bookmark.jpg"],
+    "price": {
+      "lkr": 260
+    },
+    "stock": {
+      "available": 260,
+      "reservedInCart": 0,
+      "sold": 0
+    },
+    "images": [
+      "https://cdn.example.com/shop/kilinochchi-palmyrah-bookmark.jpg"
+    ],
     "thumbnail": "https://cdn.example.com/shop/kilinochchi-palmyrah-bookmark-thumb.jpg",
     "weight": 10,
-    "dimensions": { "length": 14, "width": 3, "height": 0.2 },
+    "dimensions": {
+      "length": 14,
+      "width": 3,
+      "height": 0.2
+    },
     "shippingEstimateDays": 3,
-    "tags": ["bookmark", "palmyrah"],
+    "tags": [
+      "bookmark",
+      "palmyrah"
+    ],
     "featured": false,
     "displayOrder": 22
   },
@@ -379,14 +713,29 @@
     "description": "Art card featuring the iconic Mannar baobab tree.",
     "district": "Mannar",
     "category": "souvenirs",
-    "price": { "lkr": 450 },
-    "stock": { "available": 150, "reservedInCart": 0, "sold": 0 },
-    "images": ["https://cdn.example.com/shop/mannar-baobab-card.jpg"],
+    "price": {
+      "lkr": 450
+    },
+    "stock": {
+      "available": 150,
+      "reservedInCart": 0,
+      "sold": 0
+    },
+    "images": [
+      "https://cdn.example.com/shop/mannar-baobab-card.jpg"
+    ],
     "thumbnail": "https://cdn.example.com/shop/mannar-baobab-card-thumb.jpg",
     "weight": 18,
-    "dimensions": { "length": 15, "width": 10, "height": 0.2 },
+    "dimensions": {
+      "length": 15,
+      "width": 10,
+      "height": 0.2
+    },
     "shippingEstimateDays": 3,
-    "tags": ["baobab", "art-card"],
+    "tags": [
+      "baobab",
+      "art-card"
+    ],
     "featured": false,
     "displayOrder": 23
   },
@@ -396,14 +745,29 @@
     "description": "Necklace with a polished shell pendant referencing Mannar’s pearl history.",
     "district": "Mannar",
     "category": "handicraft",
-    "price": { "lkr": 1950 },
-    "stock": { "available": 65, "reservedInCart": 0, "sold": 0 },
-    "images": ["https://cdn.example.com/shop/mannar-pearl-pendant.jpg"],
+    "price": {
+      "lkr": 1950
+    },
+    "stock": {
+      "available": 65,
+      "reservedInCart": 0,
+      "sold": 0
+    },
+    "images": [
+      "https://cdn.example.com/shop/mannar-pearl-pendant.jpg"
+    ],
     "thumbnail": "https://cdn.example.com/shop/mannar-pearl-pendant-thumb.jpg",
     "weight": 35,
-    "dimensions": { "length": 3, "width": 3, "height": 1 },
+    "dimensions": {
+      "length": 3,
+      "width": 3,
+      "height": 1
+    },
     "shippingEstimateDays": 3,
-    "tags": ["necklace", "pearl"],
+    "tags": [
+      "necklace",
+      "pearl"
+    ],
     "featured": true,
     "displayOrder": 24
   },
@@ -413,14 +777,29 @@
     "description": "Panoramic print of a Vavuniya reservoir landscape.",
     "district": "Vavuniya",
     "category": "art-prints",
-    "price": { "lkr": 2100 },
-    "stock": { "available": 40, "reservedInCart": 0, "sold": 0 },
-    "images": ["https://cdn.example.com/shop/vavuniya-reservoir-print.jpg"],
+    "price": {
+      "lkr": 2100
+    },
+    "stock": {
+      "available": 40,
+      "reservedInCart": 0,
+      "sold": 0
+    },
+    "images": [
+      "https://cdn.example.com/shop/vavuniya-reservoir-print.jpg"
+    ],
     "thumbnail": "https://cdn.example.com/shop/vavuniya-reservoir-print-thumb.jpg",
     "weight": 280,
-    "dimensions": { "length": 40, "width": 15, "height": 2 },
+    "dimensions": {
+      "length": 40,
+      "width": 15,
+      "height": 2
+    },
     "shippingEstimateDays": 4,
-    "tags": ["panorama", "reservoir"],
+    "tags": [
+      "panorama",
+      "reservoir"
+    ],
     "featured": false,
     "displayOrder": 25
   },
@@ -430,14 +809,29 @@
     "description": "Vintage bus ticket–style key tag highlighting Vavuniya route numbers.",
     "district": "Vavuniya",
     "category": "souvenirs",
-    "price": { "lkr": 580 },
-    "stock": { "available": 120, "reservedInCart": 0, "sold": 0 },
-    "images": ["https://cdn.example.com/shop/vavuniya-bus-keytag.jpg"],
+    "price": {
+      "lkr": 580
+    },
+    "stock": {
+      "available": 120,
+      "reservedInCart": 0,
+      "sold": 0
+    },
+    "images": [
+      "https://cdn.example.com/shop/vavuniya-bus-keytag.jpg"
+    ],
     "thumbnail": "https://cdn.example.com/shop/vavuniya-bus-keytag-thumb.jpg",
     "weight": 40,
-    "dimensions": { "length": 5, "width": 3, "height": 0.5 },
+    "dimensions": {
+      "length": 5,
+      "width": 3,
+      "height": 0.5
+    },
     "shippingEstimateDays": 3,
-    "tags": ["keytag", "bus-route"],
+    "tags": [
+      "keytag",
+      "bus-route"
+    ],
     "featured": false,
     "displayOrder": 26
   },
@@ -447,14 +841,29 @@
     "description": "Ceramic mug with minimalist line art of Mullaitivu shoreline.",
     "district": "Mullaitivu",
     "category": "souvenirs",
-    "price": { "lkr": 1150 },
-    "stock": { "available": 85, "reservedInCart": 0, "sold": 0 },
-    "images": ["https://cdn.example.com/shop/mullaitivu-beach-mug.jpg"],
+    "price": {
+      "lkr": 1150
+    },
+    "stock": {
+      "available": 85,
+      "reservedInCart": 0,
+      "sold": 0
+    },
+    "images": [
+      "https://cdn.example.com/shop/mullaitivu-beach-mug.jpg"
+    ],
     "thumbnail": "https://cdn.example.com/shop/mullaitivu-beach-mug-thumb.jpg",
     "weight": 270,
-    "dimensions": { "length": 10, "width": 10, "height": 9 },
+    "dimensions": {
+      "length": 10,
+      "width": 10,
+      "height": 9
+    },
     "shippingEstimateDays": 3,
-    "tags": ["mug", "beach"],
+    "tags": [
+      "mug",
+      "beach"
+    ],
     "featured": false,
     "displayOrder": 27
   },
@@ -464,14 +873,29 @@
     "description": "Decor bottle layered with coloured sand inspired by Casuarina Beach.",
     "district": "Mullaitivu",
     "category": "handicraft",
-    "price": { "lkr": 890 },
-    "stock": { "available": 70, "reservedInCart": 0, "sold": 0 },
-    "images": ["https://cdn.example.com/shop/mullaitivu-sand-bottle.jpg"],
+    "price": {
+      "lkr": 890
+    },
+    "stock": {
+      "available": 70,
+      "reservedInCart": 0,
+      "sold": 0
+    },
+    "images": [
+      "https://cdn.example.com/shop/mullaitivu-sand-bottle.jpg"
+    ],
     "thumbnail": "https://cdn.example.com/shop/mullaitivu-sand-bottle-thumb.jpg",
     "weight": 210,
-    "dimensions": { "length": 6, "width": 6, "height": 15 },
+    "dimensions": {
+      "length": 6,
+      "width": 6,
+      "height": 15
+    },
     "shippingEstimateDays": 3,
-    "tags": ["sand-bottle", "casuarina"],
+    "tags": [
+      "sand-bottle",
+      "casuarina"
+    ],
     "featured": false,
     "displayOrder": 28
   },
@@ -481,14 +905,29 @@
     "description": "Postcard of a cyclist crossing the Batticaloa lagoon bridge.",
     "district": "Batticaloa",
     "category": "souvenirs",
-    "price": { "lkr": 340 },
-    "stock": { "available": 190, "reservedInCart": 0, "sold": 0 },
-    "images": ["https://cdn.example.com/shop/batti-lagoon-postcard.jpg"],
+    "price": {
+      "lkr": 340
+    },
+    "stock": {
+      "available": 190,
+      "reservedInCart": 0,
+      "sold": 0
+    },
+    "images": [
+      "https://cdn.example.com/shop/batti-lagoon-postcard.jpg"
+    ],
     "thumbnail": "https://cdn.example.com/shop/batti-lagoon-postcard-thumb.jpg",
     "weight": 15,
-    "dimensions": { "length": 15, "width": 10, "height": 0.2 },
+    "dimensions": {
+      "length": 15,
+      "width": 10,
+      "height": 0.2
+    },
     "shippingEstimateDays": 3,
-    "tags": ["postcard", "lagoon"],
+    "tags": [
+      "postcard",
+      "lagoon"
+    ],
     "featured": false,
     "displayOrder": 29
   },
@@ -498,14 +937,29 @@
     "description": "Silhouette art print of Kattankudy mosques at dusk.",
     "district": "Batticaloa",
     "category": "art-prints",
-    "price": { "lkr": 1850 },
-    "stock": { "available": 55, "reservedInCart": 0, "sold": 0 },
-    "images": ["https://cdn.example.com/shop/batti-kattankudy-art.jpg"],
+    "price": {
+      "lkr": 1850
+    },
+    "stock": {
+      "available": 55,
+      "reservedInCart": 0,
+      "sold": 0
+    },
+    "images": [
+      "https://cdn.example.com/shop/batti-kattankudy-art.jpg"
+    ],
     "thumbnail": "https://cdn.example.com/shop/batti-kattankudy-art-thumb.jpg",
     "weight": 230,
-    "dimensions": { "length": 30, "width": 21, "height": 2 },
+    "dimensions": {
+      "length": 30,
+      "width": 21,
+      "height": 2
+    },
     "shippingEstimateDays": 4,
-    "tags": ["art", "kattankudy"],
+    "tags": [
+      "art",
+      "kattankudy"
+    ],
     "featured": false,
     "displayOrder": 30
   },
@@ -515,14 +969,29 @@
     "description": "Mini wooden surfboard painted with Arugam Bay waves.",
     "district": "Ampara",
     "category": "handicraft",
-    "price": { "lkr": 1750 },
-    "stock": { "available": 80, "reservedInCart": 0, "sold": 0 },
-    "images": ["https://cdn.example.com/shop/ampara-arugam-surfboard.jpg"],
+    "price": {
+      "lkr": 1750
+    },
+    "stock": {
+      "available": 80,
+      "reservedInCart": 0,
+      "sold": 0
+    },
+    "images": [
+      "https://cdn.example.com/shop/ampara-arugam-surfboard.jpg"
+    ],
     "thumbnail": "https://cdn.example.com/shop/ampara-arugam-surfboard-thumb.jpg",
     "weight": 120,
-    "dimensions": { "length": 18, "width": 6, "height": 1 },
+    "dimensions": {
+      "length": 18,
+      "width": 6,
+      "height": 1
+    },
     "shippingEstimateDays": 3,
-    "tags": ["surfboard", "arugam-bay"],
+    "tags": [
+      "surfboard",
+      "arugam-bay"
+    ],
     "featured": true,
     "displayOrder": 31
   },
@@ -532,14 +1001,29 @@
     "description": "Rubber key tag shaped like a surf wave with Arugam Bay text.",
     "district": "Ampara",
     "category": "souvenirs",
-    "price": { "lkr": 620 },
-    "stock": { "available": 140, "reservedInCart": 0, "sold": 0 },
-    "images": ["https://cdn.example.com/shop/ampara-arugam-keytag.jpg"],
+    "price": {
+      "lkr": 620
+    },
+    "stock": {
+      "available": 140,
+      "reservedInCart": 0,
+      "sold": 0
+    },
+    "images": [
+      "https://cdn.example.com/shop/ampara-arugam-keytag.jpg"
+    ],
     "thumbnail": "https://cdn.example.com/shop/ampara-arugam-keytag-thumb.jpg",
     "weight": 35,
-    "dimensions": { "length": 5, "width": 3, "height": 0.5 },
+    "dimensions": {
+      "length": 5,
+      "width": 3,
+      "height": 0.5
+    },
     "shippingEstimateDays": 3,
-    "tags": ["keytag", "surf"],
+    "tags": [
+      "keytag",
+      "surf"
+    ],
     "featured": false,
     "displayOrder": 32
   },
@@ -549,14 +1033,29 @@
     "description": "A3 poster of Koneswaram Temple on Swami Rock at sunrise.",
     "district": "Trincomalee",
     "category": "art-prints",
-    "price": { "lkr": 2450 },
-    "stock": { "available": 60, "reservedInCart": 0, "sold": 0 },
-    "images": ["https://cdn.example.com/shop/trinco-koneswaram-poster.jpg"],
+    "price": {
+      "lkr": 2450
+    },
+    "stock": {
+      "available": 60,
+      "reservedInCart": 0,
+      "sold": 0
+    },
+    "images": [
+      "https://cdn.example.com/shop/trinco-koneswaram-poster.jpg"
+    ],
     "thumbnail": "https://cdn.example.com/shop/trinco-koneswaram-poster-thumb.jpg",
     "weight": 260,
-    "dimensions": { "length": 42, "width": 30, "height": 2 },
+    "dimensions": {
+      "length": 42,
+      "width": 30,
+      "height": 2
+    },
     "shippingEstimateDays": 4,
-    "tags": ["poster", "koneswaram"],
+    "tags": [
+      "poster",
+      "koneswaram"
+    ],
     "featured": true,
     "displayOrder": 33
   },
@@ -566,14 +1065,29 @@
     "description": "Notebook cover decorated with hand-drawn Pigeon Island corals.",
     "district": "Trincomalee",
     "category": "souvenirs",
-    "price": { "lkr": 780 },
-    "stock": { "available": 110, "reservedInCart": 0, "sold": 0 },
-    "images": ["https://cdn.example.com/shop/trinco-pigeon-notebook.jpg"],
+    "price": {
+      "lkr": 780
+    },
+    "stock": {
+      "available": 110,
+      "reservedInCart": 0,
+      "sold": 0
+    },
+    "images": [
+      "https://cdn.example.com/shop/trinco-pigeon-notebook.jpg"
+    ],
     "thumbnail": "https://cdn.example.com/shop/trinco-pigeon-notebook-thumb.jpg",
     "weight": 190,
-    "dimensions": { "length": 21, "width": 14, "height": 1 },
+    "dimensions": {
+      "length": 21,
+      "width": 14,
+      "height": 1
+    },
     "shippingEstimateDays": 3,
-    "tags": ["notebook", "pigeon-island"],
+    "tags": [
+      "notebook",
+      "pigeon-island"
+    ],
     "featured": false,
     "displayOrder": 34
   },
@@ -583,14 +1097,29 @@
     "description": "Silhouette frame of the iconic Kurunegala elephant rock.",
     "district": "Kurunegala",
     "category": "art-prints",
-    "price": { "lkr": 2100 },
-    "stock": { "available": 50, "reservedInCart": 0, "sold": 0 },
-    "images": ["https://cdn.example.com/shop/kurunegala-elephant-frame.jpg"],
+    "price": {
+      "lkr": 2100
+    },
+    "stock": {
+      "available": 50,
+      "reservedInCart": 0,
+      "sold": 0
+    },
+    "images": [
+      "https://cdn.example.com/shop/kurunegala-elephant-frame.jpg"
+    ],
     "thumbnail": "https://cdn.example.com/shop/kurunegala-elephant-frame-thumb.jpg",
     "weight": 260,
-    "dimensions": { "length": 32, "width": 24, "height": 2 },
+    "dimensions": {
+      "length": 32,
+      "width": 24,
+      "height": 2
+    },
     "shippingEstimateDays": 4,
-    "tags": ["elephant-rock", "silhouette"],
+    "tags": [
+      "elephant-rock",
+      "silhouette"
+    ],
     "featured": false,
     "displayOrder": 35
   },
@@ -600,14 +1129,29 @@
     "description": "Key tag inspired by the coconut triangle around Kurunegala.",
     "district": "Kurunegala",
     "category": "souvenirs",
-    "price": { "lkr": 540 },
-    "stock": { "available": 150, "reservedInCart": 0, "sold": 0 },
-    "images": ["https://cdn.example.com/shop/kurunegala-coconut-keytag.jpg"],
+    "price": {
+      "lkr": 540
+    },
+    "stock": {
+      "available": 150,
+      "reservedInCart": 0,
+      "sold": 0
+    },
+    "images": [
+      "https://cdn.example.com/shop/kurunegala-coconut-keytag.jpg"
+    ],
     "thumbnail": "https://cdn.example.com/shop/kurunegala-coconut-keytag-thumb.jpg",
     "weight": 35,
-    "dimensions": { "length": 5, "width": 3, "height": 0.5 },
+    "dimensions": {
+      "length": 5,
+      "width": 3,
+      "height": 0.5
+    },
     "shippingEstimateDays": 3,
-    "tags": ["keytag", "coconut"],
+    "tags": [
+      "keytag",
+      "coconut"
+    ],
     "featured": false,
     "displayOrder": 36
   },
@@ -617,14 +1161,29 @@
     "description": "Coaster set with Kalpitiya kite-surf silhouettes.",
     "district": "Puttalam",
     "category": "souvenirs",
-    "price": { "lkr": 1550 },
-    "stock": { "available": 75, "reservedInCart": 0, "sold": 0 },
-    "images": ["https://cdn.example.com/shop/puttalam-kite-coasters.jpg"],
+    "price": {
+      "lkr": 1550
+    },
+    "stock": {
+      "available": 75,
+      "reservedInCart": 0,
+      "sold": 0
+    },
+    "images": [
+      "https://cdn.example.com/shop/puttalam-kite-coasters.jpg"
+    ],
     "thumbnail": "https://cdn.example.com/shop/puttalam-kite-coasters-thumb.jpg",
     "weight": 230,
-    "dimensions": { "length": 10, "width": 10, "height": 4 },
+    "dimensions": {
+      "length": 10,
+      "width": 10,
+      "height": 4
+    },
     "shippingEstimateDays": 3,
-    "tags": ["coasters", "kitesurf"],
+    "tags": [
+      "coasters",
+      "kitesurf"
+    ],
     "featured": false,
     "displayOrder": 37
   },
@@ -634,14 +1193,29 @@
     "description": "Abstract wall art inspired by geometric salt fields of Puttalam.",
     "district": "Puttalam",
     "category": "art-prints",
-    "price": { "lkr": 2950 },
-    "stock": { "available": 40, "reservedInCart": 0, "sold": 0 },
-    "images": ["https://cdn.example.com/shop/puttalam-salt-art.jpg"],
+    "price": {
+      "lkr": 2950
+    },
+    "stock": {
+      "available": 40,
+      "reservedInCart": 0,
+      "sold": 0
+    },
+    "images": [
+      "https://cdn.example.com/shop/puttalam-salt-art.jpg"
+    ],
     "thumbnail": "https://cdn.example.com/shop/puttalam-salt-art-thumb.jpg",
     "weight": 340,
-    "dimensions": { "length": 40, "width": 30, "height": 2 },
+    "dimensions": {
+      "length": 40,
+      "width": 30,
+      "height": 2
+    },
     "shippingEstimateDays": 4,
-    "tags": ["salt-fields", "abstract"],
+    "tags": [
+      "salt-fields",
+      "abstract"
+    ],
     "featured": false,
     "displayOrder": 38
   },
@@ -651,14 +1225,29 @@
     "description": "Detailed miniature of the Ruwanwelisaya stupa on a wooden base.",
     "district": "Anuradhapura",
     "category": "handicraft",
-    "price": { "lkr": 3800 },
-    "stock": { "available": 35, "reservedInCart": 0, "sold": 0 },
-    "images": ["https://cdn.example.com/shop/anuradhapura-ruwanwelisaya-mini.jpg"],
+    "price": {
+      "lkr": 3800
+    },
+    "stock": {
+      "available": 35,
+      "reservedInCart": 0,
+      "sold": 0
+    },
+    "images": [
+      "https://cdn.example.com/shop/anuradhapura-ruwanwelisaya-mini.jpg"
+    ],
     "thumbnail": "https://cdn.example.com/shop/anuradhapura-ruwanwelisaya-mini-thumb.jpg",
     "weight": 420,
-    "dimensions": { "length": 14, "width": 14, "height": 22 },
+    "dimensions": {
+      "length": 14,
+      "width": 14,
+      "height": 22
+    },
     "shippingEstimateDays": 4,
-    "tags": ["stupa", "ruwanwelisaya"],
+    "tags": [
+      "stupa",
+      "ruwanwelisaya"
+    ],
     "featured": true,
     "displayOrder": 39
   },
@@ -668,14 +1257,29 @@
     "description": "Laminated bookmark with printed Sri Maha Bodhi leaf motif.",
     "district": "Anuradhapura",
     "category": "souvenirs",
-    "price": { "lkr": 450 },
-    "stock": { "available": 200, "reservedInCart": 0, "sold": 0 },
-    "images": ["https://cdn.example.com/shop/anuradhapura-bodhi-bookmark.jpg"],
+    "price": {
+      "lkr": 450
+    },
+    "stock": {
+      "available": 200,
+      "reservedInCart": 0,
+      "sold": 0
+    },
+    "images": [
+      "https://cdn.example.com/shop/anuradhapura-bodhi-bookmark.jpg"
+    ],
     "thumbnail": "https://cdn.example.com/shop/anuradhapura-bodhi-bookmark-thumb.jpg",
     "weight": 8,
-    "dimensions": { "length": 14, "width": 4, "height": 0.2 },
+    "dimensions": {
+      "length": 14,
+      "width": 4,
+      "height": 0.2
+    },
     "shippingEstimateDays": 3,
-    "tags": ["bookmark", "bodhi"],
+    "tags": [
+      "bookmark",
+      "bodhi"
+    ],
     "featured": false,
     "displayOrder": 40
   },
@@ -685,14 +1289,29 @@
     "description": "Poster featuring the serene Buddha statues of Gal Viharaya.",
     "district": "Polonnaruwa",
     "category": "art-prints",
-    "price": { "lkr": 2300 },
-    "stock": { "available": 55, "reservedInCart": 0, "sold": 0 },
-    "images": ["https://cdn.example.com/shop/polonnaruwa-galviharaya-poster.jpg"],
+    "price": {
+      "lkr": 2300
+    },
+    "stock": {
+      "available": 55,
+      "reservedInCart": 0,
+      "sold": 0
+    },
+    "images": [
+      "https://cdn.example.com/shop/polonnaruwa-galviharaya-poster.jpg"
+    ],
     "thumbnail": "https://cdn.example.com/shop/polonnaruwa-galviharaya-poster-thumb.jpg",
     "weight": 260,
-    "dimensions": { "length": 32, "width": 24, "height": 2 },
+    "dimensions": {
+      "length": 32,
+      "width": 24,
+      "height": 2
+    },
     "shippingEstimateDays": 4,
-    "tags": ["gal-viharaya", "buddha"],
+    "tags": [
+      "gal-viharaya",
+      "buddha"
+    ],
     "featured": false,
     "displayOrder": 41
   },
@@ -702,14 +1321,29 @@
     "description": "Stone coaster engraved with traditional moonstone pattern.",
     "district": "Polonnaruwa",
     "category": "handicraft",
-    "price": { "lkr": 1450 },
-    "stock": { "available": 70, "reservedInCart": 0, "sold": 0 },
-    "images": ["https://cdn.example.com/shop/polonnaruwa-moonstone-coaster.jpg"],
+    "price": {
+      "lkr": 1450
+    },
+    "stock": {
+      "available": 70,
+      "reservedInCart": 0,
+      "sold": 0
+    },
+    "images": [
+      "https://cdn.example.com/shop/polonnaruwa-moonstone-coaster.jpg"
+    ],
     "thumbnail": "https://cdn.example.com/shop/polonnaruwa-moonstone-coaster-thumb.jpg",
     "weight": 180,
-    "dimensions": { "length": 10, "width": 10, "height": 1 },
+    "dimensions": {
+      "length": 10,
+      "width": 10,
+      "height": 1
+    },
     "shippingEstimateDays": 3,
-    "tags": ["moonstone", "coaster"],
+    "tags": [
+      "moonstone",
+      "coaster"
+    ],
     "featured": false,
     "displayOrder": 42
   },
@@ -719,14 +1353,29 @@
     "description": "Handcrafted miniature of the Demodara Nine Arches Bridge.",
     "district": "Badulla",
     "category": "handicraft",
-    "price": { "lkr": 4100 },
-    "stock": { "available": 30, "reservedInCart": 0, "sold": 0 },
-    "images": ["https://cdn.example.com/shop/badulla-nine-arches-model.jpg"],
+    "price": {
+      "lkr": 4100
+    },
+    "stock": {
+      "available": 30,
+      "reservedInCart": 0,
+      "sold": 0
+    },
+    "images": [
+      "https://cdn.example.com/shop/badulla-nine-arches-model.jpg"
+    ],
     "thumbnail": "https://cdn.example.com/shop/badulla-nine-arches-model-thumb.jpg",
     "weight": 380,
-    "dimensions": { "length": 20, "width": 10, "height": 12 },
+    "dimensions": {
+      "length": 20,
+      "width": 10,
+      "height": 12
+    },
     "shippingEstimateDays": 4,
-    "tags": ["nine-arches", "bridge"],
+    "tags": [
+      "nine-arches",
+      "bridge"
+    ],
     "featured": true,
     "displayOrder": 43
   },
@@ -736,14 +1385,29 @@
     "description": "Large fridge magnet showing the view through Ella Gap.",
     "district": "Badulla",
     "category": "souvenirs",
-    "price": { "lkr": 720 },
-    "stock": { "available": 140, "reservedInCart": 0, "sold": 0 },
-    "images": ["https://cdn.example.com/shop/badulla-ella-magnet.jpg"],
+    "price": {
+      "lkr": 720
+    },
+    "stock": {
+      "available": 140,
+      "reservedInCart": 0,
+      "sold": 0
+    },
+    "images": [
+      "https://cdn.example.com/shop/badulla-ella-magnet.jpg"
+    ],
     "thumbnail": "https://cdn.example.com/shop/badulla-ella-magnet-thumb.jpg",
     "weight": 40,
-    "dimensions": { "length": 8, "width": 6, "height": 0.5 },
+    "dimensions": {
+      "length": 8,
+      "width": 6,
+      "height": 0.5
+    },
     "shippingEstimateDays": 3,
-    "tags": ["magnet", "ella-gap"],
+    "tags": [
+      "magnet",
+      "ella-gap"
+    ],
     "featured": false,
     "displayOrder": 44
   },
@@ -753,14 +1417,29 @@
     "description": "Key tag shaped like a safari jeep referencing Yala entrance.",
     "district": "Monaragala",
     "category": "souvenirs",
-    "price": { "lkr": 640 },
-    "stock": { "available": 160, "reservedInCart": 0, "sold": 0 },
-    "images": ["https://cdn.example.com/shop/monaragala-yala-jeep-keytag.jpg"],
+    "price": {
+      "lkr": 640
+    },
+    "stock": {
+      "available": 160,
+      "reservedInCart": 0,
+      "sold": 0
+    },
+    "images": [
+      "https://cdn.example.com/shop/monaragala-yala-jeep-keytag.jpg"
+    ],
     "thumbnail": "https://cdn.example.com/shop/monaragala-yala-jeep-keytag-thumb.jpg",
     "weight": 35,
-    "dimensions": { "length": 5, "width": 3, "height": 0.5 },
+    "dimensions": {
+      "length": 5,
+      "width": 3,
+      "height": 0.5
+    },
     "shippingEstimateDays": 3,
-    "tags": ["keytag", "yala"],
+    "tags": [
+      "keytag",
+      "yala"
+    ],
     "featured": false,
     "displayOrder": 45
   },
@@ -770,14 +1449,29 @@
     "description": "Art print inspired by ancient rock paintings near Buttala.",
     "district": "Monaragala",
     "category": "art-prints",
-    "price": { "lkr": 2050 },
-    "stock": { "available": 45, "reservedInCart": 0, "sold": 0 },
-    "images": ["https://cdn.example.com/shop/monaragala-buttala-art.jpg"],
+    "price": {
+      "lkr": 2050
+    },
+    "stock": {
+      "available": 45,
+      "reservedInCart": 0,
+      "sold": 0
+    },
+    "images": [
+      "https://cdn.example.com/shop/monaragala-buttala-art.jpg"
+    ],
     "thumbnail": "https://cdn.example.com/shop/monaragala-buttala-art-thumb.jpg",
     "weight": 250,
-    "dimensions": { "length": 30, "width": 21, "height": 2 },
+    "dimensions": {
+      "length": 30,
+      "width": 21,
+      "height": 2
+    },
     "shippingEstimateDays": 4,
-    "tags": ["rock-art", "buttala"],
+    "tags": [
+      "rock-art",
+      "buttala"
+    ],
     "featured": false,
     "displayOrder": 46
   },
@@ -787,14 +1481,29 @@
     "description": "Stylised map of Ratnapura with gemstone icons.",
     "district": "Ratnapura",
     "category": "art-prints",
-    "price": { "lkr": 2600 },
-    "stock": { "available": 50, "reservedInCart": 0, "sold": 0 },
-    "images": ["https://cdn.example.com/shop/ratnapura-gem-map.jpg"],
+    "price": {
+      "lkr": 2600
+    },
+    "stock": {
+      "available": 50,
+      "reservedInCart": 0,
+      "sold": 0
+    },
+    "images": [
+      "https://cdn.example.com/shop/ratnapura-gem-map.jpg"
+    ],
     "thumbnail": "https://cdn.example.com/shop/ratnapura-gem-map-thumb.jpg",
     "weight": 260,
-    "dimensions": { "length": 32, "width": 24, "height": 2 },
+    "dimensions": {
+      "length": 32,
+      "width": 24,
+      "height": 2
+    },
     "shippingEstimateDays": 4,
-    "tags": ["ratnapura", "gems"],
+    "tags": [
+      "ratnapura",
+      "gems"
+    ],
     "featured": true,
     "displayOrder": 47
   },
@@ -804,14 +1513,29 @@
     "description": "Acrylic key tag shaped like a faceted gemstone.",
     "district": "Ratnapura",
     "category": "souvenirs",
-    "price": { "lkr": 880 },
-    "stock": { "available": 130, "reservedInCart": 0, "sold": 0 },
-    "images": ["https://cdn.example.com/shop/ratnapura-gem-keytag.jpg"],
+    "price": {
+      "lkr": 880
+    },
+    "stock": {
+      "available": 130,
+      "reservedInCart": 0,
+      "sold": 0
+    },
+    "images": [
+      "https://cdn.example.com/shop/ratnapura-gem-keytag.jpg"
+    ],
     "thumbnail": "https://cdn.example.com/shop/ratnapura-gem-keytag-thumb.jpg",
     "weight": 40,
-    "dimensions": { "length": 4, "width": 3, "height": 0.5 },
+    "dimensions": {
+      "length": 4,
+      "width": 3,
+      "height": 0.5
+    },
     "shippingEstimateDays": 3,
-    "tags": ["keytag", "gem"],
+    "tags": [
+      "keytag",
+      "gem"
+    ],
     "featured": false,
     "displayOrder": 48
   },
@@ -821,14 +1545,29 @@
     "description": "Minimal line drawing of Pinnawala elephant herd in a frame.",
     "district": "Kegalle",
     "category": "art-prints",
-    "price": { "lkr": 2350 },
-    "stock": { "available": 55, "reservedInCart": 0, "sold": 0 },
-    "images": ["https://cdn.example.com/shop/kegalle-pinnawala-frame.jpg"],
+    "price": {
+      "lkr": 2350
+    },
+    "stock": {
+      "available": 55,
+      "reservedInCart": 0,
+      "sold": 0
+    },
+    "images": [
+      "https://cdn.example.com/shop/kegalle-pinnawala-frame.jpg"
+    ],
     "thumbnail": "https://cdn.example.com/shop/kegalle-pinnawala-frame-thumb.jpg",
     "weight": 260,
-    "dimensions": { "length": 32, "width": 24, "height": 2 },
+    "dimensions": {
+      "length": 32,
+      "width": 24,
+      "height": 2
+    },
     "shippingEstimateDays": 4,
-    "tags": ["pinnawala", "elephants"],
+    "tags": [
+      "pinnawala",
+      "elephants"
+    ],
     "featured": false,
     "displayOrder": 49
   },
@@ -838,14 +1577,29 @@
     "description": "Notebook cover textured to resemble rubber tree leaves.",
     "district": "Kegalle",
     "category": "souvenirs",
-    "price": { "lkr": 840 },
-    "stock": { "available": 120, "reservedInCart": 0, "sold": 0 },
-    "images": ["https://cdn.example.com/shop/kegalle-rubber-notebook.jpg"],
+    "price": {
+      "lkr": 840
+    },
+    "stock": {
+      "available": 120,
+      "reservedInCart": 0,
+      "sold": 0
+    },
+    "images": [
+      "https://cdn.example.com/shop/kegalle-rubber-notebook.jpg"
+    ],
     "thumbnail": "https://cdn.example.com/shop/kegalle-rubber-notebook-thumb.jpg",
     "weight": 190,
-    "dimensions": { "length": 21, "width": 14, "height": 1 },
+    "dimensions": {
+      "length": 21,
+      "width": 14,
+      "height": 1
+    },
     "shippingEstimateDays": 3,
-    "tags": ["notebook", "rubber"],
+    "tags": [
+      "notebook",
+      "rubber"
+    ],
     "featured": false,
     "displayOrder": 50
   },
@@ -855,14 +1609,30 @@
     "description": "Eco-friendly cotton tote with MAPORIA Sri Lanka travel logo.",
     "district": "Colombo",
     "category": "merch",
-    "price": { "lkr": 1450 },
-    "stock": { "available": 80, "reservedInCart": 0, "sold": 0 },
-    "images": ["https://cdn.example.com/shop/maporia-tote.jpg"],
+    "price": {
+      "lkr": 1450
+    },
+    "stock": {
+      "available": 80,
+      "reservedInCart": 0,
+      "sold": 0
+    },
+    "images": [
+      "https://cdn.example.com/shop/maporia-tote.jpg"
+    ],
     "thumbnail": "https://cdn.example.com/shop/maporia-tote-thumb.jpg",
     "weight": 220,
-    "dimensions": { "length": 38, "width": 42, "height": 2 },
+    "dimensions": {
+      "length": 38,
+      "width": 42,
+      "height": 2
+    },
     "shippingEstimateDays": 3,
-    "tags": ["tote", "merch", "maporia"],
+    "tags": [
+      "tote",
+      "merch",
+      "maporia"
+    ],
     "featured": true,
     "displayOrder": 51
   },
@@ -872,14 +1642,30 @@
     "description": "Assorted Ceylon tea sachets from Kandy hills.",
     "district": "Kandy",
     "category": "food-spices",
-    "price": { "lkr": 1200 },
-    "stock": { "available": 100, "reservedInCart": 0, "sold": 0 },
-    "images": ["https://cdn.example.com/shop/kandy-tea-sampler.jpg"],
+    "price": {
+      "lkr": 1200
+    },
+    "stock": {
+      "available": 100,
+      "reservedInCart": 0,
+      "sold": 0
+    },
+    "images": [
+      "https://cdn.example.com/shop/kandy-tea-sampler.jpg"
+    ],
     "thumbnail": "https://cdn.example.com/shop/kandy-tea-sampler-thumb.jpg",
     "weight": 180,
-    "dimensions": { "length": 18, "width": 12, "height": 8 },
+    "dimensions": {
+      "length": 18,
+      "width": 12,
+      "height": 8
+    },
     "shippingEstimateDays": 3,
-    "tags": ["tea", "ceylon", "spice"],
+    "tags": [
+      "tea",
+      "ceylon",
+      "spice"
+    ],
     "featured": false,
     "displayOrder": 52
   },
@@ -889,14 +1675,30 @@
     "description": "Unisex cap with embroidered Galle Fort silhouette.",
     "district": "Galle",
     "category": "apparel",
-    "price": { "lkr": 1890 },
-    "stock": { "available": 60, "reservedInCart": 0, "sold": 0 },
-    "images": ["https://cdn.example.com/shop/galle-fort-cap.jpg"],
+    "price": {
+      "lkr": 1890
+    },
+    "stock": {
+      "available": 60,
+      "reservedInCart": 0,
+      "sold": 0
+    },
+    "images": [
+      "https://cdn.example.com/shop/galle-fort-cap.jpg"
+    ],
     "thumbnail": "https://cdn.example.com/shop/galle-fort-cap-thumb.jpg",
     "weight": 120,
-    "dimensions": { "length": 28, "width": 28, "height": 12 },
+    "dimensions": {
+      "length": 28,
+      "width": 28,
+      "height": 12
+    },
     "shippingEstimateDays": 3,
-    "tags": ["cap", "galle", "fort"],
+    "tags": [
+      "cap",
+      "galle",
+      "fort"
+    ],
     "featured": true,
     "displayOrder": 53
   },
@@ -906,14 +1708,30 @@
     "description": "Water-resistant folding map of Nuwara Eliya trails.",
     "district": "Nuwara Eliya",
     "category": "travel-gear",
-    "price": { "lkr": 950 },
-    "stock": { "available": 90, "reservedInCart": 0, "sold": 0 },
-    "images": ["https://cdn.example.com/shop/nuwara-eliya-map.jpg"],
+    "price": {
+      "lkr": 950
+    },
+    "stock": {
+      "available": 90,
+      "reservedInCart": 0,
+      "sold": 0
+    },
+    "images": [
+      "https://cdn.example.com/shop/nuwara-eliya-map.jpg"
+    ],
     "thumbnail": "https://cdn.example.com/shop/nuwara-eliya-map-thumb.jpg",
     "weight": 80,
-    "dimensions": { "length": 22, "width": 16, "height": 0.5 },
+    "dimensions": {
+      "length": 22,
+      "width": 16,
+      "height": 0.5
+    },
     "shippingEstimateDays": 3,
-    "tags": ["map", "trekking", "hills"],
+    "tags": [
+      "map",
+      "trekking",
+      "hills"
+    ],
     "featured": false,
     "displayOrder": 54
   },
@@ -923,16 +1741,31 @@
     "description": "Illustrated guide to Jaffna culture and landmarks.",
     "district": "Jaffna",
     "category": "books",
-    "price": { "lkr": 2100 },
-    "stock": { "available": 45, "reservedInCart": 0, "sold": 0 },
-    "images": ["https://cdn.example.com/shop/jaffna-guidebook.jpg"],
+    "price": {
+      "lkr": 2100
+    },
+    "stock": {
+      "available": 45,
+      "reservedInCart": 0,
+      "sold": 0
+    },
+    "images": [
+      "https://cdn.example.com/shop/jaffna-guidebook.jpg"
+    ],
     "thumbnail": "https://cdn.example.com/shop/jaffna-guidebook-thumb.jpg",
     "weight": 350,
-    "dimensions": { "length": 21, "width": 14, "height": 2 },
+    "dimensions": {
+      "length": 21,
+      "width": 14,
+      "height": 2
+    },
     "shippingEstimateDays": 4,
-    "tags": ["book", "jaffna", "heritage"],
+    "tags": [
+      "book",
+      "jaffna",
+      "heritage"
+    ],
     "featured": true,
     "displayOrder": 55
   }
 ]
-
