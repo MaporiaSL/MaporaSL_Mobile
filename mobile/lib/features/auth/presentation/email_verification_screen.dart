@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/services/auth_service.dart';
 
 class EmailVerificationScreen extends StatefulWidget {
   final String email;
@@ -20,58 +22,70 @@ class EmailVerificationScreen extends StatefulWidget {
 
 class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
 
+  final _authService = AuthService();
+
+  bool _canResend = false;
+  int _resendCountdown = 60;
+  Timer? _resendTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    _startResendCountdown();
+  }
+
+  @override
+  void dispose() {
+    _resendTimer?.cancel();
+    super.dispose();
+  }
+
+  void _startResendCountdown() {
+    setState(() {
+      _canResend = false;
+      _resendCountdown = 60;
+    });
+
+    _resendTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      setState(() {
+        _resendCountdown--;
+        if (_resendCountdown <= 0) {
+          _canResend = true;
+          timer.cancel();
+        }
+      });
+    });
+  }
+
+  Future<void> _resendVerification() async {
+    await _authService.sendEmailVerification();
+    _startResendCountdown();
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
     return Scaffold(
       appBar: AppBar(),
-      body: SafeArea(
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 24),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(24),
-                  decoration: BoxDecoration(
-                    color: AppColors.primaryContainer,
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.mark_email_unread_outlined,
-                    size: 56,
-                    color: AppColors.primary,
-                  ),
-                ),
-                const SizedBox(height: 32),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
 
-                Text(
-                  'Verify Your Email',
-                  style: theme.textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
+            Text(widget.email),
 
-                const SizedBox(height: 12),
+            const SizedBox(height: 20),
 
-                Text(
-                  'We\'ve sent a verification link to',
-                  textAlign: TextAlign.center,
-                ),
-
-                const SizedBox(height: 4),
-
-                Text(
-                  widget.email,
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
+            TextButton(
+              onPressed: _canResend ? _resendVerification : null,
+              child: Text(
+                _canResend
+                    ? 'Resend verification email'
+                    : 'Resend in $_resendCountdown s',
+              ),
             ),
-          ),
+          ],
         ),
       ),
     );
