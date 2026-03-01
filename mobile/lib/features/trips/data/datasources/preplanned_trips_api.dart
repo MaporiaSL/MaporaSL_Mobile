@@ -28,7 +28,7 @@ class PrePlannedTripsApi {
         queryParameters: {
           if (duration != null) 'duration': duration,
           if (type != null) 'type': type,
-          if (startingPoint != null) 'start': startingPoint,
+          if (startingPoint != null) 'startingPoint': startingPoint,
           if (difficulty != null) 'difficulty': difficulty,
           if (tags != null && tags.isNotEmpty) 'tags': tags.join(','),
           'limit': limit,

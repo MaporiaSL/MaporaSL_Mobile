@@ -13,7 +13,7 @@ class TripModel {
   final String? description;
   final DateTime startDate;
   final DateTime endDate;
-  final List<String>? locations;
+  final List<TripLocation>? locations;
   final String? status; // 'scheduled', 'planned', 'completed', etc.
   final DateTime createdAt;
   final DateTime updatedAt;
@@ -130,7 +130,7 @@ class TripModel {
     String? description,
     DateTime? startDate,
     DateTime? endDate,
-    List<String>? locations,
+    List<TripLocation>? locations,
     String? status,
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -186,4 +186,18 @@ class _DateFormatter {
     ];
     return months[month - 1];
   }
+}
+
+/// Represents a specific location in a trip
+@JsonSerializable()
+class TripLocation {
+  final String name;
+  final int day;
+
+  const TripLocation({required this.name, required this.day});
+
+  factory TripLocation.fromJson(Map<String, dynamic> json) =>
+      _$TripLocationFromJson(json);
+
+  Map<String, dynamic> toJson() => _$TripLocationToJson(this);
 }

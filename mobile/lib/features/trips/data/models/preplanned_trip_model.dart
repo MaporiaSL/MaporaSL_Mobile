@@ -11,7 +11,9 @@ class PrePlannedTripModel {
   final int durationDays;
   final int xpReward;
   final String difficulty; // Easy, Moderate, Hard
-  final List<String> placeIds; // references to Place documents
+  final List<String> placeIds;
+  final String? district;
+  final Map<String, dynamic>? itinerary;
   final String? imageUrl;
   final List<String> tags;
   final DateTime createdAt;
@@ -24,6 +26,8 @@ class PrePlannedTripModel {
     required this.xpReward,
     required this.difficulty,
     required this.placeIds,
+    this.district,
+    this.itinerary,
     this.imageUrl,
     this.tags = const [],
     required this.createdAt,
@@ -35,15 +39,9 @@ class PrePlannedTripModel {
     if (map.containsKey('_id')) {
       map['id'] = map['_id'].toString();
     }
-    // Normalize places -> placeIds
-    if (map['places'] is List) {
-      map['placeIds'] = (map['places'] as List)
-          .map(
-            (e) => e is Map<String, dynamic>
-                ? (e['_id'] ?? e['id'] ?? e).toString()
-                : e.toString(),
-          )
-          .toList();
+    // Normalize itinerary if it's not a map
+    if (map['itinerary'] != null && map['itinerary'] is! Map) {
+      map['itinerary'] = <String, dynamic>{};
     }
     return _$PrePlannedTripModelFromJson(map);
   }

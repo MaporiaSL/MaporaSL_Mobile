@@ -1,10 +1,12 @@
+import 'trip_model.dart';
+
 /// DTO for creating a new trip
 class CreateTripDto {
   final String title;
   final String? description;
   final DateTime startDate;
   final DateTime endDate;
-  final List<String>? locations;
+  final List<TripLocation>? locations;
 
   const CreateTripDto({
     required this.title,
@@ -31,7 +33,7 @@ class UpdateTripDto {
   final String? description;
   final DateTime? startDate;
   final DateTime? endDate;
-  final List<String>? locations;
+  final List<TripLocation>? locations;
 
   const UpdateTripDto({
     this.title,

@@ -27,6 +27,10 @@ const travelSchema = new mongoose.Schema({
     type: [String],
     default: []
   },
+  itinerary: {
+    type: mongoose.Schema.Types.Mixed,
+    default: {}
+  },
   createdAt: {
     type: Date,
     default: Date.now
@@ -41,7 +45,7 @@ const travelSchema = new mongoose.Schema({
 travelSchema.index({ userId: 1, startDate: 1 });
 
 // Update timestamp on save
-travelSchema.pre('save', function(next) {
+travelSchema.pre('save', function (next) {
   this.updatedAt = Date.now();
   next();
 });
