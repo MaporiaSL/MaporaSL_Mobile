@@ -105,6 +105,7 @@ exports.cloneTemplate = async (req, res) => {
       startDate: new Date(startDate),
       endDate: new Date(endDate),
       locations: template.placeIds,
+      itinerary: template.itinerary,
     });
 
     await travel.save();

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'providers/local_places_provider.dart';
+import 'providers/preplanned_trips_provider.dart';
 import 'providers/trips_provider.dart';
 import 'create_trip_page.dart';
 import 'trip_detail_page.dart';
 import '../data/models/trip_model.dart';
+import '../data/models/preplanned_trip_model.dart';
 
 /// Trip Planning Hub — split view: Pre-Planned (left) | Custom Trips (right)
 class TripsScreen extends ConsumerStatefulWidget {
@@ -185,11 +186,11 @@ class _PrePlannedPanel extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final localPlacesAsync = ref.watch(localPlacesWithDistanceProvider);
+    final preplannedAsync = ref.watch(preplannedTripsFutureProvider);
 
-    return localPlacesAsync.when(
-      data: (places) {
-        if (places.isEmpty) {
+    return preplannedAsync.when(
+      data: (trips) {
+        if (trips.isEmpty) {
           return const Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -206,12 +207,12 @@ class _PrePlannedPanel extends ConsumerWidget {
         }
         return RefreshIndicator(
           onRefresh: () async {
-            ref.invalidate(localPlacesProvider);
-            await ref.read(localPlacesProvider.future);
+            ref.invalidate(preplannedTripsFutureProvider);
+            await ref.read(preplannedTripsFutureProvider.future);
           },
           child: ListView.separated(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
-            itemCount: places.length + 1,
+            itemCount: trips.length + 1,
             separatorBuilder: (_, __) => const SizedBox(height: 12),
             itemBuilder: (context, index) {
               if (index == 0) {
@@ -237,7 +238,7 @@ class _PrePlannedPanel extends ConsumerWidget {
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Text(
-                          '${places.length}',
+                          '${trips.length}',
                           style: TextStyle(
                             fontSize: 11,
                             fontWeight: FontWeight.bold,
@@ -249,7 +250,11 @@ class _PrePlannedPanel extends ConsumerWidget {
                   ),
                 );
               }
-              return _CuratedPlaceCard(item: places[index - 1]);
+              final trip = trips[index - 1];
+              return _PrePlannedTripCard(
+                trip: trip,
+                onTap: () => _showPrePlannedTripDetails(context, ref, trip),
+              );
             },
           ),
         );
@@ -264,10 +269,334 @@ class _PrePlannedPanel extends ConsumerWidget {
             Text('Failed to load adventures', style: TextStyle(color: Colors.grey.shade600)),
             const SizedBox(height: 8),
             TextButton(
-              onPressed: () => ref.invalidate(localPlacesProvider),
+              onPressed: () => ref.invalidate(preplannedTripsFutureProvider),
               child: const Text('Retry'),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  void _showPrePlannedTripDetails(BuildContext context, WidgetRef ref, PrePlannedTripModel trip) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => _PrePlannedTripDetailSheet(trip: trip),
+    );
+  }
+}
+
+class _PrePlannedTripDetailSheet extends ConsumerStatefulWidget {
+  final PrePlannedTripModel trip;
+  const _PrePlannedTripDetailSheet({required this.trip});
+
+  @override
+  ConsumerState<_PrePlannedTripDetailSheet> createState() => _PrePlannedTripDetailSheetState();
+}
+
+class _PrePlannedTripDetailSheetState extends ConsumerState<_PrePlannedTripDetailSheet> {
+  bool _isCloning = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final trip = widget.trip;
+    final itinerary = trip.itinerary ?? {};
+    final days = itinerary.keys.toList()..sort();
+
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.85,
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      child: Column(
+        children: [
+          // Handle
+          Container(
+            margin: const EdgeInsets.symmetric(vertical: 12),
+            width: 40,
+            height: 4,
+            decoration: BoxDecoration(
+              color: Colors.grey[300],
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    trip.district ?? 'Sri Lanka',
+                    style: TextStyle(
+                      color: Colors.blue[700],
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1.2,
+                      fontSize: 12,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    trip.title,
+                    style: theme.textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  
+                  Row(
+                    children: [
+                      _infoBadge(Icons.timer_outlined, '${trip.durationDays} Days', Colors.orange),
+                      const SizedBox(width: 8),
+                      _infoBadge(Icons.bolt, '${trip.xpReward} XP', Colors.purple),
+                      const SizedBox(width: 8),
+                      _infoBadge(Icons.signal_cellular_alt, trip.difficulty, Colors.green),
+                    ],
+                  ),
+                  
+                  const SizedBox(height: 24),
+                  const Text(
+                    'Daily Itinerary',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  
+                  ...days.map((dayKey) {
+                    final dayNum = dayKey.replaceAll('day_', '');
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 20),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            width: 32,
+                            height: 32,
+                            decoration: BoxDecoration(
+                              color: Colors.blue[50],
+                              shape: BoxShape.circle,
+                            ),
+                            child: Center(
+                              child: Text(
+                                dayNum,
+                                style: TextStyle(
+                                  color: Colors.blue[700],
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'DAY $dayNum',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 11,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  itinerary[dayKey] ?? '',
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.black87,
+                                    height: 1.5,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }),
+                  const SizedBox(height: 40),
+                ],
+              ),
+            ),
+          ),
+          
+          // Action Section
+          Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: SizedBox(
+              width: double.infinity,
+              height: 54,
+              child: ElevatedButton(
+                onPressed: _isCloning ? null : _handleStartAdventure,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue[700],
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                child: _isCloning
+                    ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                      )
+                    : const Text(
+                        'Start This Adventure',
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _infoBadge(IconData icon, String label, Color color) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 14, color: color),
+          const SizedBox(width: 4),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _handleStartAdventure() async {
+    setState(() => _isCloning = true);
+    
+    try {
+      final now = DateTime.now();
+      final startDate = now.add(const Duration(days: 1));
+      final endDate = startDate.add(Duration(days: widget.trip.durationDays));
+      
+      await ref.read(startAdventureProvider(StartAdventureRequest(
+        templateId: widget.trip.id,
+        startDate: startDate,
+        endDate: endDate,
+      )).future);
+      
+      if (mounted) {
+        Navigator.pop(context); // Close sheet
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Adventure started! Visit "My Trips" to view details.')),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: ${e.toString()}')),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isCloning = false);
+    }
+  }
+}
+
+class _PrePlannedTripCard extends StatelessWidget {
+  final PrePlannedTripModel trip;
+  final VoidCallback onTap;
+
+  const _PrePlannedTripCard({required this.trip, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(color: Colors.grey.shade200),
+      ),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(16),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Row(
+            children: [
+              Container(
+                width: 60,
+                height: 60,
+                decoration: BoxDecoration(
+                  color: Colors.blue.shade50,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Center(
+                  child: Text('🏝️', style: TextStyle(fontSize: 30)),
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      (trip.district ?? 'SRI LANKA').toUpperCase(),
+                      style: TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blue.shade700,
+                        letterSpacing: 1.1,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      trip.title,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Row(
+                      children: [
+                        Icon(Icons.timer_outlined, size: 12, color: Colors.grey.shade600),
+                        const SizedBox(width: 4),
+                        Text(
+                          '${trip.durationDays} Days',
+                          style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                        ),
+                        const SizedBox(width: 12),
+                        Icon(Icons.bolt, size: 12, color: Colors.grey.shade600),
+                        const SizedBox(width: 4),
+                        Text(
+                          '${trip.xpReward} XP',
+                          style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              Icon(Icons.chevron_right, color: Colors.grey.shade400),
+            ],
+          ),
         ),
       ),
     );
@@ -416,163 +745,6 @@ class _CustomTripsPanel extends ConsumerWidget {
         },
       ),
     );
-  }
-}
-
-// ─────────────────────────────────────────────
-// Card: Curated Place (Pre-Planned)
-// ─────────────────────────────────────────────
-class _CuratedPlaceCard extends StatelessWidget {
-  final PlaceWithDistance item;
-
-  const _CuratedPlaceCard({required this.item});
-
-  @override
-  Widget build(BuildContext context) {
-    final place = item.place;
-    final distanceText = item.distanceKm != null
-        ? '${item.distanceKm!.toStringAsFixed(1)} km away'
-        : place.district ?? '';
-
-    final categoryColor = _categoryColor(place.category);
-
-    return Card(
-      clipBehavior: Clip.antiAlias,
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-      child: InkWell(
-        onTap: () {},
-        child: SizedBox(
-          height: 110,
-          child: Row(
-            children: [
-              // Image
-              SizedBox(
-                width: 110,
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    Container(color: categoryColor.withOpacity(0.15)),
-                    place.photos.isNotEmpty
-                        ? Image.network(
-                            place.photos.first,
-                            fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) => Icon(
-                              _categoryIcon(place.category),
-                              size: 40,
-                              color: categoryColor,
-                            ),
-                          )
-                        : Icon(
-                            _categoryIcon(place.category),
-                            size: 40,
-                            color: categoryColor,
-                          ),
-                    // Category badge
-                    Positioned(
-                      bottom: 6,
-                      left: 6,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: categoryColor,
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: Text(
-                          (place.category ?? 'place').toUpperCase(),
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 8,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              // Info
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        place.name,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      const SizedBox(height: 4),
-                      Row(
-                        children: [
-                          Icon(Icons.location_on, size: 12, color: Colors.blue.shade600),
-                          const SizedBox(width: 3),
-                          Expanded(
-                            child: Text(
-                              distanceText,
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.blue.shade600,
-                                fontWeight: FontWeight.w500,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        place.description ?? '',
-                        style: Theme.of(context).textTheme.bodySmall,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              const Padding(
-                padding: EdgeInsets.only(right: 10),
-                child: Icon(Icons.chevron_right, color: Colors.grey),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Color _categoryColor(String? category) {
-    switch (category) {
-      case 'beach': return Colors.cyan;
-      case 'mountain': return Colors.green;
-      case 'historical': return Colors.brown;
-      case 'temple': return Colors.orange;
-      case 'park': return Colors.lightGreen;
-      case 'wildlife': return Colors.teal;
-      case 'forest': return Colors.green.shade700;
-      default: return Colors.blue;
-    }
-  }
-
-  IconData _categoryIcon(String? category) {
-    switch (category) {
-      case 'beach': return Icons.beach_access;
-      case 'mountain': return Icons.landscape;
-      case 'historical': return Icons.account_balance;
-      case 'temple': return Icons.temple_buddhist;
-      case 'park': return Icons.park;
-      case 'wildlife': return Icons.pets;
-      case 'forest': return Icons.forest;
-      default: return Icons.place;
-    }
   }
 }
 

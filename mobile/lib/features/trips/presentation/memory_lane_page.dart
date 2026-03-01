@@ -431,7 +431,7 @@ class _TripCard extends StatelessWidget {
                   spacing: 6,
                   runSpacing: 6,
                   children: trip.locations!.take(3).map((loc) {
-                    return Chip(label: Text(loc));
+                    return Chip(label: Text(loc.name));
                   }).toList(),
                 ),
               ),

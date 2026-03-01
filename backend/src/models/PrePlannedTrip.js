@@ -7,12 +7,21 @@ const preplannedTripSchema = new mongoose.Schema({
   },
   description: {
     type: String,
+    required: false,
+    default: '',
+  },
+  district: {
+    type: String,
     required: true,
+  },
+  itinerary: {
+    type: mongoose.Schema.Types.Mixed,
+    default: {},
   },
   difficulty: {
     type: String,
     enum: ['Easy', 'Moderate', 'Hard'],
-    required: true,
+    default: 'Moderate',
   },
   durationDays: {
     type: Number,
