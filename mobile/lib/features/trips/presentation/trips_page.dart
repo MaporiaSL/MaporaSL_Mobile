@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
+import 'package:intl/intl.dart';
 import 'providers/preplanned_trips_provider.dart';
 import 'providers/trips_provider.dart';
 import 'create_trip_page.dart';
@@ -220,8 +220,8 @@ class _PrePlannedPanel extends ConsumerWidget {
                   padding: const EdgeInsets.only(bottom: 4),
                   child: Row(
                     children: [
-                      const Icon(Icons.auto_awesome, size: 16, color: Colors.amber),
-                      const SizedBox(width: 8),
+                      //const Icon(Icons.auto_awesome, size: 16, color: Colors.amber),
+                      //const SizedBox(width: 8),
                       Text(
                         'CURATED ADVENTURES',
                         style: Theme.of(context).textTheme.labelSmall?.copyWith(
@@ -436,7 +436,7 @@ class _PrePlannedTripDetailSheetState extends ConsumerState<_PrePlannedTripDetai
               width: double.infinity,
               height: 54,
               child: ElevatedButton(
-                onPressed: _isCloning ? null : _handleStartAdventure,
+                onPressed: _isCloning ? null : () => _showQuickStartDialog(context, ref),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue[700],
                   foregroundColor: Colors.white,
@@ -487,34 +487,158 @@ class _PrePlannedTripDetailSheetState extends ConsumerState<_PrePlannedTripDetai
     );
   }
 
-  Future<void> _handleStartAdventure() async {
-    setState(() => _isCloning = true);
+  Future<void> _showQuickStartDialog(BuildContext context, WidgetRef ref) async {
+    DateTime selectedDate = DateTime.now().add(const Duration(days: 1)); // Default to tomorrow
     
+    // FIX 1: Start with an empty text box so the user can type their custom/current location
+    final locationCtrl = TextEditingController();
+
+    await showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            final calculatedEndDate = selectedDate.add(Duration(days: widget.trip.durationDays));
+
+            return AlertDialog(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              title: Text('Start ${widget.trip.title}', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text('Just a few details before we pack your bags!', style: TextStyle(color: Colors.grey, fontSize: 13)),
+                  const SizedBox(height: 20),
+                  
+                  // Starting Location Input
+                  TextField(
+                    controller: locationCtrl,
+                    decoration: InputDecoration(
+                      labelText: 'Starting Location',
+                      // Give them a hint that it's customizable
+                      hintText: 'e.g., Current Location, Colombo...', 
+                      prefixIcon: const Icon(Icons.location_on, color: Colors.blue),
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  
+                  // Start Date Picker
+                  ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    title: const Text('Start Date', style: TextStyle(fontSize: 14)),
+                    subtitle: Text(
+                      DateFormat('MMM dd, yyyy').format(selectedDate),
+                      style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),
+                    ),
+                    trailing: const Icon(Icons.calendar_month, color: Colors.blue),
+                    onTap: () async {
+                      final picked = await showDatePicker(
+                        context: context,
+                        initialDate: selectedDate,
+                        firstDate: DateTime.now(),
+                        lastDate: DateTime.now().add(const Duration(days: 365)),
+                      );
+                      if (picked != null) {
+                        setDialogState(() => selectedDate = picked);
+                      }
+                    },
+                  ),
+                  const Divider(),
+                  
+                  // Auto-calculated End Date Display
+                  ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    title: const Text('End Date (Auto-Calculated)', style: TextStyle(fontSize: 14)),
+                    subtitle: Text(
+                      DateFormat('MMM dd, yyyy').format(calculatedEndDate),
+                      style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black54),
+                    ),
+                    trailing: const Icon(Icons.flag_circle, color: Colors.green),
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(dialogContext),
+                  child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    // Make sure it doesn't pass a totally blank string to the database
+                    final finalLocation = locationCtrl.text.trim().isEmpty 
+                        ? 'Current Location' 
+                        : locationCtrl.text.trim();
+
+                    Navigator.pop(dialogContext); 
+                    _createAndSaveTrip(ref, selectedDate, calculatedEndDate, finalLocation);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue[700],
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  ),
+                  child: const Text('Save Adventure'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  // FIX 2: Added "async" here so we can wait for the database
+  Future<void> _createAndSaveTrip(WidgetRef ref, DateTime start, DateTime end, String startingLocation) async {
+    final now = DateTime.now();
+
+    final todayMidnight = DateTime(now.year, now.month, now.day);
+    final startMidnight = DateTime(start.year, start.month, start.day);
+    String status = startMidnight.isAfter(todayMidnight) ? 'scheduled' : 'planned';
+
+    final newTrip = TripModel(
+      id: now.millisecondsSinceEpoch.toString(),
+      // FIX 3: THE USER ID!
+      // If your custom trips page uses a specific ID, you MUST use the exact same one here.
+      // (Check your CreateTripPage to see what ID it uses to save successfully)
+      userId: 'user', 
+      title: widget.trip.title,
+      description: widget.trip.description,
+      startDate: start,
+      endDate: end,
+      locations: [
+        TripLocation(name: startingLocation, day: 1),
+        if (widget.trip.district != null) TripLocation(name: widget.trip.district!, day: 1),
+      ], 
+      status: status,
+      createdAt: now,
+      updatedAt: now,
+    );
+
     try {
-      final now = DateTime.now();
-      final startDate = now.add(const Duration(days: 1));
-      final endDate = startDate.add(Duration(days: widget.trip.durationDays));
+      // FIX 4: upsertTrip is synchronous, so no "await" needed
+      ref.read(tripsProvider.notifier).upsertTrip(newTrip);
       
-      await ref.read(startAdventureProvider(StartAdventureRequest(
-        templateId: widget.trip.id,
-        startDate: startDate,
-        endDate: endDate,
-      )).future);
-      
+      // FIX 5: "await" the load trips
+      await ref.read(tripsProvider.notifier).loadTrips(refresh: true);
+
+      // Close the bottom detail sheet
       if (mounted) {
-        Navigator.pop(context); // Close sheet
+        Navigator.pop(context);
+
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Adventure started! Visit "My Trips" to view details.')),
+          SnackBar(
+            content: const Text('Adventure added to My Trips successfully!'),
+            backgroundColor: Colors.green[700],
+            behavior: SnackBarBehavior.floating,
+          ),
         );
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: ${e.toString()}')),
+          SnackBar(content: Text('Failed to save trip: $e'), backgroundColor: Colors.red),
         );
       }
-    } finally {
-      if (mounted) setState(() => _isCloning = false);
     }
   }
 }
