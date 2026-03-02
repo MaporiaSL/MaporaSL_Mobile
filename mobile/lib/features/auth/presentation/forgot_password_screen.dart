@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/services/auth_service.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -9,8 +10,23 @@ class ForgotPasswordScreen extends StatefulWidget {
 }
 
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
+  final _authService = AuthService();
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
+
+  bool _emailSent = false;
+
+  Future<void> _handleResetPassword() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    await _authService.sendPasswordResetEmail(
+      _emailController.text.trim(),
+    );
+
+    setState(() {
+      _emailSent = true;
+    });
+  }
 
   @override
   void dispose() {
@@ -40,26 +56,13 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 children: [
                   Icon(Icons.lock_reset_rounded,
                       size: 64, color: AppColors.primary),
-
                   const SizedBox(height: 20),
 
                   Text(
                     'Forgot Password?',
                     textAlign: TextAlign.center,
-                    style: theme.textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-
-                  const SizedBox(height: 8),
-
-                  Text(
-                    'Enter your email address and we\'ll send you a link to reset your password.',
-                    textAlign: TextAlign.center,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: AppColors.textMuted,
-                      height: 1.5,
-                    ),
+                    style: theme.textTheme.headlineSmall
+                        ?.copyWith(fontWeight: FontWeight.w700),
                   ),
 
                   const SizedBox(height: 36),
@@ -77,7 +80,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   SizedBox(
                     height: 50,
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: _handleResetPassword,
                       child: const Text('Send Reset Link'),
                     ),
                   ),
