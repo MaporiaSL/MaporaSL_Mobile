@@ -1,0 +1,281 @@
+{
+  "country": "Sri Lanka",
+  "total_districts": 25,
+  "trips": [
+    {
+      "district": "Colombo",
+      "trip_name": "The Urban Pulse",
+      "duration_days": 4,
+      "itinerary": {
+        "day_1": "Colonial Fort walk, Dutch Hospital lunch, and sunset at Galle Face Green.",
+        "day_2": "Gangaramaya Temple and a boat ride on Beira Lake. Evening shopping at Pettah Market.",
+        "day_3": "Day trip to the Kelaniya Raja Maha Vihara and exploring the wetlands of Beddagana.",
+        "day_4": "Art gallery hopping in Colombo 07 and a farewell rooftop dinner overlooking the skyline."
+      }
+    },
+    {
+      "district": "Galle",
+      "trip_name": "The Azure Coastline",
+      "duration_days": 4,
+      "itinerary": {
+        "day_1": "Full day exploring the UNESCO Galle Fort ramparts and boutiques.",
+        "day_2": "Surfing at Sahana Beach and visiting the Japanese Peace Pagoda.",
+        "day_3": "Boat safari in the Koggala Lake and visiting the Martin Wickramasinghe Museum.",
+        "day_4": "Whale watching in nearby Mirissa and evening at the Hikkaduwa Coral Reef."
+      }
+    },
+    {
+      "district": "Matale",
+      "trip_name": "The Citadel Circuit",
+      "duration_days": 4,
+      "itinerary": {
+        "day_1": "Sunrise climb of Sigiriya Rock Fortress followed by a village lunch.",
+        "day_2": "Exploring the Dambulla Cave Temple and the Golden Buddha statue.",
+        "day_3": "Hiking the Knuckles Mountain Range foothills and visiting a spice garden.",
+        "day_4": "Visit the Nalanda Gedige and the Aluvihara Rock Temple."
+      }
+    },
+    {
+      "district": "Kandy",
+      "trip_name": "The Royal Heritage",
+      "duration_days": 4,
+      "itinerary": {
+        "day_1": "Temple of the Sacred Tooth Relic and a traditional Kandyan dance show.",
+        "day_2": "Royal Botanical Gardens in Peradeniya and a walk around Kandy Lake.",
+        "day_3": "Hike to the Hanthana Mountain Range and visit the Tea Museum.",
+        "day_4": "Visit the Bahirawakanda Buddha statue and explore the Udawattakele Sanctuary."
+      }
+    },
+    {
+      "district": "Nuwara Eliya",
+      "trip_name": "The Emerald Highlands",
+      "duration_days": 4,
+      "itinerary": {
+        "day_1": "High tea at the Grand Hotel and a walk around Gregory Lake.",
+        "day_2": "Early morning trek at Horton Plains National Park to see World's End.",
+        "day_3": "Touring a Pedro Tea Factory and visiting the Seetha Amman Temple.",
+        "day_4": "Visit the Hakgala Botanical Gardens and the Ambewela Farm."
+      }
+    },
+    {
+      "district": "Anuradhapura",
+      "trip_name": "The Sacred Sanctuary",
+      "duration_days": 4,
+      "itinerary": {
+        "day_1": "Cycling through the Sacred City ruins and the Jaya Sri Maha Bodhi.",
+        "day_2": "Climbing Mihintale Peak for sunset views of the ancient reservoirs.",
+        "day_3": "Exploring the Isurumuniya Rock Temple and the Twin Ponds (Kuttam Pokuna).",
+        "day_4": "Visit the Avukana Buddha statue and the Kala Wewa tank."
+      }
+    },
+    {
+      "district": "Jaffna",
+      "trip_name": "The Northern Revival",
+      "duration_days": 4,
+      "itinerary": {
+        "day_1": "Jaffna Fort and the Nallur Kandaswamy Kovil evening ceremony.",
+        "day_2": "Ferry to Delft Island to see the wild ponies and coral ruins.",
+        "day_3": "Dip in the Keerimalai Sacred Springs and visiting the Casuarina Beach.",
+        "day_4": "Exploring the Point Pedro lighthouse and the Kantharodai Viharaya."
+      }
+    },
+    {
+      "district": "Trincomalee",
+      "trip_name": "The Eastern Pearl",
+      "duration_days": 4,
+      "itinerary": {
+        "day_1": "Snorkeling at Pigeon Island National Park and Nilaveli Beach.",
+        "day_2": "Visit Koneswaram Temple on 'Lovers Leap' and Fort Frederick.",
+        "day_3": "Relaxing at Marble Beach and hiking Diamond Hill.",
+        "day_4": "Visiting the Kanniya Hot Springs and the Trinco Whale Watching port."
+      }
+    },
+    {
+      "district": "Hambantota",
+      "trip_name": "The Safari Spirit",
+      "duration_days": 4,
+      "itinerary": {
+        "day_1": "Full day leopard-spotting safari at Yala National Park.",
+        "day_2": "Bird watching at Bundala National Park and the salt lewayas.",
+        "day_3": "Visit the Kataragama Temple complex and the Kirinda Temple.",
+        "day_4": "Explore the Ridiyagama Safari Park and the Dry Zone Botanical Garden."
+      }
+    },
+    {
+      "district": "Badulla",
+      "trip_name": "The Misty Peaks",
+      "duration_days": 4,
+      "itinerary": {
+        "day_1": "Visit the Muthiyangana Raja Maha Vihara and Dunhinda Falls.",
+        "day_2": "Train journey to Ella and hiking Little Adam's Peak.",
+        "day_3": "Walk across the Nine Arch Bridge and explore Ravana Caves.",
+        "day_4": "Hike Ella Rock and visit the Lipton's Seat in nearby Haputale."
+      }
+    },
+    {
+      "district": "Ampara",
+      "trip_name": "The Surfer’s Soul",
+      "duration_days": 4,
+      "itinerary": {
+        "day_1": "Surfing at Arugam Bay and sunset at Elephant Rock.",
+        "day_2": "Wildlife safari in Kumana National Park (Bird sanctuary).",
+        "day_3": "Explore the Kudumbigala Monastery and the Panama Beach.",
+        "day_4": "Canoe safari in Pottuvil Lagoon and the Muhudu Maha Viharaya."
+      }
+    },
+    {
+      "district": "Polonnaruwa",
+      "trip_name": "The Medieval Majesty",
+      "duration_days": 4,
+      "itinerary": {
+        "day_1": "Cycling through the Polonnaruwa Ancient City ruins.",
+        "day_2": "Evening safari at Minneriya National Park for 'The Gathering'.",
+        "day_3": "Visit the Parakrama Samudra and the Archaeological Museum.",
+        "day_4": "Explore the Medirigiriya Vatadage and the Somawathiya Stupa."
+      }
+    },
+    {
+      "district": "Batticaloa",
+      "trip_name": "The Singing Lagoon",
+      "duration_days": 4,
+      "itinerary": {
+        "day_1": "Walking tour of Batticaloa Fort and the Kallady Bridge.",
+        "day_2": "Lagoon boat trip to hear the 'singing fish' and bird watching.",
+        "day_3": "Relaxing at Pasikudah Beach and snorkeling in the shallow bay.",
+        "day_4": "Visit the Sathurukondan Wetlands and the local lighthouse."
+      }
+    },
+    {
+      "district": "Puttalam",
+      "trip_name": "The Salt & Sea",
+      "duration_days": 4,
+      "itinerary": {
+        "day_1": "Dolphin watching in Kalpitiya and exploring the Dutch Fort.",
+        "day_2": "Kitesurfing lessons or relaxing at the Kalpitiya Lagoon.",
+        "day_3": "Full day safari at Wilpattu National Park (Western entrance).",
+        "day_4": "Explore the salt pans and the St. Anne’s Church in Talawila."
+      }
+    },
+    {
+      "district": "Ratnapura",
+      "trip_name": "The Gemstone Trail",
+      "duration_days": 4,
+      "itinerary": {
+        "day_1": "Visiting a traditional Gem Mine and the Gem Museum.",
+        "day_2": "Hiking the classic route of Sri Pada (Adam's Peak).",
+        "day_3": "Exploring Sinharaja Rain Forest (UNESCO) - Kudawa entrance.",
+        "day_4": "Cooling off at Bopath Ella Falls and the Saman Devalaya."
+      }
+    },
+    {
+      "district": "Kegalle",
+      "trip_name": "The Gentle Giants",
+      "duration_days": 4,
+      "itinerary": {
+        "day_1": "Visit Pinnawala Elephant Orphanage and the elephant river bath.",
+        "day_2": "Exploring the Saradiel Village (Uthuwankanda) and the rock hike.",
+        "day_3": "Visit the Millennium Elephant Foundation for an ethical walk.",
+        "day_4": "Hiking in the Bible Rock (Bathalegala) for mountain views."
+      }
+    },
+    {
+      "district": "Kurunegala",
+      "trip_name": "The Elephant Rock",
+      "duration_days": 4,
+      "itinerary": {
+        "day_1": "Climbing Ethagala (Elephant Rock) for the giant Buddha statue.",
+        "day_2": "Exploring the Panduwasnuwara ancient kingdom ruins.",
+        "day_3": "Visit the Yapahuwa Rock Fortress and its ornate stone stairs.",
+        "day_4": "Exploring the Ridi Vihara (Silver Temple) and Arankele Monastery."
+      }
+    },
+    {
+      "district": "Matara",
+      "trip_name": "The Southern Tip",
+      "duration_days": 4,
+      "itinerary": {
+        "day_1": "Explore the Star Fort and the Parevi Duwa temple island.",
+        "day_2": "Visit the Dondra Head Lighthouse and the Vishnu Devalaya.",
+        "day_3": "Snorkeling with sea turtles at Polhena Beach.",
+        "day_4": "Visit the Wewurukannala Temple and the Hummanaya Blowhole."
+      }
+    },
+    {
+      "district": "Kalutara",
+      "trip_name": "The Serene Coast",
+      "duration_days": 4,
+      "itinerary": {
+        "day_1": "Visit the Kalutara Bodhiya and its hollow Stupa.",
+        "day_2": "Exploring the Richmond Castle and its colonial architecture.",
+        "day_3": "A day trip to the Brief Garden (Bevis Bawa's masterpiece).",
+        "day_4": "Calido Beach walk and visiting the Fa Hien Caves."
+      }
+    },
+    {
+      "district": "Moneragala",
+      "trip_name": "The Veddah Voyage",
+      "duration_days": 4,
+      "itinerary": {
+        "day_1": "Exploring the Maligawila Buddha Statue (largest free-standing).",
+        "day_2": "Safari at Gal Oya National Park (Boat safari).",
+        "day_3": "Visit the Veddah (Indigenous) community in Dambana.",
+        "day_4": "Hiking the Yudaganawa archaeological site and tank."
+      }
+    },
+    {
+      "district": "Gampaha",
+      "trip_name": "The Transit Hub",
+      "duration_days": 4,
+      "itinerary": {
+        "day_1": "Exploring the Negombo Fish Market and Dutch Canal boat ride.",
+        "day_2": "Relaxing at Negombo Beach and the St. Mary’s Church.",
+        "day_3": "Visit the Henarathgoda Botanical Garden (first rubber trees).",
+        "day_4": "Exploring the Pilikuththuwa Raja Maha Vihara cave temple."
+      }
+    },
+    {
+      "district": "Mannar",
+      "trip_name": "The Palk Strait Path",
+      "duration_days": 4,
+      "itinerary": {
+        "day_1": "Crossing the Mannar Causeway and seeing the Baobab Tree.",
+        "day_2": "Visit the Thiruketheeswaram Temple and the Mannar Fort.",
+        "day_3": "Exploring the Talaimannar Pier and Adam's Bridge sandbanks.",
+        "day_4": "Bird watching at the Vankalai Sanctuary and Madhu Church."
+      }
+    },
+    {
+      "district": "Vavuniya",
+      "trip_name": "The Northern Gateway",
+      "duration_days": 4,
+      "itinerary": {
+        "day_1": "Visit the Vavuniya Museum and the local market culture.",
+        "day_2": "Exploring the Kanda Swamy Kovil and the Grand Mosque.",
+        "day_3": "Visit the ancient Madukanda Vihara and the nearby tank.",
+        "day_4": "Exploring the local agrarian life and the Pavakkulam tank."
+      }
+    },
+    {
+      "district": "Mullaitivu",
+      "trip_name": "The Coastal Frontier",
+      "duration_days": 4,
+      "itinerary": {
+        "day_1": "Relaxing at the untouched Mullaitivu Beach.",
+        "day_2": "Visit the Maritime and Naval History Museum.",
+        "day_3": "Exploring the Nanthikadal Lagoon for scenic views.",
+        "day_4": "Visit the Oddusuddan Thaanthonreeswarar Temple."
+      }
+    },
+    {
+      "district": "Kilinochchi",
+      "trip_name": "The Resilience Route",
+      "duration_days": 4,
+      "itinerary": {
+        "day_1": "Visit the Elephant Pass War Memorial.",
+        "day_2": "Exploring the Iranamadu Tank and its engineering marvel.",
+        "day_3": "Learning about local agriculture at the Rice Research Center.",
+        "day_4": "Visit the Akkarayan Kulam and the local peace monuments."
+      }
+    }
+  ]
+}

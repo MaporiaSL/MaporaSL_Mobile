@@ -122,7 +122,7 @@ class _LocationsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final locations = trip.locations ?? const <String>[];
+    final locations = trip.locations ?? const <TripLocation>[];
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
@@ -155,7 +155,7 @@ class _LocationsSection extends StatelessWidget {
                         size: 18,
                       ),
                       const SizedBox(width: 8),
-                      Text(loc),
+                      Text(loc.name),
                     ],
                   ),
                 ),

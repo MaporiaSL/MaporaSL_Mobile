@@ -44,13 +44,13 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage> {
       text:
           (widget.trip?.locations != null &&
               (widget.trip!.locations?.isNotEmpty ?? false))
-          ? widget.trip!.locations!.first
+          ? widget.trip!.locations!.first.name
           : '',
     );
     _startDate = widget.trip?.startDate ?? DateTime.now();
     _endDate =
         widget.trip?.endDate ?? DateTime.now().add(const Duration(days: 1));
-    _places = List.from(widget.trip?.locations ?? []);
+    _places = widget.trip?.locations?.map((l) => l.name).toList() ?? [];
     _selectedTransport = _transportModes[0];
   }
 
@@ -122,7 +122,7 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage> {
       description: _descriptionCtrl.text.isEmpty ? null : _descriptionCtrl.text,
       startDate: _startDate,
       endDate: _endDate,
-      locations: _places,
+      locations: _places.map((p) => TripLocation(name: p, day: 1)).toList(),
       status: widget.trip?.status ?? 'scheduled',
       createdAt: widget.trip?.createdAt ?? now,
       updatedAt: now,
