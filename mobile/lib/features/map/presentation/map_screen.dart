@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../../../core/constants/app_colors.dart';
 import '../data/regions_data.dart';
 import 'widgets/cartoon_map_canvas.dart';
@@ -7,6 +8,13 @@ import 'widgets/map_legend.dart';
 import 'theme/map_visual_theme.dart';
 import '../../exploration/providers/exploration_provider.dart';
 import '../../exploration/data/models/exploration_models.dart';
+import '../../places/providers/place_visit_provider.dart';
+
+// User ID provider - gets current Firebase user or falls back to test_user
+final currentUserIdProvider = Provider<String>((ref) {
+  final user = FirebaseAuth.instance.currentUser;
+  return user?.uid ?? 'test_user';
+});
 
 /// Lightweight map screen displaying stylized Sri Lanka map with exploration assignments
 class MapScreen extends ConsumerStatefulWidget {
@@ -70,6 +78,8 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     });
 
     final explorationState = ref.watch(explorationProvider);
+    final userId = ref.watch(currentUserIdProvider);
+    final placeVisitState = ref.watch(placeVisitProvider(userId));
     final assignments = explorationState.assignments;
     final lockedDistricts = assignments
         .where((assignment) => assignment.unlockedAt == null)
@@ -164,7 +174,8 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                 ),
               ),
             ),
-            if (explorationState.isVerifying) const _VerificationOverlay(),
+            if (placeVisitState.isVerifying)
+              _VerificationOverlay(state: placeVisitState),
             // Map legend
             Positioned(
               top: 16,
@@ -410,31 +421,127 @@ class _AssignedLocationList extends StatelessWidget {
 }
 
 class _VerificationOverlay extends StatelessWidget {
-  const _VerificationOverlay();
+  final PlaceVisitState state;
+
+  const _VerificationOverlay({required this.state});
+
+  IconData _getStepIcon(String? step) {
+    if (step == null) return Icons.sync;
+    if (step.contains('permission')) return Icons.location_on;
+    if (step.contains('GPS') || step.contains('signal')) return Icons.gps_fixed;
+    if (step.contains('device')) return Icons.phone_android;
+    if (step.contains('security')) return Icons.security;
+    if (step.contains('environmental')) return Icons.wb_sunny;
+    if (step.contains('server')) return Icons.cloud_upload;
+    if (step.contains('verification')) return Icons.verified_user;
+    return Icons.sync;
+  }
 
   @override
   Widget build(BuildContext context) {
     return Positioned.fill(
       child: Container(
         color: AppColors.background.withOpacity(0.95),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const SizedBox(
-              width: 40,
-              height: 40,
-              child: CircularProgressIndicator(strokeWidth: 2),
+        child: Center(
+          child: Container(
+            margin: const EdgeInsets.all(24),
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: AppColors.surface,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: AppColors.primary.withOpacity(0.2)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 20,
+                  offset: const Offset(0, 4),
+                ),
+              ],
             ),
-            const SizedBox(height: 16),
-            Text(
-              'Verifying location...\nPlease stay still',
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-                color: AppColors.textDark,
-              ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Title
+                Text(
+                  'Verifying Visit',
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textDark,
+                  ),
+                ),
+                const SizedBox(height: 24),
+
+                // Progress bar
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: LinearProgressIndicator(
+                    value: state.verificationProgress ?? 0.0,
+                    minHeight: 8,
+                    backgroundColor: AppColors.border,
+                    valueColor: AlwaysStoppedAnimation(AppColors.primary),
+                  ),
+                ),
+                const SizedBox(height: 20),
+
+                // Current step with icon
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: AppColors.primary.withOpacity(0.1),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        _getStepIcon(state.verificationStep),
+                        color: AppColors.primary,
+                        size: 24,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            state.verificationStep ??
+                                'Starting verification...',
+                            style: Theme.of(context).textTheme.bodyLarge
+                                ?.copyWith(
+                                  color: AppColors.textDark,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            '${((state.verificationProgress ?? 0) * 100).toInt()}% complete',
+                            style: Theme.of(context).textTheme.bodySmall
+                                ?.copyWith(color: AppColors.textMuted),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+
+                // Instruction text
+                Text(
+                  'Please stay still while we verify your location',
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: AppColors.textMuted,
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
