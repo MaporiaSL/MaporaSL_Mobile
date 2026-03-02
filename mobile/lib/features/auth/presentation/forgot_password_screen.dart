@@ -16,16 +16,33 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
   bool _emailSent = false;
 
+  bool _isLoading = false;
+  String? _errorMessage;
+
   Future<void> _handleResetPassword() async {
     if (!_formKey.currentState!.validate()) return;
 
-    await _authService.sendPasswordResetEmail(
-      _emailController.text.trim(),
-    );
-
     setState(() {
-      _emailSent = true;
+      _isLoading = true;
+      _errorMessage = null;
     });
+
+    try {
+      await _authService.sendPasswordResetEmail(_emailController.text.trim());
+
+      setState(() {
+        _emailSent = true;
+      });
+    } catch (e) {
+      setState(() {
+        _errorMessage =
+            'Failed to send reset email. Please check your email and try again.';
+      });
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   @override
@@ -54,15 +71,19 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Icon(Icons.lock_reset_rounded,
-                      size: 64, color: AppColors.primary),
+                  Icon(
+                    Icons.lock_reset_rounded,
+                    size: 64,
+                    color: AppColors.primary,
+                  ),
                   const SizedBox(height: 20),
 
                   Text(
                     'Forgot Password?',
                     textAlign: TextAlign.center,
-                    style: theme.textTheme.headlineSmall
-                        ?.copyWith(fontWeight: FontWeight.w700),
+                    style: theme.textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
 
                   const SizedBox(height: 36),
@@ -81,7 +102,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     height: 50,
                     child: ElevatedButton(
                       onPressed: _handleResetPassword,
-                      child: const Text('Send Reset Link'),
+                      child: _isLoading
+                          ? const CircularProgressIndicator()
+                          : const Text('Send Reset Link'),
                     ),
                   ),
                 ],
