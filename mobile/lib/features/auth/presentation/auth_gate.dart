@@ -33,10 +33,11 @@ class AuthGate extends StatelessWidget {
         // If user signed up via email/password and hasn't verified yet
         if (!user.emailVerified &&
             user.providerData.any((p) => p.providerId == 'password')) {
+          // hometownDistrict is read from local storage inside
+          // EmailVerificationScreen — no hardcoded fallback needed.
           return EmailVerificationScreen(
             email: user.email ?? '',
             name: user.displayName ?? '',
-            hometownDistrict: 'Colombo',
           );
         }
 

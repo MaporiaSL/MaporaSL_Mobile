@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../../core/services/auth_service.dart';
 import '../../../core/services/auth_api.dart';
+import '../../../core/services/local_prefs.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../exploration/data/districts_data.dart';
 import 'email_verification_screen.dart';
@@ -55,6 +56,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
       if (!mounted) return;
 
+      // Persist the selected district so it survives app restarts
+      await LocalPrefs.saveHometownDistrict(_selectedDistrict!);
+
       // Navigate to email verification screen (pass registration data)
       Navigator.pushReplacement(
         context,
@@ -89,11 +93,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
       final credential = await _authService.signInWithGoogle();
       final user = credential.user;
       if (user != null) {
+        final district =
+            _selectedDistrict ??
+            await LocalPrefs.getHometownDistrict() ??
+            'Colombo';
         try {
           await AuthApi().registerUser(
             email: user.email ?? '',
             name: user.displayName ?? user.email?.split('@').first ?? '',
-            hometownDistrict: _selectedDistrict ?? 'Colombo',
+            hometownDistrict: district,
           );
         } catch (_) {
           // Backend sync will be retried by HomeScreen

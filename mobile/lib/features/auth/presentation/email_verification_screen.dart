@@ -2,18 +2,19 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import '../../../core/services/auth_service.dart';
 import '../../../core/services/auth_api.dart';
+import '../../../core/services/local_prefs.dart';
 import '../../../core/constants/app_colors.dart';
 
 class EmailVerificationScreen extends StatefulWidget {
   final String email;
   final String name;
-  final String hometownDistrict;
+  final String? hometownDistrict;
 
   const EmailVerificationScreen({
     super.key,
     required this.email,
     required this.name,
-    required this.hometownDistrict,
+    this.hometownDistrict,
   });
 
   @override
@@ -62,13 +63,21 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
         // email_verified=true, and so AuthGate's userChanges() stream fires.
         await _authService.currentUser?.getIdToken(true);
 
+        // Resolve hometown: prefer explicit param, then local storage
+        final district =
+            widget.hometownDistrict ?? await LocalPrefs.getHometownDistrict();
+
         // Register user with backend after email verification
         try {
-          await AuthApi().registerUser(
-            email: widget.email,
-            name: widget.name,
-            hometownDistrict: widget.hometownDistrict,
-          );
+          if (district != null) {
+            await AuthApi().registerUser(
+              email: widget.email,
+              name: widget.name,
+              hometownDistrict: district,
+            );
+            // Clear cached district after successful registration
+            await LocalPrefs.clearHometownDistrict();
+          }
         } catch (e) {
           debugPrint('Backend register after verification failed: $e');
           // Backend sync will be retried by HomeScreen as fallback

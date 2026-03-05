@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../../core/services/auth_service.dart';
 import '../../../core/services/auth_api.dart';
+import '../../../core/services/local_prefs.dart';
 import '../../../core/constants/app_colors.dart';
 import 'signup_screen.dart';
 import 'forgot_password_screen.dart';
@@ -67,12 +68,15 @@ class _LoginScreenState extends State<LoginScreen> {
       // Sync Google user to backend
       final user = credential.user;
       if (user != null) {
+        final district = await LocalPrefs.getHometownDistrict();
         try {
-          await AuthApi().registerUser(
-            email: user.email ?? '',
-            name: user.displayName ?? user.email?.split('@').first ?? '',
-            hometownDistrict: 'Colombo',
-          );
+          if (district != null) {
+            await AuthApi().registerUser(
+              email: user.email ?? '',
+              name: user.displayName ?? user.email?.split('@').first ?? '',
+              hometownDistrict: district,
+            );
+          }
         } catch (_) {
           // Backend sync will be retried by HomeScreen
         }

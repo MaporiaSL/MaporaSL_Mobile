@@ -8,6 +8,7 @@ import '../../shop/presentation/shop_page.dart';
 import '../../profile/presentation/profile_screen.dart';
 import '../widgets/bottom_nav_bar.dart';
 import '../../../core/services/auth_api.dart';
+import '../../../core/services/local_prefs.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -50,12 +51,16 @@ class _HomeScreenState extends State<HomeScreen> {
       }
       final email = user.email ?? 'unknown@local.test';
       final name = user.displayName ?? email.split('@').first;
+      final district = await LocalPrefs.getHometownDistrict();
       try {
-        await AuthApi().registerUser(
-          email: email,
-          name: name,
-          hometownDistrict: 'Colombo',
-        );
+        if (district != null) {
+          await AuthApi().registerUser(
+            email: email,
+            name: name,
+            hometownDistrict: district,
+          );
+          await LocalPrefs.clearHometownDistrict();
+        }
       } catch (_) {
         // Swallow registration errors during dev flow.
       }
