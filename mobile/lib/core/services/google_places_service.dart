@@ -1,67 +1,48 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-class GooglePlacesService {
-  final String? apiKey;
-
-  GooglePlacesService({this.apiKey});
-
-  String get _key => apiKey ?? dotenv.env['GOOGLE_MAPS_API_KEY'] ?? '';
-
-  Future<List<GooglePlaceSuggestion>> getSuggestions(String input) async {
+class FreePlacesService {
+  Future<List<FreePlaceSuggestion>> getSuggestions(String input) async {
     if (input.isEmpty) return [];
-    if (_key.isEmpty || _key == 'your_google_maps_api_key_here') {
-      print('Google Places Error: API Key is not configured in .env');
-      return [];
-    }
-
-    final queryParameters = {
-      'input': input,
-      'key': _key,
-      'components': 'country:lk',
-    };
-
-    final uri = Uri.https('maps.googleapis.com', '/maps/api/place/autocomplete/json', queryParameters);
-    print('Google Places Request URI: $uri');
+    final searchQuery = '$input Sri Lanka';
+    final uri = Uri.parse('https://photon.komoot.io/api/?q=${Uri.encodeComponent(searchQuery)}&limit=8');
     
     try {
       final response = await http.get(uri).timeout(const Duration(seconds: 5));
-      print('Google Places Response Code: ${response.statusCode}');
-      
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        print('Google Places Response Status: ${data['status']}');
-        
-        if (data['status'] == 'OK') {
-          final predictions = data['predictions'] as List;
-          return predictions.map((p) => GooglePlaceSuggestion.fromJson(p)).toList();
-        } else if (data['status'] == 'REQUEST_DENIED') {
-          print('Google Places Error: Request Denied - ${data['error_message']}');
-        } else if (data['status'] == 'ZERO_RESULTS') {
-          print('Google Places: No results found for "$input"');
-        } else {
-          print('Google Places Status: ${data['status']}');
-        }
+        final features = data['features'] as List;
+        final filteredFeatures = features.where((f) {
+           final country = f['properties']['country']?.toString().toLowerCase() ?? '';
+           return country.contains('sri lanka');
+        }).toList();
+        return filteredFeatures.map((f) => FreePlaceSuggestion.fromJson(f['properties'])).toList();
       }
       return [];
     } catch (e) {
-      print('Google Places Exception: $e');
+      print('Free Places Exception: $e');
       return [];
     }
   }
 }
 
-class GooglePlaceSuggestion {
-  final String description;
-  final String placeId;
+class FreePlaceSuggestion {
+  final String name;
+  final String state; 
+  final String city;
 
-  GooglePlaceSuggestion({required this.description, required this.placeId});
+  FreePlaceSuggestion({required this.name, required this.state, required this.city});
 
-  factory GooglePlaceSuggestion.fromJson(Map<String, dynamic> json) {
-    return GooglePlaceSuggestion(
-      description: json['description'],
-      placeId: json['place_id'],
+  factory FreePlaceSuggestion.fromJson(Map<String, dynamic> json) {
+    return FreePlaceSuggestion(
+      name: json['name'] ?? 'Unknown Location',
+      state: json['state'] ?? '',
+      city: json['city'] ?? json['county'] ?? '', 
     );
+  }
+
+  String get subtitle {
+    final parts = [city, state].where((e) => e.isNotEmpty && e != name).toList();
+    return parts.join(', ');
   }
 }
