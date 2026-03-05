@@ -4,6 +4,7 @@ import '../../../core/services/auth_service.dart';
 import '../../../core/services/auth_api.dart';
 import '../../../core/services/local_prefs.dart';
 import '../../../core/constants/app_colors.dart';
+import 'auth_gate.dart';
 
 class EmailVerificationScreen extends StatefulWidget {
   final String email;
@@ -81,9 +82,13 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
 
         if (!mounted) return;
 
-        Navigator.of(context).popUntil((route) => route.isFirst);
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (_) => const AuthGate()),
+          (route) => false,
+        );
       }
-    } catch (_) {} finally {
+    } catch (_) {
+    } finally {
       _isChecking = false;
     }
   }
@@ -148,11 +153,11 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
+        automaticallyImplyLeading: false,
+        leading: const SizedBox.shrink(),
+        leadingWidth: 0,
         actions: [
-          TextButton(
-            onPressed: _handleSignOut,
-            child: const Text("Cancel"),
-          )
+          TextButton(onPressed: _handleSignOut, child: const Text("Cancel")),
         ],
       ),
       body: SafeArea(
@@ -161,7 +166,6 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-
               /// ICON
               Container(
                 padding: const EdgeInsets.all(24),
@@ -193,9 +197,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
               Text(
                 "We've sent a verification link to",
                 textAlign: TextAlign.center,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: Colors.grey,
-                ),
+                style: theme.textTheme.bodyMedium?.copyWith(color: Colors.grey),
               ),
 
               const SizedBox(height: 4),
@@ -232,9 +234,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
 
               Text(
                 "Waiting for verification...",
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: Colors.grey,
-                ),
+                style: theme.textTheme.bodySmall?.copyWith(color: Colors.grey),
               ),
 
               const SizedBox(height: 36),
@@ -254,10 +254,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                   ),
                   child: const Text(
                     "I've verified my email",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                   ),
                 ),
               ),
