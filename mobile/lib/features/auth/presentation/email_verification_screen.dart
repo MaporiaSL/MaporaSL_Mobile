@@ -4,7 +4,7 @@ import '../../../core/services/auth_service.dart';
 import '../../../core/services/auth_api.dart';
 import '../../../core/services/local_prefs.dart';
 import '../../../core/constants/app_colors.dart';
-import 'auth_gate.dart';
+import '../services/auth_gate.dart';
 
 class EmailVerificationScreen extends StatefulWidget {
   final String email;

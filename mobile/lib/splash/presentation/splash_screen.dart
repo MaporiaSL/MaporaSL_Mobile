@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../features/auth/presentation/auth_gate.dart';
+import '../../features/auth/services/auth_gate.dart';
 import '../../features/onboarding/presentation/onboarding_screeens.dart';
 
 class SplashScreen extends StatefulWidget {
