@@ -43,9 +43,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
   InputDecoration _inputDecoration(String hint, IconData icon) {
     return InputDecoration(
       hintText: hint,
-      prefixIcon: Icon(icon, color: Colors.grey),
+      prefixIcon: Icon(icon, color: AppColors.textMuted),
       filled: true,
-      fillColor: const Color(0xFFF2F3F5),
+      fillColor: AppColors.surfaceMuted,
       contentPadding: const EdgeInsets.symmetric(vertical: 18),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),
@@ -160,12 +160,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
     final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.white,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
+          icon: const Icon(Icons.arrow_back_ios_new, color: AppColors.textDark),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -193,7 +190,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   "Please fill the details and create account",
                   textAlign: TextAlign.center,
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: Colors.grey,
+                    color: AppColors.textMuted,
                   ),
                 ),
 
@@ -313,7 +310,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   child: ElevatedButton(
                     onPressed: _isLoading ? null : _handleSignUp,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF2D6CDF),
+                      backgroundColor: AppColors.primary,
                       elevation: 0,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
@@ -380,7 +377,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     Text(
                       "Already have an account? ",
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        color: Colors.grey,
+                        color: AppColors.textMuted,
                       ),
                     ),
                     GestureDetector(

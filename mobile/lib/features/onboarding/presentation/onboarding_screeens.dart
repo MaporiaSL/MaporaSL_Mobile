@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gemified_travel_portfolio/features/onboarding/widgets/brush_highlight.dart';
+import '../../../core/constants/app_colors.dart';
 import '../../auth/services/auth_gate.dart';
 import '../../auth/presentation/login_screen.dart';
 
@@ -23,7 +24,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+      backgroundColor: AppColors.background,
       body: SafeArea(
         child: Stack(
           children: [
@@ -133,13 +134,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               bottomRight: Radius.circular(30),
             ),
             child: SizedBox(
-              height: MediaQuery.of(context).size.height * 0.54,
+              height: MediaQuery.of(context).size.height * 0.5,
               width: double.infinity,
               child: Image.asset(image, fit: BoxFit.cover),
             ),
           ),
 
-          const SizedBox(height: 30),
+          const SizedBox(height: 20),
 
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -149,7 +150,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 style: const TextStyle(
                   fontSize: 26,
                   fontWeight: FontWeight.w700,
-                  color: Colors.black,
+                  color: AppColors.textDark,
                 ),
                 children: [
                   TextSpan(text: title + " "), // normal text
@@ -173,7 +174,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               textAlign: TextAlign.center,
               style: const TextStyle(
                 fontSize: 14,
-                color: Colors.grey,
+                color: AppColors.textMuted,
                 height: 1.4,
               ),
             ),
@@ -193,8 +194,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 width: currentIndex == index ? 24 : 8,
                 decoration: BoxDecoration(
                   color: currentIndex == index
-                      ? Colors.blue
-                      : Colors.blue.withOpacity(0.3),
+                      ? AppColors.primary
+                      : AppColors.primary.withOpacity(0.3),
                   borderRadius: BorderRadius.circular(10),
                 ),
               );
@@ -211,7 +212,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               height: 56,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
+                  backgroundColor: AppColors.primary,
                   elevation: 0,
                   shadowColor: Colors.transparent,
                   shape: RoundedRectangleBorder(

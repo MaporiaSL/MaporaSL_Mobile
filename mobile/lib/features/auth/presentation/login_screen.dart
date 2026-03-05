@@ -30,9 +30,9 @@ class _LoginScreenState extends State<LoginScreen> {
   InputDecoration _inputDecoration(String hint, IconData icon) {
     return InputDecoration(
       hintText: hint,
-      prefixIcon: Icon(icon, color: Colors.grey),
+      prefixIcon: Icon(icon, color: AppColors.textMuted),
       filled: true,
-      fillColor: const Color(0xFFF2F3F5),
+      fillColor: AppColors.surfaceMuted,
       contentPadding: const EdgeInsets.symmetric(vertical: 18),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),
@@ -128,12 +128,9 @@ class _LoginScreenState extends State<LoginScreen> {
     final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.white,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
+          icon: const Icon(Icons.arrow_back_ios_new, color: AppColors.textDark),
           onPressed: () {
             Navigator.of(context).pushReplacement(
               MaterialPageRoute(builder: (context) => const OnboardingScreen()),
@@ -165,7 +162,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   "Please sign in to continue our app",
                   textAlign: TextAlign.center,
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: Colors.grey,
+                    color: AppColors.textMuted,
                   ),
                 ),
 
@@ -237,7 +234,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Text(
                       _errorMessage!,
                       textAlign: TextAlign.center,
-                      style: const TextStyle(color: Colors.red),
+                      style: const TextStyle(color: AppColors.error),
                     ),
                   ),
 
@@ -246,7 +243,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: ElevatedButton(
                     onPressed: _isLoading ? null : _handleEmailSignIn,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF2D6CDF),
+                      backgroundColor: AppColors.primary,
                       elevation: 0,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
@@ -312,7 +309,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     Text(
                       "Don't have an account? ",
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        color: Colors.grey,
+                        color: AppColors.textMuted,
                       ),
                     ),
                     GestureDetector(
