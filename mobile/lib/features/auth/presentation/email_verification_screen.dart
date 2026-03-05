@@ -149,10 +149,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
     final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
         automaticallyImplyLeading: false,
         leading: const SizedBox.shrink(),
         leadingWidth: 0,
@@ -170,13 +167,13 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
               Container(
                 padding: const EdgeInsets.all(24),
                 decoration: const BoxDecoration(
-                  color: Color(0xFFE9F1FF),
+                  color: AppColors.primaryContainer,
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(
                   Icons.mark_email_unread_outlined,
                   size: 56,
-                  color: Color(0xFF2D6CDF),
+                  color: AppColors.primary,
                 ),
               ),
 
@@ -197,7 +194,9 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
               Text(
                 "We've sent a verification link to",
                 textAlign: TextAlign.center,
-                style: theme.textTheme.bodyMedium?.copyWith(color: Colors.grey),
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: AppColors.textMuted,
+                ),
               ),
 
               const SizedBox(height: 4),
@@ -216,7 +215,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                 "Click the link in the email to verify your account.\nThis page will update automatically.",
                 textAlign: TextAlign.center,
                 style: theme.textTheme.bodySmall?.copyWith(
-                  color: Colors.grey,
+                  color: AppColors.textMuted,
                   height: 1.5,
                 ),
               ),
@@ -234,7 +233,9 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
 
               Text(
                 "Waiting for verification...",
-                style: theme.textTheme.bodySmall?.copyWith(color: Colors.grey),
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: AppColors.textMuted,
+                ),
               ),
 
               const SizedBox(height: 36),
@@ -246,7 +247,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                 child: ElevatedButton(
                   onPressed: _checkVerification,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF2D6CDF),
+                    backgroundColor: AppColors.primary,
                     elevation: 0,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
