@@ -5,27 +5,40 @@ import '../../../core/services/auth_service.dart';
 import '../../../core/services/auth_api.dart';
 import '../../../core/services/local_prefs.dart';
 import '../../../core/constants/app_colors.dart';
-import 'signup_screen.dart';
-import 'forgot_password_screen.dart';
-import '../../onboarding/presentation/onboarding_screeens.dart';
+import '../../exploration/data/districts_data.dart';
+import 'email_verification_screen.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class SignUpScreen extends StatefulWidget {
+  const SignUpScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<SignUpScreen> createState() => _SignUpScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _SignUpScreenState extends State<SignUpScreen> {
   final _authService = AuthService();
   final _formKey = GlobalKey<FormState>();
 
+  final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
+
+  String? _selectedDistrict;
 
   bool _isLoading = false;
   bool _obscurePassword = true;
+  bool _obscureConfirm = true;
   String? _errorMessage;
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
+    super.dispose();
+  }
 
   InputDecoration _inputDecoration(String hint, IconData icon) {
     return InputDecoration(
@@ -38,17 +51,18 @@ class _LoginScreenState extends State<LoginScreen> {
         borderRadius: BorderRadius.circular(16),
         borderSide: BorderSide.none,
       ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: BorderSide.none,
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: BorderSide.none,
+      ),
     );
   }
 
-  @override
-  void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _handleEmailSignIn() async {
+  Future<void> _handleSignUp() async {
     if (!_formKey.currentState!.validate()) return;
 
     setState(() {
@@ -57,9 +71,26 @@ class _LoginScreenState extends State<LoginScreen> {
     });
 
     try {
-      await _authService.signInWithEmail(
+      final credential = await _authService.signUpWithEmail(
         _emailController.text.trim(),
         _passwordController.text,
+      );
+
+      await credential.user?.updateDisplayName(_nameController.text.trim());
+
+      await LocalPrefs.saveHometownDistrict(_selectedDistrict!);
+
+      if (!mounted) return;
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => EmailVerificationScreen(
+            email: _emailController.text.trim(),
+            name: _nameController.text.trim(),
+            hometownDistrict: _selectedDistrict!,
+          ),
+        ),
       );
     } on FirebaseAuthException catch (e) {
       setState(() {
@@ -67,7 +98,7 @@ class _LoginScreenState extends State<LoginScreen> {
       });
     } catch (_) {
       setState(() {
-        _errorMessage = 'Sign-in failed. Please try again.';
+        _errorMessage = 'Sign-up failed. Please try again.';
       });
     } finally {
       if (mounted) setState(() => _isLoading = false);
@@ -85,17 +116,22 @@ class _LoginScreenState extends State<LoginScreen> {
       final user = credential.user;
 
       if (user != null) {
-        final district = await LocalPrefs.getHometownDistrict();
+        final district =
+            _selectedDistrict ??
+            await LocalPrefs.getHometownDistrict() ??
+            'Colombo';
 
         try {
-          if (district != null) {
-            await AuthApi().registerUser(
-              email: user.email ?? '',
-              name: user.displayName ?? '',
-              hometownDistrict: district,
-            );
-          }
+          await AuthApi().registerUser(
+            email: user.email ?? '',
+            name: user.displayName ?? '',
+            hometownDistrict: district,
+          );
         } catch (_) {}
+      }
+
+      if (mounted) {
+        Navigator.of(context).popUntil((route) => route.isFirst);
       }
     } catch (_) {
       setState(() {
@@ -108,18 +144,14 @@ class _LoginScreenState extends State<LoginScreen> {
 
   String _mapFirebaseError(String code) {
     switch (code) {
-      case 'user-not-found':
-        return 'No account found with this email.';
-      case 'wrong-password':
-        return 'Incorrect password.';
+      case 'email-already-in-use':
+        return 'An account with this email already exists.';
       case 'invalid-email':
-        return 'Enter a valid email address.';
-      case 'user-disabled':
-        return 'This account has been disabled.';
-      case 'too-many-requests':
-        return 'Too many attempts. Try later.';
+        return 'Enter a valid email.';
+      case 'weak-password':
+        return 'Password must be at least 6 characters.';
       default:
-        return 'Sign-in failed. Please try again.';
+        return 'Sign-up failed. Please try again.';
     }
   }
 
@@ -134,11 +166,7 @@ class _LoginScreenState extends State<LoginScreen> {
         backgroundColor: Colors.white,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
-          onPressed: () {
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (context) => const OnboardingScreen()),
-            );
-          },
+          onPressed: () => Navigator.pop(context),
         ),
       ),
       body: SafeArea(
@@ -149,27 +177,39 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const SizedBox(height: 20),
+                const SizedBox(height: 10),
 
                 Text(
-                  "Sign in now",
+                  "Sign up now",
                   textAlign: TextAlign.center,
                   style: theme.textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
 
                 const SizedBox(height: 6),
 
                 Text(
-                  "Please sign in to continue our app",
+                  "Please fill the details and create account",
                   textAlign: TextAlign.center,
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: Colors.grey,
                   ),
                 ),
 
-                const SizedBox(height: 32),
+                const SizedBox(height: 30),
+
+                TextFormField(
+                  controller: _nameController,
+                  decoration: _inputDecoration(
+                    "Full Name",
+                    Icons.person_outline,
+                  ),
+                  validator: (v) =>
+                      v == null || v.isEmpty ? "Enter your name" : null,
+                ),
+
+                const SizedBox(height: 16),
 
                 TextFormField(
                   controller: _emailController,
@@ -178,14 +218,28 @@ class _LoginScreenState extends State<LoginScreen> {
                     Icons.email_outlined,
                   ),
                   validator: (v) {
-                    if (v == null || v.isEmpty) {
-                      return "Enter your email";
-                    }
+                    if (v == null || v.isEmpty) return "Enter your email";
                     if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(v)) {
                       return "Enter valid email";
                     }
                     return null;
                   },
+                ),
+
+                const SizedBox(height: 16),
+
+                DropdownButtonFormField<String>(
+                  value: _selectedDistrict,
+                  decoration: _inputDecoration(
+                    "Hometown District",
+                    Icons.location_on_outlined,
+                  ),
+                  items: sriLankaDistricts
+                      .map((d) => DropdownMenuItem(value: d, child: Text(d)))
+                      .toList(),
+                  onChanged: (v) => setState(() => _selectedDistrict = v),
+                  validator: (v) =>
+                      v == null ? "Select your hometown district" : null,
                 ),
 
                 const SizedBox(height: 16),
@@ -207,44 +261,57 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                   validator: (v) {
-                    if (v == null || v.isEmpty) {
-                      return "Enter your password";
+                    if (v == null || v.isEmpty) return "Enter password";
+                    if (v.length < 6) return "Minimum 6 characters";
+                    return null;
+                  },
+                ),
+
+                const SizedBox(height: 16),
+
+                TextFormField(
+                  controller: _confirmPasswordController,
+                  obscureText: _obscureConfirm,
+                  decoration:
+                      _inputDecoration(
+                        "Confirm Password",
+                        Icons.lock_outline,
+                      ).copyWith(
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _obscureConfirm
+                                ? Icons.visibility_off
+                                : Icons.visibility,
+                          ),
+                          onPressed: () => setState(
+                            () => _obscureConfirm = !_obscureConfirm,
+                          ),
+                        ),
+                      ),
+                  validator: (v) {
+                    if (v != _passwordController.text) {
+                      return "Passwords do not match";
                     }
                     return null;
                   },
                 ),
 
-                const SizedBox(height: 8),
-
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: TextButton(
-                    onPressed: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => const ForgotPasswordScreen(),
-                      ),
-                    ),
-                    child: const Text("Forget Password?"),
-                  ),
-                ),
-
-                const SizedBox(height: 10),
+                const SizedBox(height: 24),
 
                 if (_errorMessage != null)
                   Padding(
-                    padding: const EdgeInsets.only(bottom: 10),
+                    padding: const EdgeInsets.only(bottom: 12),
                     child: Text(
                       _errorMessage!,
+                      style: const TextStyle(color: AppColors.error),
                       textAlign: TextAlign.center,
-                      style: const TextStyle(color: Colors.red),
                     ),
                   ),
 
                 SizedBox(
                   height: 55,
                   child: ElevatedButton(
-                    onPressed: _isLoading ? null : _handleEmailSignIn,
+                    onPressed: _isLoading ? null : _handleSignUp,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF2D6CDF),
                       elevation: 0,
@@ -262,10 +329,11 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           )
                         : const Text(
-                            "Sign In",
+                            "Sign Up",
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
+                              color: Colors.white,
                             ),
                           ),
                   ),
@@ -298,7 +366,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     label: const Text("Continue with Google"),
                     style: OutlinedButton.styleFrom(
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius: BorderRadius.circular(18),
                       ),
                     ),
                   ),
@@ -310,18 +378,15 @@ class _LoginScreenState extends State<LoginScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      "Don't have an account? ",
+                      "Already have an account? ",
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: Colors.grey,
                       ),
                     ),
                     GestureDetector(
-                      onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => const SignUpScreen()),
-                      ),
+                      onTap: () => Navigator.pop(context),
                       child: Text(
-                        "Sign up",
+                        "Sign In",
                         style: TextStyle(
                           color: AppColors.primary,
                           fontWeight: FontWeight.w600,
@@ -331,7 +396,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ],
                 ),
 
-                const SizedBox(height: 40),
+                const SizedBox(height: 30),
               ],
             ),
           ),

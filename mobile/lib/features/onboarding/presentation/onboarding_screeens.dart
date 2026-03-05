@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gemified_travel_portfolio/features/onboarding/widgets/brush_highlight.dart';
+import '../../auth/services/auth_gate.dart';
+import '../../auth/presentation/login_screen.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -13,9 +15,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   int currentIndex = 0;
 
   final List<String> images = [
-    "assets/images/onboarding_image1.png",
-    "assets/images/onboarding_image2.png",
-    "assets/images/onboarding_image3.png",
+    "assets/images/onboarding_image_1.png",
+    "assets/images/onboarding_image_2.png",
+    "assets/images/onboarding_image_3.png",
   ];
 
   @override
@@ -60,7 +62,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 ),
               ],
             ),
-            
+
             Positioned(
               top: 16,
               right: 16,
@@ -82,10 +84,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       ),
                       child: TextButton(
                         onPressed: () {
-                          _pageController.animateToPage(
-                            2,
-                            duration: const Duration(milliseconds: 400),
-                            curve: Curves.easeInOut,
+                          Navigator.of(context).pushReplacement(
+                            MaterialPageRoute(
+                              builder: (context) => const LoginScreen(),
+                            ),
                           );
                         },
                         style: TextButton.styleFrom(
@@ -131,7 +133,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               bottomRight: Radius.circular(30),
             ),
             child: SizedBox(
-              height:  MediaQuery.of(context).size.height * 0.54,
+              height: MediaQuery.of(context).size.height * 0.54,
               width: double.infinity,
               child: Image.asset(image, fit: BoxFit.cover),
             ),
@@ -223,10 +225,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       curve: Curves.easeInOutCubic,
                     );
                   } else {
-                    // Navigate to main app screen
-                    // TODO: Replace with your home screen
-                    // Example: Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomeScreen()));
-                    Navigator.pop(context);
+                    // Navigate to AuthGate (shows LoginScreen for unauthenticated users)
+                    Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(builder: (context) => const AuthGate()),
+                    );
                   }
                 },
                 child: Text(

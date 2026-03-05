@@ -162,7 +162,7 @@ class _PhotoViewerPageState extends State<PhotoViewerPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.black.withOpacity(0.9),
       extendBodyBehindAppBar: true,
       appBar: _showControls
           ? AppBar(

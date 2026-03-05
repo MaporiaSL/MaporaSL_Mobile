@@ -8,5 +8,5 @@ class AppConfig {
   );
 
   // AUTH_BYPASS_ANCHOR: set to false to re-enable auth.
-  static const bool authBypass = true;
+  static const bool authBypass = false;
 }

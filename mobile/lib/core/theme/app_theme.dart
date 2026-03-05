@@ -4,7 +4,7 @@ import '../constants/app_colors.dart';
 
 class AppTheme {
   static ThemeData light() {
-    final baseTextTheme = GoogleFonts.interTextTheme(
+    final baseTextTheme = GoogleFonts.poppinsTextTheme(
       ThemeData.light().textTheme,
     ).apply(bodyColor: AppColors.textDark, displayColor: AppColors.textDark);
 
@@ -135,7 +135,7 @@ class AppTheme {
   }
 
   static ThemeData dark() {
-    final baseTextTheme = GoogleFonts.interTextTheme(
+    final baseTextTheme = GoogleFonts.poppinsTextTheme(
       ThemeData.dark().textTheme,
     ).apply(bodyColor: AppColors.textLight, displayColor: AppColors.textLight);
 
@@ -275,32 +275,32 @@ class AppTheme {
     Color displayColor,
   ) {
     return baseTextTheme.copyWith(
-      displayLarge: GoogleFonts.fraunces(
+      displayLarge: GoogleFonts.poppins(
         textStyle: baseTextTheme.displayLarge,
         fontWeight: FontWeight.w600,
         color: displayColor,
       ),
-      displayMedium: GoogleFonts.fraunces(
+      displayMedium: GoogleFonts.poppins(
         textStyle: baseTextTheme.displayMedium,
         fontWeight: FontWeight.w600,
         color: displayColor,
       ),
-      displaySmall: GoogleFonts.fraunces(
+      displaySmall: GoogleFonts.poppins(
         textStyle: baseTextTheme.displaySmall,
         fontWeight: FontWeight.w600,
         color: displayColor,
       ),
-      headlineLarge: GoogleFonts.fraunces(
+      headlineLarge: GoogleFonts.poppins(
         textStyle: baseTextTheme.headlineLarge,
         fontWeight: FontWeight.w600,
         color: displayColor,
       ),
-      headlineMedium: GoogleFonts.fraunces(
+      headlineMedium: GoogleFonts.poppins(
         textStyle: baseTextTheme.headlineMedium,
         fontWeight: FontWeight.w600,
         color: displayColor,
       ),
-      headlineSmall: GoogleFonts.fraunces(
+      headlineSmall: GoogleFonts.poppins(
         textStyle: baseTextTheme.headlineSmall,
         fontWeight: FontWeight.w600,
         color: displayColor,
