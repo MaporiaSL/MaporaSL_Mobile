@@ -285,9 +285,17 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
     }
 
     if (!_isInitialized || _controller == null) {
-      return const Scaffold(
-        backgroundColor: Colors.black,
-        body: Center(child: CircularProgressIndicator(color: Colors.white)),
+      return Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Container(
+          color: Colors.black.withOpacity(0.6),
+          child: const Center(
+            child: CircularProgressIndicator(
+              color: Colors.white,
+              strokeWidth: 3,
+            ),
+          ),
+        ),
       );
     }
 

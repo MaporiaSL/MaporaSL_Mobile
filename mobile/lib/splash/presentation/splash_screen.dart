@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../features/auth/presentation/auth_gate.dart';
 import '../../features/onboarding/presentation/onboarding_screeens.dart';
 
@@ -22,7 +23,7 @@ class _SplashScreenState extends State<SplashScreen>
 
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1500),
+      duration: const Duration(milliseconds: 800),
     );
 
     _fadeAnimation = Tween<double>(
@@ -38,7 +39,7 @@ class _SplashScreenState extends State<SplashScreen>
     _controller.forward();
 
     // After splash duration, check auth and navigate
-    Future.delayed(const Duration(milliseconds: 2500), _navigateNext);
+    Future.delayed(const Duration(milliseconds: 1500), _navigateNext);
   }
 
   Future<void> _navigateNext() async {
@@ -48,10 +49,10 @@ class _SplashScreenState extends State<SplashScreen>
 
     Widget destination;
     if (user != null) {
-      // User is already signed in → go to AuthGate (handles verification + home)
+      // User is already signed in go to AuthGate (handles verification + home)
       destination = const AuthGate();
     } else {
-      // User is not signed in → show onboarding screens first
+      // User is not signed in show onboarding screens first
       destination = const OnboardingScreen();
     }
 
@@ -81,9 +82,9 @@ class _SplashScreenState extends State<SplashScreen>
           opacity: _fadeAnimation,
           child: ScaleTransition(
             scale: _scaleAnimation,
-            child: const Text(
+            child: Text(
               "Maporia",
-              style: TextStyle(
+              style: GoogleFonts.poppins(
                 color: Colors.white,
                 fontSize: 36,
                 fontWeight: FontWeight.w700,
