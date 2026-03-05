@@ -7,6 +7,7 @@ import 'create_trip_page.dart';
 import 'trip_detail_page.dart';
 import '../data/models/trip_model.dart';
 import '../data/models/preplanned_trip_model.dart';
+import '../../places/widgets/destination_picker.dart';
 
 /// Trip Planning Hub — split view: Pre-Planned (left) | Custom Trips (right)
 class TripsScreen extends ConsumerStatefulWidget {
@@ -509,15 +510,49 @@ class _PrePlannedTripDetailSheetState extends ConsumerState<_PrePlannedTripDetai
                   const Text('Just a few details before we pack your bags!', style: TextStyle(color: Colors.grey, fontSize: 13)),
                   const SizedBox(height: 20),
                   
-                  // Starting Location Input
-                  TextField(
-                    controller: locationCtrl,
-                    decoration: InputDecoration(
-                      labelText: 'Starting Location',
-                      // Give them a hint that it's customizable
-                      hintText: 'e.g., Current Location, Colombo...', 
-                      prefixIcon: const Icon(Icons.location_on, color: Colors.blue),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  // Smart Starting Location
+                  const Text('Starting Location', style: TextStyle(fontSize: 12, color: Colors.grey)),
+                  const SizedBox(height: 4),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey.shade400),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            locationCtrl.text.isEmpty ? 'Search starting point...' : locationCtrl.text,
+                            style: TextStyle(
+                              color: locationCtrl.text.isEmpty ? Colors.grey.shade600 : Colors.black87,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.search, color: Colors.blue),
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: const Text('Select Starting Point'),
+                                content: SizedBox(
+                                  width: double.maxFinite,
+                                  child: DestinationPicker(
+                                    onDestinationSelected: (name) {
+                                      setDialogState(() {
+                                        locationCtrl.text = name;
+                                      });
+                                      Navigator.pop(context); // Close the search popup
+                                    },
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ],
                     ),
                   ),
                   const SizedBox(height: 16),
