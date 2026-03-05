@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import '../data/models/trip_model.dart';
+import '../data/models/trip_dto.dart';
 import 'providers/trips_provider.dart';
 import '../../places/widgets/destination_picker.dart';
 
@@ -114,23 +115,28 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage> {
       return;
     }
 
-    final now = DateTime.now();
-
-    final trip = TripModel(
-      id: widget.trip?.id ?? now.millisecondsSinceEpoch.toString(),
-      userId: widget.trip?.userId ?? 'user', // TODO: replace with auth user id
-      title: _titleCtrl.text,
-      description: _descriptionCtrl.text.isEmpty ? null : _descriptionCtrl.text,
-      startDate: _startDate,
-      endDate: _endDate,
-      locations: _places.map((p) => TripLocation(name: p, day: 1)).toList(),
-      status: widget.trip?.status ?? 'scheduled',
-      createdAt: widget.trip?.createdAt ?? now,
-      updatedAt: now,
-    );
+    final locations = _places.map((p) => TripLocation(name: p, day: 1)).toList();
 
     try {
-      ref.read(tripsProvider.notifier).upsertTrip(trip);
+      if (widget.trip == null) {
+        final dto = CreateTripDto(
+          title: _titleCtrl.text,
+          description: _descriptionCtrl.text.isEmpty ? null : _descriptionCtrl.text,
+          startDate: _startDate,
+          endDate: _endDate,
+          locations: locations,
+        );
+        await ref.read(tripsProvider.notifier).createTrip(dto);
+      } else {
+        final dto = UpdateTripDto(
+          title: _titleCtrl.text,
+          description: _descriptionCtrl.text.isEmpty ? null : _descriptionCtrl.text,
+          startDate: _startDate,
+          endDate: _endDate,
+          locations: locations,
+        );
+        await ref.read(tripsProvider.notifier).updateTrip(widget.trip!.id, dto);
+      }
 
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -179,16 +185,54 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage> {
             maxLines: 3,
           ),
           const SizedBox(height: 16),
-          // Starting Location
-          TextField(
-            controller: _startingLocationCtrl,
-            decoration: const InputDecoration(
-              labelText: 'Starting Location',
-              hintText: 'e.g., Colombo',
-              border: OutlineInputBorder(),
+          
+          // Smart Starting Location
+          const Text('Starting Location', style: TextStyle(fontSize: 12, color: Colors.grey)),
+          const SizedBox(height: 4),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey.shade400),
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    _startingLocationCtrl.text.isEmpty ? 'Search starting point...' : _startingLocationCtrl.text,
+                    style: TextStyle(
+                      color: _startingLocationCtrl.text.isEmpty ? Colors.grey.shade600 : Colors.black87,
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.search, color: Colors.blue),
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: const Text('Select Starting Point'),
+                        content: SizedBox(
+                          width: double.maxFinite,
+                          child: DestinationPicker(
+                            onDestinationSelected: (name) {
+                              setState(() {
+                                _startingLocationCtrl.text = name;
+                              });
+                              Navigator.pop(context); // Close the popup after picking
+                            },
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ],
             ),
           ),
           const SizedBox(height: 16),
+
           // Start Date
           ListTile(
             title: const Text('Start Date'),
@@ -201,6 +245,7 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage> {
             ),
           ),
           const SizedBox(height: 12),
+
           // End Date
           ListTile(
             title: const Text('End Date'),
@@ -213,9 +258,10 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage> {
             ),
           ),
           const SizedBox(height: 16),
+
           // Transportation Mode
           DropdownButtonFormField<String>(
-            initialValue: _selectedTransport,
+            value: _selectedTransport,
             decoration: const InputDecoration(
               labelText: 'Primary Mode of Transportation',
               border: OutlineInputBorder(),
@@ -228,55 +274,119 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage> {
             },
           ),
           const SizedBox(height: 24),
-          // Destinations
-          Text(
-            'Destinations (${_places.length})',
-            style: Theme.of(context).textTheme.titleMedium,
+
+          // ==========================================
+          // MULTIPLE DESTINATIONS SECTION
+          // ==========================================
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Destinations (${_places.length})',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+              ),
+              if (_places.isNotEmpty)
+                TextButton(
+                  onPressed: () {
+                    setState(() => _places.clear());
+                  },
+                  child: const Text('Clear All', style: TextStyle(color: Colors.red, fontSize: 12)),
+                )
+            ],
           ),
           const SizedBox(height: 12),
-          DestinationPicker(
-            onDestinationSelected: (name) {
-              setState(() {
-                if (!_places.contains(name)) {
-                  _places.add(name);
-                }
-              });
-            },
-          ),
-          const SizedBox(height: 12),
-          // List of places
+
+          // 1. Show the list of chosen destinations
           if (_places.isEmpty)
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 24),
-              child: Center(
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade100,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.grey.shade300),
+              ),
+              child: const Center(
                 child: Text(
-                  'No destinations added yet',
-                  style: Theme.of(context).textTheme.bodyMedium,
+                  'No destinations added yet.\nClick below to start adding!',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.grey, fontSize: 13),
                 ),
               ),
             )
           else
-            ListView.separated(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: _places.length,
-              separatorBuilder: (_, __) => const SizedBox(height: 8),
-              itemBuilder: (_, idx) {
-                return ListTile(
-                  leading: CircleAvatar(child: Text('${idx + 1}')),
-                  title: Text(_places[idx]),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.delete_outline, color: Colors.red),
-                    onPressed: () => _removePlace(idx),
+            ..._places.asMap().entries.map((entry) {
+              final index = entry.key;
+              final place = entry.value;
+              return Card(
+                key: ValueKey('place_$index'),
+                margin: const EdgeInsets.only(bottom: 8),
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  side: BorderSide(color: Colors.blue.shade100),
+                ),
+                child: ListTile(
+                  leading: CircleAvatar(
+                    radius: 14,
+                    backgroundColor: Colors.blue.shade600,
+                    child: Text('${index + 1}', style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold)),
                   ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    side: BorderSide(color: Colors.grey.shade300),
+                  title: Text(place, style: const TextStyle(fontWeight: FontWeight.w500)),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.remove_circle_outline, color: Colors.redAccent),
+                    onPressed: () {
+                      setState(() {
+                        _places.removeAt(index);
+                      });
+                    },
+                  ),
+                ),
+              );
+            }),
+
+          const SizedBox(height: 12),
+
+          // 2. The "Add Another Location" Button
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton.icon(
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text('Add Destination'),
+                    content: SizedBox(
+                      width: double.maxFinite,
+                      child: DestinationPicker(
+                        onDestinationSelected: (name) {
+                          setState(() {
+                            if (!_places.contains(name)) {
+                              _places.add(name);
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('Location already added!')),
+                              );
+                            }
+                          });
+                          Navigator.pop(context); // Close popup
+                        },
+                      ),
+                    ),
                   ),
                 );
               },
+              icon: const Icon(Icons.add_location_alt),
+              label: const Text('Add Another Location'),
+              style: OutlinedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                foregroundColor: Colors.blue.shade700,
+                side: BorderSide(color: Colors.blue.shade300, width: 2),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
             ),
-          const SizedBox(height: 24),
+          ),
+          const SizedBox(height: 32),
+
           // Save Button
           ElevatedButton(
             onPressed: _saveTrip,
@@ -290,3 +400,4 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage> {
     );
   }
 }
+
