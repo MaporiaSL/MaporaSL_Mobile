@@ -84,15 +84,20 @@ class ExplorationNotifier extends StateNotifier<ExplorationState> {
       error: null,
     );
 
+    String? errorMessage;
     try {
       await _ensureLocationPermission();
       final samples = await _collectSamples();
       await _api.visitLocation(locationId: location.id, samples: samples);
       await loadAssignments();
     } catch (error) {
-      state = state.copyWith(error: error.toString());
+      errorMessage = error.toString();
     } finally {
-      state = state.copyWith(isVerifying: false, verifyingLocationId: null);
+      state = state.copyWith(
+        isVerifying: false,
+        verifyingLocationId: null,
+        error: errorMessage,
+      );
     }
   }
 

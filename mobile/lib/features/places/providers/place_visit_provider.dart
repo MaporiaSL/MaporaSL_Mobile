@@ -1,7 +1,7 @@
-import 'dart:io' show Platform;
-import 'package:flutter/foundation.dart' show kIsWeb, kDebugMode, debugPrint;
+import 'package:flutter/foundation.dart' show kDebugMode, debugPrint;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dio/dio.dart';
+import 'package:gemified_travel_portfolio/core/config/app_config.dart';
 import '../data/models/place_visit.dart';
 import '../data/place_visit_repository.dart';
 
@@ -13,7 +13,7 @@ import '../data/place_visit_repository.dart';
 final placeVisitRepositoryProvider = Provider.family((ref, String? token) {
   final dio = Dio(
     BaseOptions(
-      baseUrl: _resolveApiBaseUrl(),
+      baseUrl: AppConfig.apiBaseUrl,
       connectTimeout: const Duration(seconds: 15),
       receiveTimeout: const Duration(seconds: 20),
     ),
@@ -36,22 +36,6 @@ final placeVisitRepositoryProvider = Provider.family((ref, String? token) {
   return PlaceVisitRepository(dio, token);
 });
 
-String _resolveApiBaseUrl() {
-  const apiBaseUrl = String.fromEnvironment('API_BASE_URL');
-  if (apiBaseUrl.isNotEmpty) return apiBaseUrl;
-
-  if (kIsWeb) return 'http://localhost:5000';
-
-  if (Platform.isAndroid) {
-    return 'http://10.0.2.2:5000';
-  }
-
-  if (Platform.isIOS) {
-    return 'http://127.0.0.1:5000';
-  }
-
-  return 'http://localhost:5000';
-}
 
 /// Place visit state notifier
 final placeVisitProvider =

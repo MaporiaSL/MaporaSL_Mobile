@@ -472,6 +472,7 @@ async function visitLocation(req, res) {
 
     const user = await User.findOne({ auth0Id: req.userId });
     if (!user) {
+      console.log(`[Visit] User not found for userId: ${req.userId}`);
       return res.status(404).json({ error: 'User not found' });
     }
 
