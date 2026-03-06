@@ -25,4 +25,10 @@ class AppColors {
   static const Color textLight = Color(0xFFE6E8EC);
   static const Color textMutedDark = Color(0xFF9AA3AE);
   static const Color borderDark = Color(0xFF2A3441);
+
+  // Neon / Cyber Accents
+  static const Color neonCyan = Color(0xFF00FBFF);
+  static const Color neonPurple = Color(0xFF9D00FF);
+  static const Color neonPink = Color(0xFFFF00E5);
+  static const Color neonLime = Color(0xFF39FF14);
 }

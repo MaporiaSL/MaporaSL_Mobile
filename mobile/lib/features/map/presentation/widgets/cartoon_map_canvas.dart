@@ -225,6 +225,11 @@ class _CartoonMapCanvasState extends State<CartoonMapCanvas> {
               widget.onRegionSelected?.call(tappedRegionId);
               widget.onDistrictSelected?.call(tappedRegionId, provinceName);
               widget.onRegionTapped?.call();
+            } else {
+              // Clear selection if background tapped
+              widget.onRegionSelected?.call('');
+              widget.onDistrictSelected?.call('', null);
+              widget.onRegionTapped?.call();
             }
           },
           child: RepaintBoundary(

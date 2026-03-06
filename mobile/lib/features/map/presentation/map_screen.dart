@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:ui';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/app_colors.dart';
 import '../data/regions_data.dart';
@@ -119,12 +120,12 @@ class _MapScreenState extends ConsumerState<MapScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('🗺️ Discover Sri Lanka'),
+        title: const Text('🗺️ Discover Sri Lanka', style: TextStyle(fontWeight: FontWeight.bold)),
         elevation: 0,
-        backgroundColor: AppColors.background,
-        foregroundColor: AppColors.textDark,
+        backgroundColor: AppColors.backgroundDark,
+        foregroundColor: Colors.white,
       ),
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.backgroundDark,
       body: SafeArea(
         top: false,
         child: Stack(
@@ -137,11 +138,17 @@ class _MapScreenState extends ConsumerState<MapScreen> {
               districtProgress: districtProgress,
               onDistrictSelected: (districtName, provinceName) {
                 setState(() {
-                  selectedDistrict = districtName;
-                  selectedProvince =
-                      (provinceName != null && provinceName.isNotEmpty)
-                      ? provinceName
-                      : null;
+                  if (selectedDistrict == districtName) {
+                    // Toggle off if same one tapped again
+                    selectedDistrict = null;
+                    selectedProvince = null;
+                  } else {
+                    selectedDistrict = districtName;
+                    selectedProvince =
+                        (provinceName != null && provinceName.isNotEmpty)
+                        ? provinceName
+                        : null;
+                  }
                 });
               },
             ),
@@ -228,85 +235,146 @@ class _DistrictActionPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final title = district ?? 'Select a district';
     final subtitle = district == null
         ? 'Tap a district to reveal quests'
         : 'Province: ${province ?? 'Unknown'}';
 
-    return Card(
-      margin: EdgeInsets.zero,
-      elevation: 0,
-      color: AppColors.surface,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        title,
-                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          color: AppColors.textDark,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        subtitle,
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: AppColors.textMuted,
-                        ),
-                      ),
-                      if (district != null) ...[
-                        const SizedBox(height: 8),
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(6),
-                          child: LinearProgressIndicator(
-                            value:
-                                (visitedCount /
-                                        (assignedCount > 0 ? assignedCount : 1))
-                                    .clamp(0, 1),
-                            minHeight: 4,
-                            backgroundColor: AppColors.border,
-                            valueColor: AlwaysStoppedAnimation(
-                              AppColors.primary,
-                            ),
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(24),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+        child: Container(
+          decoration: BoxDecoration(
+            color: isDark 
+                ? Colors.black.withOpacity(0.5) 
+                : Colors.white.withOpacity(0.6),
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(
+              color: isDark ? Colors.white.withOpacity(0.1) : Colors.black.withOpacity(0.05),
+              width: 1,
+            ),
+          ),
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          title,
+                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                            color: isDark ? Colors.white : AppColors.textDark,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: -0.5,
                           ),
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          'Progress: $visitedCount / $assignedCount',
-                          style: Theme.of(context).textTheme.labelSmall
-                              ?.copyWith(color: AppColors.textMuted),
+                          subtitle,
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: isDark ? Colors.grey[400] : AppColors.textMuted,
+                          ),
                         ),
+                        if (district != null) ...[
+                          const SizedBox(height: 12),
+                          Stack(
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: LinearProgressIndicator(
+                                  value: (visitedCount / (assignedCount > 0 ? assignedCount : 1)).clamp(0, 1),
+                                  minHeight: 8,
+                                  backgroundColor: isDark ? Colors.white12 : AppColors.border,
+                                  valueColor: AlwaysStoppedAnimation(AppColors.neonCyan),
+                                ),
+                              ),
+                              if (visitedCount > 0)
+                                Positioned.fill(
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: AppColors.neonCyan.withOpacity(0.2),
+                                          blurRadius: 4,
+                                          spreadRadius: 0,
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
+                          const SizedBox(height: 6),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Progress',
+                                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                                  color: isDark ? Colors.grey[500] : AppColors.textMuted,
+                                ),
+                              ),
+                              Text(
+                                '$visitedCount / $assignedCount',
+                                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                                  color: AppColors.neonCyan,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ],
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Row(
+                    children: [
+                      IconButton(
+                        onPressed: onToggle,
+                        icon: const Icon(Icons.unfold_less),
+                        color: isDark ? Colors.white60 : AppColors.textMuted,
+                        visualDensity: VisualDensity.compact,
+                        tooltip: 'Collapse',
+                      ),
+                      if (district != null)
+                        IconButton(
+                          onPressed: () {
+                            // Find the state and set selectedDistrict to null
+                            final state = context.findAncestorStateOfType<_MapScreenState>();
+                            state?.setState(() {
+                              state.selectedDistrict = null;
+                              state.selectedProvince = null;
+                            });
+                          },
+                          icon: const Icon(Icons.close),
+                          color: Colors.redAccent.withOpacity(0.8),
+                          visualDensity: VisualDensity.compact,
+                          tooltip: 'Clear Selection',
+                        ),
                     ],
                   ),
-                ),
-                IconButton(
-                  onPressed: onToggle,
-                  icon: const Icon(Icons.unfold_less),
-                  color: AppColors.textMuted,
-                  tooltip: 'Collapse',
+                ],
+              ),
+              if (district != null) ...[
+                const SizedBox(height: 16),
+                _AssignedLocationList(
+                  isLoading: isLoading,
+                  locations: locations,
+                  onVerify: onVerifyLocation,
                 ),
               ],
-            ),
-            if (district != null) ...[
-              const SizedBox(height: 12),
-              _AssignedLocationList(
-                isLoading: isLoading,
-                locations: locations,
-                onVerify: onVerifyLocation,
-              ),
             ],
-          ],
+          ),
         ),
       ),
     );
@@ -326,12 +394,13 @@ class _AssignedLocationList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     if (isLoading) {
       return const Padding(
         padding: EdgeInsets.only(top: 12),
         child: SizedBox(
           height: 60,
-          child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
+          child: Center(child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.neonCyan)),
         ),
       );
     }
@@ -343,82 +412,93 @@ class _AssignedLocationList extends StatelessWidget {
           'No assigned locations yet.',
           style: Theme.of(
             context,
-          ).textTheme.bodySmall?.copyWith(color: AppColors.textMuted),
+          ).textTheme.bodySmall?.copyWith(color: isDark ? Colors.grey[500] : AppColors.textMuted),
         ),
       );
     }
 
     return Padding(
-      padding: const EdgeInsets.only(top: 12),
+      padding: const EdgeInsets.only(top: 4),
       child: SizedBox(
-        height: 120,
+        height: 130,
         child: ListView.separated(
           itemCount: locations.length,
-          separatorBuilder: (_, __) => const SizedBox(height: 8),
+          scrollDirection: Axis.horizontal,
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          separatorBuilder: (_, __) => const SizedBox(width: 12),
           itemBuilder: (context, index) {
             final location = locations[index];
             return Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              width: 200,
+              padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: AppColors.surfaceMuted,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppColors.border, width: 0.5),
+                color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.03),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: isDark ? Colors.white.withOpacity(0.1) : Colors.black.withOpacity(0.05),
+                  width: 1,
+                ),
               ),
-              child: Row(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(
-                    location.visited ? Icons.check_circle : Icons.location_on,
-                    color: location.visited
-                        ? AppColors.success
-                        : AppColors.primary,
-                    size: 18,
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
+                  Row(
+                    children: [
+                      Icon(
+                        location.visited ? Icons.check_circle : Icons.location_on,
+                        color: location.visited
+                            ? AppColors.neonLime
+                            : AppColors.neonCyan,
+                        size: 16,
+                      ),
+                      const SizedBox(width: 6),
+                      Expanded(
+                        child: Text(
                           location.name,
                           style: Theme.of(context).textTheme.labelMedium
                               ?.copyWith(
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.textDark,
+                                fontWeight: FontWeight.bold,
+                                color: isDark ? Colors.white : AppColors.textDark,
                               ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
-                        Text(
-                          location.type,
-                          style: Theme.of(context).textTheme.labelSmall
-                              ?.copyWith(color: AppColors.textMuted),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  ElevatedButton(
-                    onPressed: location.visited
-                        ? null
-                        : () => onVerify(location),
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 4,
                       ),
-                      backgroundColor: location.visited
-                          ? AppColors.border
-                          : AppColors.primary,
-                      foregroundColor: location.visited
-                          ? AppColors.textMuted
-                          : Colors.white,
-                      disabledBackgroundColor: AppColors.border,
-                      disabledForegroundColor: AppColors.textMuted,
-                    ),
-                    child: Text(
-                      location.visited ? 'Done' : 'Mark Visited',
-                      style: const TextStyle(fontSize: 11),
+                    ],
+                  ),
+                  const Spacer(),
+                  Text(
+                    location.type,
+                    style: Theme.of(context).textTheme.labelSmall
+                        ?.copyWith(color: isDark ? Colors.grey[400] : AppColors.textMuted),
+                  ),
+                  const SizedBox(height: 8),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: location.visited
+                          ? null
+                          : () => onVerify(location),
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 4),
+                        backgroundColor: location.visited
+                            ? Colors.transparent
+                            : AppColors.neonCyan.withOpacity(0.2),
+                        foregroundColor: location.visited
+                            ? (isDark ? Colors.white24 : Colors.black26)
+                            : AppColors.neonCyan,
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          side: BorderSide(
+                            color: location.visited ? Colors.transparent : AppColors.neonCyan.withOpacity(0.4),
+                          ),
+                        ),
+                      ),
+                      child: Text(
+                        location.visited ? 'Visited' : 'Unlock',
+                        style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
+                      ),
                     ),
                   ),
                 ],
@@ -448,34 +528,43 @@ class _CollapsedPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return GestureDetector(
       onTap: onToggle,
-      child: Card(
-        margin: EdgeInsets.zero,
-        elevation: 0,
-        color: AppColors.surface,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                locked ? Icons.lock : Icons.explore,
-                size: 18,
-                color: locked ? AppColors.error : AppColors.primary,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+          child: Container(
+            decoration: BoxDecoration(
+              color: isDark ? Colors.black.withOpacity(0.5) : Colors.white.withOpacity(0.7),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: isDark ? Colors.white.withOpacity(0.1) : Colors.black.withOpacity(0.05),
+                width: 1,
               ),
-              const SizedBox(width: 8),
-              Text(
-                district ?? 'Map',
-                style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.textDark,
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  locked ? Icons.lock : Icons.explore,
+                  size: 20,
+                  color: locked ? AppColors.neonPink : AppColors.neonCyan,
                 ),
-              ),
-              const SizedBox(width: 6),
-              Icon(Icons.unfold_more, size: 18, color: AppColors.textMuted),
-            ],
+                const SizedBox(width: 10),
+                Text(
+                  district ?? 'Select Location',
+                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? Colors.white : AppColors.textDark,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Icon(Icons.unfold_more, size: 20, color: isDark ? Colors.white60 : AppColors.textMuted),
+              ],
+            ),
           ),
         ),
       ),
