@@ -6,7 +6,7 @@ const UserDistrictAssignment = require('../models/UserDistrictAssignment');
 const User = require('../models/User');
 
 const COOLDOWN_MS = 5 * 60 * 1000;
-const MAX_DISTANCE_METERS = 100;
+const MAX_DISTANCE_METERS = 250;
 const MAX_ACCURACY_METERS = 50;
 const MIN_SAMPLE_COUNT = 3;
 const SAMPLE_INTERVAL_SECONDS = 2;
@@ -476,7 +476,7 @@ async function visitLocation(req, res) {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    if (user.explorationLastUnlockAt) {
+    if (user.explorationLastUnlockAt && process.env.NODE_ENV === 'production') {
       const diff = Date.now() - new Date(user.explorationLastUnlockAt).getTime();
       if (diff < COOLDOWN_MS) {
         return res
@@ -538,6 +538,7 @@ async function visitLocation(req, res) {
         location.latitude,
         location.longitude
       );
+      
       return distance <= MAX_DISTANCE_METERS;
     });
 

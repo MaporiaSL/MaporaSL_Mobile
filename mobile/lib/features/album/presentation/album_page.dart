@@ -38,11 +38,13 @@ class _AlbumPageState extends State<AlbumPage> {
 
     try {
       final albums = await _service.getAlbums();
+      if (!mounted) return;
       setState(() {
         _albums = albums;
         _isLoading = false;
       });
     } catch (e) {
+      if (!mounted) return;
       setState(() {
         _error = e.toString();
         _isLoading = false;

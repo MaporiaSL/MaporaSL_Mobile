@@ -16,7 +16,22 @@ class ApiClient {
                     receiveTimeout: const Duration(seconds: 10),
                   ),
                 )
-            ..interceptors.add(AuthInterceptor());
+            ..interceptors.add(AuthInterceptor())
+            ..interceptors.add(InterceptorsWrapper(
+              onRequest: (options, handler) {
+                print('>>> [API CLIENT DIO] REQUEST TO: ${options.uri.toString()}');
+                return handler.next(options);
+              },
+              onResponse: (response, handler) {
+                print('>>> [API CLIENT DIO] RESPONSE: ${response.statusCode}');
+                return handler.next(response);
+              },
+              onError: (DioException e, handler) {
+                print('>>> [API CLIENT DIO] ERROR: ${e.response?.statusCode} AT ${e.requestOptions.uri.toString()}');
+                print('>>> [API CLIENT DIO] ERROR DATA: ${e.response?.data}');
+                return handler.next(e);
+              }
+            ));
 
   Future<Response<dynamic>> get(
     String path, {

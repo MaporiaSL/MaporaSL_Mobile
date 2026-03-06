@@ -14,7 +14,7 @@ const mapRoutes = require('./routes/mapRoutes');
 const geoRoutes = require('./routes/geoRoutes');
 const userRoutes = require('./routes/userRoutes');
 const placeRoutes = require('./routes/placeRoutes');
-const placeVisitRoutes = require('./routes/placeVisitRoutes');
+const visitRoutes = require('./routes/visitRoutes');
 const realStoreRoutes = require('./routes/realStoreRoutes');
 const preplannedTripsRoutes = require('./routes/preplannedTripsRoutes');
 const albumRoutes = require('./routes/albumRoute');
@@ -52,7 +52,7 @@ app.use('/api/destinations', geoRoutes);
 // User progress routes (JWT protected)
 app.use('/api/users', userRoutes);
 app.use('/api/places', placeRoutes);
-app.use('/api/places', placeVisitRoutes);
+app.use('/api/visits', visitRoutes);
 app.use('/api/districts', userRoutes);
 
 // Album and photo routes (JWT protected)
