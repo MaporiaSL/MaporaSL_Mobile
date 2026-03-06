@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
-import '../data/models/photo_model.dart';
+import 'package:gemified_travel_portfolio/features/album/data/models/photo_model.dart';
 
 /// Full-screen photo viewer with swipe navigation
 class PhotoViewerPage extends StatefulWidget {

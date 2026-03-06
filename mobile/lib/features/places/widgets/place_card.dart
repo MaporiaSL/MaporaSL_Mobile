@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/place.dart';
+import '../../visits/presentation/widgets/modern_visit_button.dart';
+import '../../visits/presentation/widgets/dynamic_visit_sheet.dart';
+import '../../visits/providers/visit_provider.dart';
 
-class PlaceCard extends StatelessWidget {
+class PlaceCard extends ConsumerWidget {
   final Place place;
   final VoidCallback onTap;
 
@@ -12,7 +16,14 @@ class PlaceCard extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Check if user has visited (using future provider data)
+    final userVisitsAsync = ref.watch(userVisitsProvider);
+    final hasVisited = userVisitsAsync.maybeWhen(
+      data: (visits) => visits.any((v) => v.placeId == place.id),
+      orElse: () => false,
+    );
+
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
@@ -89,14 +100,31 @@ class PlaceCard extends StatelessWidget {
                       style: TextStyle(color: Colors.grey.shade700, fontSize: 13),
                     ),
                   ],
-                  const SizedBox(height: 12),
-                  Wrap(
-                    spacing: 8,
+                  const SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      if (place.category != null)
-                        _buildTag(place.category!, Colors.blue),
-                      if (place.visitCount > 0)
-                        _buildTag('${place.visitCount} visits', Colors.green),
+                      Wrap(
+                        spacing: 8,
+                        children: [
+                          if (place.category != null)
+                            _buildTag(place.category!, Colors.blue),
+                        ],
+                      ),
+                      ModernVisitButton(
+                        isVisited: hasVisited,
+                        onTap: () {
+                          if (!hasVisited) {
+                            DynamicVisitSheet.show(
+                              context,
+                              placeId: place.id,
+                              placeName: place.name,
+                              targetLat: place.latitude,
+                              targetLng: place.longitude,
+                            );
+                          }
+                        },
+                      ),
                     ],
                   ),
                 ],

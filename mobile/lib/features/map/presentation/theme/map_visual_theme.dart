@@ -25,27 +25,24 @@ class MapVisualTheme {
   final Map<String, Color> regionFillOverrides;
 
   const MapVisualTheme({
-    this.backgroundColor = const Color(0xFFFAFAFA), // White
-    this.borderColor = const Color(0xFF00A6B2), // Teal
-    this.borderWidth = 1.5,
-    this.fogColor = const Color(0xFFE8F4F8), // Light foggy blue
-    this.fogOpacity = 0.4,
-    // Progressive unlock colors
-    this.unlockedColor = const Color(0xFFD4AF37), // Gold - 100%
-    this.nearCompleteColor = const Color(0xFFE6C75B), // Light gold - 75%+
-    this.halfwayColor = const Color(0xFF4FD1D9), // Light teal - 50%+
-    this.quarterColor = const Color(0xFFC5D9E8), // Light slate - 25%+
-    this.lockedColor = const Color(0xFFE8EAED), // Very light grey - <25%
-    this.selectedDistrictBorderColor = const Color(0xFF00A6B2), // Teal
-    this.selectedDistrictBorderWidth = 2.5,
+    this.backgroundColor = const Color(0xFFE0F2FE), // Light Blue (Water)
+    this.borderColor = const Color(0xFF94A3B8), // Muted Slate
+    this.borderWidth = 1.0,
+    this.fogColor = const Color(0xFFF1F5F9), // Soft Cloud White
+    this.fogOpacity = 0.6,
+    // Discovery / Fog Clearing colors
+    this.unlockedColor = const Color(0xFF10B981), // Emerald - 100%
+    this.nearCompleteColor = const Color(0xFF06B6D4), // Cyan - 75%+
+    this.halfwayColor = const Color(0xFF6366F1), // indigo - 50%+
+    this.quarterColor = const Color(0xFF94A3B8), // Slate - 25%+
+    this.lockedColor = const Color(0xFFCBD5E1), // Light Slate (Fog) - <25%
+    this.selectedDistrictBorderColor = const Color(0xFF0EA5E9), // Blue highlight
+    this.selectedDistrictBorderWidth = 2.0,
     this.lockedDistrictIds = const <String>{},
     this.labelStyle = const TextStyle(
-      color: Color(0xFF1F6F8B), // Cool slate
-      fontSize: 12,
-      fontWeight: FontWeight.w600,
-      shadows: [
-        Shadow(offset: Offset(1, 1), blurRadius: 1, color: Color(0xFFFFFFFF)),
-      ],
+      color: Color(0xFF334155), // Dark Slate Text
+      fontSize: 10,
+      fontWeight: FontWeight.w500,
     ),
     this.regionFillOverrides = const <String, Color>{},
   });

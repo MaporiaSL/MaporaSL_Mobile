@@ -1,8 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:gemified_travel_portfolio/features/album/widgets/album_picker_sheet.dart';
-import '../data/models/album_model.dart';
-import '../data/services/album_service.dart';
+import 'package:gemified_travel_portfolio/features/album/data/models/album_model.dart';
+import 'package:gemified_travel_portfolio/features/album/data/services/album_service.dart';
 
 class PhotoPreview extends StatelessWidget {
   final String photoPath;

@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:gemified_travel_portfolio/features/album/widgets/album_card.dart';
 import 'package:gemified_travel_portfolio/features/album/widgets/create_album_dialog.dart';
 import 'package:image_picker/image_picker.dart';
-import '../data/services/album_service.dart';
-import '../data/models/album_model.dart';
+import 'package:gemified_travel_portfolio/features/album/data/services/album_service.dart';
+import 'package:gemified_travel_portfolio/features/album/data/models/album_model.dart';
 import 'camera_page.dart';
 import 'album_detail_page.dart';
 
@@ -38,11 +38,13 @@ class _AlbumPageState extends State<AlbumPage> {
 
     try {
       final albums = await _service.getAlbums();
+      if (!mounted) return;
       setState(() {
         _albums = albums;
         _isLoading = false;
       });
     } catch (e) {
+      if (!mounted) return;
       setState(() {
         _error = e.toString();
         _isLoading = false;

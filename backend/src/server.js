@@ -14,6 +14,7 @@ const mapRoutes = require('./routes/mapRoutes');
 const geoRoutes = require('./routes/geoRoutes');
 const userRoutes = require('./routes/userRoutes');
 const placeRoutes = require('./routes/placeRoutes');
+const visitRoutes = require('./routes/visitRoutes');
 const realStoreRoutes = require('./routes/realStoreRoutes');
 const preplannedTripsRoutes = require('./routes/preplannedTripsRoutes');
 const albumRoutes = require('./routes/albumRoute');
@@ -51,6 +52,7 @@ app.use('/api/destinations', geoRoutes);
 // User progress routes (JWT protected)
 app.use('/api/users', userRoutes);
 app.use('/api/places', placeRoutes);
+app.use('/api/visits', visitRoutes);
 app.use('/api/districts', userRoutes);
 
 // Album and photo routes (JWT protected)
@@ -71,6 +73,19 @@ app.use('/api/upload', uploadRoutes);
 // Serve static uploads
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
+// API 404 diagnostics
+app.use((req, res, next) => {
+  if (req.originalUrl.startsWith('/api/')) {
+    console.warn(`[API 404] ${req.method} ${req.originalUrl}`);
+    return res.status(404).json({
+      error: 'Route not found',
+      method: req.method,
+      path: req.originalUrl,
+    });
+  }
+  next();
+});
+
 // Boot: connect to DB first, then start server
 (async () => {
   await connectDB();
@@ -83,8 +98,8 @@ app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
     console.warn('Firebase initialization failed - photo features will be unavailable:', error.message);
   }
   
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Server running on http://0.0.0.0:${PORT}`);
   });
 })();
 

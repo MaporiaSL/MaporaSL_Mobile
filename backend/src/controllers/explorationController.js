@@ -5,8 +5,9 @@ const Place = require('../models/Place');
 const UserDistrictAssignment = require('../models/UserDistrictAssignment');
 const User = require('../models/User');
 
+const { getRadiusConfig } = require('../utils/geofenceUtils');
+
 const COOLDOWN_MS = 5 * 60 * 1000;
-const MAX_DISTANCE_METERS = 100;
 const MAX_ACCURACY_METERS = 50;
 const MIN_SAMPLE_COUNT = 3;
 const SAMPLE_INTERVAL_SECONDS = 2;
@@ -472,10 +473,11 @@ async function visitLocation(req, res) {
 
     const user = await User.findOne({ auth0Id: req.userId });
     if (!user) {
+      console.log(`[Visit] User not found for userId: ${req.userId}`);
       return res.status(404).json({ error: 'User not found' });
     }
 
-    if (user.explorationLastUnlockAt) {
+    if (user.explorationLastUnlockAt && process.env.NODE_ENV === 'production') {
       const diff = Date.now() - new Date(user.explorationLastUnlockAt).getTime();
       if (diff < COOLDOWN_MS) {
         return res
@@ -519,38 +521,60 @@ async function visitLocation(req, res) {
       });
     }
 
-    const validSamples = samples.filter((sample) => {
-      if (
-        sample == null ||
-        typeof sample.latitude !== 'number' ||
-        typeof sample.longitude !== 'number' ||
-        typeof sample.accuracyMeters !== 'number'
-      ) {
-        return false;
-      }
+    // Dynamic Geofence Config
+    const { primary, failsafe, category } = getRadiusConfig(location.type || 'attraction');
 
+    let tierResult = null;
+
+    // First attempt: Primary Radius
+    const primarySamples = samples.filter((sample) => {
+      if (!sample || typeof sample.latitude !== 'number' || typeof sample.accuracyMeters !== 'number') return false;
       if (sample.accuracyMeters > MAX_ACCURACY_METERS) return false;
 
       const distance = distanceMeters(
-        sample.latitude,
-        sample.longitude,
-        location.latitude,
-        location.longitude
+        sample.latitude, sample.longitude,
+        location.latitude, location.longitude
       );
-      return distance <= MAX_DISTANCE_METERS;
+      return distance <= primary;
     });
 
-    if (validSamples.length < MIN_SAMPLE_COUNT) {
+    let finalValidSamples = [];
+
+    if (primarySamples.length >= MIN_SAMPLE_COUNT) {
+      finalValidSamples = primarySamples;
+      tierResult = 'primary';
+    } else {
+      // Second attempt: Failsafe Radius
+      const failsafeSamples = samples.filter((sample) => {
+        if (!sample || typeof sample.latitude !== 'number' || typeof sample.accuracyMeters !== 'number') return false;
+        if (sample.accuracyMeters > MAX_ACCURACY_METERS) return false;
+
+        const distance = distanceMeters(
+          sample.latitude, sample.longitude,
+          location.latitude, location.longitude
+        );
+        return distance <= failsafe;
+      });
+
+      if (failsafeSamples.length >= MIN_SAMPLE_COUNT) {
+        finalValidSamples = failsafeSamples;
+        tierResult = 'failsafe';
+      }
+    }
+
+    if (finalValidSamples.length < MIN_SAMPLE_COUNT) {
       return res.status(400).json({
         error: 'Not enough valid GPS samples to verify visit',
         requiredSamples: MIN_SAMPLE_COUNT,
         sampleIntervalSeconds: SAMPLE_INTERVAL_SECONDS,
-        radiusMeters: MAX_DISTANCE_METERS,
+        radiusMeters: primary,
+        failsafeMeters: failsafe,
+        category
       });
     }
 
     const accuracyMeters = Math.max(
-      ...validSamples.map((sample) => sample.accuracyMeters)
+      ...finalValidSamples.map((sample) => sample.accuracyMeters || 0)
     );
 
     assignment.visitedLocationIds.push(location._id);
@@ -560,6 +584,7 @@ async function visitLocation(req, res) {
       accuracyMeters,
       source: 'gps_verified',
       adminReason: null,
+      metadata: { verificationTier: tierResult, category }
     });
     assignment.visitedCount = assignment.visitedLocationIds.length;
     if (assignment.visitedCount >= assignment.assignedCount) {

@@ -1,12 +1,13 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:gemified_travel_portfolio/core/config/app_config.dart';
 import '../models/place.dart';
 
 class PlacesRepository {
   final String baseUrl;
 
   PlacesRepository({String? baseUrl}) 
-      : baseUrl = baseUrl ?? 'http://10.0.2.2:5000/api';
+      : baseUrl = baseUrl ?? '${AppConfig.apiBaseUrl}/api';
 
   Future<List<Place>> getPlaces({
     int page = 1, 
