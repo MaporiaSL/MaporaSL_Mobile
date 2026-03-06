@@ -25,27 +25,24 @@ class MapVisualTheme {
   final Map<String, Color> regionFillOverrides;
 
   const MapVisualTheme({
-    this.backgroundColor = const Color(0xFF0B0F14), // Dark background
-    this.borderColor = const Color(0xFF00FBFF), // neonCyan
+    this.backgroundColor = const Color(0xFF0F172A), // Deep Slate
+    this.borderColor = const Color(0xFF334155), // Muted Slate
     this.borderWidth = 1.0,
-    this.fogColor = const Color(0xFF1B2430), 
-    this.fogOpacity = 0.2,
-    // Progressive unlock colors
-    this.unlockedColor = const Color(0xFF39FF14), // neonLime - 100%
-    this.nearCompleteColor = const Color(0xFF00FBFF), // neonCyan - 75%+
-    this.halfwayColor = const Color(0xFF9D00FF), // neonPurple - 50%+
-    this.quarterColor = const Color(0xFFFF00E5), // neonPink - 25%+
-    this.lockedColor = const Color(0xFF1E293B), // Dark slate - <25%
-    this.selectedDistrictBorderColor = const Color(0xFF00FBFF), // neonCyan
+    this.fogColor = const Color(0xFF020617), // Near Black Fog
+    this.fogOpacity = 0.8,
+    // Discovery / Fog Clearing colors
+    this.unlockedColor = const Color(0xFF10B981), // Emerald - 100%
+    this.nearCompleteColor = const Color(0xFF06B6D4), // Cyan - 75%+
+    this.halfwayColor = const Color(0xFF3B82F6), // Blue - 50%+
+    this.quarterColor = const Color(0xFF6366F1), // Indigo - 25%+
+    this.lockedColor = const Color(0xFF1E293B), // Dark Slate (Fog) - <25%
+    this.selectedDistrictBorderColor = const Color(0xFF00FBFF), // Keep a glow for selection
     this.selectedDistrictBorderWidth = 2.0,
     this.lockedDistrictIds = const <String>{},
     this.labelStyle = const TextStyle(
-      color: Colors.white, 
-      fontSize: 11,
-      fontWeight: FontWeight.bold,
-      shadows: [
-        Shadow(offset: Offset(0, 0), blurRadius: 10, color: Color(0xFF00FBFF)),
-      ],
+      color: Colors.white70,
+      fontSize: 10,
+      fontWeight: FontWeight.w500,
     ),
     this.regionFillOverrides = const <String, Color>{},
   });

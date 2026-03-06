@@ -194,15 +194,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
               ),
             ),
             // if (explorationState.isVerifying) const _VerificationOverlay(),
-            // Map legend
-            Positioned(
-              top: 16,
-              right: 16,
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 200),
-                child: const MapLegend(),
-              ),
-            ),
+            // legend removed
           ],
         ),
       ),
@@ -293,7 +285,7 @@ class _DistrictActionPanel extends StatelessWidget {
                                   value: (visitedCount / (assignedCount > 0 ? assignedCount : 1)).clamp(0, 1),
                                   minHeight: 8,
                                   backgroundColor: isDark ? Colors.white12 : AppColors.border,
-                                  valueColor: AlwaysStoppedAnimation(AppColors.neonCyan),
+                                  valueColor: AlwaysStoppedAnimation(isDark ? const Color(0xFF10B981) : const Color(0xFF059669)),
                                 ),
                               ),
                               if (visitedCount > 0)
@@ -301,13 +293,7 @@ class _DistrictActionPanel extends StatelessWidget {
                                   child: Container(
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(10),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: AppColors.neonCyan.withOpacity(0.2),
-                                          blurRadius: 4,
-                                          spreadRadius: 0,
-                                        )
-                                      ],
+                                      color: (isDark ? const Color(0xFF10B981) : const Color(0xFF059669)).withOpacity(0.05),
                                     ),
                                   ),
                                 ),
@@ -318,7 +304,7 @@ class _DistrictActionPanel extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                'Progress',
+                                'Exploration Progress',
                                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
                                   color: isDark ? Colors.grey[500] : AppColors.textMuted,
                                 ),
@@ -326,7 +312,7 @@ class _DistrictActionPanel extends StatelessWidget {
                               Text(
                                 '$visitedCount / $assignedCount',
                                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                                  color: AppColors.neonCyan,
+                                  color: isDark ? const Color(0xFF10B981) : const Color(0xFF059669),
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -357,7 +343,7 @@ class _DistrictActionPanel extends StatelessWidget {
                             });
                           },
                           icon: const Icon(Icons.close),
-                          color: Colors.redAccent.withOpacity(0.8),
+                          color: isDark ? Colors.white38 : AppColors.textMuted,
                           visualDensity: VisualDensity.compact,
                           tooltip: 'Clear Selection',
                         ),
@@ -396,11 +382,11 @@ class _AssignedLocationList extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     if (isLoading) {
-      return const Padding(
-        padding: EdgeInsets.only(top: 12),
+      return Padding(
+        padding: const EdgeInsets.only(top: 12),
         child: SizedBox(
           height: 60,
-          child: Center(child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.neonCyan)),
+          child: Center(child: CircularProgressIndicator(strokeWidth: 2, color: isDark ? const Color(0xFF10B981) : const Color(0xFF059669))),
         ),
       );
     }
@@ -447,8 +433,8 @@ class _AssignedLocationList extends StatelessWidget {
                       Icon(
                         location.visited ? Icons.check_circle : Icons.location_on,
                         color: location.visited
-                            ? AppColors.neonLime
-                            : AppColors.neonCyan,
+                            ? (isDark ? const Color(0xFF10B981) : const Color(0xFF059669))
+                            : (isDark ? const Color(0xFF06B6D4) : const Color(0xFF0891B2)),
                         size: 16,
                       ),
                       const SizedBox(width: 6),
@@ -483,21 +469,21 @@ class _AssignedLocationList extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(vertical: 4),
                         backgroundColor: location.visited
                             ? Colors.transparent
-                            : AppColors.neonCyan.withOpacity(0.2),
+                            : (isDark ? const Color(0xFF10B981) : const Color(0xFF059669)).withOpacity(0.1),
                         foregroundColor: location.visited
                             ? (isDark ? Colors.white24 : Colors.black26)
-                            : AppColors.neonCyan,
+                            : (isDark ? const Color(0xFF10B981) : const Color(0xFF059669)),
                         elevation: 0,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                           side: BorderSide(
-                            color: location.visited ? Colors.transparent : AppColors.neonCyan.withOpacity(0.4),
+                            color: location.visited ? Colors.transparent : (isDark ? const Color(0xFF10B981) : const Color(0xFF059669)).withOpacity(0.3),
                           ),
                         ),
                       ),
                       child: Text(
-                        location.visited ? 'Visited' : 'Unlock',
-                        style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
+                        location.visited ? 'Visited' : 'Discovery',
+                        style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
                       ),
                     ),
                   ),
@@ -549,9 +535,9 @@ class _CollapsedPanel extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(
-                  locked ? Icons.lock : Icons.explore,
+                  locked ? Icons.lock_outline : Icons.explore_outlined,
                   size: 20,
-                  color: locked ? AppColors.neonPink : AppColors.neonCyan,
+                  color: locked ? Colors.white38 : (isDark ? const Color(0xFF10B981) : const Color(0xFF059669)),
                 ),
                 const SizedBox(width: 10),
                 Text(

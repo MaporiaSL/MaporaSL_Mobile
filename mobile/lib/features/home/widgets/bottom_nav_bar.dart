@@ -56,15 +56,16 @@ class BottomNavBar extends StatelessWidget {
             children: List.generate(navItems.length, (index) {
               final isSelected = currentIndex == index;
               final item = navItems[index];
+              final activeColor = isDark ? const Color(0xFF10B981) : const Color(0xFF059669); // Emerald
               final color = isSelected 
-                  ? AppColors.neonCyan 
-                  : (isDark ? Colors.grey[500] : Colors.grey[600]);
+                  ? activeColor
+                  : (isDark ? Colors.white38 : Colors.black38);
 
               return Expanded(
                 child: InkWell(
                   onTap: () => onTap(index),
                   highlightColor: Colors.transparent,
-                  splashColor: AppColors.neonCyan.withOpacity(0.1),
+                  splashColor: activeColor.withOpacity(0.1),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -73,18 +74,12 @@ class BottomNavBar extends StatelessWidget {
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          boxShadow: isSelected ? [
-                            BoxShadow(
-                              color: AppColors.neonCyan.withOpacity(0.4),
-                              blurRadius: 15,
-                              spreadRadius: 2,
-                            )
-                          ] : [],
+                          color: isSelected ? activeColor.withOpacity(0.1) : Colors.transparent,
                         ),
                         child: Icon(
                           isSelected ? item['activeIcon'] as IconData : item['icon'] as IconData,
                           color: color,
-                          size: isSelected ? 28 : 24,
+                          size: isSelected ? 26 : 24,
                         ),
                       ),
                       const SizedBox(height: 2),
@@ -94,7 +89,7 @@ class BottomNavBar extends StatelessWidget {
                           color: color,
                           fontSize: 10,
                           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                          letterSpacing: 0.5,
+                          letterSpacing: 0.2,
                         ),
                       ),
                     ],
