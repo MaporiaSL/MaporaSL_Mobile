@@ -299,26 +299,37 @@ class _DynamicVisitSheetState extends ConsumerState<DynamicVisitSheet>
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const SizedBox(height: 40),
+          const SizedBox(height: 24),
+          // Show the checklist showing where it failed
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: VerificationChecklist(
+              steps: _steps,
+              currentStepIndex: _currentStepIndex,
+            ),
+          ),
+          const SizedBox(height: 32),
+          const Divider(indent: 40, endIndent: 40),
+          const SizedBox(height: 32),
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: Colors.red.withOpacity(0.1),
             ),
-            child: const Icon(Icons.error_outline, size: 60, color: Colors.red),
+            child: const Icon(Icons.error_outline, size: 40, color: Colors.red),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 16),
           const Text(
             'Verification Failed',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 12),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 32),
             child: Text(
               errorMsg,
-              style: TextStyle(fontSize: 15, color: Colors.grey.shade700, height: 1.4),
+              style: TextStyle(fontSize: 14, color: Colors.red.shade800, height: 1.4),
               textAlign: TextAlign.center,
             ),
           ),

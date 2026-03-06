@@ -129,14 +129,20 @@ class ExplorationNotifier extends StateNotifier<ExplorationState> {
       // Map failure to correct UI step
       finalStep = state.currentStepIndex;
       final lowerError = errorMessage.toLowerCase();
-      if (lowerError.contains('gps') || 
-          lowerError.contains('sample') || 
-          lowerError.contains('radius') || 
-          lowerError.contains('distance') || 
-          lowerError.contains('far') || 
-          lowerError.contains('meters') ||
-          lowerError.contains('geofence')) {
-        finalStep = 1; // Map to Geofence check step visually
+      
+      if (lowerError.contains('permission')) {
+        finalStep = 0;
+      } else if (lowerError.contains('samples') || lowerError.contains('sample count')) {
+        finalStep = 2; // Multi-path / Sampling step
+      } else if (lowerError.contains('gps') || 
+                 lowerError.contains('radius') || 
+                 lowerError.contains('distance') || 
+                 lowerError.contains('far') || 
+                 lowerError.contains('meters') ||
+                 lowerError.contains('geofence')) {
+        finalStep = 1; // Boundary check step
+      } else if (lowerError.contains('upload') || lowerError.contains('server')) {
+        finalStep = 4; // Final upload step
       }
     } finally {
       debugPrint('🏁 Finishing exploration verification at step $finalStep');
