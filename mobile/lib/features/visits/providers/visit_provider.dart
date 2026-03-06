@@ -1,44 +1,12 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:dio/dio.dart';
 import 'package:geolocator/geolocator.dart';
-import '../../../../core/config/app_config.dart';
 import '../data/visit_repository.dart';
 import '../data/models/visit_model.dart';
-import '../../Auth/providers/auth_provider.dart';
-
-final visitDioProvider = Provider<Dio>((ref) {
-  final dio = Dio(
-    BaseOptions(
-      baseUrl: '${AppConfig.apiBaseUrl}/api/',
-      connectTimeout: const Duration(seconds: 15),
-      receiveTimeout: const Duration(seconds: 20),
-    ),
-  );
-
-  dio.interceptors.add(InterceptorsWrapper(
-    onRequest: (options, handler) {
-      print('>>> [VISITS DIO] REQUEST TO: ${options.uri.toString()}');
-      return handler.next(options);
-    },
-    onResponse: (response, handler) {
-      print('>>> [VISITS DIO] RESPONSE: ${response.statusCode}');
-      return handler.next(response);
-    },
-    onError: (DioException e, handler) {
-      print('>>> [VISITS DIO] ERROR: ${e.response?.statusCode} AT ${e.requestOptions.uri.toString()}');
-      print('>>> [VISITS DIO] ERROR DATA: ${e.response?.data}');
-      return handler.next(e);
-    }
-  ));
-  
-  return dio;
-});
+import '../../../../core/services/api_client.dart';
 
 final visitRepositoryProvider = Provider<VisitRepository>((ref) {
-  final dio = ref.watch(visitDioProvider);
-  final authState = ref.watch(authProvider);
-  return VisitRepository(dio, authState.token);
+  final client = ref.watch(apiClientProvider);
+  return VisitRepository(client);
 });
 
 class VisitState {

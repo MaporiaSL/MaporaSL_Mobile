@@ -2,8 +2,7 @@ const Visit = require('../models/Visit');
 const Place = require('../models/Place');
 const geolib = require('geolib');
 
-// Standard geofence threshold for verification (in meters)
-const GEOFENCE_RADIUS_METERS = 250;
+const { getRadiusConfig } = require('../utils/geofenceUtils');
 
 exports.markVisit = async (req, res) => {
   try {
@@ -26,9 +25,13 @@ exports.markVisit = async (req, res) => {
       return res.status(400).json({ error: 'You have already visited this place.' });
     }
 
-    // 3. Coordinate validation
+    // 3. Dynamic Geofence Validation
     let isVerified = false;
     let rejectionReason = null;
+    let verificationTier = null;
+    
+    // Get dynamic radius based on place type
+    const { primary, failsafe, category } = getRadiusConfig(place.type || 'attraction');
 
     if (place.location && place.location.coordinates) {
       const placeLat = place.location.coordinates[1];
@@ -39,8 +42,12 @@ exports.markVisit = async (req, res) => {
         { latitude: placeLat, longitude: placeLng }
       );
 
-      if (distance <= GEOFENCE_RADIUS_METERS) {
+      if (distance <= primary) {
         isVerified = true;
+        verificationTier = 'primary';
+      } else if (distance <= failsafe) {
+        isVerified = true;
+        verificationTier = 'failsafe';
       } else {
         rejectionReason = 'too_far';
       }
@@ -55,6 +62,12 @@ exports.markVisit = async (req, res) => {
       coordinates: { latitude, longitude },
       isVerified,
       rejectionReason,
+      metadata: { 
+        verificationTier,
+        geofenceCategory: category,
+        primaryRadius: primary,
+        failsafeRadius: failsafe
+      }
     });
 
     await newVisit.save();
@@ -62,7 +75,13 @@ exports.markVisit = async (req, res) => {
     res.status(201).json({
       message: isVerified ? 'Visit verified successfully!' : 'Visit recorded but not verified.',
       visit: newVisit,
-      distanceToPlace: rejectionReason === 'too_far' ? 'More than 250m away' : 'Within 250m',
+      verificationResult: {
+        isVerified,
+        tier: verificationTier,
+        category,
+        primaryRadius: primary,
+        failsafeRadius: failsafe
+      }
     });
 
   } catch (error) {

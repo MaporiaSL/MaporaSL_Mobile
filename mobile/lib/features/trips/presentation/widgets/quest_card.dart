@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../exploration/data/models/exploration_models.dart';
 import '../../../exploration/providers/exploration_provider.dart';
+import '../../../visits/presentation/widgets/dynamic_visit_sheet.dart';
 
 class QuestCard extends ConsumerWidget {
   final DistrictAssignment assignment;
@@ -91,7 +92,15 @@ class QuestCard extends ConsumerWidget {
       trailing: !location.visited
           ? TextButton(
               onPressed: () {
-                ref.read(explorationProvider.notifier).verifyLocation(location);
+                DynamicVisitSheet.show(
+                  context,
+                  placeId: location.id,
+                  placeName: location.name,
+                  targetLat: location.latitude,
+                  targetLng: location.longitude,
+                  isExploration: true,
+                  explorationLocation: location,
+                );
               },
               child: const Text('Visit'),
             )
