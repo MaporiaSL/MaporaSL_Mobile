@@ -4,6 +4,8 @@ import '../../../core/constants/app_colors.dart';
 import '../data/models/place_visit.dart';
 import '../providers/place_visit_provider.dart';
 import './visit_verification_error_screen.dart';
+import '../../visits/presentation/widgets/verification_checklist.dart';
+import 'dart:math' as math;
 
 /// Modal for marking a place as visited with optional notes and photos
 class MarkVisitModal extends ConsumerStatefulWidget {
@@ -32,6 +34,26 @@ class _MarkVisitModalState extends ConsumerState<MarkVisitModal> {
   final _notesController = TextEditingController();
   bool _includeNotes = false;
   bool _agreeToVerification = false;
+  
+  // Checklist State
+  List<VerificationStep> _steps = [];
+  int _currentStepIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _initSteps();
+  }
+
+  void _initSteps() {
+    _steps = [
+      VerificationStep(label: 'Satellite Signal Strength', icon: Icons.wifi_tethering),
+      VerificationStep(label: 'Main Geofence Boundary Check', icon: Icons.adjust),
+      VerificationStep(label: 'Multi-Path Reflection Correction', icon: Icons.reorder),
+      VerificationStep(label: 'Atmospheric Data Validation', icon: Icons.cloud_done),
+      VerificationStep(label: 'Proximity Finalization', icon: Icons.fact_check),
+    ];
+  }
 
   @override
   void dispose() {
@@ -47,11 +69,7 @@ class _MarkVisitModalState extends ConsumerState<MarkVisitModal> {
       return;
     }
 
-    final userId = ref.read(userIdProvider); // TODO: Implement userIdProvider
-
-    // Give UI time to render the loading state
-    await Future.delayed(const Duration(milliseconds: 100));
-
+    final userId = ref.read(userIdProvider);
     try {
       await ref
           .read(placeVisitProvider(userId).notifier)
@@ -62,6 +80,12 @@ class _MarkVisitModalState extends ConsumerState<MarkVisitModal> {
             placeLatitude: widget.latitude,
             placeLongitude: widget.longitude,
           );
+
+      // Wait for provider to complete
+      while (ref.read(placeVisitProvider(userId)).isVerifying) {
+        if (!mounted) return;
+        await Future.delayed(const Duration(milliseconds: 200));
+      }
 
       // Check if verification failed
       final state = ref.read(placeVisitProvider(userId));
@@ -115,16 +139,38 @@ class _MarkVisitModalState extends ConsumerState<MarkVisitModal> {
       }
     } catch (e) {
       // Handle errors
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+        );
+      }
     }
   }
+
+
 
   @override
   Widget build(BuildContext context) {
     final userId = ref.watch(userIdProvider);
     final visitState = ref.watch(placeVisitProvider(userId));
+    final int providerStepIndex = visitState.currentStepIndex;
+    final String? error = visitState.error;
+    final bool isVerifying = visitState.isVerifying;
+    final bool success = visitState.success;
+
+    // Sync _steps with provider state
+    for (int i = 0; i < _steps.length; i++) {
+      if (error != null && providerStepIndex == i) {
+        _steps[i].status = StepStatus.failed;
+      } else if (providerStepIndex > i || success) {
+        _steps[i].status = StepStatus.passed;
+      } else if (providerStepIndex == i && isVerifying) {
+        _steps[i].status = StepStatus.checking;
+      } else {
+        _steps[i].status = StepStatus.pending;
+      }
+    }
+    _currentStepIndex = providerStepIndex;
 
     return Stack(
       children: [
@@ -267,33 +313,6 @@ class _MarkVisitModalState extends ConsumerState<MarkVisitModal> {
 
                 const SizedBox(height: 20),
 
-                // ========== ERROR MESSAGE ==========
-                if (visitState.error != null)
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Colors.red.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Colors.red.withOpacity(0.3)),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(Icons.error_outline, color: Colors.red, size: 20),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            visitState.error!,
-                            style: Theme.of(
-                              context,
-                            ).textTheme.bodySmall?.copyWith(color: Colors.red),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                if (visitState.error != null) const SizedBox(height: 20),
-
                 // ========== ACTION BUTTONS ==========
                 Row(
                   children: [
@@ -313,18 +332,7 @@ class _MarkVisitModalState extends ConsumerState<MarkVisitModal> {
                             ? _recordVisit
                             : null,
                         icon: visitState.isVerifying
-                            ? SizedBox(
-                                width: 16,
-                                height: 16,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  valueColor: AlwaysStoppedAnimation(
-                                    Theme.of(
-                                      context,
-                                    ).primaryTextTheme.labelLarge?.color,
-                                  ),
-                                ),
-                              )
+                            ? Container() // Handled by overlay
                             : const Icon(Icons.check_circle),
                         label: Text(
                           visitState.isVerifying
@@ -335,17 +343,6 @@ class _MarkVisitModalState extends ConsumerState<MarkVisitModal> {
                     ),
                   ],
                 ),
-
-                // ========== SUCCESS STATE ==========
-                if (visitState.lastVisit != null &&
-                    visitState.unlockedAchievement != null)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 20),
-                    child: _buildAchievementCard(
-                      visitState.unlockedAchievement!,
-                      context,
-                    ),
-                  ),
               ],
             ),
           ),
@@ -355,102 +352,38 @@ class _MarkVisitModalState extends ConsumerState<MarkVisitModal> {
         if (visitState.isVerifying)
           Positioned.fill(
             child: Container(
-              color: Colors.black.withOpacity(0.7),
+              color: Colors.black.withOpacity(0.8),
               child: Center(
                 child: Container(
                   margin: const EdgeInsets.all(24),
-                  padding: const EdgeInsets.all(24),
+                  padding: const EdgeInsets.all(32),
                   decoration: BoxDecoration(
                     color: AppColors.surface,
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.2),
-                        blurRadius: 20,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
+                    borderRadius: BorderRadius.circular(24),
                   ),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      // Title
                       Text(
                         'Verifying Visit',
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.textDark,
-                        ),
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.textDark,
+                            ),
+                      ),
+                      const SizedBox(height: 32),
+                      VerificationChecklist(
+                        steps: _steps,
+                        currentStepIndex: _currentStepIndex,
                       ),
                       const SizedBox(height: 24),
-
-                      // Progress bar
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: LinearProgressIndicator(
-                          value: visitState.verificationProgress ?? 0.0,
-                          minHeight: 8,
-                          backgroundColor: AppColors.border,
-                          valueColor: AlwaysStoppedAnimation(AppColors.primary),
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-
-                      // Current step with icon
-                      Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              color: AppColors.primary.withOpacity(0.1),
-                              shape: BoxShape.circle,
-                            ),
-                            child: Icon(
-                              _getStepIcon(visitState.verificationStep),
-                              color: AppColors.primary,
-                              size: 24,
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  visitState.verificationStep ??
-                                      'Starting verification...',
-                                  style: Theme.of(context).textTheme.bodyLarge
-                                      ?.copyWith(
-                                        color: AppColors.textDark,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  '${((visitState.verificationProgress ?? 0) * 100).toInt()}% complete',
-                                  style: Theme.of(context).textTheme.bodySmall
-                                      ?.copyWith(color: AppColors.textMuted),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 24,
-                            height: 24,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 16),
-
-                      // Instruction text
                       Text(
                         'Please stay still while we verify your location',
                         textAlign: TextAlign.center,
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: AppColors.textMuted,
-                          fontStyle: FontStyle.italic,
-                        ),
+                              color: AppColors.textMuted,
+                              fontStyle: FontStyle.italic,
+                            ),
                       ),
                     ],
                   ),
@@ -460,18 +393,6 @@ class _MarkVisitModalState extends ConsumerState<MarkVisitModal> {
           ),
       ],
     );
-  }
-
-  IconData _getStepIcon(String? step) {
-    if (step == null) return Icons.sync;
-    if (step.contains('permission')) return Icons.location_on;
-    if (step.contains('GPS') || step.contains('signal')) return Icons.gps_fixed;
-    if (step.contains('device')) return Icons.phone_android;
-    if (step.contains('security')) return Icons.security;
-    if (step.contains('environmental')) return Icons.wb_sunny;
-    if (step.contains('server')) return Icons.cloud_upload;
-    if (step.contains('verification')) return Icons.verified_user;
-    return Icons.sync;
   }
 
   Widget _buildNotesSection(BuildContext context) {
@@ -501,12 +422,6 @@ class _MarkVisitModalState extends ConsumerState<MarkVisitModal> {
               hintText: 'What did you experience at this place? 📝',
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
-              ),
-              counter: Text(
-                '${_notesController.text.length}/500',
-                style: Theme.of(
-                  context,
-                ).textTheme.labelSmall?.copyWith(color: AppColors.textMuted),
               ),
             ),
           ),
@@ -594,6 +509,3 @@ class _MarkVisitModalState extends ConsumerState<MarkVisitModal> {
     );
   }
 }
-
-// Placeholder provider - replace with actual auth provider
-final userIdProvider = Provider((ref) => 'test_user');

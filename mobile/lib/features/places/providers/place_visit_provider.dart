@@ -79,6 +79,7 @@ class PlaceVisitState {
   final PlaceAchievement? unlockedAchievement;
   final double? verificationProgress; // 0.0-1.0 for metadata collection
   final String? verificationStep; // Current step description
+  final int currentStepIndex; // Checklist index 0-4
 
   // Store user coordinates for error display
   final double? userLatitude;
@@ -93,6 +94,7 @@ class PlaceVisitState {
     this.unlockedAchievement,
     this.verificationProgress,
     this.verificationStep,
+    this.currentStepIndex = -1,
     this.userLatitude,
     this.userLongitude,
   });
@@ -106,6 +108,7 @@ class PlaceVisitState {
     PlaceAchievement? unlockedAchievement,
     double? verificationProgress,
     String? verificationStep,
+    int? currentStepIndex,
     double? userLatitude,
     double? userLongitude,
   }) {
@@ -118,6 +121,7 @@ class PlaceVisitState {
       unlockedAchievement: unlockedAchievement ?? this.unlockedAchievement,
       verificationProgress: verificationProgress ?? this.verificationProgress,
       verificationStep: verificationStep ?? this.verificationStep,
+      currentStepIndex: currentStepIndex ?? this.currentStepIndex,
       userLatitude: userLatitude ?? this.userLatitude,
       userLongitude: userLongitude ?? this.userLongitude,
     );
@@ -148,21 +152,31 @@ class PlaceVisitNotifier extends StateNotifier<PlaceVisitState> {
       isVerifying: true,
       error: null,
       verificationProgress: 0.1,
-      verificationStep: 'Requesting location permissions...',
+      verificationStep: 'Initializing security handshake...',
+      currentStepIndex: 0,
       userLatitude: null,
       userLongitude: null,
     );
 
+    String? errorMessage;
     try {
+      debugPrint('🚀 Starting PlaceVisit recording for $placeId');
       // Call repository to record visit (includes anti-cheat validation)
       final visit = await _repository.recordVisit(
         placeId: placeId,
         notes: notes,
         photoUrl: photoUrl,
         onProgress: (step, progress) {
+          int? stepIndex;
+          if (step.contains('Permission') || step.contains('signal') || step.contains('GPS')) stepIndex = 1; // Maps to Boundary Check since permissions are fast
+          if (step.contains('device') || step.contains('security')) stepIndex = 2;
+          if (step.contains('environmental')) stepIndex = 3;
+          if (step.contains('Preparing') || step.contains('Sending') || step.contains('server')) stepIndex = 4;
+
           state = state.copyWith(
             verificationProgress: progress,
             verificationStep: step,
+            currentStepIndex: stepIndex ?? state.currentStepIndex,
           );
         },
       );
@@ -201,6 +215,7 @@ class PlaceVisitNotifier extends StateNotifier<PlaceVisitState> {
         error: null,
         userLatitude: userLat,
         userLongitude: userLng,
+        currentStepIndex: 5,
       );
 
       // Show success message
@@ -222,13 +237,16 @@ class PlaceVisitNotifier extends StateNotifier<PlaceVisitState> {
         state = state.copyWith(error: visit.validation.displayMessage);
       }
     } catch (e) {
+      debugPrint('❌ Error recording visit: $e');
+      errorMessage = 'Failed to record visit: $e';
+    } finally {
+      debugPrint('🏁 Finishing PlaceVisit for $placeId');
       state = state.copyWith(
         isVerifying: false,
-        error: 'Failed to record visit: $e',
-        verificationProgress: null,
+        error: errorMessage,
+        verificationProgress: errorMessage == null ? 1.0 : null,
+        currentStepIndex: errorMessage == null ? 5 : state.currentStepIndex,
       );
-      print('❌ Error recording visit: $e');
-      rethrow;
     }
   }
 

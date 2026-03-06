@@ -7,6 +7,7 @@ import 'widgets/map_legend.dart';
 import 'theme/map_visual_theme.dart';
 import '../../exploration/providers/exploration_provider.dart';
 import '../../exploration/data/models/exploration_models.dart';
+import '../../visits/presentation/widgets/dynamic_visit_sheet.dart';
 
 /// Lightweight map screen displaying stylized Sri Lanka map with exploration assignments
 class MapScreen extends ConsumerStatefulWidget {
@@ -162,9 +163,15 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                   visitedCount: selectedAssignment.visitedCount,
                   locations: selectedAssignment.locations,
                   onVerifyLocation: (location) {
-                    ref
-                        .read(explorationProvider.notifier)
-                        .verifyLocation(location);
+                    DynamicVisitSheet.show(
+                      context,
+                      placeId: location.id,
+                      placeName: location.name,
+                      targetLat: location.latitude,
+                      targetLng: location.longitude,
+                      isExploration: true,
+                      explorationLocation: location,
+                    );
                   },
                   onToggle: () {
                     setState(() => _panelExpanded = !_panelExpanded);
@@ -179,7 +186,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                 ),
               ),
             ),
-            if (explorationState.isVerifying) const _VerificationOverlay(),
+            // if (explorationState.isVerifying) const _VerificationOverlay(),
             // Map legend
             Positioned(
               top: 16,
@@ -424,61 +431,9 @@ class _AssignedLocationList extends StatelessWidget {
   }
 }
 
-class _VerificationOverlay extends StatelessWidget {
-  const _VerificationOverlay();
-
-  @override
-  Widget build(BuildContext context) {
-    return Positioned.fill(
-      child: Container(
-        color: Colors.black.withOpacity(0.7),
-        child: Center(
-          child: Container(
-            margin: const EdgeInsets.all(24),
-            padding: const EdgeInsets.all(32),
-            decoration: BoxDecoration(
-              color: AppColors.surface,
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
-                  blurRadius: 20,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const SizedBox(
-                  width: 50,
-                  height: 50,
-                  child: CircularProgressIndicator(strokeWidth: 3),
-                ),
-                const SizedBox(height: 24),
-                Text(
-                  'Verifying Location',
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textDark,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  'Collecting GPS samples...\nPlease stay still',
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: AppColors.textMuted,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
+// class _VerificationOverlay extends StatelessWidget {
+// ... removed legacy overlay
+// }
 
 class _CollapsedPanel extends StatelessWidget {
   final String? district;
