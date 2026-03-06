@@ -25,22 +25,22 @@ class MapVisualTheme {
   final Map<String, Color> regionFillOverrides;
 
   const MapVisualTheme({
-    this.backgroundColor = const Color(0xFF0F172A), // Deep Slate
-    this.borderColor = const Color(0xFF334155), // Muted Slate
+    this.backgroundColor = const Color(0xFFE0F2FE), // Light Blue (Water)
+    this.borderColor = const Color(0xFF94A3B8), // Muted Slate
     this.borderWidth = 1.0,
-    this.fogColor = const Color(0xFF020617), // Near Black Fog
-    this.fogOpacity = 0.8,
+    this.fogColor = const Color(0xFFF1F5F9), // Soft Cloud White
+    this.fogOpacity = 0.6,
     // Discovery / Fog Clearing colors
     this.unlockedColor = const Color(0xFF10B981), // Emerald - 100%
     this.nearCompleteColor = const Color(0xFF06B6D4), // Cyan - 75%+
-    this.halfwayColor = const Color(0xFF3B82F6), // Blue - 50%+
-    this.quarterColor = const Color(0xFF6366F1), // Indigo - 25%+
-    this.lockedColor = const Color(0xFF1E293B), // Dark Slate (Fog) - <25%
-    this.selectedDistrictBorderColor = const Color(0xFF00FBFF), // Keep a glow for selection
+    this.halfwayColor = const Color(0xFF6366F1), // indigo - 50%+
+    this.quarterColor = const Color(0xFF94A3B8), // Slate - 25%+
+    this.lockedColor = const Color(0xFFCBD5E1), // Light Slate (Fog) - <25%
+    this.selectedDistrictBorderColor = const Color(0xFF0EA5E9), // Blue highlight
     this.selectedDistrictBorderWidth = 2.0,
     this.lockedDistrictIds = const <String>{},
     this.labelStyle = const TextStyle(
-      color: Colors.white70,
+      color: Color(0xFF334155), // Dark Slate Text
       fontSize: 10,
       fontWeight: FontWeight.w500,
     ),

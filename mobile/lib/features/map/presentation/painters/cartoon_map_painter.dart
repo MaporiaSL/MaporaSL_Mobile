@@ -166,8 +166,9 @@ class CartoonMapPainter extends CustomPainter {
 
   /// Add a grainy/noisy procedural texture
   void _drawGrainOverlay(Canvas canvas, Size size) {
+    final isDark = theme.backgroundColor.computeLuminance() < 0.5;
     final paint = Paint()
-      ..color = Colors.white.withOpacity(0.03)
+      ..color = (isDark ? Colors.white : const Color(0xFF334155)).withOpacity(0.04)
       ..strokeWidth = 1.0;
       
     final random = math.Random(42); // Seed for stability

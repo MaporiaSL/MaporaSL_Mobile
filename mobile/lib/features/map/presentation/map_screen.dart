@@ -122,10 +122,10 @@ class _MapScreenState extends ConsumerState<MapScreen> {
       appBar: AppBar(
         title: const Text('🗺️ Discover Sri Lanka', style: TextStyle(fontWeight: FontWeight.bold)),
         elevation: 0,
-        backgroundColor: AppColors.backgroundDark,
-        foregroundColor: Colors.white,
+        backgroundColor: AppColors.background,
+        foregroundColor: AppColors.textDark,
       ),
-      backgroundColor: AppColors.backgroundDark,
+      backgroundColor: AppColors.background,
       body: SafeArea(
         top: false,
         child: Stack(
@@ -520,17 +520,24 @@ class _CollapsedPanel extends StatelessWidget {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(20),
         child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
           child: Container(
+            padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: isDark ? Colors.black.withOpacity(0.5) : Colors.white.withOpacity(0.7),
-              borderRadius: BorderRadius.circular(20),
+              color: isDark ? Colors.black.withOpacity(0.5) : Colors.white.withOpacity(0.8),
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
               border: Border.all(
                 color: isDark ? Colors.white.withOpacity(0.1) : Colors.black.withOpacity(0.05),
                 width: 1,
               ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(isDark ? 0.3 : 0.05),
+                  blurRadius: 20,
+                  offset: const Offset(0, -5),
+                )
+              ],
             ),
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
