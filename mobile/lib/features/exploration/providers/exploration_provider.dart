@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:dio/dio.dart';
+import '../../../core/services/api_client.dart';
 import '../data/exploration_api.dart';
 import '../data/models/exploration_models.dart';
 
@@ -218,7 +219,13 @@ class ExplorationNotifier extends StateNotifier<ExplorationState> {
   }
 }
 
+final explorationApiProvider = Provider<ExplorationApi>((ref) {
+  final client = ref.watch(apiClientProvider);
+  return ExplorationApi(client: client);
+});
+
 final explorationProvider =
     StateNotifierProvider<ExplorationNotifier, ExplorationState>((ref) {
-  return ExplorationNotifier(ExplorationApi());
+  final api = ref.watch(explorationApiProvider);
+  return ExplorationNotifier(api);
 });

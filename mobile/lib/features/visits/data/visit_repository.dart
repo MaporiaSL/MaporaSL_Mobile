@@ -1,4 +1,4 @@
-import '../../../../core/services/api_client.dart';
+import '../../../core/services/api_client.dart';
 import 'models/visit_model.dart';
 
 class VisitRepository {

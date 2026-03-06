@@ -7,7 +7,7 @@ const { getRadiusConfig } = require('../utils/geofenceUtils');
 exports.markVisit = async (req, res) => {
   try {
     const { placeId, latitude, longitude } = req.body;
-    const userId = req.user.id;
+    const userId = req.userId;
 
     if (!placeId || latitude == null || longitude == null) {
       return res.status(400).json({ error: 'Missing required parameters (placeId, latitude, longitude).' });
@@ -95,7 +95,7 @@ exports.markVisit = async (req, res) => {
 
 exports.getUserVisits = async (req, res) => {
   try {
-    const userId = req.user.id;
+    const userId = req.userId;
     const visits = await Visit.find({ userId }).populate('placeId', 'name imageUrl type');
     
     res.status(200).json({ visits });

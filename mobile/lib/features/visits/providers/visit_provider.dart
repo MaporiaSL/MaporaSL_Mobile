@@ -4,7 +4,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:dio/dio.dart';
 import '../data/visit_repository.dart';
 import '../data/models/visit_model.dart';
-import '../../../../core/services/api_client.dart';
+import '../../../core/services/api_client.dart';
 
 final visitRepositoryProvider = Provider<VisitRepository>((ref) {
   final client = ref.watch(apiClientProvider);
