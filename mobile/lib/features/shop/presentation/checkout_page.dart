@@ -62,7 +62,7 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
         "merchant_id": order.payhereMerchantId,
         "merchant_secret": "", // Not needed for mobile SDK, hash is enough
         "notify_url":
-            "https://ent13zglezxqd.x.pipedream.net/", // Should be your actual backend API URL usually
+            "https://social-bananas-heal.loca.lt/api/store/payhere/notify", // Set to localtunnel webhook endpoint
         "order_id": order.orderId,
         "items": "Maporia Order ${order.orderId}",
         "amount": double.parse(order.total.toStringAsFixed(2)),
