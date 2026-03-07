@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../core/services/api_client.dart';
 import '../../data/models/preplanned_trip_model.dart';
 import '../../data/models/trip_model.dart';
 import '../../data/datasources/preplanned_trips_api.dart';
@@ -43,10 +44,10 @@ final preplannedFiltersProvider = StateProvider<PreplannedFilters>(
   (ref) => const PreplannedFilters(),
 );
 
-/// API provider (reuses Dio from trips)
+/// API provider
 final preplannedTripsApiProvider = Provider<PrePlannedTripsApi>((ref) {
-  final dio = ref.watch(dioProvider);
-  return PrePlannedTripsApi(dio: dio);
+  final apiClient = ref.watch(apiClientProvider);
+  return PrePlannedTripsApi(dio: apiClient.dio);
 });
 
 /// Repository provider

@@ -1,5 +1,6 @@
 const express = require('express');
 const { validateCreateTravel, validateUpdateTravel } = require('../validators/travelValidator');
+const { checkJwt, extractUserId } = require('../middleware/auth');
 const {
   createTravel,
   listTravels,
