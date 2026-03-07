@@ -4,10 +4,10 @@ import '../config/app_config.dart';
 import 'auth_interceptor.dart';
 
 class ApiClient {
-  final Dio _dio;
+  final Dio dio;
 
   ApiClient({Dio? dio})
-    : _dio =
+    : dio =
           dio ??
                 Dio(
                   BaseOptions(
@@ -38,7 +38,7 @@ class ApiClient {
     Map<String, dynamic>? queryParameters,
     Options? options,
   }) {
-    return _dio.get(path, queryParameters: queryParameters, options: options);
+    return dio.get(path, queryParameters: queryParameters, options: options);
   }
 
   Future<Response<dynamic>> post(
@@ -47,7 +47,7 @@ class ApiClient {
     Map<String, dynamic>? queryParameters,
     Options? options,
   }) {
-    return _dio.post(
+    return dio.post(
       path,
       data: data,
       queryParameters: queryParameters,
