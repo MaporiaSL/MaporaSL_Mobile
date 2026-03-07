@@ -11,6 +11,9 @@ const {
 
 const router = express.Router();
 
+// Apply auth middleware to all travel routes
+router.use(checkJwt, extractUserId);
+
 // POST /api/travel - Create travel
 router.post('/', validateCreateTravel, createTravel);
 
