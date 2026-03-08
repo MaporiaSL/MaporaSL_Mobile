@@ -75,6 +75,7 @@ class _HomeScreenState extends State<HomeScreen> {
           : Stack(
               children: [
                 _screens[_selectedIndex],
+                if (_selectedIndex == 0)
                 Positioned(
                   top: 130,
                   right: 16,
