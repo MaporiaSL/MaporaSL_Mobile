@@ -435,6 +435,53 @@ changes
 - Use vague messages like "fix" or "update"
 - Commit broken code
 
+### Changing a Commit Message
+
+Sometimes you need to fix a commit message after the fact.
+
+#### Amend the most recent commit
+
+If the commit has **not yet been pushed** (or you are working on your own branch):
+
+```bash
+git commit --amend -m "feat(auth): correct description of what was done"
+```
+
+This opens your default editor pre-filled with the current message if you omit `-m`:
+
+```bash
+git commit --amend   # opens editor — edit, save, and close
+```
+
+#### Change an older commit (interactive rebase)
+
+1. Start an interactive rebase for the last *N* commits (replace `N` with the number of commits you want to go back):
+
+   ```bash
+   git rebase -i HEAD~N
+   ```
+
+2. In the editor that opens, change `pick` to `reword` (or just `r`) next to the commit you want to rename:
+
+   ```
+   reword a1b2c3d feat(map): add district boundaries
+   pick   d4e5f6g fix(auth): resolve token refresh
+   ```
+
+3. Save and close. Git will pause at each `reword` commit and open your editor for the new message.
+
+4. Write the corrected message, save, and close. The rebase continues automatically.
+
+#### After amending a pushed commit
+
+If the commit was already pushed to a shared branch, you will need to force-push. **Only do this on your own feature branch — never on `main` or `develop`.**
+
+```bash
+git push --force-with-lease origin feature/your-feature-name
+```
+
+> ⚠️ `--force-with-lease` is safer than `--force` because it will fail if someone else has pushed to the branch since you last fetched.
+
 ---
 
 ## 🔄 Pull Request Process
