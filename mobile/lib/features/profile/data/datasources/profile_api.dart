@@ -54,14 +54,7 @@ class ProfileApi {
         if (avatarUrl != null) 'avatarUrl': avatarUrl,
       };
 
-      final response = await dio.post(
-<<<<<<< HEAD
-        '/profile/$userId',
-=======
-        '/api/profile/$userId',
->>>>>>> 086449420befcc784499fdfb9b9d56844796b670
-        data: payload,
-      );
+      final response = await dio.post('/api/profile/$userId', data: payload);
 
       if (response.statusCode == 200) {
         return response.data;
@@ -76,7 +69,7 @@ class ProfileApi {
   /// POST /api/auth/logout
   Future<void> logout() async {
     try {
-      final response = await dio.post('/auth/logout');
+      final response = await dio.post('/api/auth/logout');
       if (response.statusCode != 200) {
         throw Exception('Failed to logout: ${response.statusCode}');
       }
@@ -90,7 +83,7 @@ class ProfileApi {
   Future<List<dynamic>> getTopContributors({int limit = 10}) async {
     try {
       final response = await dio.get(
-        '/profile/leaderboard/top',
+        '/api/profile/leaderboard/top',
         queryParameters: {'limit': limit},
       );
       if (response.statusCode == 200) {
