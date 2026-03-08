@@ -95,7 +95,7 @@ class _GameMapScreenState extends State<GameMapScreen> {
         
         // Don't forget to color your icons so they contrast with the bar!
         items: const <Widget>[
-          Icon(Icons.map, size: 30, color: Colors.yellow),       
+          Icon(Icons.map, size: 30, color: Colors.white),       
           Icon(Icons.flag, size: 30, color: Colors.white),      
           Icon(Icons.inventory, size: 30, color: Colors.white), 
           Icon(Icons.settings, size: 30, color: Colors.white),  
