@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../domain/user_profile.dart' as profile_model;
 import 'providers/profile_providers.dart';
 
 /// Debug screen to diagnose profile loading issues
@@ -49,12 +48,12 @@ class ProfileDebugScreen extends ConsumerWidget {
               style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 8),
-            _DebugInfoCard(
+            const _DebugInfoCard(
               label: 'API Base URL',
               value: 'http://10.0.2.2:5000',
               color: Colors.blue,
             ),
-            _DebugInfoCard(
+            const _DebugInfoCard(
               label: 'Profile Endpoint',
               value: 'GET /api/profile/{userId}',
               color: Colors.blue,
@@ -67,22 +66,22 @@ class ProfileDebugScreen extends ConsumerWidget {
               style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 8),
-            _TroubleshootingStep(
+            const _TroubleshootingStep(
               number: 1,
               title: 'Check Authentication',
               description: 'If "Firebase User" is NULL, user is not logged in.\nGo to login screen first.',
             ),
-            _TroubleshootingStep(
+            const _TroubleshootingStep(
               number: 2,
               title: 'Verify Backend is Running',
               description: 'Ensure Node.js server is running on port 5000.\nRun: npm start in backend/folder',
             ),
-            _TroubleshootingStep(
+            const _TroubleshootingStep(
               number: 3,
               title: 'Check Database Connection',
               description: 'Ensure MongoDB Atlas is connected.\nCheck backend logs for connection errors.',
             ),
-            _TroubleshootingStep(
+            const _TroubleshootingStep(
               number: 4,
               title: 'Verify User Record Exists',
               description: 'User must exist in MongoDB users collection with matching Firebase UID.',
@@ -131,7 +130,7 @@ class _DebugInfoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: color.withOpacity(0.1),
+      color: color.withValues(alpha: 0.1),
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Column(

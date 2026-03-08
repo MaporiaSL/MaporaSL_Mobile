@@ -9,11 +9,7 @@ class ProfileApi {
   /// GET /api/profile/:userId
   Future<Map<String, dynamic>> getUserProfile(String userId) async {
     try {
-<<<<<<< HEAD
-      final response = await dio.get('/profile/$userId');
-=======
       final response = await dio.get('/api/profile/$userId');
->>>>>>> 086449420befcc784499fdfb9b9d56844796b670
       if (response.statusCode == 200) {
         return response.data;
       }
@@ -27,11 +23,7 @@ class ProfileApi {
   /// GET /api/profile/:userId/contributions
   Future<List<dynamic>> getUserContributions(String userId) async {
     try {
-<<<<<<< HEAD
-      final response = await dio.get('/profile/$userId/contributions');
-=======
       final response = await dio.get('/api/profile/$userId/contributions');
->>>>>>> 086449420befcc784499fdfb9b9d56844796b670
       if (response.statusCode == 200) {
         return response.data['contributions'] ?? [];
       }
