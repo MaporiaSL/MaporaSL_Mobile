@@ -8,5 +8,11 @@ class AppConfig {
   );
 
   // AUTH_BYPASS_ANCHOR: set to false to re-enable auth.
-  static const bool authBypass = false;
+  static const bool authBypass = true;
+
+  // Optional development fallback UID when auth bypass is enabled.
+  static const String profileFallbackUserId = String.fromEnvironment(
+    'PROFILE_FALLBACK_USER_ID',
+    defaultValue: 'test-user-123',
+  );
 }

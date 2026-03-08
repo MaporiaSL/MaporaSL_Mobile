@@ -64,7 +64,7 @@ class ProfileApi {
   /// POST /api/auth/logout
   Future<void> logout() async {
     try {
-      final response = await dio.post('/auth/logout');
+      final response = await dio.post('/api/auth/logout');
       if (response.statusCode != 200) {
         throw Exception('Failed to logout: ${response.statusCode}');
       }
@@ -78,7 +78,7 @@ class ProfileApi {
   Future<List<dynamic>> getTopContributors({int limit = 10}) async {
     try {
       final response = await dio.get(
-        '/profile/leaderboard/top',
+        '/api/profile/leaderboard/top',
         queryParameters: {'limit': limit},
       );
       if (response.statusCode == 200) {

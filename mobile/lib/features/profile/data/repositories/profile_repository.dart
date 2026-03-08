@@ -20,7 +20,7 @@ class ProfileRepository {
   Future<List<ContributedPlace>> getUserContributions(String userId) async {
     try {
       final data = await api.getUserContributions(userId);
-      return (data as List)
+      return data
           .map((place) => ContributedPlace.fromJson(place))
           .toList();
     } catch (e) {
