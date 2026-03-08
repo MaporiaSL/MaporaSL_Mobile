@@ -208,7 +208,7 @@ class _DistrictActionPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     final title = district ?? 'Select a district';
     final subtitle = district == null
-        ? 'Tap a district to reveal quests'
+        ? 'Tap a district to reveal timeline'
         : 'Province: ${province ?? 'Unknown'}';
 
     return Card(

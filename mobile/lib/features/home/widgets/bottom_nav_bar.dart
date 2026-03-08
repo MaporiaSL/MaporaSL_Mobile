@@ -42,7 +42,7 @@ class BottomNavBar extends StatelessWidget {
         BottomNavigationBarItem(
           icon: Icon(Icons.stars_outlined),
           activeIcon: Icon(Icons.stars),
-          label: 'Quests',
+          label: 'Timeline',
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.shopping_bag_outlined),

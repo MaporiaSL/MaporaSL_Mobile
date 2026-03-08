@@ -44,11 +44,11 @@ class _MemoryLanePageState extends ConsumerState<MemoryLanePage>
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Quests & Trips'),
+        title: const Text('Timeline & Trips'),
         bottom: TabBar(
           controller: _tabController,
           tabs: const [
-            Tab(text: 'Quests'),
+            Tab(text: 'Timeline'),
             Tab(text: 'Trips'),
           ],
         ),
@@ -99,7 +99,7 @@ class _MemoryLanePageState extends ConsumerState<MemoryLanePage>
             const Icon(Icons.stars, size: 64, color: Colors.orange),
             const SizedBox(height: 12),
             const Text(
-              'No quests available',
+              'No timeline available',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 8),

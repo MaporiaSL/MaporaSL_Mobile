@@ -84,7 +84,7 @@ class _GameMapScreenState extends State<GameMapScreen> {
         },
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.map), label: 'Map'),
-          BottomNavigationBarItem(icon: Icon(Icons.flag), label: 'Quests'),
+          BottomNavigationBarItem(icon: Icon(Icons.flag), label: 'Timeline'),
           BottomNavigationBarItem(
             icon: Icon(Icons.inventory),
             label: 'Inventory',
@@ -104,9 +104,9 @@ class _GameMapScreenState extends State<GameMapScreen> {
         // Map screen (already here)
         break;
       case 1:
-        // Quests
+        // Timeline
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Quests section - Coming soon!')),
+          const SnackBar(content: Text('Timeline section - Coming soon!')),
         );
         break;
       case 2:
