@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gemified_travel_portfolio/features/onboarding/widgets/brush_highlight.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/config/app_config.dart';
 import '../../auth/services/auth_gate.dart';
 import '../../auth/presentation/login_screen.dart';
 
@@ -87,7 +88,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         onPressed: () {
                           Navigator.of(context).pushReplacement(
                             MaterialPageRoute(
-                              builder: (context) => const LoginScreen(),
+                              builder: (context) => AppConfig.authBypass
+                                  ? const AuthGate()
+                                  : const LoginScreen(),
                             ),
                           );
                         },

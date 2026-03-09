@@ -11,6 +11,27 @@
 .svn/
 migrate_working_dir/
 
+# Machine-specific files (OS/IDE/local setup)
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.AppleDouble
+.LSOverride
+.Spotlight-V100/
+.Trashes/
+._*
+
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.code-workspace
+
+.envrc
+*.local
+
 # Gradle build files (Android)
 **/android/.gradle/
 **/.gradle/

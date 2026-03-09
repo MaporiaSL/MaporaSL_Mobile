@@ -141,7 +141,7 @@ class AdventureTripCard extends StatelessWidget {
   String _getTripEmoji(TripModel trip) {
     // Use location-based emojis if available, otherwise use status emoji
     if (trip.locations != null && trip.locations!.isNotEmpty) {
-      final firstLocation = trip.locations!.first.toLowerCase();
+      final firstLocation = trip.locations!.first.name.toLowerCase();
       if (firstLocation.contains('beach') || firstLocation.contains('sea')) {
         return '🏖️';
       }

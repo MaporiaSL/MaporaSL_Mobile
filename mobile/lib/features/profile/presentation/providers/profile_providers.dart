@@ -3,10 +3,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/config/app_config.dart';
 import '../../../../core/services/auth_interceptor.dart';
+import '../../../../core/services/auth_service.dart';
 import '../../data/datasources/profile_api.dart';
 import '../../data/repositories/profile_repository.dart';
 import '../../domain/user_profile.dart';
-import '../../../../core/services/auth_service.dart';
 
 // Provider for Auth Service
 final authServiceProvider = Provider<AuthService>((ref) {
@@ -48,7 +48,7 @@ final currentUserIdProvider = Provider<String?>((ref) {
     debugPrint('[DEBUG] Current User ID: $userId');
     debugPrint('[DEBUG] Current User Email: ${currentUser?.email}');
   }
-  
+
   if (userId != null) return userId;
 
   // Use fallback only when auth bypass is enabled in config.
@@ -67,7 +67,7 @@ final userProfileProvider = FutureProvider<UserProfile?>((ref) async {
   if (kDebugMode) {
     debugPrint('[DEBUG] userProfileProvider - userId: $userId');
   }
-  
+
   if (userId == null) {
     if (kDebugMode) {
       debugPrint('[ERROR] userId is null - user not authenticated');
@@ -94,7 +94,7 @@ final userProfileProvider = FutureProvider<UserProfile?>((ref) async {
 /// Usage: ref.watch(userContributionsProvider)
 final userContributionsProvider = FutureProvider<List<ContributedPlace>>((ref) async {
   final userId = ref.watch(currentUserIdProvider);
-  
+
   if (userId == null) return [];
 
   try {

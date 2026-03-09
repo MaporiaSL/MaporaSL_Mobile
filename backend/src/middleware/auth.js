@@ -1,21 +1,36 @@
 const { admin } = require('../config/firebase');
 
+// Default to bypass auth in non-production unless explicitly disabled.
+const isDevelopment = process.env.NODE_ENV !== 'production';
+const authBypassEnabled =
+  process.env.AUTH_BYPASS === 'true' ||
+  (process.env.AUTH_BYPASS == null && isDevelopment);
+
 // Validates Firebase ID token and attaches payload to req.auth
-const checkJwt = isDevelopment
+const checkJwt = authBypassEnabled
   ? (req, res, next) => {
-      // In development, create a mock auth object
       req.auth = { uid: 'test-user-123' };
       next();
     }
+  : async (req, res, next) => {
+      try {
+        const authHeader = req.headers.authorization || '';
+        const token = authHeader.startsWith('Bearer ')
+          ? authHeader.slice(7)
+          : null;
 
-    const decoded = await admin.auth().verifyIdToken(token);
-    req.auth = decoded;
-    next();
-  } catch (error) {
-    console.error('Auth error:', error.message);
-    return res.status(401).json({ error: 'Unauthorized: Invalid token' });
-  }
-};
+        if (!token) {
+          return res.status(401).json({ error: 'Unauthorized: Missing Bearer token' });
+        }
+
+        const decoded = await admin.auth().verifyIdToken(token);
+        req.auth = decoded;
+        next();
+      } catch (error) {
+        console.error('Auth error:', error.message);
+        return res.status(401).json({ error: 'Unauthorized: Invalid token' });
+      }
+    };
 
 // Extracts the userId from the Firebase token
 function extractUserId(req, res, next) {
