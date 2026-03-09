@@ -4,7 +4,7 @@ name: "💡 Feature Request"
 
 about: Suggest a new idea or feature for the app
 
-title: "\[Feature]: "
+title: "\[Feature]: "v   
 
 labels: enhancement
 
