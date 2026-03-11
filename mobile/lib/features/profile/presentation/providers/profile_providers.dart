@@ -49,12 +49,13 @@ final currentUserIdProvider = Provider<String?>((ref) {
     debugPrint('[DEBUG] Current User Email: ${currentUser?.email}');
   }
 
-  if (userId != null) return userId;
-
-  // Use fallback only when auth bypass is enabled in config.
+  // In bypass mode, backend always resolves to the fallback UID.
+  // Return the same UID from mobile to avoid 403 userId mismatch.
   if (AppConfig.authBypass) {
     return AppConfig.profileFallbackUserId;
   }
+
+  if (userId != null) return userId;
 
   return null;
 });
