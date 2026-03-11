@@ -153,6 +153,21 @@ class ProfileEditNotifier extends StateNotifier<ProfileEditState> {
         _userId = userId,
         super(ProfileEditState());
 
+  /// Upload avatar image file and update profile
+  Future<void> uploadAvatar(String filePath) async {
+    state = state.copyWith(isLoading: true, error: null, success: false);
+    try {
+      final avatarUrl = await _repository.uploadAvatar(_userId, filePath);
+      await _repository.updateProfile(_userId, avatarUrl: avatarUrl);
+      state = state.copyWith(isLoading: false, success: true, avatarUrl: avatarUrl);
+      Future.delayed(const Duration(seconds: 2), () {
+        state = state.copyWith(success: false);
+      });
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: e.toString(), success: false);
+    }
+  }
+
   /// Update user profile
   Future<void> updateProfile({String? name, String? avatarUrl}) async {
     state = state.copyWith(isLoading: true, error: null, success: false);

@@ -227,10 +227,50 @@ async function getTopContributors(req, res) {
   }
 }
 
+/**
+ * POST /api/profile/:userId/avatar
+ * Upload a profile picture file for a user
+ * Requires JWT authentication + multipart/form-data with field 'avatar'
+ */
+async function uploadUserAvatar(req, res) {
+  try {
+    const { userId } = req.params;
+
+    if (req.userId !== userId) {
+      return res.status(403).json({ error: 'Forbidden: Cannot update another user\'s avatar' });
+    }
+
+    if (!req.file) {
+      return res.status(400).json({ error: 'No avatar file provided' });
+    }
+
+    const avatarUrl = `/uploads/avatars/${req.file.filename}`;
+
+    const updatedUser = await User.findOneAndUpdate(
+      { auth0Id: userId },
+      { profilePicture: avatarUrl },
+      { new: true }
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    res.status(200).json({
+      message: 'Avatar uploaded successfully',
+      avatarUrl,
+    });
+  } catch (error) {
+    console.error('Upload avatar error:', error);
+    res.status(500).json({ error: 'Failed to upload avatar' });
+  }
+}
+
 module.exports = {
   getUserProfile,
   getUserContributions,
   updateUserProfile,
   logoutUser,
   getTopContributors,
+  uploadUserAvatar,
 };

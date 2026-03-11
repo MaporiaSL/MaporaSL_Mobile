@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../domain/user_profile.dart' as profile_model;
+import 'edit_profile_screen.dart';
 import 'providers/profile_providers.dart';
 
 class ProfileScreen extends ConsumerWidget {
@@ -135,9 +136,11 @@ class ProfileScreen extends ConsumerWidget {
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () {
-                      // Navigate to edit profile screen (to be created)
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Edit profile coming soon')),
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => EditProfileScreen(initialProfile: profile),
+                        ),
                       );
                     },
                     child: const Text('Edit Profile'),

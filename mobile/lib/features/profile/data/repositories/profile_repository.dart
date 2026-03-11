@@ -46,6 +46,15 @@ class ProfileRepository {
     }
   }
 
+  /// Upload a profile avatar from a local file path
+  Future<String> uploadAvatar(String userId, String filePath) async {
+    try {
+      return await api.uploadAvatar(userId, filePath);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   /// Logout user
   Future<void> logout() async {
     try {
