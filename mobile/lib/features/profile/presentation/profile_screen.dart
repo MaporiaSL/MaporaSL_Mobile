@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../domain/user_profile.dart' as profile_model;
 import 'providers/profile_providers.dart';
-import 'profile_debug_screen.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
@@ -16,16 +15,6 @@ class ProfileScreen extends ConsumerWidget {
       appBar: AppBar(
         title: const Text('My Profile'),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.help),
-            tooltip: 'Debug',
-            onPressed: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const ProfileDebugScreen(),
-              ),
-            ),
-          ),
           IconButton(
             icon: const Icon(Icons.logout),
             tooltip: 'Logout',
