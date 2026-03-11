@@ -29,8 +29,16 @@ const checkJwt = authBypassEnabled
       }
     };
 
-// Extracts the userId from the Firebase token
+// Extracts the userId from the Firebase token (or URL in bypass mode)
 function extractUserId(req, res, next) {
+  if (authBypassEnabled) {
+    // req.params is not yet populated in router.use(); parse req.path directly.
+    // Path patterns: /:uid, /:uid/contributions, /:uid/avatar
+    // Non-user paths: /leaderboard/top, /auth/logout (req.userId unused there)
+    const match = req.path.match(/^\/([^/]+)/);
+    req.userId = match ? match[1] : 'test-user-123';
+    return next();
+  }
   const uid = req?.auth?.uid || req?.auth?.sub;
   if (!uid) return res.status(401).json({ error: 'Unauthorized: Missing uid' });
   req.userId = uid;
