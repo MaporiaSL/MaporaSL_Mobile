@@ -1,10 +1,7 @@
 const { admin } = require('../config/firebase');
 
-// Default to bypass auth in non-production unless explicitly disabled.
-const isDevelopment = process.env.NODE_ENV !== 'production';
-const authBypassEnabled =
-  process.env.AUTH_BYPASS === 'true' ||
-  (process.env.AUTH_BYPASS == null && isDevelopment);
+// Auth bypass must be explicitly enabled via AUTH_BYPASS=true.
+const authBypassEnabled = process.env.AUTH_BYPASS === 'true';
 
 // Validates Firebase ID token and attaches payload to req.auth
 const checkJwt = authBypassEnabled

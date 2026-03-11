@@ -2,6 +2,15 @@ const User = require('../models/User');
 const PlaceSubmission = require('../models/PlaceSubmission');
 const UserBadge = require('../models/UserBadge');
 const PlaceUsageTracking = require('../models/PlaceUsageTracking');
+const { getStorage } = require('../config/firebase');
+const path = require('path');
+const crypto = require('crypto');
+
+function generateAvatarStoragePath(userId, originalName) {
+  const ext = path.extname(originalName || '').toLowerCase() || '.jpg';
+  const uniqueId = crypto.randomUUID();
+  return `users/${userId}/avatars/${uniqueId}${ext}`;
+}
 
 /**
  * GET /api/profile/:userId
@@ -244,7 +253,28 @@ async function uploadUserAvatar(req, res) {
       return res.status(400).json({ error: 'No avatar file provided' });
     }
 
-    const avatarUrl = `/uploads/avatars/${req.file.filename}`;
+    if (!req.file?.buffer) {
+      return res.status(400).json({ error: 'Invalid file upload' });
+    }
+
+    const storagePath = generateAvatarStoragePath(userId, req.file.originalname);
+    const bucket = getStorage();
+    const file = bucket.file(storagePath);
+
+    await file.save(req.file.buffer, {
+      metadata: {
+        contentType: req.file.mimetype,
+        metadata: {
+          originalName: req.file.originalname,
+          uploadedBy: userId,
+          uploadType: 'profile-avatar',
+        },
+      },
+    });
+
+    // Make the avatar publicly accessible for mobile profile rendering.
+    await file.makePublic();
+    const avatarUrl = `https://storage.googleapis.com/${bucket.name}/${storagePath}`;
 
     const updatedUser = await User.findOneAndUpdate(
       { auth0Id: userId },
