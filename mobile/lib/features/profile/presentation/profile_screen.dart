@@ -11,6 +11,7 @@ class ProfileScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final profileAsyncValue = ref.watch(userProfileProvider);
     final contributionsAsyncValue = ref.watch(userContributionsProvider);
+    final topContributorsAsync = ref.watch(topContributorsProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -129,6 +130,14 @@ class ProfileScreen extends ConsumerWidget {
 
                 // Leaderboard & Impact
                 _buildLeaderboardAndImpact(profile),
+                const SizedBox(height: 20),
+
+                Text(
+                  'Top Contributors',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                const SizedBox(height: 10),
+                _buildTopContributorsSection(topContributorsAsync),
                 const SizedBox(height: 32),
 
                 // Edit Profile Button
@@ -302,6 +311,39 @@ class ProfileScreen extends ConsumerWidget {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildTopContributorsSection(AsyncValue<List<Map<String, dynamic>>> asyncValue) {
+    return asyncValue.when(
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (error, _) => Text('Could not load leaderboard: $error'),
+      data: (contributors) {
+        if (contributors.isEmpty) {
+          return const Text('No leaderboard data yet.');
+        }
+
+        final top = contributors.take(5).toList();
+        return Column(
+          children: top.asMap().entries.map((entry) {
+            final rank = entry.key + 1;
+            final item = entry.value;
+            final name = (item['userName'] ?? 'Unknown').toString();
+            final count = (item['approvedCount'] ?? 0).toString();
+
+            return ListTile(
+              dense: true,
+              contentPadding: EdgeInsets.zero,
+              leading: CircleAvatar(
+                radius: 14,
+                child: Text('$rank'),
+              ),
+              title: Text(name),
+              trailing: Text('$count approved'),
+            );
+          }).toList(),
+        );
+      },
     );
   }
 

@@ -41,8 +41,9 @@ class ProfileApi {
 
   Future<String> uploadAvatar(String userId, String filePath) async {
     try {
+      final filename = filePath.split(RegExp(r'[\\/]+')).last;
       final formData = FormData.fromMap({
-        'avatar': await MultipartFile.fromFile(filePath, filename: filePath.split('/').last),
+        'avatar': await MultipartFile.fromFile(filePath, filename: filename),
       });
       final response = await _dio.post(
         '/api/profile/$userId/avatar',

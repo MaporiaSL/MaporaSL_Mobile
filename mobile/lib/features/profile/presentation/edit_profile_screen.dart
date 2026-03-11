@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../domain/user_profile.dart';
@@ -23,6 +24,8 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   /// Locally picked image (not yet uploaded)
   File? _pickedImage;
   bool _isUploadingAvatar = false;
+  String? _inlineError;
+  String? _lastFailedUploadPath;
 
   @override
   void initState() {
@@ -47,9 +50,59 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     );
     if (picked == null) return;
 
+    final cropped = await ImageCropper().cropImage(
+      sourcePath: picked.path,
+      compressFormat: ImageCompressFormat.jpg,
+      compressQuality: 85,
+      aspectRatioPresets: [
+        CropAspectRatioPreset.square,
+      ],
+      uiSettings: [
+        AndroidUiSettings(
+          toolbarTitle: 'Crop Avatar',
+          lockAspectRatio: true,
+          hideBottomControls: false,
+        ),
+        IOSUiSettings(
+          title: 'Crop Avatar',
+          aspectRatioLockEnabled: true,
+        ),
+      ],
+    );
+
+    if (cropped == null) return;
+
     setState(() {
-      _pickedImage = File(picked.path);
+      _pickedImage = File(cropped.path);
+      _inlineError = null;
+      _lastFailedUploadPath = null;
     });
+  }
+
+  Future<void> _retryAvatarUpload() async {
+    if (_lastFailedUploadPath == null) return;
+    final editNotifier = ref.read(profileEditProvider.notifier);
+
+    setState(() {
+      _isUploadingAvatar = true;
+      _inlineError = null;
+    });
+
+    await editNotifier.uploadAvatar(_lastFailedUploadPath!);
+
+    if (!mounted) return;
+
+    final uploadState = ref.read(profileEditProvider);
+    setState(() {
+      _isUploadingAvatar = false;
+      _inlineError = uploadState.error != null
+          ? 'Avatar upload failed. Check your connection and try again.'
+          : null;
+      if (uploadState.error == null) {
+        _lastFailedUploadPath = null;
+      }
+    });
+    editNotifier.clearError();
   }
 
   void _showAvatarSourceSheet() {
@@ -98,7 +151,12 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   // ─── Save ─────────────────────────────────────────────────────────────────
 
   Future<void> _save() async {
-    if (!_formKey.currentState!.validate()) return;
+    if (!_formKey.currentState!.validate()) {
+      setState(() {
+        _inlineError = 'Please correct the highlighted fields.';
+      });
+      return;
+    }
 
     final editNotifier = ref.read(profileEditProvider.notifier);
     final userId = ref.read(currentUserIdProvider);
@@ -112,18 +170,14 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
 
       final uploadState = ref.read(profileEditProvider);
       if (uploadState.error != null) {
-        // Avatar upload failed — show error and stop
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Avatar upload failed: ${uploadState.error}'),
-              backgroundColor: Colors.red,
-            ),
-          );
-          editNotifier.clearError();
-        }
+        setState(() {
+          _inlineError = 'Avatar upload failed. Tap retry to try again.';
+          _lastFailedUploadPath = _pickedImage!.path;
+        });
+        editNotifier.clearError();
         return;
       }
+      _lastFailedUploadPath = null;
     }
 
     // Save name if it changed
@@ -136,12 +190,9 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
 
     final finalState = ref.read(profileEditProvider);
     if (finalState.error != null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Save failed: ${finalState.error}'),
-          backgroundColor: Colors.red,
-        ),
-      );
+      setState(() {
+        _inlineError = 'Save failed. Please try again.';
+      });
       editNotifier.clearError();
       return;
     }
@@ -256,9 +307,26 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                     ),
                     const SizedBox(height: 32),
 
+                    if (_inlineError != null)
+                      Container(
+                        width: double.infinity,
+                        margin: const EdgeInsets.only(bottom: 12),
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.red.shade50,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: Colors.red.shade200),
+                        ),
+                        child: Text(
+                          _inlineError!,
+                          style: TextStyle(color: Colors.red.shade700),
+                        ),
+                      ),
+
                     // Name field
                     TextFormField(
                       controller: _nameController,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
                       decoration: const InputDecoration(
                         labelText: 'Display name',
                         hintText: 'Enter your name',
@@ -272,6 +340,9 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                         }
                         if (value.trim().length < 2) {
                           return 'Name must be at least 2 characters';
+                        }
+                        if (value.trim().length > 40) {
+                          return 'Name must be under 40 characters';
                         }
                         return null;
                       },
@@ -303,6 +374,18 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                         ),
                       ),
                     ),
+
+                    if (_lastFailedUploadPath != null) ...[
+                      const SizedBox(height: 12),
+                      SizedBox(
+                        width: double.infinity,
+                        child: OutlinedButton.icon(
+                          onPressed: _retryAvatarUpload,
+                          icon: const Icon(Icons.refresh),
+                          label: const Text('Retry Avatar Upload'),
+                        ),
+                      ),
+                    ],
                   ],
                 ),
               ),
