@@ -161,6 +161,7 @@ class ProfileEditNotifier extends StateNotifier<ProfileEditState> {
       await _repository.updateProfile(_userId, avatarUrl: avatarUrl);
       state = state.copyWith(isLoading: false, success: true, avatarUrl: avatarUrl);
       Future.delayed(const Duration(seconds: 2), () {
+        if (!mounted) return;
         state = state.copyWith(success: false);
       });
     } catch (e) {
@@ -188,6 +189,7 @@ class ProfileEditNotifier extends StateNotifier<ProfileEditState> {
 
       // Clear success message after 2 seconds
       Future.delayed(const Duration(seconds: 2), () {
+        if (!mounted) return;
         state = state.copyWith(success: false);
       });
     } catch (e) {
