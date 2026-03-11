@@ -54,9 +54,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       sourcePath: picked.path,
       compressFormat: ImageCompressFormat.jpg,
       compressQuality: 85,
-      aspectRatioPresets: [
-        CropAspectRatioPreset.square,
-      ],
+      aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
       uiSettings: [
         AndroidUiSettings(
           toolbarTitle: 'Crop Avatar',

@@ -73,6 +73,7 @@ void main() {
     await tester.enterText(find.byType(TextFormField).first, 'New Name');
     await tester.tap(find.text('Save Changes'));
     await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 3));
 
     verify(
       () => repository.updateProfile(
