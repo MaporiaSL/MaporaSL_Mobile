@@ -98,6 +98,26 @@ const userSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
+  isPhotoPrivate: {
+    type: Boolean,
+    default: true
+  },
+  locationDuringCheckinsOnly: {
+    type: Boolean,
+    default: true
+  },
+  notifications: {
+    achievements: { type: Boolean, default: true },
+    trips: { type: Boolean, default: true },
+    places: { type: Boolean, default: true },
+    social: { type: Boolean, default: true }
+  },
+  display: {
+    mapTheme: { type: String, enum: ['default', 'dark', 'cartoon'], default: 'default' },
+    cloudAnimation: { type: Boolean, default: true },
+    units: { type: String, enum: ['km', 'miles'], default: 'km' },
+    language: { type: String, default: 'English' }
+  },
   createdAt: {
     type: Date,
     default: Date.now
