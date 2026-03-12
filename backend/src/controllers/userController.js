@@ -201,8 +201,195 @@ async function recalculateUserProgress(userId) {
   }
 }
 
+/**
+ * Update user profile (name, avatar)
+ * PUT /api/users/:userId/profile
+ */
+async function updateProfile(req, res) {
+  try {
+    const { userId } = req.params;
+    const { name, profilePicture } = req.body;
+
+    if (req.userId !== userId) {
+      return res.status(403).json({ error: 'Forbidden: Cannot update another user\'s profile' });
+    }
+
+    const user = await User.findOne({ auth0Id: userId });
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    if (name) user.name = name;
+    if (profilePicture !== undefined) user.profilePicture = profilePicture;
+
+    await user.save();
+
+    res.status(200).json({
+      message: 'Profile updated successfully',
+      user: {
+        id: user.auth0Id,
+        name: user.name,
+        email: user.email,
+        profilePicture: user.profilePicture
+      }
+    });
+  } catch (error) {
+    console.error('Update profile error:', error);
+    res.status(500).json({ error: 'Failed to update profile' });
+  }
+}
+
+/**
+ * Delete user account and associated data (GDPR)
+ * DELETE /api/users/:userId
+ */
+async function deleteUser(req, res) {
+  try {
+    const { userId } = req.params;
+
+    if (req.userId !== userId) {
+      return res.status(403).json({ error: 'Forbidden: Cannot delete another user\'s account' });
+    }
+
+    const user = await User.findOne({ auth0Id: userId });
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Delete user document and associated destinations
+    await User.deleteOne({ auth0Id: userId });
+    await Destination.deleteMany({ userId });
+
+    res.status(200).json({ message: 'User account and associated data deleted successfully' });
+  } catch (error) {
+    console.error('Delete user error:', error);
+    res.status(500).json({ error: 'Failed to delete user account' });
+  }
+}
+
+/**
+ * Update user privacy settings
+ * PUT /api/users/:userId/privacy
+ */
+async function updatePrivacy(req, res) {
+  try {
+    const { userId } = req.params;
+    const { isPhotoPrivate, locationDuringCheckinsOnly } = req.body;
+
+    if (req.userId !== userId) {
+      return res.status(403).json({ error: 'Forbidden: Cannot update another user\'s privacy settings' });
+    }
+
+    const user = await User.findOne({ auth0Id: userId });
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    if (isPhotoPrivate !== undefined) user.isPhotoPrivate = isPhotoPrivate;
+    if (locationDuringCheckinsOnly !== undefined) user.locationDuringCheckinsOnly = locationDuringCheckinsOnly;
+
+    await user.save();
+
+    res.status(200).json({
+      message: 'Privacy settings updated successfully',
+      settings: {
+        isPhotoPrivate: user.isPhotoPrivate,
+        locationDuringCheckinsOnly: user.locationDuringCheckinsOnly
+      }
+    });
+  } catch (error) {
+    console.error('Update privacy error:', error);
+    res.status(500).json({ error: 'Failed to update privacy settings' });
+  }
+}
+
+/**
+ * Update user notification settings
+ * PUT /api/users/:userId/notifications
+ */
+async function updateNotifications(req, res) {
+  try {
+    const { userId } = req.params;
+    const { achievements, trips, places, social } = req.body;
+
+    if (req.userId !== userId) {
+      return res.status(403).json({ error: 'Forbidden: Cannot update another user\'s notifications' });
+    }
+
+    const user = await User.findOne({ auth0Id: userId });
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Initialize notifications object if it doesn't exist (for older documents)
+    if (!user.notifications) {
+      user.notifications = {};
+    }
+
+    if (achievements !== undefined) user.notifications.achievements = achievements;
+    if (trips !== undefined) user.notifications.trips = trips;
+    if (places !== undefined) user.notifications.places = places;
+    if (social !== undefined) user.notifications.social = social;
+
+    await user.save();
+
+    res.status(200).json({
+      message: 'Notification settings updated successfully',
+      settings: user.notifications
+    });
+  } catch (error) {
+    console.error('Update notifications error:', error);
+    res.status(500).json({ error: 'Failed to update notification settings' });
+  }
+}
+
+/**
+ * Update user map & display settings
+ * PUT /api/users/:userId/display
+ */
+async function updateDisplay(req, res) {
+  try {
+    const { userId } = req.params;
+    const { mapTheme, cloudAnimation, units, language } = req.body;
+
+    if (req.userId !== userId) {
+      return res.status(403).json({ error: 'Forbidden: Cannot update another user\'s display settings' });
+    }
+
+    const user = await User.findOne({ auth0Id: userId });
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Initialize display object if it doesn't exist (for older documents)
+    if (!user.display) {
+      user.display = {};
+    }
+
+    if (mapTheme !== undefined) user.display.mapTheme = mapTheme;
+    if (cloudAnimation !== undefined) user.display.cloudAnimation = cloudAnimation;
+    if (units !== undefined) user.display.units = units;
+    if (language !== undefined) user.display.language = language;
+
+    await user.save();
+
+    res.status(200).json({
+      message: 'Display settings updated successfully',
+      settings: user.display
+    });
+  } catch (error) {
+    console.error('Update display error:', error);
+    res.status(500).json({ error: 'Failed to update display settings' });
+  }
+}
+
 module.exports = {
   getUserProgress,
   getDistrictProgress,
-  recalculateUserProgress
+  recalculateUserProgress,
+  updateProfile,
+  updatePrivacy,
+  updateNotifications,
+  updateDisplay,
+  deleteUser
 };

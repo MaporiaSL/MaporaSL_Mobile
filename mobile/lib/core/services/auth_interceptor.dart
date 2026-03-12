@@ -13,9 +13,13 @@ class AuthInterceptor extends Interceptor {
   ) async {
     final user = _auth.currentUser;
     if (user != null) {
-      final token = await user.getIdToken();
-      options.headers['Authorization'] = 'Bearer $token';
+      try {
+        final token = await user.getIdToken();
+        options.headers['Authorization'] = 'Bearer $token';
+      } catch (e) {
+        print('Error fetching Firebase token: $e');
+      }
     }
-    handler.next(options);
+    return handler.next(options);
   }
 }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../../../core/constants/map_constants.dart';
 
 class MapboxMapScreen extends StatefulWidget {
   const MapboxMapScreen({super.key});
@@ -26,8 +28,17 @@ class _MapboxMapScreenState extends State<MapboxMapScreen> {
     );
   }
 
-  void _onMapCreated(MapboxMap mapboxMap) {
-    // ✅ Load Mapbox’s default “streets” style
-    mapboxMap.loadStyleURI("mapbox://styles/mapbox/streets-v12");
+  void _onMapCreated(MapboxMap mapboxMap) async {
+    final prefs = await SharedPreferences.getInstance();
+    final theme = prefs.getString('mapTheme') ?? 'default';
+
+    String styleUrl = MapConstants.gameStyleUrl;
+    if (theme == 'dark') {
+      styleUrl = MapConstants.darkStyleUrl;
+    } else if (theme == 'cartoon') {
+      styleUrl = MapConstants.cartoonStyleUrl;
+    }
+
+    mapboxMap.loadStyleURI(styleUrl);
   }
 }

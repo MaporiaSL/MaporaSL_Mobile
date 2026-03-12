@@ -4,6 +4,8 @@ class MapConstants {
   // Mapbox Style - Custom "Game" aesthetic
   // Format: mapbox://styles/YOUR_USERNAME/YOUR_STYLE_ID
   static const String gameStyleUrl = 'mapbox://styles/mapbox/outdoors-v12';
+  static const String darkStyleUrl = 'mapbox://styles/mapbox/dark-v11';
+  static const String cartoonStyleUrl = 'mapbox://styles/mapbox/navigation-guidance-day-v4';
 
   // Mapbox Access Tokens
   static const String publicAccessToken = String.fromEnvironment(

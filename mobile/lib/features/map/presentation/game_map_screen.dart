@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/constants/map_constants.dart';
+import '../../settings/presentation/settings_screen.dart';
 
 /// GameMapScreen - Main map interface with gamification features
 /// Displays Sri Lanka map with custom game-styled theme,
@@ -15,6 +17,7 @@ class GameMapScreen extends StatefulWidget {
 class _GameMapScreenState extends State<GameMapScreen> {
   bool _isStyleLoaded = false;
   int _selectedBottomNavIndex = 0;
+  MapboxMap? _mapboxMap;
 
   @override
   Widget build(BuildContext context) {
@@ -98,7 +101,7 @@ class _GameMapScreenState extends State<GameMapScreen> {
     );
   }
 
-  void _handleBottomNavigation(int index) {
+  void _handleBottomNavigation(int index) async {
     switch (index) {
       case 0:
         // Map screen (already here)
@@ -117,16 +120,49 @@ class _GameMapScreenState extends State<GameMapScreen> {
         break;
       case 3:
         // Settings
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Settings section - Coming soon!')),
+        await Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const SettingsScreen()),
         );
+        
+        // Reload map style if it was changed in Settings
+        if (_mapboxMap != null) {
+          final prefs = await SharedPreferences.getInstance();
+          final theme = prefs.getString('mapTheme') ?? 'default';
+
+          String styleUrl = MapConstants.gameStyleUrl;
+          if (theme == 'dark') {
+            styleUrl = MapConstants.darkStyleUrl;
+          } else if (theme == 'cartoon') {
+            styleUrl = MapConstants.cartoonStyleUrl;
+          }
+          await _mapboxMap!.loadStyleURI(styleUrl);
+        }
+
+        // Reset selected index after returning so it doesn't get stuck on Settings
+        if (mounted) {
+          setState(() {
+            _selectedBottomNavIndex = 0;
+          });
+        }
         break;
     }
   }
 
   void _onMapCreated(MapboxMap mapboxMap) async {
+    _mapboxMap = mapboxMap;
+    final prefs = await SharedPreferences.getInstance();
+    final theme = prefs.getString('mapTheme') ?? 'default';
+
+    String styleUrl = MapConstants.gameStyleUrl;
+    if (theme == 'dark') {
+      styleUrl = MapConstants.darkStyleUrl;
+    } else if (theme == 'cartoon') {
+      styleUrl = MapConstants.cartoonStyleUrl;
+    }
+
     // Load custom game style
-    await mapboxMap.loadStyleURI(MapConstants.gameStyleUrl);
+    await mapboxMap.loadStyleURI(styleUrl);
 
     setState(() {
       _isStyleLoaded = true;
