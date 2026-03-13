@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getUserProgress, getDistrictProgress } = require('../controllers/userController');
+const { getUserProgress, getDistrictProgress, updateProfile, updatePrivacy, updateNotifications, updateDisplay, deleteUser } = require('../controllers/userController');
 const { checkJwt, extractUserId } = require('../middleware/auth');
 
 // Apply JWT middleware to all routes
@@ -20,5 +20,40 @@ router.get('/:userId/progress', getUserProgress);
  * @access  Private (JWT required)
  */
 router.get('/districts/:districtId/progress', getDistrictProgress);
+
+/**
+ * @route   PUT /api/users/:userId/profile
+ * @desc    Update user profile (name, avatar)
+ * @access  Private (JWT required)
+ */
+router.put('/:userId/profile', updateProfile);
+
+/**
+ * @route   PUT /api/users/:userId/privacy
+ * @desc    Update user privacy and location settings
+ * @access  Private (JWT required)
+ */
+router.put('/:userId/privacy', updatePrivacy);
+
+/**
+ * @route   PUT /api/users/:userId/notifications
+ * @desc    Update user notification settings
+ * @access  Private (JWT required)
+ */
+router.put('/:userId/notifications', updateNotifications);
+
+/**
+ * @route   PUT /api/users/:userId/display
+ * @desc    Update user map and display settings
+ * @access  Private (JWT required)
+ */
+router.put('/:userId/display', updateDisplay);
+
+/**
+ * @route   DELETE /api/users/:userId
+ * @desc    Delete user account and data
+ * @access  Private (JWT required)
+ */
+router.delete('/:userId', deleteUser);
 
 module.exports = router;

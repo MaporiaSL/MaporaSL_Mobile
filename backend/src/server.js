@@ -20,6 +20,7 @@ const preplannedTripsRoutes = require('./routes/preplannedTripsRoutes');
 const albumRoutes = require('./routes/albumRoute');
 const explorationRoutes = require('./routes/explorationRoutes');
 const explorationAdminRoutes = require('./routes/explorationAdminRoutes');
+const securityRoutes = require('./routes/securityRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -62,6 +63,9 @@ app.use('/api/exploration', explorationRoutes);
 
 // Admin exploration routes (JWT + admin)
 app.use('/api/admin', explorationAdminRoutes);
+
+// Security settings (2FA, Sessions)
+app.use('/api/security', securityRoutes);
 
 // Real store (shop) routes
 app.use('/api/store', realStoreRoutes);

@@ -3,6 +3,12 @@ const { admin } = require('../config/firebase');
 // Validates Firebase ID token and attaches payload to req.auth
 const checkJwt = async (req, res, next) => {
   try {
+    // Local dev bypass
+    if (process.env.AUTH_BYPASS === 'true') {
+      req.auth = { uid: 'CPESJcTjGPN2VoNs13LpC4Sdv682' }; 
+      return next();
+    }
+
     const authHeader = req.headers.authorization || '';
     const token = authHeader.startsWith('Bearer ')
       ? authHeader.slice(7)

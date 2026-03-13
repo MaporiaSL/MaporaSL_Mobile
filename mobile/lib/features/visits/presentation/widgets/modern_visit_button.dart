@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../core/providers/accessibility_provider.dart';
 
-class ModernVisitButton extends StatelessWidget {
+class ModernVisitButton extends ConsumerWidget {
   final bool isVisited;
   final VoidCallback onTap;
 
@@ -11,11 +13,16 @@ class ModernVisitButton extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final accessibility = ref.watch(accessibilityProvider);
+    final useAnimations = accessibility.useAnimations;
+
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
+        duration: useAnimations 
+            ? const Duration(milliseconds: 300)
+            : Duration.zero,
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(100),
