@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'dart:ui';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/providers/accessibility_provider.dart';
 
-class BottomNavBar extends StatelessWidget {
+class BottomNavBar extends ConsumerWidget {
   final int currentIndex;
   final Function(int) onTap;
 
@@ -13,8 +15,11 @@ class BottomNavBar extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final accessibility = ref.watch(accessibilityProvider);
+    final useAnimations = accessibility.useAnimations;
+    
     final navItems = [
       {'icon': Icons.map_outlined, 'activeIcon': Icons.map, 'label': 'Map'},
       {'icon': Icons.photo_album_outlined, 'activeIcon': Icons.photo_album, 'label': 'Album'},
@@ -25,7 +30,7 @@ class BottomNavBar extends StatelessWidget {
 
     return Container(
       height: 85,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: Colors.transparent,
       ),
       child: Stack(
@@ -70,7 +75,9 @@ class BottomNavBar extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       AnimatedContainer(
-                        duration: const Duration(milliseconds: 300),
+                        duration: useAnimations 
+                            ? const Duration(milliseconds: 300)
+                            : Duration.zero,
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,

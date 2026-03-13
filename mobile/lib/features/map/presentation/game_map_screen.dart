@@ -133,8 +133,6 @@ class _GameMapScreenState extends State<GameMapScreen> {
           String styleUrl = MapConstants.gameStyleUrl;
           if (theme == 'dark') {
             styleUrl = MapConstants.darkStyleUrl;
-          } else if (theme == 'cartoon') {
-            styleUrl = MapConstants.cartoonStyleUrl;
           }
           await _mapboxMap!.loadStyleURI(styleUrl);
         }
@@ -157,8 +155,6 @@ class _GameMapScreenState extends State<GameMapScreen> {
     String styleUrl = MapConstants.gameStyleUrl;
     if (theme == 'dark') {
       styleUrl = MapConstants.darkStyleUrl;
-    } else if (theme == 'cartoon') {
-      styleUrl = MapConstants.cartoonStyleUrl;
     }
 
     // Load custom game style

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../features/exploration/data/models/exploration_models.dart';
 import '../../../../features/exploration/providers/exploration_provider.dart';
+import '../../../../core/providers/accessibility_provider.dart';
 import '../../providers/visit_provider.dart';
 import './verification_checklist.dart';
 import 'dart:math' as math;
@@ -62,8 +63,13 @@ class _DynamicVisitSheetState extends ConsumerState<DynamicVisitSheet>
   @override
   void initState() {
     super.initState();
+    final useAnimations = ref.read(accessibilityProvider).useAnimations;
     _radarController = AnimationController(
-        vsync: this, duration: const Duration(seconds: 2))..repeat();
+        vsync: this, duration: const Duration(seconds: 2));
+    
+    if (useAnimations) {
+      _radarController.repeat();
+    }
     
     _initSteps();
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -250,7 +256,9 @@ class _DynamicVisitSheetState extends ConsumerState<DynamicVisitSheet>
           const SizedBox(height: 40),
           TweenAnimationBuilder<double>(
             tween: Tween(begin: 0.0, end: 1.0),
-            duration: const Duration(milliseconds: 600),
+            duration: ref.watch(accessibilityProvider).useAnimations 
+                ? const Duration(milliseconds: 600)
+                : Duration.zero,
             curve: Curves.elasticOut,
             builder: (context, value, child) {
               return Transform.scale(

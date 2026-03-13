@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const Session = require('../models/Session');
 const { assignExplorationForUser } = require('./explorationController');
 
 // Register or sync user (called after Firebase login)
@@ -18,6 +19,20 @@ async function registerUser(req, res) {
     let user = await User.findOne({ auth0Id: authProviderId });
 
     if (user) {
+      // Track session for existing user on sync
+      try {
+        const session = new Session({
+          userId: authProviderId,
+          deviceId: req.headers['x-device-id'] || 'Unknown',
+          deviceType: req.headers['x-device-type'] || 'Mobile',
+          ip: req.ip || req.headers['x-forwarded-for'],
+          userAgent: req.headers['user-agent']
+        });
+        await session.save();
+      } catch (sessionError) {
+        console.warn('Failed to track session:', sessionError.message);
+      }
+
       return res.status(200).json({
         message: 'User already registered',
         user
@@ -42,6 +57,20 @@ async function registerUser(req, res) {
       return res.status(500).json({
         error: 'Failed to create exploration assignments'
       });
+    }
+
+    // Track session
+    try {
+      const session = new Session({
+        userId: authProviderId,
+        deviceId: req.headers['x-device-id'] || 'Unknown',
+        deviceType: req.headers['x-device-type'] || 'Mobile',
+        ip: req.ip || req.headers['x-forwarded-for'],
+        userAgent: req.headers['user-agent']
+      });
+      await session.save();
+    } catch (sessionError) {
+      console.warn('Failed to track session:', sessionError.message);
     }
 
     res.status(201).json({

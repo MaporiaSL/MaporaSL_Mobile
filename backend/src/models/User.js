@@ -112,8 +112,12 @@ const userSchema = new mongoose.Schema({
     places: { type: Boolean, default: true },
     social: { type: Boolean, default: true }
   },
+  security: {
+    twoFactorSecret: { type: String, default: null },
+    twoFactorEnabled: { type: Boolean, default: false }
+  },
   display: {
-    mapTheme: { type: String, enum: ['default', 'dark', 'cartoon'], default: 'default' },
+    mapTheme: { type: String, enum: ['light', 'dark'], default: 'light' },
     cloudAnimation: { type: Boolean, default: true },
     units: { type: String, enum: ['km', 'miles'], default: 'km' },
     language: { type: String, default: 'English' }
