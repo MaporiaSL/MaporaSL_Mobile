@@ -46,6 +46,9 @@ class DistrictAssignment {
   final int assignedCount;
   final int visitedCount;
   final DateTime? unlockedAt;
+  final bool isUnlocked;
+  final GeoPoint? center;
+  final GeoBounds? bounds;
   final List<ExplorationLocation> locations;
 
   DistrictAssignment({
@@ -54,6 +57,9 @@ class DistrictAssignment {
     required this.assignedCount,
     required this.visitedCount,
     required this.unlockedAt,
+    required this.isUnlocked,
+    this.center,
+    this.bounds,
     required this.locations,
   });
 
@@ -66,6 +72,13 @@ class DistrictAssignment {
       visitedCount: (json['visitedCount'] as num?)?.toInt() ?? 0,
       unlockedAt: json['unlockedAt'] != null
           ? DateTime.tryParse(json['unlockedAt'].toString())
+          : null,
+        isUnlocked: json['isUnlocked'] == true,
+        center: json['center'] is Map<String, dynamic>
+          ? GeoPoint.fromJson(Map<String, dynamic>.from(json['center'] as Map))
+          : null,
+        bounds: json['bounds'] is Map<String, dynamic>
+          ? GeoBounds.fromJson(Map<String, dynamic>.from(json['bounds'] as Map))
           : null,
       locations: locationsRaw
           .map(
@@ -122,4 +135,41 @@ class LocationSample {
     'longitude': longitude,
     'accuracyMeters': accuracyMeters,
   };
+}
+
+class GeoPoint {
+  final double latitude;
+  final double longitude;
+
+  const GeoPoint({required this.latitude, required this.longitude});
+
+  factory GeoPoint.fromJson(Map<String, dynamic> json) {
+    return GeoPoint(
+      latitude: (json['latitude'] as num?)?.toDouble() ?? 0,
+      longitude: (json['longitude'] as num?)?.toDouble() ?? 0,
+    );
+  }
+}
+
+class GeoBounds {
+  final double minLat;
+  final double maxLat;
+  final double minLng;
+  final double maxLng;
+
+  const GeoBounds({
+    required this.minLat,
+    required this.maxLat,
+    required this.minLng,
+    required this.maxLng,
+  });
+
+  factory GeoBounds.fromJson(Map<String, dynamic> json) {
+    return GeoBounds(
+      minLat: (json['minLat'] as num?)?.toDouble() ?? 0,
+      maxLat: (json['maxLat'] as num?)?.toDouble() ?? 0,
+      minLng: (json['minLng'] as num?)?.toDouble() ?? 0,
+      maxLng: (json['maxLng'] as num?)?.toDouble() ?? 0,
+    );
+  }
 }

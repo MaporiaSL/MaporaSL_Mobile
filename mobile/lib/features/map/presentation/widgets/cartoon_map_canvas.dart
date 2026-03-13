@@ -12,9 +12,11 @@ class CartoonMapCanvas extends StatefulWidget {
   final String? selectedDistrictName;
   final VoidCallback? onRegionTapped;
   final Function(String regionId)? onRegionSelected;
-  final void Function(String districtName, String? provinceName)?
+  final void Function(String districtName, String? provinceName, Offset tapFraction)?
   onDistrictSelected;
   final MapVisualTheme theme;
+  final bool focusMode;
+  final String? focusedDistrictName;
 
   /// Map of district ID to completion percentage (0.0 - 1.0)
   final Map<String, double> districtProgress;
@@ -28,6 +30,8 @@ class CartoonMapCanvas extends StatefulWidget {
     this.onRegionSelected,
     this.onDistrictSelected,
     this.theme = const MapVisualTheme(),
+    this.focusMode = false,
+    this.focusedDistrictName,
     this.districtProgress = const <String, double>{},
   });
 
@@ -66,7 +70,7 @@ class _CartoonMapCanvasState extends State<CartoonMapCanvas> {
         _boundariesLoaded = true;
       });
     } catch (e) {
-      print('Error loading boundaries: $e');
+      debugPrint('Error loading boundaries: $e');
       setState(() => _boundariesLoaded = true);
     }
   }
@@ -220,15 +224,19 @@ class _CartoonMapCanvasState extends State<CartoonMapCanvas> {
               details.localPosition,
               size,
             );
+            final tapFraction = Offset(
+              (details.localPosition.dx / size.width).clamp(0.0, 1.0),
+              (details.localPosition.dy / size.height).clamp(0.0, 1.0),
+            );
             if (tappedRegionId != null) {
               final provinceName = _districtToProvince[tappedRegionId];
               widget.onRegionSelected?.call(tappedRegionId);
-              widget.onDistrictSelected?.call(tappedRegionId, provinceName);
+              widget.onDistrictSelected?.call(tappedRegionId, provinceName, tapFraction);
               widget.onRegionTapped?.call();
             } else {
               // Clear selection if background tapped
               widget.onRegionSelected?.call('');
-              widget.onDistrictSelected?.call('', null);
+              widget.onDistrictSelected?.call('', null, tapFraction);
               widget.onRegionTapped?.call();
             }
           },
@@ -240,6 +248,8 @@ class _CartoonMapCanvasState extends State<CartoonMapCanvas> {
                 regions: _regions,
                 selectedRegionId: widget.selectedRegionId,
                 selectedDistrictName: widget.selectedDistrictName,
+                focusMode: widget.focusMode,
+                focusedDistrictName: widget.focusedDistrictName,
                 provincePaths: _provincePaths,
                 districtPaths: _districtPaths,
                 provinceLabelPositions: _provinceLabelPositions,

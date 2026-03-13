@@ -13,6 +13,8 @@ class CartoonMapPainter extends CustomPainter {
   final Map<String, List<Path>> districtPaths;
   final Map<String, Offset> provinceLabelPositions;
   final String? selectedDistrictName;
+  final bool focusMode;
+  final String? focusedDistrictName;
   final MapVisualTheme theme;
 
   /// Map of district ID to completion percentage (0.0 - 1.0)
@@ -25,6 +27,8 @@ class CartoonMapPainter extends CustomPainter {
     required this.districtPaths,
     required this.provinceLabelPositions,
     this.selectedDistrictName,
+    this.focusMode = false,
+    this.focusedDistrictName,
     required this.theme,
     this.districtProgress = const <String, double>{},
   });
@@ -65,8 +69,6 @@ class CartoonMapPainter extends CustomPainter {
   void _drawProvince(Canvas canvas, Size size, SriLankaRegion region) {
     // Find matching boundary for this region
     List<Path>? polygons;
-    String? matchedKey;
-
     for (final entry in provincePaths.entries) {
       final keyLower = entry.key.toLowerCase();
       final displayLower = region.displayName.toLowerCase();
@@ -74,7 +76,6 @@ class CartoonMapPainter extends CustomPainter {
       if (keyLower.contains(displayLower) ||
           displayLower.contains(keyLower.split(' ')[0])) {
         polygons = entry.value;
-        matchedKey = entry.key;
         break;
       }
     }
@@ -96,6 +97,10 @@ class CartoonMapPainter extends CustomPainter {
     for (final entry in districtPaths.entries) {
       final districtId = entry.key;
       final districtPathList = entry.value;
+      final isFocusedDistrict =
+          focusedDistrictName != null &&
+          districtId.toLowerCase() == focusedDistrictName!.toLowerCase();
+      final shouldDim = focusMode && !isFocusedDistrict;
 
       // Get progress for this district
       final progress = districtProgress[districtId] ?? 0.0;
@@ -103,13 +108,14 @@ class CartoonMapPainter extends CustomPainter {
       // Gradually clear fog: lerp between lockedColor (Fog) and target progress color
       final targetColor = theme.getDistrictProgressColor(progress);
       final fillColor = Color.lerp(theme.lockedColor, targetColor, progress) ?? theme.lockedColor;
+      final opacity = shouldDim ? 0.12 : (progress == 0 ? 0.5 : 0.8);
 
       final fillPaint = Paint()
-        ..color = fillColor.withOpacity(progress == 0 ? 0.5 : 0.8)
+        ..color = fillColor.withOpacity(opacity)
         ..style = PaintingStyle.fill;
 
       final borderPaint = Paint()
-        ..color = theme.borderColor.withOpacity(0.1 + (0.1 * progress))
+        ..color = theme.borderColor.withOpacity(shouldDim ? 0.06 : 0.1 + (0.1 * progress))
         ..strokeWidth = 0.5
         ..style = PaintingStyle.stroke;
 
@@ -119,7 +125,9 @@ class CartoonMapPainter extends CustomPainter {
       }
       
       // Draw labels for all districts, but opacity depends on progress
-      _drawDistrictLabelFor(canvas, districtId, districtPathList, progress);
+      if (!focusMode || isFocusedDistrict) {
+        _drawDistrictLabelFor(canvas, districtId, districtPathList, progress);
+      }
     }
   }
 
@@ -151,17 +159,25 @@ class CartoonMapPainter extends CustomPainter {
 
   /// Draw the fog overlay that covers unexplored areas
   void _drawFogOverlay(Canvas canvas, Size size) {
-    // Total fog layer
+    if (!focusMode || focusedDistrictName == null) return;
+
+    final paths = districtPaths[focusedDistrictName!];
+    if (paths == null || paths.isEmpty) return;
+
+    final layerRect = Rect.fromLTWH(0, 0, size.width, size.height);
+    canvas.saveLayer(layerRect, Paint());
+
     final fogPaint = Paint()
-      ..color = theme.fogColor.withOpacity(theme.fogOpacity)
+      ..color = Colors.black.withOpacity(0.5)
       ..style = PaintingStyle.fill;
-      
-    // Create a path that covers the whole canvas EXCEPT the unlocked districts
-    // This is expensive if done every frame, but fine for prototype
-    // For simplicity, we just use BlendMode.dstIn or similar if we wanted a hole
-    // But since districts are already drawn, let's just use it creatively.
-    
-    // Instead of a hole, we'll just draw fog over everything then re-highlight selected
+    canvas.drawRect(layerRect, fogPaint);
+
+    final clearPaint = Paint()..blendMode = BlendMode.clear;
+    for (final path in paths) {
+      canvas.drawPath(path, clearPaint);
+    }
+
+    canvas.restore();
   }
 
   /// Add a grainy/noisy procedural texture
@@ -203,20 +219,6 @@ class CartoonMapPainter extends CustomPainter {
     }
   }
 
-  /// Draw region name label
-  void _drawRegionLabel(Canvas canvas, String label, Offset position) {
-    final textPainter = TextPainter(
-      text: TextSpan(text: label, style: theme.labelStyle),
-      textDirection: TextDirection.ltr,
-    );
-    textPainter.layout();
-
-    textPainter.paint(
-      canvas,
-      position - Offset(textPainter.width / 2, textPainter.height / 2),
-    );
-  }
-
   /// Draw simple outer border
   void _drawBorders(Canvas canvas, Size size) {
     final borderPaint = Paint()
@@ -241,6 +243,8 @@ class CartoonMapPainter extends CustomPainter {
         oldDelegate.districtPaths != districtPaths ||
         oldDelegate.provinceLabelPositions != provinceLabelPositions ||
         oldDelegate.selectedDistrictName != selectedDistrictName ||
+        oldDelegate.focusMode != focusMode ||
+        oldDelegate.focusedDistrictName != focusedDistrictName ||
         oldDelegate.theme != theme ||
         oldDelegate.districtProgress != districtProgress;
   }
