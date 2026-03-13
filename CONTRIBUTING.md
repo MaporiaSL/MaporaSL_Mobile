@@ -457,16 +457,16 @@ git commit --amend   # opens editor — edit, save, and close
 
 1. Start an interactive rebase for the last *N* commits (replace `N` with the number of commits you want to go back):
 
-   ```bash
-   git rebase -i HEAD~N
-   ```
+  ```bash
+  git rebase -i HEAD~N
+  ```
 
 2. In the editor that opens, change `pick` to `reword` (or just `r`) next to the commit you want to rename:
 
-   ```
-   reword a1b2c3d feat(map): add district boundaries
-   pick   d4e5f6g fix(auth): resolve token refresh
-   ```
+  ```
+  reword a1b2c3d feat(map): add district boundaries
+  pick   d4e5f6g fix(auth): resolve token refresh
+  ```
 
 3. Save and close. Git will pause at each `reword` commit and open your editor for the new message.
 
@@ -474,7 +474,75 @@ git commit --amend   # opens editor — edit, save, and close
 
 #### After amending a pushed commit
 
-If the commit was already pushed to a shared branch, you will need to force-push. **Only do this on your own feature branch — never on `main` or `develop`.**
+If the commit was already pushed to a shared branch, you will need to force-push. **Only do this on your own feature branch - never on `main` or `develop`.**
+
+### Deleting Commits
+
+Sometimes you need to remove one or more commits from your branch history.
+
+#### Delete the most recent commit(s)
+
+To remove the latest commit but **keep your working-directory changes**:
+
+```bash
+git reset HEAD~1
+```
+
+To remove the latest commit **and discard the changes entirely**:
+
+```bash
+git reset --hard HEAD~1
+```
+
+Replace `1` with the number of commits you want to remove (e.g. `HEAD~3` removes the last 3 commits).
+
+#### Delete an older commit (interactive rebase)
+
+1. Start an interactive rebase covering the commit you want to delete (replace `N` with the number of commits to go back):
+### Deleting Commits
+
+Sometimes you need to remove one or more commits from your branch history.
+
+#### Delete the most recent commit(s)
+
+To remove the latest commit but **keep your working-directory changes**:
+
+```bash
+git reset HEAD~1
+```
+
+To remove the latest commit **and discard the changes entirely**:
+
+```bash
+git reset --hard HEAD~1
+```
+
+Replace `1` with the number of commits you want to remove (e.g. `HEAD~3` removes the last 3 commits).
+
+#### Delete an older commit (interactive rebase)
+
+1. Start an interactive rebase covering the commit you want to delete (replace `N` with the number of commits to go back):
+>>>>>>> pr-62-merge
+
+   ```bash
+   git rebase -i HEAD~N
+   ```
+
+2. In the editor that opens, change `pick` to `drop` (or simply delete the line) for each commit you want to remove:
+
+   ```
+   pick   a1b2c3d feat(map): add district boundaries
+   drop   d4e5f6g wip: temporary debugging
+   pick   e7f8g9h fix(auth): resolve token refresh
+   ```
+
+3. Save and close. Git will replay the remaining commits, skipping the dropped ones.
+
+4. Resolve any merge conflicts if they arise, then run `git rebase --continue`.
+
+#### After removing pushed commits
+
+If the commits were already pushed to a remote branch you will need to force-push. **Only do this on your own feature branch - never on `main` or `develop`.**
 
 ```bash
 git push --force-with-lease origin feature/your-feature-name
