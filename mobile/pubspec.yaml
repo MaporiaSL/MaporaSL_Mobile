@@ -48,6 +48,8 @@ dependencies:
   light: ^4.1.0
   mapbox_maps_flutter: ^2.6.0
   image_picker: ^1.2.1
+  image_cropper: ^8.1.0
+  local_auth: ^2.3.0
   payhere_mobilesdk_flutter: ^3.2.2
   # Camera & Photos
   camera: ^0.11.0+2
@@ -64,6 +66,9 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  integration_test:
+    sdk: flutter
+  mocktail: ^1.0.4
   flutter_lints: ^3.0.1
   build_runner: ^2.4.9
   json_serializable: ^6.8.0

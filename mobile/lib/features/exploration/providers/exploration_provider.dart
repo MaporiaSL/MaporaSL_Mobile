@@ -9,6 +9,8 @@ class ExplorationState {
   final bool isVerifying;
   final String? error;
   final String? verifyingLocationId;
+  final int currentStepIndex;
+  final String? verificationStep;
   final List<DistrictAssignment> assignments;
   final List<DistrictSummary> districts;
 
@@ -17,6 +19,8 @@ class ExplorationState {
     required this.isVerifying,
     required this.error,
     required this.verifyingLocationId,
+    required this.currentStepIndex,
+    required this.verificationStep,
     required this.assignments,
     required this.districts,
   });
@@ -27,6 +31,8 @@ class ExplorationState {
       isVerifying: false,
       error: null,
       verifyingLocationId: null,
+      currentStepIndex: 0,
+      verificationStep: null,
       assignments: [],
       districts: [],
     );
@@ -37,6 +43,8 @@ class ExplorationState {
     bool? isVerifying,
     String? error,
     String? verifyingLocationId,
+    int? currentStepIndex,
+    String? verificationStep,
     List<DistrictAssignment>? assignments,
     List<DistrictSummary>? districts,
   }) {
@@ -45,6 +53,8 @@ class ExplorationState {
       isVerifying: isVerifying ?? this.isVerifying,
       error: error,
       verifyingLocationId: verifyingLocationId ?? this.verifyingLocationId,
+      currentStepIndex: currentStepIndex ?? this.currentStepIndex,
+      verificationStep: verificationStep ?? this.verificationStep,
       assignments: assignments ?? this.assignments,
       districts: districts ?? this.districts,
     );
@@ -74,22 +84,46 @@ class ExplorationNotifier extends StateNotifier<ExplorationState> {
     }
   }
 
-
-
   Future<void> verifyLocation(ExplorationLocation location) async {
     if (state.isVerifying) return;
     state = state.copyWith(
       isVerifying: true,
       verifyingLocationId: location.id,
+      currentStepIndex: 0,
+      verificationStep: 'Satellite Signal Strength',
       error: null,
     );
 
     String? errorMessage;
     try {
+      state = state.copyWith(
+        currentStepIndex: 1,
+        verificationStep: 'Main Geofence Boundary Check',
+      );
       await _ensureLocationPermission();
+
+      state = state.copyWith(
+        currentStepIndex: 2,
+        verificationStep: 'Multi-Path Reflection Correction',
+      );
       final samples = await _collectSamples();
+
+      state = state.copyWith(
+        currentStepIndex: 3,
+        verificationStep: 'Atmospheric Data Validation',
+      );
       await _api.visitLocation(locationId: location.id, samples: samples);
+
+      state = state.copyWith(
+        currentStepIndex: 4,
+        verificationStep: 'Proximity Finalization',
+      );
       await loadAssignments();
+
+      state = state.copyWith(
+        currentStepIndex: 5,
+        verificationStep: 'Verification complete',
+      );
     } catch (error) {
       errorMessage = error.toString();
     } finally {
@@ -145,5 +179,5 @@ class ExplorationNotifier extends StateNotifier<ExplorationState> {
 
 final explorationProvider =
     StateNotifierProvider<ExplorationNotifier, ExplorationState>((ref) {
-  return ExplorationNotifier(ExplorationApi());
-});
+      return ExplorationNotifier(ExplorationApi());
+    });
