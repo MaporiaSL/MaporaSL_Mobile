@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../core/constants/app_colors.dart';
+import '../../core/config/app_config.dart';
 import '../../features/auth/services/auth_gate.dart';
 import '../../features/onboarding/presentation/onboarding_screeens.dart';
 
@@ -45,6 +46,20 @@ class _SplashScreenState extends State<SplashScreen>
 
   Future<void> _navigateNext() async {
     if (!mounted) return;
+
+    if (AppConfig.authBypass) {
+      Navigator.of(context).pushReplacement(
+        PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) =>
+              const AuthGate(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return FadeTransition(opacity: animation, child: child);
+          },
+          transitionDuration: const Duration(milliseconds: 500),
+        ),
+      );
+      return;
+    }
 
     final user = FirebaseAuth.instance.currentUser;
 
