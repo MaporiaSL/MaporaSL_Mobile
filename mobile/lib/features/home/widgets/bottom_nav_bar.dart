@@ -24,15 +24,30 @@ class BottomNavBar extends StatelessWidget {
       height: 75,
       items: <Widget>[
         _buildNavItem(Icons.map, Icons.map_outlined, 'Map', 0),
-        _buildNavItem(Icons.photo_album, Icons.photo_album_outlined, 'Album', 1),
+        _buildNavItem(
+          Icons.photo_album,
+          Icons.photo_album_outlined,
+          'Album',
+          1,
+        ),
         _buildNavItem(Icons.card_travel, Icons.card_travel, 'Trips', 2),
         _buildNavItem(Icons.timeline, Icons.timeline_outlined, 'Timeline', 3),
-        _buildNavItem(Icons.shopping_bag, Icons.shopping_bag_outlined, 'Shop', 4),
+        _buildNavItem(
+          Icons.shopping_bag,
+          Icons.shopping_bag_outlined,
+          'Shop',
+          4,
+        ),
       ],
     );
   }
 
-  Widget _buildNavItem(IconData activeIcon, IconData inactiveIcon, String label, int index) {
+  Widget _buildNavItem(
+    IconData activeIcon,
+    IconData inactiveIcon,
+    String label,
+    int index,
+  ) {
     final isActive = currentIndex == index;
     return Padding(
       padding: const EdgeInsets.only(top: 6.0),

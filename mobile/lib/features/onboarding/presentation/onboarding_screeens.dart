@@ -75,14 +75,14 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               right: 16,
               child: AnimatedOpacity(
                 opacity: currentIndex < 2 ? 1.0 : 0.0,
-                duration: useAnimations 
+                duration: useAnimations
                     ? const Duration(milliseconds: 300)
                     : Duration.zero,
                 child: AnimatedSlide(
                   offset: currentIndex < 2
                       ? Offset.zero
                       : const Offset(0, -0.5),
-                  duration: useAnimations 
+                  duration: useAnimations
                       ? const Duration(milliseconds: 300)
                       : Duration.zero,
                   curve: Curves.easeInOut,
@@ -202,7 +202,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: List.generate(3, (index) {
               return AnimatedContainer(
-                duration: useAnimations 
+                duration: useAnimations
                     ? const Duration(milliseconds: 300)
                     : Duration.zero,
                 curve: Curves.easeInOut,
