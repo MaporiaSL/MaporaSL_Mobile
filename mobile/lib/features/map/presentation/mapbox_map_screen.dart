@@ -35,8 +35,6 @@ class _MapboxMapScreenState extends State<MapboxMapScreen> {
     String styleUrl = MapConstants.gameStyleUrl;
     if (theme == 'dark') {
       styleUrl = MapConstants.darkStyleUrl;
-    } else if (theme == 'cartoon') {
-      styleUrl = MapConstants.cartoonStyleUrl;
     }
 
     mapboxMap.loadStyleURI(styleUrl);
