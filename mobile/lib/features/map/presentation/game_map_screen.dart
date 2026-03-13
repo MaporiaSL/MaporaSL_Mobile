@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 import '../../../core/constants/map_constants.dart';
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 
 /// GameMapScreen - Main map interface with gamification features
 /// Displays Sri Lanka map with custom game-styled theme,
@@ -74,25 +75,30 @@ class _GameMapScreenState extends State<GameMapScreen> {
         ],
       ),
       // Bottom navigation bar
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedBottomNavIndex,
+      bottomNavigationBar: CurvedNavigationBar(
+        index: _selectedBottomNavIndex,
+        
+        // ==========================================
+        // YOUR COLORS GO HERE:
+        // ==========================================
+        color: Colors.blue.shade700, // The main color of the bar itself
+        buttonBackgroundColor: Colors.blue.shade900, // The color of the floating circle
+        backgroundColor: Colors.white, // ⚠️ CRITICAL: This must match your Scaffold's body color!
+        // ==========================================
+
         onTap: (index) {
           setState(() {
             _selectedBottomNavIndex = index;
           });
           _handleBottomNavigation(index);
         },
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.map), label: 'Map'),
-          BottomNavigationBarItem(icon: Icon(Icons.flag), label: 'Quests'),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.inventory),
-            label: 'Inventory',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'Settings',
-          ),
+        
+        // Don't forget to color your icons so they contrast with the bar!
+        items: const <Widget>[
+          Icon(Icons.map, size: 30, color: Colors.white),       
+          Icon(Icons.flag, size: 30, color: Colors.white),      
+          Icon(Icons.inventory, size: 30, color: Colors.white), 
+          Icon(Icons.settings, size: 30, color: Colors.white),  
         ],
       ),
     );

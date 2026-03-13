@@ -6,6 +6,7 @@ import '../../trips/presentation/trips_page.dart';
 import '../../trips/presentation/memory_lane_page.dart';
 import '../../shop/presentation/shop_page.dart';
 import '../../profile/presentation/profile_screen.dart';
+import '../../places/presentation/add_destination_page.dart';
 import '../widgets/bottom_nav_bar.dart';
 import '../../../core/services/auth_api.dart';
 import '../../../core/services/local_prefs.dart';
@@ -79,9 +80,27 @@ class _HomeScreenState extends State<HomeScreen> {
           : Stack(
               children: [
                 _screens[_selectedIndex],
+                if (_selectedIndex == 0)
                 Positioned(
-                  top: 12,
-                  right: 12,
+                  top: 130,
+                  right: 16,
+                  child: FloatingActionButton(
+                    heroTag: 'add_gem_btn',
+                    backgroundColor: Colors.blue.shade700,
+                    foregroundColor: Colors.white,
+                    elevation: 4,
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const AddDestinationPage()),
+                      );
+                    },
+                    child: const Icon(Icons.add_location_alt),
+                  ),
+                ),
+                Positioned(
+                  top: 10, // Moved profile icon down to make room for FAB
+                  right: 16,
                   child: SafeArea(
                     child: Material(
                       color: Colors.transparent,
