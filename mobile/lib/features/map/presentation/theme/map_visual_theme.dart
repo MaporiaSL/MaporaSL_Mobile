@@ -47,6 +47,25 @@ class MapVisualTheme {
     this.regionFillOverrides = const <String, Color>{},
   });
 
+  factory MapVisualTheme.dark() {
+    return const MapVisualTheme(
+      backgroundColor: Color(0xFF0F172A), // Very dark blue
+      borderColor: Color(0xFF334155), // Dark slate
+      fogColor: Color(0xFF1E293B), // Dark slate blue
+      fogOpacity: 0.8,
+      unlockedColor: Color(0xFF10B981),
+      nearCompleteColor: Color(0xFF0EA5E9),
+      halfwayColor: Color(0xFF6366F1),
+      quarterColor: Color(0xFF64748B),
+      lockedColor: Color(0xFF334155),
+      labelStyle: TextStyle(
+        color: Color(0xFFF8FAFC), // Light text
+        fontSize: 10,
+        fontWeight: FontWeight.w500,
+      ),
+    );
+  }
+
   Color resolveRegionFill(String regionId, Color fallback) {
     return regionFillOverrides[regionId] ?? fallback;
   }
