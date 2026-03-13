@@ -7,6 +7,7 @@ import 'widgets/cartoon_map_canvas.dart';
 import 'widgets/map_legend.dart';
 import 'theme/map_visual_theme.dart';
 import '../../exploration/providers/exploration_provider.dart';
+import '../../../core/providers/theme_provider.dart';
 import '../../exploration/data/models/exploration_models.dart';
 import '../../visits/presentation/widgets/dynamic_visit_sheet.dart';
 
@@ -42,9 +43,6 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     }
     return progress;
   }
-
-  // Light theme map visual appearance with progressive unlock colors
-  static const MapVisualTheme _mapTheme = MapVisualTheme();
 
   @override
   void initState() {
@@ -115,8 +113,11 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     // Calculate district progress (0.0-1.0 for each district)
     final districtProgress = _calculateDistrictProgress(assignments);
 
-    // Use the default light theme with progressive colors
-    final theme = _mapTheme;
+    // Watch the global theme provider
+    final mapThemeStr = ref.watch(themeProvider);
+    final theme = (mapThemeStr == 'dark') 
+        ? MapVisualTheme.dark() 
+        : const MapVisualTheme();
 
     return Scaffold(
       appBar: AppBar(
