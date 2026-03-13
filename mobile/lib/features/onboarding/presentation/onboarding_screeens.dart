@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gemified_travel_portfolio/features/onboarding/widgets/brush_highlight.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/providers/accessibility_provider.dart';
 import '../../auth/services/auth_gate.dart';
 import '../../auth/presentation/login_screen.dart';
 
-class OnboardingScreen extends StatefulWidget {
+class OnboardingScreen extends ConsumerStatefulWidget {
   const OnboardingScreen({super.key});
 
   @override
-  State<OnboardingScreen> createState() => _OnboardingScreenState();
+  ConsumerState<OnboardingScreen> createState() => _OnboardingScreenState();
 }
 
-class _OnboardingScreenState extends State<OnboardingScreen> {
+class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   final PageController _pageController = PageController();
   int currentIndex = 0;
 
@@ -23,6 +25,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final accessibility = ref.watch(accessibilityProvider);
+    final useAnimations = accessibility.useAnimations;
+
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
@@ -69,12 +74,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               right: 16,
               child: AnimatedOpacity(
                 opacity: currentIndex < 2 ? 1.0 : 0.0,
-                duration: const Duration(milliseconds: 300),
+                duration: useAnimations 
+                    ? const Duration(milliseconds: 300)
+                    : Duration.zero,
                 child: AnimatedSlide(
                   offset: currentIndex < 2
                       ? Offset.zero
                       : const Offset(0, -0.5),
-                  duration: const Duration(milliseconds: 300),
+                  duration: useAnimations 
+                      ? const Duration(milliseconds: 300)
+                      : Duration.zero,
                   curve: Curves.easeInOut,
                   child: IgnorePointer(
                     ignoring: currentIndex >= 2,
@@ -124,12 +133,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     required String description,
     required String buttonText,
   }) {
+    final accessibility = ref.watch(accessibilityProvider);
+    final useAnimations = accessibility.useAnimations;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 0),
       child: Column(
         children: [
           ClipRRect(
-            borderRadius: BorderRadius.only(
+            borderRadius: const BorderRadius.only(
               bottomLeft: Radius.circular(30),
               bottomRight: Radius.circular(30),
             ),
@@ -187,7 +199,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: List.generate(3, (index) {
               return AnimatedContainer(
-                duration: const Duration(milliseconds: 300),
+                duration: useAnimations 
+                    ? const Duration(milliseconds: 300)
+                    : Duration.zero,
                 curve: Curves.easeInOut,
                 margin: const EdgeInsets.symmetric(horizontal: 4),
                 height: 8,
@@ -221,10 +235,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 ),
                 onPressed: () {
                   if (currentIndex < 2) {
-                    _pageController.nextPage(
-                      duration: const Duration(milliseconds: 400),
-                      curve: Curves.easeInOutCubic,
-                    );
+                    if (useAnimations) {
+                      _pageController.nextPage(
+                        duration: const Duration(milliseconds: 400),
+                        curve: Curves.easeInOutCubic,
+                      );
+                    } else {
+                      _pageController.jumpToPage(currentIndex + 1);
+                    }
                   } else {
                     // Navigate to AuthGate (shows LoginScreen for unauthenticated users)
                     Navigator.of(context).pushReplacement(

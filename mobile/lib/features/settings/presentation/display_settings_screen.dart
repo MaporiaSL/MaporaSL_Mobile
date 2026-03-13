@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:dio/dio.dart' as dio;
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/services/auth_service.dart';
 import '../../../../core/services/api_client.dart';
+import '../../../../core/providers/theme_provider.dart';
+import '../../../../core/providers/accessibility_provider.dart';
 
-class DisplaySettingsScreen extends StatefulWidget {
+class DisplaySettingsScreen extends ConsumerStatefulWidget {
   const DisplaySettingsScreen({super.key});
 
   @override
-  State<DisplaySettingsScreen> createState() => _DisplaySettingsScreenState();
+  ConsumerState<DisplaySettingsScreen> createState() => _DisplaySettingsScreenState();
 }
 
-class _DisplaySettingsScreenState extends State<DisplaySettingsScreen> {
+class _DisplaySettingsScreenState extends ConsumerState<DisplaySettingsScreen> {
   final _apiClient = ApiClient();
   final _authService = AuthService();
 
-  String _mapTheme = 'default';
   bool _cloudAnimation = true;
   String _units = 'km';
   String _language = 'English';
@@ -35,13 +35,7 @@ class _DisplaySettingsScreenState extends State<DisplaySettingsScreen> {
 
   Future<void> _fetchDisplaySettings() async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final savedTheme = prefs.getString('mapTheme');
-      
       setState(() {
-        if (savedTheme != null) {
-          _mapTheme = savedTheme;
-        }
         _isLoading = false;
       });
     } catch (e) {
@@ -51,18 +45,15 @@ class _DisplaySettingsScreenState extends State<DisplaySettingsScreen> {
     }
   }
 
-  Future<void> _updateDisplaySettings() async {
+  Future<void> _updateDisplaySettings(String mapTheme) async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('mapTheme', _mapTheme);
-
       final user = _authService.currentUser;
       if (user == null) return;
 
       await _apiClient.put(
         '/api/users/${user.uid}/display',
         data: {
-          'mapTheme': _mapTheme,
+          'mapTheme': mapTheme,
           'cloudAnimation': _cloudAnimation,
           'units': _units,
           'language': _language,
@@ -70,12 +61,7 @@ class _DisplaySettingsScreenState extends State<DisplaySettingsScreen> {
       );
     } catch (e) {
       if (mounted) {
-        String errMsg = 'Failed to update map settings';
-        if (e is dio.DioException && e.response != null) {
-          errMsg = 'Backend Error: ${e.response?.statusCode} - ${e.response?.data}';
-        } else {
-          errMsg = e.toString();
-        }
+        String errMsg = 'Failed to update map settings: $e';
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(errMsg, style: const TextStyle(fontSize: 12)),
@@ -131,17 +117,16 @@ class _DisplaySettingsScreenState extends State<DisplaySettingsScreen> {
                               style: TextStyle(fontSize: 16),
                             ),
                             DropdownButton<String>(
-                              value: _mapTheme,
+                              value: ref.watch(themeProvider),
                               underline: const SizedBox(),
                               items: const [
-                                DropdownMenuItem(value: 'default', child: Text('Default')),
+                                DropdownMenuItem(value: 'light', child: Text('Light Mode')),
                                 DropdownMenuItem(value: 'dark', child: Text('Dark Mode')),
-                                DropdownMenuItem(value: 'cartoon', child: Text('Cartoon / Game')),
                               ],
                               onChanged: (val) {
                                 if (val != null) {
-                                  setState(() => _mapTheme = val);
-                                  _updateDisplaySettings();
+                                  ref.read(themeProvider.notifier).setTheme(val);
+                                  _updateDisplaySettings(val);
                                 }
                               },
                             ),
@@ -152,10 +137,10 @@ class _DisplaySettingsScreenState extends State<DisplaySettingsScreen> {
                       SwitchListTile(
                         title: const Text('Cloud Animations'),
                         subtitle: const Text('Turn off for better performance'),
-                        value: _cloudAnimation,
-                        onChanged: (val) {
+                        value: ref.watch(accessibilityProvider).reduceMotion ? false : _cloudAnimation,
+                        onChanged: ref.watch(accessibilityProvider).reduceMotion ? null : (val) {
                           setState(() => _cloudAnimation = val);
-                          _updateDisplaySettings();
+                          _updateDisplaySettings(ref.read(themeProvider));
                         },
                         secondary: const Icon(Icons.cloud_outlined),
                       ),
@@ -190,7 +175,7 @@ class _DisplaySettingsScreenState extends State<DisplaySettingsScreen> {
                               selected: {_units},
                               onSelectionChanged: (Set<String> newSelection) {
                                 setState(() => _units = newSelection.first);
-                                _updateDisplaySettings();
+                                _updateDisplaySettings(ref.read(themeProvider));
                               },
                               style: ButtonStyle(
                                 visualDensity: VisualDensity.compact,
@@ -221,7 +206,7 @@ class _DisplaySettingsScreenState extends State<DisplaySettingsScreen> {
                               onChanged: (val) {
                                 if (val != null) {
                                   setState(() => _language = val);
-                                  _updateDisplaySettings();
+                                  _updateDisplaySettings(ref.read(themeProvider));
                                 }
                               },
                             ),
