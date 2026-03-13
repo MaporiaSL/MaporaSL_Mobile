@@ -73,11 +73,11 @@ class DistrictAssignment {
       unlockedAt: json['unlockedAt'] != null
           ? DateTime.tryParse(json['unlockedAt'].toString())
           : null,
-        isUnlocked: json['isUnlocked'] == true,
-        center: json['center'] is Map<String, dynamic>
+      isUnlocked: json['isUnlocked'] == true,
+      center: json['center'] is Map<String, dynamic>
           ? GeoPoint.fromJson(Map<String, dynamic>.from(json['center'] as Map))
           : null,
-        bounds: json['bounds'] is Map<String, dynamic>
+      bounds: json['bounds'] is Map<String, dynamic>
           ? GeoBounds.fromJson(Map<String, dynamic>.from(json['bounds'] as Map))
           : null,
       locations: locationsRaw

@@ -12,7 +12,11 @@ class CartoonMapCanvas extends StatefulWidget {
   final String? selectedDistrictName;
   final VoidCallback? onRegionTapped;
   final Function(String regionId)? onRegionSelected;
-  final void Function(String districtName, String? provinceName, Offset tapFraction)?
+  final void Function(
+    String districtName,
+    String? provinceName,
+    Offset tapFraction,
+  )?
   onDistrictSelected;
   final MapVisualTheme theme;
   final bool focusMode;
@@ -231,7 +235,11 @@ class _CartoonMapCanvasState extends State<CartoonMapCanvas> {
             if (tappedRegionId != null) {
               final provinceName = _districtToProvince[tappedRegionId];
               widget.onRegionSelected?.call(tappedRegionId);
-              widget.onDistrictSelected?.call(tappedRegionId, provinceName, tapFraction);
+              widget.onDistrictSelected?.call(
+                tappedRegionId,
+                provinceName,
+                tapFraction,
+              );
               widget.onRegionTapped?.call();
             } else {
               // Clear selection if background tapped

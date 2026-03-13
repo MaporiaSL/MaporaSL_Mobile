@@ -17,6 +17,8 @@ class MapVisualTheme {
 
   final Color selectedDistrictBorderColor;
   final double selectedDistrictBorderWidth;
+  final Color selectedDistrictGlassTint;
+  final Color selectedDistrictGlowColor;
 
   final Set<String> lockedDistrictIds;
   final TextStyle labelStyle;
@@ -36,8 +38,12 @@ class MapVisualTheme {
     this.halfwayColor = const Color(0xFF6366F1), // indigo - 50%+
     this.quarterColor = const Color(0xFF94A3B8), // Slate - 25%+
     this.lockedColor = const Color(0xFFCBD5E1), // Light Slate (Fog) - <25%
-    this.selectedDistrictBorderColor = const Color(0xFF0EA5E9), // Blue highlight
+    this.selectedDistrictBorderColor = const Color(
+      0xFF0EA5E9,
+    ), // Blue highlight
     this.selectedDistrictBorderWidth = 2.0,
+    this.selectedDistrictGlassTint = const Color(0xFFBDE7F7),
+    this.selectedDistrictGlowColor = const Color(0xFFE9D5FF),
     this.lockedDistrictIds = const <String>{},
     this.labelStyle = const TextStyle(
       color: Color(0xFF334155), // Dark Slate Text
@@ -58,6 +64,8 @@ class MapVisualTheme {
       halfwayColor: Color(0xFF6366F1),
       quarterColor: Color(0xFF64748B),
       lockedColor: Color(0xFF334155),
+      selectedDistrictGlassTint: Color(0xFF334155),
+      selectedDistrictGlowColor: Color(0xFF67E8F9),
       labelStyle: TextStyle(
         color: Color(0xFFF8FAFC), // Light text
         fontSize: 10,

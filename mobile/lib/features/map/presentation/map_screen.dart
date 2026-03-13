@@ -96,9 +96,11 @@ class _MapScreenState extends ConsumerState<MapScreen> {
           ),
         );
       }
-      
+
       // Show success message when verification completes
-      if (previous?.isVerifying == true && !next.isVerifying && next.error == null) {
+      if (previous?.isVerifying == true &&
+          !next.isVerifying &&
+          next.error == null) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('✅ Location verified successfully!'),
@@ -111,24 +113,28 @@ class _MapScreenState extends ConsumerState<MapScreen> {
 
     final explorationState = ref.watch(explorationProvider);
     final assignments = explorationState.assignments;
-    final selectedAssignment = _assignmentForDistrict(assignments, selectedDistrict);
-    final selectedLocations = selectedAssignment?.locations ?? const <ExplorationLocation>[];
-    final districtLocked = selectedAssignment == null
-        ? false
-        : !selectedAssignment.isUnlocked;
+    final selectedAssignment = _assignmentForDistrict(
+      assignments,
+      selectedDistrict,
+    );
+    final selectedLocations =
+        selectedAssignment?.locations ?? const <ExplorationLocation>[];
 
     // Calculate district progress (0.0-1.0 for each district)
     final districtProgress = _calculateDistrictProgress(assignments);
 
     // Watch the global theme provider
     final mapThemeStr = ref.watch(themeProvider);
-    final theme = (mapThemeStr == 'dark') 
-        ? MapVisualTheme.dark() 
+    final theme = (mapThemeStr == 'dark')
+        ? MapVisualTheme.dark()
         : const MapVisualTheme();
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('🗺️ Discover Sri Lanka', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: const Text(
+          '🗺️ Discover Sri Lanka',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         elevation: 0,
         backgroundColor: AppColors.background,
         foregroundColor: AppColors.textDark,
@@ -145,8 +151,12 @@ class _MapScreenState extends ConsumerState<MapScreen> {
             );
             final center = Offset(size.width / 2, size.height / 2);
             final scale = _isDistrictFocused ? 2.15 : 1.0;
-            final tx = _isDistrictFocused ? center.dx - (focusPx.dx * scale) : 0.0;
-            final ty = _isDistrictFocused ? center.dy - (focusPx.dy * scale) : 0.0;
+            final tx = _isDistrictFocused
+                ? center.dx - (focusPx.dx * scale)
+                : 0.0;
+            final ty = _isDistrictFocused
+                ? center.dy - (focusPx.dy * scale)
+                : 0.0;
 
             return Stack(
               children: [
@@ -167,52 +177,59 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                         focusedDistrictName: selectedDistrict,
                         theme: theme,
                         districtProgress: districtProgress,
-                        onDistrictSelected: (districtName, provinceName, tapFraction) {
-                          setState(() {
-                            if (districtName.isEmpty) {
-                              selectedDistrict = null;
-                              selectedProvince = null;
-                              _isDistrictFocused = false;
-                              _selectedLocation = null;
-                              _focusFraction = const Offset(0.5, 0.5);
-                              return;
-                            }
+                        onDistrictSelected:
+                            (districtName, provinceName, tapFraction) {
+                              setState(() {
+                                if (districtName.isEmpty) {
+                                  selectedDistrict = null;
+                                  selectedProvince = null;
+                                  _isDistrictFocused = false;
+                                  _selectedLocation = null;
+                                  _focusFraction = const Offset(0.5, 0.5);
+                                  return;
+                                }
 
-                            final sameDistrict =
-                                _normalizeKey(selectedDistrict) == _normalizeKey(districtName);
-                            if (sameDistrict && _isDistrictFocused) {
-                              selectedDistrict = null;
-                              selectedProvince = null;
-                              _isDistrictFocused = false;
-                              _selectedLocation = null;
-                              _focusFraction = const Offset(0.5, 0.5);
-                              return;
-                            }
+                                final sameDistrict =
+                                    _normalizeKey(selectedDistrict) ==
+                                    _normalizeKey(districtName);
+                                if (sameDistrict && _isDistrictFocused) {
+                                  selectedDistrict = null;
+                                  selectedProvince = null;
+                                  _isDistrictFocused = false;
+                                  _selectedLocation = null;
+                                  _focusFraction = const Offset(0.5, 0.5);
+                                  return;
+                                }
 
-                            selectedDistrict = districtName;
-                            selectedProvince =
-                                (provinceName != null && provinceName.isNotEmpty)
-                                ? provinceName
-                                : null;
-                            _isDistrictFocused = true;
-                            _selectedLocation = null;
+                                selectedDistrict = districtName;
+                                selectedProvince =
+                                    (provinceName != null &&
+                                        provinceName.isNotEmpty)
+                                    ? provinceName
+                                    : null;
+                                _isDistrictFocused = true;
+                                _selectedLocation = null;
 
-                            final assignment = _assignmentForDistrict(assignments, districtName);
-                            if (assignment != null && assignment.center != null) {
-                              final centerPx = _latLngToCanvas(
-                                assignment.center!.latitude,
-                                assignment.center!.longitude,
-                                size,
-                              );
-                              _focusFraction = Offset(
-                                (centerPx.dx / size.width).clamp(0.0, 1.0),
-                                (centerPx.dy / size.height).clamp(0.0, 1.0),
-                              );
-                            } else {
-                              _focusFraction = tapFraction;
-                            }
-                          });
-                        },
+                                final assignment = _assignmentForDistrict(
+                                  assignments,
+                                  districtName,
+                                );
+                                if (assignment != null &&
+                                    assignment.center != null) {
+                                  final centerPx = _latLngToCanvas(
+                                    assignment.center!.latitude,
+                                    assignment.center!.longitude,
+                                    size,
+                                  );
+                                  _focusFraction = Offset(
+                                    (centerPx.dx / size.width).clamp(0.0, 1.0),
+                                    (centerPx.dy / size.height).clamp(0.0, 1.0),
+                                  );
+                                } else {
+                                  _focusFraction = tapFraction;
+                                }
+                              });
+                            },
                       ),
                       if (_isDistrictFocused && selectedLocations.isNotEmpty)
                         ...selectedLocations.map((location) {
@@ -258,7 +275,9 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                     right: 16,
                     child: _FocusHintBar(
                       district: selectedDistrict,
-                      locked: districtLocked,
+                      onRefresh: () => ref
+                          .read(explorationProvider.notifier)
+                          .loadAssignments(),
                       onExit: () {
                         setState(() {
                           selectedDistrict = null;
@@ -268,17 +287,6 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                           _focusFraction = const Offset(0.5, 0.5);
                         });
                       },
-                    ),
-                  ),
-
-                if (_isDistrictFocused && selectedLocations.isEmpty)
-                  Positioned(
-                    left: 16,
-                    right: 16,
-                    bottom: 24,
-                    child: _EmptyDistrictCard(
-                      district: selectedDistrict,
-                      onRetry: () => ref.read(explorationProvider.notifier).loadAssignments(),
                     ),
                   ),
 
@@ -320,12 +328,12 @@ class _MapScreenState extends ConsumerState<MapScreen> {
 
 class _FocusHintBar extends StatelessWidget {
   final String? district;
-  final bool locked;
+  final VoidCallback onRefresh;
   final VoidCallback onExit;
 
   const _FocusHintBar({
     required this.district,
-    required this.locked,
+    required this.onRefresh,
     required this.onExit,
   });
 
@@ -335,71 +343,35 @@ class _FocusHintBar extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
-        color: isDark ? Colors.black.withOpacity(0.72) : Colors.white.withOpacity(0.92),
+        color: isDark
+            ? Colors.black.withOpacity(0.72)
+            : Colors.white.withOpacity(0.92),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: isDark ? Colors.white24 : Colors.black12,
-        ),
+        border: Border.all(color: isDark ? Colors.white24 : Colors.black12),
       ),
       child: Row(
         children: [
-          Icon(
-            locked ? Icons.lock_outline : Icons.explore,
-            color: locked ? Colors.orange.shade300 : Colors.green.shade400,
-          ),
-          const SizedBox(width: 10),
           Expanded(
             child: Text(
-              district == null
-                  ? 'District focus mode'
-                  : '$district focused. Tap outside district to return.',
+              district ?? 'District',
               style: TextStyle(
                 color: isDark ? Colors.white : AppColors.textDark,
                 fontWeight: FontWeight.w600,
+                fontSize: 16,
               ),
             ),
           ),
-          TextButton(onPressed: onExit, child: const Text('Full Map')),
+          IconButton(
+            onPressed: onRefresh,
+            icon: const Icon(Icons.refresh),
+            tooltip: 'Refresh assignments',
+          ),
+          IconButton(
+            onPressed: onExit,
+            icon: const Icon(Icons.close),
+            tooltip: 'Exit district focus',
+          ),
         ],
-      ),
-    );
-  }
-}
-
-class _EmptyDistrictCard extends StatelessWidget {
-  final String? district;
-  final VoidCallback onRetry;
-
-  const _EmptyDistrictCard({required this.district, required this.onRetry});
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(14),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'No assigned places for ${district ?? 'this district'} yet',
-              style: const TextStyle(fontWeight: FontWeight.w700),
-            ),
-            const SizedBox(height: 6),
-            const Text(
-              'Try refreshing assignments. If this persists, backend assignment data needs regeneration.',
-            ),
-            const SizedBox(height: 10),
-            Align(
-              alignment: Alignment.centerRight,
-              child: ElevatedButton.icon(
-                onPressed: onRetry,
-                icon: const Icon(Icons.refresh),
-                label: const Text('Refresh Assignments'),
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
@@ -477,7 +449,11 @@ class _PlaceDetailCard extends StatelessWidget {
                     child: ElevatedButton.icon(
                       onPressed: location.visited ? null : onVerify,
                       icon: const Icon(Icons.verified),
-                      label: Text(location.visited ? 'Already Verified' : 'Verify This Place'),
+                      label: Text(
+                        location.visited
+                            ? 'Already Verified'
+                            : 'Verify This Place',
+                      ),
                     ),
                   ),
                 ],

@@ -104,18 +104,39 @@ class CartoonMapPainter extends CustomPainter {
 
       // Get progress for this district
       final progress = districtProgress[districtId] ?? 0.0;
-      
+
       // Gradually clear fog: lerp between lockedColor (Fog) and target progress color
       final targetColor = theme.getDistrictProgressColor(progress);
-      final fillColor = Color.lerp(theme.lockedColor, targetColor, progress) ?? theme.lockedColor;
-      final opacity = shouldDim ? 0.12 : (progress == 0 ? 0.5 : 0.8);
+      var fillColor =
+          Color.lerp(theme.lockedColor, targetColor, progress) ??
+          theme.lockedColor;
+      if (isFocusedDistrict && focusMode) {
+        fillColor =
+            Color.lerp(fillColor, theme.selectedDistrictGlassTint, 0.45) ??
+            theme.selectedDistrictGlassTint;
+      }
+      final opacity = shouldDim
+          ? 0.12
+          : (isFocusedDistrict && focusMode
+                ? 0.92
+                : (progress == 0 ? 0.5 : 0.8));
 
       final fillPaint = Paint()
         ..color = fillColor.withOpacity(opacity)
         ..style = PaintingStyle.fill;
 
       final borderPaint = Paint()
-        ..color = theme.borderColor.withOpacity(shouldDim ? 0.06 : 0.1 + (0.1 * progress))
+        ..color =
+            (isFocusedDistrict && focusMode
+                    ? theme.selectedDistrictBorderColor
+                    : theme.borderColor)
+                .withOpacity(
+                  shouldDim
+                      ? 0.06
+                      : (isFocusedDistrict && focusMode
+                            ? 0.45
+                            : 0.1 + (0.1 * progress)),
+                )
         ..strokeWidth = 0.5
         ..style = PaintingStyle.stroke;
 
@@ -123,7 +144,7 @@ class CartoonMapPainter extends CustomPainter {
         canvas.drawPath(path, fillPaint);
         canvas.drawPath(path, borderPaint);
       }
-      
+
       // Draw labels for all districts, but opacity depends on progress
       if (!focusMode || isFocusedDistrict) {
         _drawDistrictLabelFor(canvas, districtId, districtPathList, progress);
@@ -132,29 +153,37 @@ class CartoonMapPainter extends CustomPainter {
   }
 
   /// Calculate centroid and draw district label
-  void _drawDistrictLabelFor(Canvas canvas, String districtId, List<Path> paths, double progress) {
+  void _drawDistrictLabelFor(
+    Canvas canvas,
+    String districtId,
+    List<Path> paths,
+    double progress,
+  ) {
     if (paths.isEmpty) return;
-    
+
     // Simple way to get a center for the label
     final bounds = paths.first.getBounds();
     final center = bounds.center;
 
     // Label becomes clearer as fog clears
     final labelOpacity = (0.2 + (0.6 * progress)).clamp(0.0, 1.0);
-    
+
     final textPainter = TextPainter(
       text: TextSpan(
-        text: districtId, 
+        text: districtId,
         style: theme.labelStyle.copyWith(
           color: Colors.white.withOpacity(labelOpacity),
           fontSize: 8,
           fontWeight: progress > 0.5 ? FontWeight.bold : FontWeight.normal,
-        )
+        ),
       ),
       textDirection: TextDirection.ltr,
     );
     textPainter.layout();
-    textPainter.paint(canvas, center - Offset(textPainter.width / 2, textPainter.height / 2));
+    textPainter.paint(
+      canvas,
+      center - Offset(textPainter.width / 2, textPainter.height / 2),
+    );
   }
 
   /// Draw the fog overlay that covers unexplored areas
@@ -184,14 +213,16 @@ class CartoonMapPainter extends CustomPainter {
   void _drawGrainOverlay(Canvas canvas, Size size) {
     final isDark = theme.backgroundColor.computeLuminance() < 0.5;
     final paint = Paint()
-      ..color = (isDark ? Colors.white : const Color(0xFF334155)).withOpacity(0.04)
+      ..color = (isDark ? Colors.white : const Color(0xFF334155)).withOpacity(
+        0.04,
+      )
       ..strokeWidth = 1.0;
-      
+
     final random = math.Random(42); // Seed for stability
     for (int i = 0; i < 1000; i++) {
-       final x = random.nextDouble() * size.width;
-       final y = random.nextDouble() * size.height;
-       canvas.drawPoints(ui.PointMode.points, [Offset(x, y)], paint);
+      final x = random.nextDouble() * size.width;
+      final y = random.nextDouble() * size.height;
+      canvas.drawPoints(ui.PointMode.points, [Offset(x, y)], paint);
     }
   }
 
@@ -206,9 +237,9 @@ class CartoonMapPainter extends CustomPainter {
       ..color = theme.selectedDistrictBorderColor
       ..strokeWidth = 2.0
       ..style = PaintingStyle.stroke;
-      
+
     final outerGlowPaint = Paint()
-      ..color = theme.selectedDistrictBorderColor.withOpacity(0.2)
+      ..color = theme.selectedDistrictGlowColor.withOpacity(0.38)
       ..strokeWidth = 4.0
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2)
       ..style = PaintingStyle.stroke;
