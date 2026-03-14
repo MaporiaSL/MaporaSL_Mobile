@@ -1,9 +1,9 @@
-# Photo Album Feature Specification
+﻿# Photo Album Feature Specification
 
 **Version**: 1.0  
 **Date**: January 27, 2026  
-**Status**: 📋 Planning Phase  
-**Priority**: 🟡 HIGH - User-generated content core
+**Status**: ðŸ“‹ Planning Phase  
+**Priority**: ðŸŸ¡ HIGH - User-generated content core
 
 ---
 
@@ -145,23 +145,23 @@ The **Photo Album Feature** enables users to capture, organize, and share photos
 **Photo Capture Flow**:
 ```
 User opens Camera
-    ↓
+    â†“
 Requests location permission (if not granted)
-    ↓
+    â†“
 Gets current GPS coordinates
-    ↓
+    â†“
 User frames shot
-    ↓
+    â†“
 Taps capture button
-    ↓
+    â†“
 Photo saved to device + cloud
-    ↓
+    â†“
 Geotagged with coordinates
-    ↓
+    â†“
 Optional: Add caption/notes dialog
-    ↓
+    â†“
 Linked to current trip (if in trip context)
-    ↓
+    â†“
 Added to Photo Album
 ```
 
@@ -453,3 +453,4 @@ db.albums.createIndex({ tripId: 1 });
 - Places: `docs/features/PLACES.md`
 - Database Schema: `docs/03_architecture/DATABASE_SCHEMA.md`
 - API Reference: `docs/04_api/API_REFERENCE.md`
+

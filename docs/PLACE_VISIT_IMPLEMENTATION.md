@@ -1,55 +1,55 @@
-# Place Visit System - Implementation Guide
+﻿# Place Visit System - Implementation Guide
 
 ## Architecture Overview
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│  MOBILE CLIENT (Flutter)                                        │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                  │
-│  1. Map Screen (map_screen.dart)                               │
-│     └─ Shows districts and locations                            │
-│     └─ User taps location → Show MarkVisitModal               │
-│                                                                  │
-│  2. Mark Visit Modal (mark_visit_modal.dart)                   │
-│     └─ Collects metadata (GPS, compass, device info)           │
-│     └─ User confirms → PlaceVisitNotifier.recordVisit()       │
-│                                                                  │
-│  3. Place Visit Provider (place_visit_provider.dart)           │
-│     └─ Manages state (isVerifying, lastVisit, etc)            │
-│     └─ Calls repository                                         │
-│                                                                  │
-│  4. Place Visit Repository (place_visit_repository.dart)       │
-│     └─ Collects VisitMetadata (GPS, heading, device data)     │
-│     └─ Generates request signature                             │
-│     └─ Calls POST /api/places/:id/visit                       │
-│                                                                  │
-└────────────────────────┬──────────────────────────────────────┘
-                         │ POST /api/places/:id/visit
-                         │ { placeId, metadata, signature }
-                         ▼
-┌─────────────────────────────────────────────────────────────────┐
-│  BACKEND (Node.js/Express)                                      │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                  │
-│  1. placeVisitRoutes.js                                        │
-│     └─ POST /:id/visit → validateVisit() → checkAchievements()│
-│                                                                  │
-│  2. Anti-Cheat Validation                                       │
-│     ✓ GPS accuracy check (< 30m)                              │
-│     ✓ Geofencing (< 200m from place)                          │
-│     ✓ Heading validation (facing place)                        │
-│     ✓ Photo EXIF validation                                    │
-│     ✓ Device fingerprinting (spoof detection)                  │
-│     ✓ Speed validation (distance vs time)                      │
-│     ✓ Request signature verification (replay attack)           │
-│                                                                  │
-│  3. Database (MongoDB)                                          │
-│     └─ PlaceVisit model (stores metadata + validation)         │
-│     └─ PlaceAchievement model (user achievements)             │
-│     └─ Updates Place.stats.visitCount                          │
-│                                                                  │
-└─────────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  MOBILE CLIENT (Flutter)                                        â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚                                                                  â”‚
+â”‚  1. Map Screen (map_screen.dart)                               â”‚
+â”‚     â””â”€ Shows districts and locations                            â”‚
+â”‚     â””â”€ User taps location â†’ Show MarkVisitModal               â”‚
+â”‚                                                                  â”‚
+â”‚  2. Mark Visit Modal (mark_visit_modal.dart)                   â”‚
+â”‚     â””â”€ Collects metadata (GPS, compass, device info)           â”‚
+â”‚     â””â”€ User confirms â†’ PlaceVisitNotifier.recordVisit()       â”‚
+â”‚                                                                  â”‚
+â”‚  3. Place Visit Provider (place_visit_provider.dart)           â”‚
+â”‚     â””â”€ Manages state (isVerifying, lastVisit, etc)            â”‚
+â”‚     â””â”€ Calls repository                                         â”‚
+â”‚                                                                  â”‚
+â”‚  4. Place Visit Repository (place_visit_repository.dart)       â”‚
+â”‚     â””â”€ Collects VisitMetadata (GPS, heading, device data)     â”‚
+â”‚     â””â”€ Generates request signature                             â”‚
+â”‚     â””â”€ Calls POST /api/places/:id/visit                       â”‚
+â”‚                                                                  â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                         â”‚ POST /api/places/:id/visit
+                         â”‚ { placeId, metadata, signature }
+                         â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  BACKEND (Node.js/Express)                                      â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚                                                                  â”‚
+â”‚  1. placeVisitRoutes.js                                        â”‚
+â”‚     â””â”€ POST /:id/visit â†’ validateVisit() â†’ checkAchievements()â”‚
+â”‚                                                                  â”‚
+â”‚  2. Anti-Cheat Validation                                       â”‚
+â”‚     âœ“ GPS accuracy check (< 30m)                              â”‚
+â”‚     âœ“ Geofencing (< 200m from place)                          â”‚
+â”‚     âœ“ Heading validation (facing place)                        â”‚
+â”‚     âœ“ Photo EXIF validation                                    â”‚
+â”‚     âœ“ Device fingerprinting (spoof detection)                  â”‚
+â”‚     âœ“ Speed validation (distance vs time)                      â”‚
+â”‚     âœ“ Request signature verification (replay attack)           â”‚
+â”‚                                                                  â”‚
+â”‚  3. Database (MongoDB)                                          â”‚
+â”‚     â””â”€ PlaceVisit model (stores metadata + validation)         â”‚
+â”‚     â””â”€ PlaceAchievement model (user achievements)             â”‚
+â”‚     â””â”€ Updates Place.stats.visitCount                          â”‚
+â”‚                                                                  â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ---
@@ -128,7 +128,7 @@ app.use('/api/places', placeVisitRoutes);
 
 ```bash
 cd backend
-node seed-places.js
+node backend/scripts/seed/seed-places.js
 ```
 
 ---
@@ -167,7 +167,7 @@ node seed-places.js
 
 1. **Validate GPS Accuracy**: Must be < 30m
 2. **Geofence Check**: Must be within 200m of place coordinates
-3. **Heading Check**: User must face towards place (±45°)
+3. **Heading Check**: User must face towards place (Â±45Â°)
 4. **Photo EXIF**: If photo provided, GPS data must match
 5. **Device Fingerprint**: Check for spoof apps/ROMs
 6. **Speed Validation**: Distance/time ratio must be realistic
@@ -200,15 +200,15 @@ node seed-places.js
 
 | Category | Title | Threshold | Badge | Reward |
 |----------|-------|-----------|-------|--------|
-| temples | Temple Explorer | 10 | 🕉️ | 100 pts |
-| beaches | Beach Bum | 10 | 🏖️ | 100 pts |
-| mountains | Mountain Climber | 10 | ⛰️ | 100 pts |
-| historical | Historic Hunter | 10 | 🏛️ | 100 pts |
-| wildlife | Wildlife Watcher | 10 | 🦁 | 100 pts |
-| all_districts | All Districts Explorer | 25 | 🗺️ | 500 pts |
-| visit_count | Legendary Traveler | 50 | 👑 | 300 pts |
-| photos | Photo Collector | 10 | 📷 | 100 pts |
-| streak | On a Roll | 7 | 🔥 | 200 pts |
+| temples | Temple Explorer | 10 | ðŸ•‰ï¸ | 100 pts |
+| beaches | Beach Bum | 10 | ðŸ–ï¸ | 100 pts |
+| mountains | Mountain Climber | 10 | â›°ï¸ | 100 pts |
+| historical | Historic Hunter | 10 | ðŸ›ï¸ | 100 pts |
+| wildlife | Wildlife Watcher | 10 | ðŸ¦ | 100 pts |
+| all_districts | All Districts Explorer | 25 | ðŸ—ºï¸ | 500 pts |
+| visit_count | Legendary Traveler | 50 | ðŸ‘‘ | 300 pts |
+| photos | Photo Collector | 10 | ðŸ“· | 100 pts |
+| streak | On a Roll | 7 | ðŸ”¥ | 200 pts |
 
 ### Auto-Unlock Logic
 
@@ -357,20 +357,20 @@ db.placeachievements.findOne()
 ### Anti-Cheat Testing
 
 1. **GPS Accuracy**: 
-   - Within 30m → Should pass ✅
-   - Beyond 30m → Should fail ❌
+   - Within 30m â†’ Should pass âœ…
+   - Beyond 30m â†’ Should fail âŒ
 
 2. **Geofence**:
-   - Within 200m of place → Should pass ✅
-   - Beyond 200m → Should fail ❌
+   - Within 200m of place â†’ Should pass âœ…
+   - Beyond 200m â†’ Should fail âŒ
 
 3. **Rate Limit**:
-   - First visit → Should pass ✅
-   - Second visit within 1h → Should fail ❌
+   - First visit â†’ Should pass âœ…
+   - Second visit within 1h â†’ Should fail âŒ
 
 4. **Spoofing Detection**:
-   - Normal device → Should pass ✅
-   - With FakeGPS app → Should fail ❌
+   - Normal device â†’ Should pass âœ…
+   - With FakeGPS app â†’ Should fail âŒ
 
 ---
 
@@ -407,21 +407,21 @@ db.placeachievements.findOne()
 
 ## Security Best Practices
 
-✅ **DO:**
-- ✅ Verify signatures server-side
-- ✅ Use HTTPS only in production
-- ✅ Rate limit API endpoints
-- ✅ Log all suspicious visits
-- ✅ Use server timestamps (never trust client time)
-- ✅ Validate all metadata on backend
+âœ… **DO:**
+- âœ… Verify signatures server-side
+- âœ… Use HTTPS only in production
+- âœ… Rate limit API endpoints
+- âœ… Log all suspicious visits
+- âœ… Use server timestamps (never trust client time)
+- âœ… Validate all metadata on backend
 
-❌ **DON'T:**
-- ❌ Trust client-side timestamps
-- ❌ Allow multiple visits in same location instantly
-- ❌ Disable geofence checks
-- ❌ Store unvalidated GPS coordinates
-- ❌ Use weak request signatures
-- ❌ Accept visits from spoofing devices
+âŒ **DON'T:**
+- âŒ Trust client-side timestamps
+- âŒ Allow multiple visits in same location instantly
+- âŒ Disable geofence checks
+- âŒ Store unvalidated GPS coordinates
+- âŒ Use weak request signatures
+- âŒ Accept visits from spoofing devices
 
 ---
 
@@ -435,3 +435,4 @@ db.placeachievements.findOne()
 - [ ] Difficulty-based challenges
 - [ ] Visit history with photos
 - [ ] Badges for consecutive days
+

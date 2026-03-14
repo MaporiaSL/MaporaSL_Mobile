@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import '../../data/models/trip_model.dart';
 
 /// Adventure trip card widget with gamified design
@@ -45,7 +45,7 @@ class AdventureTripCard extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: _getStatusColor(
                         trip.timelineStatus,
-                      ).withOpacity(0.1),
+                      ).withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
@@ -143,16 +143,16 @@ class AdventureTripCard extends StatelessWidget {
     if (trip.locations != null && trip.locations!.isNotEmpty) {
       final firstLocation = trip.locations!.first.name.toLowerCase();
       if (firstLocation.contains('beach') || firstLocation.contains('sea')) {
-        return '🏖️';
+        return 'ðŸ–ï¸';
       }
       if (firstLocation.contains('mountain') ||
           firstLocation.contains('hill')) {
-        return '🏔️';
+        return 'ðŸ”ï¸';
       }
-      if (firstLocation.contains('city')) return '🏙️';
-      if (firstLocation.contains('temple')) return '⛩️';
+      if (firstLocation.contains('city')) return 'ðŸ™ï¸';
+      if (firstLocation.contains('temple')) return 'â›©ï¸';
     }
-    return '✈️';
+    return 'âœˆï¸';
   }
 
   Color _getStatusColor(TripStatus status) {
@@ -185,7 +185,7 @@ class _StatusChip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: _getColor().withOpacity(0.15),
+        color: _getColor().withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: _getColor(), width: 1.5),
       ),
@@ -232,11 +232,11 @@ class _StatusChip extends StatelessWidget {
   String _getEmoji() {
     switch (status) {
       case TripStatus.upcoming:
-        return '📅';
+        return 'ðŸ“…';
       case TripStatus.active:
-        return '⚡';
+        return 'âš¡';
       case TripStatus.completed:
-        return '✅';
+        return 'âœ…';
     }
   }
 }
@@ -274,3 +274,4 @@ class _SegmentedProgressBar extends StatelessWidget {
     );
   }
 }
+

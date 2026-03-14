@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
 import 'dart:math' as math;
 import '../../data/regions_data.dart';
@@ -83,7 +83,7 @@ class CartoonMapPainter extends CustomPainter {
     if (polygons == null) return;
 
     final borderPaint = Paint()
-      ..color = theme.borderColor.withOpacity(0.1)
+      ..color = theme.borderColor.withValues(alpha: 0.1)
       ..strokeWidth = 0.5
       ..style = PaintingStyle.stroke;
 
@@ -122,7 +122,7 @@ class CartoonMapPainter extends CustomPainter {
                 : (progress == 0 ? 0.5 : 0.8));
 
       final fillPaint = Paint()
-        ..color = fillColor.withOpacity(opacity)
+        ..color = fillColor.withValues(alpha: opacity)
         ..style = PaintingStyle.fill;
 
       final borderPaint = Paint()
@@ -130,7 +130,7 @@ class CartoonMapPainter extends CustomPainter {
             (isFocusedDistrict && focusMode
                     ? theme.selectedDistrictBorderColor
                     : theme.borderColor)
-                .withOpacity(
+                .withValues(alpha: 
                   shouldDim
                       ? 0.06
                       : (isFocusedDistrict && focusMode
@@ -172,7 +172,7 @@ class CartoonMapPainter extends CustomPainter {
       text: TextSpan(
         text: districtId,
         style: theme.labelStyle.copyWith(
-          color: Colors.white.withOpacity(labelOpacity),
+          color: Colors.white.withValues(alpha: labelOpacity),
           fontSize: 8,
           fontWeight: progress > 0.5 ? FontWeight.bold : FontWeight.normal,
         ),
@@ -197,7 +197,7 @@ class CartoonMapPainter extends CustomPainter {
     canvas.saveLayer(layerRect, Paint());
 
     final fogPaint = Paint()
-      ..color = Colors.black.withOpacity(0.5)
+      ..color = Colors.black.withValues(alpha: 0.5)
       ..style = PaintingStyle.fill;
     canvas.drawRect(layerRect, fogPaint);
 
@@ -213,7 +213,7 @@ class CartoonMapPainter extends CustomPainter {
   void _drawGrainOverlay(Canvas canvas, Size size) {
     final isDark = theme.backgroundColor.computeLuminance() < 0.5;
     final paint = Paint()
-      ..color = (isDark ? Colors.white : const Color(0xFF334155)).withOpacity(
+      ..color = (isDark ? Colors.white : const Color(0xFF334155)).withValues(alpha: 
         0.04,
       )
       ..strokeWidth = 1.0;
@@ -239,7 +239,7 @@ class CartoonMapPainter extends CustomPainter {
       ..style = PaintingStyle.stroke;
 
     final outerGlowPaint = Paint()
-      ..color = theme.selectedDistrictGlowColor.withOpacity(0.38)
+      ..color = theme.selectedDistrictGlowColor.withValues(alpha: 0.38)
       ..strokeWidth = 4.0
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2)
       ..style = PaintingStyle.stroke;
@@ -280,3 +280,4 @@ class CartoonMapPainter extends CustomPainter {
         oldDelegate.districtProgress != districtProgress;
   }
 }
+

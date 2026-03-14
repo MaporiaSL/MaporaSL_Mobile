@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
 import '../data/models/place_visit.dart';
 
@@ -83,15 +83,15 @@ class VisitVerificationErrorScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.red.withOpacity(0.1),
+        color: Colors.red.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.red.withOpacity(0.3), width: 2),
+        border: Border.all(color: Colors.red.withValues(alpha: 0.3), width: 2),
       ),
       child: Row(
         children: [
           Container(
             padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: Colors.red,
               shape: BoxShape.circle,
             ),
@@ -141,7 +141,7 @@ class VisitVerificationErrorScreen extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.warning_amber, color: Colors.orange, size: 24),
+              const Icon(Icons.warning_amber, color: Colors.orange, size: 24),
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
@@ -157,7 +157,7 @@ class VisitVerificationErrorScreen extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Colors.red.withOpacity(0.05),
+              color: Colors.red.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Text(
@@ -191,7 +191,7 @@ class VisitVerificationErrorScreen extends StatelessWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.2),
+            color: color.withValues(alpha: 0.2),
             borderRadius: BorderRadius.circular(4),
           ),
           child: Text(
@@ -251,7 +251,7 @@ class VisitVerificationErrorScreen extends StatelessWidget {
         title: 'Device Security',
         isPassed: !validation.deviceSignatureSuspicious,
         description: validation.deviceSignatureSuspicious
-            ? '⚠️ Location spoofing detected. Disable mock location apps'
+            ? 'âš ï¸ Location spoofing detected. Disable mock location apps'
             : 'Device integrity verified',
         icon: Icons.security,
         isCritical: validation.deviceSignatureSuspicious,
@@ -269,7 +269,7 @@ class VisitVerificationErrorScreen extends StatelessWidget {
         isPassed: validation.speedValid,
         description: validation.speedValid
             ? 'Travel speed is reasonable'
-            : '⚠️ Impossible travel speed detected',
+            : 'âš ï¸ Impossible travel speed detected',
         icon: Icons.speed,
         isCritical: !validation.speedValid,
       ),
@@ -292,13 +292,13 @@ class VisitVerificationErrorScreen extends StatelessWidget {
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: check.isPassed
-            ? Colors.green.withOpacity(0.05)
-            : Colors.red.withOpacity(0.05),
+            ? Colors.green.withValues(alpha: 0.05)
+            : Colors.red.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
           color: check.isPassed
-              ? Colors.green.withOpacity(0.3)
-              : Colors.red.withOpacity(0.3),
+              ? Colors.green.withValues(alpha: 0.3)
+              : Colors.red.withValues(alpha: 0.3),
         ),
       ),
       child: Row(
@@ -308,8 +308,8 @@ class VisitVerificationErrorScreen extends StatelessWidget {
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               color: check.isPassed
-                  ? Colors.green.withOpacity(0.2)
-                  : Colors.red.withOpacity(0.2),
+                  ? Colors.green.withValues(alpha: 0.2)
+                  : Colors.red.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(
@@ -423,7 +423,7 @@ class VisitVerificationErrorScreen extends StatelessWidget {
           const Divider(height: 24),
           Row(
             children: [
-              Icon(Icons.straighten, color: AppColors.textMuted, size: 20),
+              const Icon(Icons.straighten, color: AppColors.textMuted, size: 20),
               const SizedBox(width: 8),
               Text(
                 'Distance: ',
@@ -448,7 +448,7 @@ class VisitVerificationErrorScreen extends StatelessWidget {
                     vertical: 2,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.red.withOpacity(0.2),
+                    color: Colors.red.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: Text(
@@ -509,16 +509,16 @@ class VisitVerificationErrorScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.blue.withOpacity(0.05),
+        color: Colors.blue.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.blue.withOpacity(0.3)),
+        border: Border.all(color: Colors.blue.withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(Icons.lightbulb_outline, color: Colors.blue, size: 24),
+              const Icon(Icons.lightbulb_outline, color: Colors.blue, size: 24),
               const SizedBox(width: 12),
               Text(
                 'How to Fix',
@@ -543,7 +543,7 @@ class VisitVerificationErrorScreen extends StatelessWidget {
                         width: 24,
                         height: 24,
                         decoration: BoxDecoration(
-                          color: Colors.blue.withOpacity(0.2),
+                          color: Colors.blue.withValues(alpha: 0.2),
                           shape: BoxShape.circle,
                         ),
                         child: Center(
@@ -572,7 +572,7 @@ class VisitVerificationErrorScreen extends StatelessWidget {
                   ),
                 ),
               )
-              .toList(),
+              ,
         ],
       ),
     );
@@ -595,8 +595,8 @@ class VisitVerificationErrorScreen extends StatelessWidget {
           width: double.infinity,
           child: OutlinedButton(
             onPressed: onCancel ?? () => Navigator.pop(context),
-            child: const Text('Cancel'),
             style: OutlinedButton.styleFrom(padding: const EdgeInsets.all(16)),
+            child: const Text('Cancel'),
           ),
         ),
       ],
@@ -658,8 +658,8 @@ class VisitVerificationErrorScreen extends StatelessWidget {
     }
 
     if (validation.deviceSignatureSuspicious) {
-      tips.add('⚠️ Disable any mock location or GPS spoofing apps');
-      tips.add('⚠️ Check Developer Options for mock location settings');
+      tips.add('âš ï¸ Disable any mock location or GPS spoofing apps');
+      tips.add('âš ï¸ Check Developer Options for mock location settings');
       tips.add('Restart your device if problems persist');
     }
 
@@ -741,3 +741,4 @@ class ValidationCheck {
     this.isCritical = false,
   });
 }
+

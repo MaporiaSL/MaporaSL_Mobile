@@ -1,9 +1,9 @@
-# Trip Planning Feature Specification
+﻿# Trip Planning Feature Specification
 
 **Version**: 2.0  
 **Date**: January 29, 2026  
-**Status**: ✅ Implementation In Progress  
-**Priority**: 🔴 CRITICAL - Core feature
+**Status**: âœ… Implementation In Progress  
+**Priority**: ðŸ”´ CRITICAL - Core feature
 
 ---
 
@@ -27,10 +27,10 @@ The **Trip Planning Feature** is the central hub for users to discover, create, 
 **Purpose**: Provide expertly-designed travel itineraries for users who want guided, proven routes.
 
 **Examples**:
-- "Cultural Triangle Heritage Tour" (Sigiriya → Dambulla → Kandy)
-- "South Coast Beach Escape" (Mirissa → Unawatuna → Galle)
-- "Highland Adventure" (Ella → Horton Plains → Nuwara Eliya)
-- "Sacred Temple Circuit" (Temple of Tooth → Thuparama → Kelaniya)
+- "Cultural Triangle Heritage Tour" (Sigiriya â†’ Dambulla â†’ Kandy)
+- "South Coast Beach Escape" (Mirissa â†’ Unawatuna â†’ Galle)
+- "Highland Adventure" (Ella â†’ Horton Plains â†’ Nuwara Eliya)
+- "Sacred Temple Circuit" (Temple of Tooth â†’ Thuparama â†’ Kelaniya)
 - "Wildlife Safari" (Yala National Park itinerary)
 
 **Pre-Planned Trip Structure**:
@@ -148,28 +148,28 @@ The **Trip Planning Feature** is the central hub for users to discover, create, 
 **User Discovery**:
 ```
 TripsScreen
-  ↓
-[Browse Pre-Planned Trips] → Trip browsing & discovery
-  ↓
+  â†“
+[Browse Pre-Planned Trips] â†’ Trip browsing & discovery
+  â†“
 [View Trip Details]
-  ├─ Full itinerary with day-by-day breakdown
-  ├─ Total distance & duration
-  ├─ Best season & cost estimates
-  ├─ User ratings & reviews
-  └─ [Clone Trip] button
-  ↓
-[Clone Trip] → Creates custom trip with pre-planned data
-  ↓
+  â”œâ”€ Full itinerary with day-by-day breakdown
+  â”œâ”€ Total distance & duration
+  â”œâ”€ Best season & cost estimates
+  â”œâ”€ User ratings & reviews
+  â””â”€ [Clone Trip] button
+  â†“
+[Clone Trip] â†’ Creates custom trip with pre-planned data
+  â†“
 Customize (optional)
-  ├─ Change dates
-  ├─ Add/remove days
-  ├─ Reorder places
-  ├─ Add notes
-  └─ Change transportation mode
-  ↓
-[Save Custom Trip] → Now in user's trip list
-  ↓
-MemoryLane → Trips tab shows new trip
+  â”œâ”€ Change dates
+  â”œâ”€ Add/remove days
+  â”œâ”€ Reorder places
+  â”œâ”€ Add notes
+  â””â”€ Change transportation mode
+  â†“
+[Save Custom Trip] â†’ Now in user's trip list
+  â†“
+MemoryLane â†’ Trips tab shows new trip
 ```
 
 **Key Features**:
@@ -186,57 +186,57 @@ MemoryLane → Trips tab shows new trip
 **Trip Creation**:
 ```
 TripsScreen
-  ↓
-[Create Custom Trip] → CreateTripPage
-  ↓
+  â†“
+[Create Custom Trip] â†’ CreateTripPage
+  â†“
 Enter Trip Details:
-  ├─ Trip title (required)
-  ├─ Description (optional)
-  ├─ Start date (required)
-  ├─ End date (required, >= start date)
-  ├─ Starting location
-  └─ Transportation mode
-  ↓
+  â”œâ”€ Trip title (required)
+  â”œâ”€ Description (optional)
+  â”œâ”€ Start date (required)
+  â”œâ”€ End date (required, >= start date)
+  â”œâ”€ Starting location
+  â””â”€ Transportation mode
+  â†“
 Add Destinations:
-  ├─ Search places from Places catalog
-  ├─ Add multiple places
-  ├─ Reorder on map
-  ├─ At least 1 place required
-  └─ Remove/modify as needed
-  ↓
+  â”œâ”€ Search places from Places catalog
+  â”œâ”€ Add multiple places
+  â”œâ”€ Reorder on map
+  â”œâ”€ At least 1 place required
+  â””â”€ Remove/modify as needed
+  â†“
 [Save Trip]
-  ↓
-MemoryLane → Trips tab (Scheduled status)
+  â†“
+MemoryLane â†’ Trips tab (Scheduled status)
 ```
 
 **Trip Management**:
 ```
 MemoryLane > Trips Tab
-  ↓
+  â†“
 Trip organized by status:
-  ├─ Scheduled (editable) - future trips
-  ├─ Planned (editable) - in-progress trips
-  └─ Completed (read-only) - past trips
-  ↓
+  â”œâ”€ Scheduled (editable) - future trips
+  â”œâ”€ Planned (editable) - in-progress trips
+  â””â”€ Completed (read-only) - past trips
+  â†“
 Per-Trip Actions:
-  ├─ [View] - Open trip details
-  ├─ [Edit] - Modify trip (if Scheduled/Planned)
-  └─ [Delete] - Remove trip (with confirmation)
+  â”œâ”€ [View] - Open trip details
+  â”œâ”€ [Edit] - Modify trip (if Scheduled/Planned)
+  â””â”€ [Delete] - Remove trip (with confirmation)
 ```
 
 **Editing Trip**:
 ```
-[Edit Trip] → CreateTripPage (pre-filled)
-  ↓
+[Edit Trip] â†’ CreateTripPage (pre-filled)
+  â†“
 Modify:
-  ├─ Dates
-  ├─ Destinations
-  ├─ Title/description
-  ├─ Transportation mode
-  └─ Other details
-  ↓
-[Save Changes] → Trip updated
-  ↓
+  â”œâ”€ Dates
+  â”œâ”€ Destinations
+  â”œâ”€ Title/description
+  â”œâ”€ Transportation mode
+  â””â”€ Other details
+  â†“
+[Save Changes] â†’ Trip updated
+  â†“
 MemoryLane refreshes
 ```
 
@@ -246,11 +246,11 @@ MemoryLane refreshes
 
 ```
 Create Trip
-    ↓
+    â†“
 status = 'scheduled'      (startDate > today) - EDITABLE
-    ↓
+    â†“
 status = 'planned'        (today between startDate & endDate) - EDITABLE
-    ↓
+    â†“
 status = 'completed'      (endDate < today) - READ-ONLY
 ```
 
@@ -429,16 +429,16 @@ class PrePlannedTrip {
 **Provider Hierarchy**:
 ```
 dioProvider (HTTP client)
-    ↓
-    └→ tripsApiProvider (API calls)
-            ↓
-            └→ tripsRepositoryProvider (data layer)
-                    ↓
-                    ├→ customTripsProvider (StateNotifierProvider)
-                    │       └→ CustomTripsNotifier
-                    │
-                    └→ prePlannedTripsProvider (FutureProvider)
-                            └→ Fetch pre-planned trips
+    â†“
+    â””â†’ tripsApiProvider (API calls)
+            â†“
+            â””â†’ tripsRepositoryProvider (data layer)
+                    â†“
+                    â”œâ†’ customTripsProvider (StateNotifierProvider)
+                    â”‚       â””â†’ CustomTripsNotifier
+                    â”‚
+                    â””â†’ prePlannedTripsProvider (FutureProvider)
+                            â””â†’ Fetch pre-planned trips
 ```
 
 **TripsNotifier Methods**:
@@ -656,6 +656,8 @@ Indexes:
 - Places: [places.md](places.md)
 - Album: [album.md](album.md)
 - Shop: [shop.md](shop.md)
-- Core Source: [project-source-of-truth.md](../core/project-source-of-truth.md)
+- Core Source: [project-source-of-truth.md](../../core/project-source-of-truth.md)
 - Database Schema: [database-schema.md](../architecture/database-schema.md)
-- API Reference: [api-reference.md](../api/api-reference.md)
+- API Reference: [api-reference.md](../../backend/api-endpoints/api-reference.md)
+
+

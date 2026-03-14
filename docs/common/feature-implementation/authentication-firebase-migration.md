@@ -1,10 +1,10 @@
-# Firebase Authentication Migration Plan
+﻿# Firebase Authentication Migration Plan
 **Last Updated**: February 5, 2026
 
 ---
 
 ## Goal
-Migrate authentication from Auth0 to **Firebase Authentication** to support a native in‑app login flow and simplify Flutter integration.
+Migrate authentication from Auth0 to **Firebase Authentication** to support a native inâ€‘app login flow and simplify Flutter integration.
 
 ---
 
@@ -65,3 +65,4 @@ Migrate authentication from Auth0 to **Firebase Authentication** to support a na
 - Backend accepts Firebase ID tokens
 - Authenticated endpoints work with Firebase users
 - User records are created and fetched correctly
+

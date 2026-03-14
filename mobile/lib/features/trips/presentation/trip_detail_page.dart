@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import '../data/models/trip_model.dart';
 
 class TripDetailPage extends StatelessWidget {
@@ -48,7 +48,7 @@ class _HeaderSection extends StatelessWidget {
             Text(trip.title, style: Theme.of(context).textTheme.titleLarge),
             const SizedBox(height: 8),
             Text(
-              '${trip.statusEmoji} ${trip.statusLabel} • ${trip.durationDays} days',
+              '${trip.statusEmoji} ${trip.statusLabel} â€¢ ${trip.durationDays} days',
               style: TextStyle(color: Colors.grey.shade700),
             ),
             const SizedBox(height: 8),
@@ -213,7 +213,7 @@ class _StatusChip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.15),
+        color: color.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: color),
       ),
@@ -224,3 +224,4 @@ class _StatusChip extends StatelessWidget {
     );
   }
 }
+

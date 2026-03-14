@@ -1,10 +1,9 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import '../data/models/trip_model.dart';
 import '../../exploration/providers/exploration_provider.dart';
-import '../../exploration/data/models/exploration_models.dart';
 import 'widgets/quest_card.dart';
 import 'providers/trips_provider.dart';
 import 'create_trip_page.dart';
@@ -70,7 +69,8 @@ class _MemoryLanePageState extends ConsumerState<MemoryLanePage>
       return const Center(child: CircularProgressIndicator());
     }
 
-    if (explorationState.error != null && explorationState.assignments.isEmpty) {
+    if (explorationState.error != null &&
+        explorationState.assignments.isEmpty) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -80,7 +80,8 @@ class _MemoryLanePageState extends ConsumerState<MemoryLanePage>
             Text(explorationState.error!, textAlign: TextAlign.center),
             const SizedBox(height: 12),
             ElevatedButton.icon(
-              onPressed: () => ref.read(explorationProvider.notifier).loadAssignments(),
+              onPressed: () =>
+                  ref.read(explorationProvider.notifier).loadAssignments(),
               icon: const Icon(Icons.refresh),
               label: const Text('Retry'),
             ),
@@ -276,7 +277,7 @@ class _StatusSection extends ConsumerWidget {
             const SizedBox(width: 8),
             Chip(
               label: Text('${trips.length}'),
-              backgroundColor: color.withOpacity(0.15),
+              backgroundColor: color.withValues(alpha: 0.15),
               labelStyle: TextStyle(color: color, fontWeight: FontWeight.w600),
             ),
           ],
@@ -393,7 +394,7 @@ class _TripCard extends StatelessWidget {
                     vertical: 8,
                   ),
                   decoration: BoxDecoration(
-                    color: color.withOpacity(0.12),
+                    color: color.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Column(
@@ -471,3 +472,4 @@ class _TripCard extends StatelessWidget {
     return '${fmt.format(start)} - ${fmt.format(end)}';
   }
 }
+

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:gemified_travel_portfolio/features/album/presentation/camera_page.dart';
 import 'package:gemified_travel_portfolio/features/album/presentation/photo_viewer_page.dart';
 import 'package:gemified_travel_portfolio/features/album/widgets/album_picker_sheet.dart';
-import 'package:gemified_travel_portfolio/features/album/widgets/photo_preview.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:gemified_travel_portfolio/features/album/data/services/album_service.dart';

@@ -1,7 +1,7 @@
-# District Places Assignment System - Implementation Guide
+﻿# District Places Assignment System - Implementation Guide
 
 **Date**: February 23, 2026  
-**Status**: ✅ Complete
+**Status**: âœ… Complete
 
 ## Overview
 
@@ -54,12 +54,12 @@ router.get('/district/:district', getPlacesByDistrict);  // By district
 router.get('/:id', getPlaceById);              // Single place
 ```
 
-#### 5. **Seeding Script** (`backend/seed-places.js`, updated)
+#### 5. **Seeding Script** (`backend/scripts/seed/seed-places.js`, updated)
 Now seeds **both**:
 - **Place collection** - New model with full metadata
 - **Destination collection** - Legacy system compatibility
 
-Run: `node backend/seed-places.js`
+Run: `node backend/scripts/seed/seed-places.js`
 
 ### Frontend Components
 
@@ -85,49 +85,49 @@ Already compatible! Automatically receives new fields from backend.
 ### 1. User "Starts Exploration"
 ```
 User selects hometown district
-    ↓
+    â†“
 Backend: assignExplorationForUser(userId, hometown)
-    ↓
+    â†“
 Query Place collection for each district
-    ↓
+    â†“
 Randomly select 3-7 places per district (tier-based)
-    ↓
+    â†“
 Save to UserDistrictAssignment
-    ↓
+    â†“
 Frontend: loadAssignments()
-    ↓
+    â†“
 Display assigned places on map
 ```
 
 ### 2. User Visits a Location
 ```
 User taps location marker
-    ↓
+    â†“
 App collects GPS samples (3+ readings)
-    ↓
+    â†“
 POST /api/exploration/visit with samples
-    ↓
+    â†“
 Backend: Verify GPS proximity
-    ↓
+    â†“
 Mark as visited + award XP
-    ↓
-Check if all places in district visited → unlock
-    ↓
+    â†“
+Check if all places in district visited â†’ unlock
+    â†“
 Frontend: Refresh assignments
-    ↓
+    â†“
 Show district unlocked badge
 ```
 
 ### 3. New Places Added to DB
 ```
 Admin/user adds place to Place collection
-    ↓
+    â†“
 Place is marked as active & verified
-    ↓
-Next user signup → gets assigned new places
-    ↓
-Existing user rerolls → gets new assignment with new places
-    ↓
+    â†“
+Next user signup â†’ gets assigned new places
+    â†“
+Existing user rerolls â†’ gets new assignment with new places
+    â†“
 Ever-growing list available to explore
 ```
 
@@ -183,7 +183,7 @@ echo $MONGODB_URI
 ### Step 2: Seed Initial Places
 ```bash
 cd backend
-node seed-places.js
+node backend/scripts/seed/seed-places.js
 ```
 
 Output:
@@ -229,25 +229,25 @@ When user clicks "Start Exploration":
 
 ## Key Features
 
-### ✅ Dynamic Assignment
+### âœ… Dynamic Assignment
 - Places fetched from database at assignment time
 - Randomized selection per district
 - Different tiers for hometown vs remote districts
 - New places available for new users & rerolls
 
-### ✅ Backward Compatibility
+### âœ… Backward Compatibility
 - `UnlockLocation` collection still supported
 - Exploration system auto-detects data source
 - Old Destination system still works
 
-### ✅ Rich Metadata
+### âœ… Rich Metadata
 - Place descriptions, categories, photos
 - Geospatial queries (nearby places)
 - Search functionality
 - Rating & review counts
 - Accessibility info
 
-### ✅ Scalable
+### âœ… Scalable
 - New places can be added anytime
 - No redeployment needed
 - Supports user-contributed places
@@ -285,7 +285,7 @@ db.userdistrictassignments.findOne({userId: "user123"})
 ## Troubleshooting
 
 ### "No places found in either Place or UnlockLocation"
-**Solution**: Run `node seed-places.js` to populate collections
+**Solution**: Run `node backend/scripts/seed/seed-places.js` to populate collections
 
 ### "District not found in places catalog"
 **Solution**: 
@@ -307,14 +307,14 @@ db.userdistrictassignments.findOne({userId: "user123"})
 ## Files Modified
 
 ### Backend
-- ✅ `backend/src/models/Place.js` - NEW
-- ✅ `backend/src/controllers/explorationController.js` - Updated
-- ✅ `backend/src/controllers/placeController.js` - Updated
-- ✅ `backend/src/routes/placeRoutes.js` - Updated
-- ✅ `backend/seed-places.js` - Updated
+- âœ… `backend/src/models/Place.js` - NEW
+- âœ… `backend/src/controllers/explorationController.js` - Updated
+- âœ… `backend/src/controllers/placeController.js` - Updated
+- âœ… `backend/src/routes/placeRoutes.js` - Updated
+- âœ… `backend/scripts/seed/seed-places.js` - Updated
 
 ### Frontend
-- ✅ `mobile/lib/features/exploration/data/models/exploration_models.dart` - Updated
+- âœ… `mobile/lib/features/exploration/data/models/exploration_models.dart` - Updated
 
 ## API Endpoints Quick Reference
 
@@ -333,5 +333,6 @@ db.userdistrictassignments.findOne({userId: "user123"})
 
 ---
 
-**Status**: ✅ Implementation Complete  
+**Status**: âœ… Implementation Complete  
 **Ready for**: User testing, place additions, feedback loop
+

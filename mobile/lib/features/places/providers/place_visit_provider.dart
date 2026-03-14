@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart' show kDebugMode, debugPrint;
+﻿import 'package:flutter/foundation.dart' show kDebugMode, debugPrint;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dio/dio.dart';
 import 'package:gemified_travel_portfolio/core/config/app_config.dart';
@@ -160,7 +160,7 @@ class PlaceVisitNotifier extends StateNotifier<PlaceVisitState> {
 
     String? errorMessage;
     try {
-      debugPrint('🚀 Starting PlaceVisit recording for $placeId');
+      debugPrint('ðŸš€ Starting PlaceVisit recording for $placeId');
       // Call repository to record visit (includes anti-cheat validation)
       final visit = await _repository.recordVisit(
         placeId: placeId,
@@ -197,7 +197,7 @@ class PlaceVisitNotifier extends StateNotifier<PlaceVisitState> {
               userId: _userId,
               title: visit.achievementTitle ?? '',
               description: 'Achievement unlocked!',
-              badgeEmoji: '🏆',
+              badgeEmoji: 'ðŸ†',
               category: 'all_districts',
               threshold: 1,
               currentProgress: 1,
@@ -219,16 +219,16 @@ class PlaceVisitNotifier extends StateNotifier<PlaceVisitState> {
       );
 
       // Show success message
-      print('✅ Visit recorded successfully: $placeName');
+      debugPrint('âœ… Visit recorded successfully: $placeName');
       if (achievement != null) {
-        print('🏆 Achievement unlocked: ${achievement.title}');
+        debugPrint('ðŸ† Achievement unlocked: ${achievement.title}');
       }
 
       // If validation was suspicious but approved, show warning
       if (visit.validation.status == 'suspicious' && visit.validation.isValid) {
         state = state.copyWith(
           error:
-              '⚠️ Visit recorded with warnings (${visit.validation.flaggedReason})',
+              'âš ï¸ Visit recorded with warnings (${visit.validation.flaggedReason})',
         );
       }
 
@@ -237,10 +237,10 @@ class PlaceVisitNotifier extends StateNotifier<PlaceVisitState> {
         state = state.copyWith(error: visit.validation.displayMessage);
       }
     } catch (e) {
-      debugPrint('❌ Error recording visit: $e');
+      debugPrint('âŒ Error recording visit: $e');
       errorMessage = 'Failed to record visit: $e';
     } finally {
-      debugPrint('🏁 Finishing PlaceVisit for $placeId');
+      debugPrint('ðŸ Finishing PlaceVisit for $placeId');
       state = state.copyWith(
         isVerifying: false,
         error: errorMessage,
@@ -283,36 +283,36 @@ class PlaceVisitNotifier extends StateNotifier<PlaceVisitState> {
 extension ValidationDisplayMessage on PlaceVisitValidation {
   String get displayMessage {
     if (isValid && status == 'approved') {
-      return '✅ Visit verified safely';
+      return 'âœ… Visit verified safely';
     }
 
     if (!isValid) {
       switch (flaggedReason) {
         case 'low_accuracy':
-          return '📍 GPS accuracy too low. Try moving around to get a better signal.';
+          return 'ðŸ“ GPS accuracy too low. Try moving around to get a better signal.';
         case 'outside_geofence':
-          return '⚠️ You are too far from the place. Move closer to within 200m.';
+          return 'âš ï¸ You are too far from the place. Move closer to within 200m.';
         case 'wrong_heading':
-          return '👀 Face towards the place for verification.';
+          return 'ðŸ‘€ Face towards the place for verification.';
         case 'photo_location_mismatch':
-          return '📷 Photo location doesn\'t match place coordinates.';
+          return 'ðŸ“· Photo location doesn\'t match place coordinates.';
         case 'location_spoofing_detected':
-          return '🚫 Location spoofing detected. Use real location.';
+          return 'ðŸš« Location spoofing detected. Use real location.';
         case 'impossible_speed':
-          return '🚗 Impossible travel speed detected (teleporting?).';
+          return 'ðŸš— Impossible travel speed detected (teleporting?).';
         case 'rate_limited':
-          return '⏱️ You visited this place recently. Please try again later.';
+          return 'â±ï¸ You visited this place recently. Please try again later.';
         case 'invalid_signature':
-          return '🔐 Verification request signature failed. Please retry.';
+          return 'ðŸ” Verification request signature failed. Please retry.';
         case 'missing_signature':
-          return '🔐 Verification signature missing. Please retry.';
+          return 'ðŸ” Verification signature missing. Please retry.';
         default:
           return invalidReason ?? 'Visit could not be verified';
       }
     }
 
     if (status == 'suspicious') {
-      return '⚠️ Visit recorded with warnings: $flaggedReason';
+      return 'âš ï¸ Visit recorded with warnings: $flaggedReason';
     }
 
     return 'Visit status unknown';
@@ -331,3 +331,4 @@ extension AchievementDisplay on PlaceAchievement {
 
   bool get isNearlyUnlocked => currentProgress >= (threshold * 0.8);
 }
+

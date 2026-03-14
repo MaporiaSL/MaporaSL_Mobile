@@ -27,11 +27,12 @@ class _AlbumPickerSheetState extends State<AlbumPickerSheet> {
       final filtered = widget.excludeAlbumId != null
           ? albums.where((a) => a.id != widget.excludeAlbumId).toList()
           : albums;
-      if (mounted)
+      if (mounted) {
         setState(() {
           _albums = filtered;
           _loading = false;
         });
+      }
     } catch (_) {
       if (mounted) setState(() => _loading = false);
     }

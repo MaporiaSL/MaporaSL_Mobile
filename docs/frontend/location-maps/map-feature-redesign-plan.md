@@ -1,4 +1,4 @@
-# Map Feature Redesign Plan
+﻿# Map Feature Redesign Plan
 
 ## Overview
 Complete redesign of the map feature from scratch with a cartoonish/stylized appearance, starting with the visual foundation before adding functionality.
@@ -34,13 +34,13 @@ Complete redesign of the map feature from scratch with a cartoonish/stylized app
    - Settings/Info button only
 
 ### What We're NOT Doing Yet
-- ❌ Mapbox integration
-- ❌ Real GPS/location data
-- ❌ Trip data binding
-- ❌ Route visualization
-- ❌ Real statistics/analytics
-- ❌ Theme switching
-- ❌ Gesture controls
+- âŒ Mapbox integration
+- âŒ Real GPS/location data
+- âŒ Trip data binding
+- âŒ Route visualization
+- âŒ Real statistics/analytics
+- âŒ Theme switching
+- âŒ Gesture controls
 
 ### Tech Stack for Phase 1
 - Flutter widgets (CustomPaint or SVG)
@@ -96,25 +96,25 @@ Complete redesign of the map feature from scratch with a cartoonish/stylized app
 
 ```
 mobile/lib/features/map/
-├── presentation/
-│   ├── map_screen.dart                 (Main screen - CartoonMapScreen)
-│   ├── widgets/
-│   │   ├── cartoon_map_canvas.dart     (CustomPaint widget)
-│   │   ├── region_selector.dart        (Region interaction)
-│   │   └── info_panel.dart             (Bottom info display)
-│   └── models/
-│       └── cartoon_models.dart         (Local data models)
-├── utils/
-│   └── map_painter.dart                (CustomPaint painting logic)
-└── data/
-    └── regions_data.dart               (Sri Lanka regions data)
+â”œâ”€â”€ presentation/
+â”‚   â”œâ”€â”€ map_screen.dart                 (Main screen - CartoonMapScreen)
+â”‚   â”œâ”€â”€ widgets/
+â”‚   â”‚   â”œâ”€â”€ cartoon_map_canvas.dart     (CustomPaint widget)
+â”‚   â”‚   â”œâ”€â”€ region_selector.dart        (Region interaction)
+â”‚   â”‚   â””â”€â”€ info_panel.dart             (Bottom info display)
+â”‚   â””â”€â”€ models/
+â”‚       â””â”€â”€ cartoon_models.dart         (Local data models)
+â”œâ”€â”€ utils/
+â”‚   â””â”€â”€ map_painter.dart                (CustomPaint painting logic)
+â””â”€â”€ data/
+    â””â”€â”€ regions_data.dart               (Sri Lanka regions data)
 ```
 
 ---
 
 ## Current Status
-- ✅ Snapshot created (commit: f40959a)
-- 🔄 Starting Phase 1: Cartoonish Map Foundation
+- âœ… Snapshot created (commit: f40959a)
+- ðŸ”„ Starting Phase 1: Cartoonish Map Foundation
 
 ## Next Steps
 1. Create CartoonMapScreen (simplified map_screen.dart)
@@ -122,3 +122,4 @@ mobile/lib/features/map/
 3. Build CartoonMapCanvas with CustomPaint
 4. Add basic info panel
 5. Test interactivity (tap to select region)
+

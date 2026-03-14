@@ -226,7 +226,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 const SizedBox(height: 16),
 
                 DropdownButtonFormField<String>(
-                  value: _selectedDistrict,
+                  initialValue: _selectedDistrict,
                   decoration: _inputDecoration(
                     "Hometown District",
                     Icons.location_on_outlined,
@@ -338,8 +338,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                 const SizedBox(height: 24),
 
-                Row(
-                  children: const [
+                const Row(
+                  children: [
                     Expanded(child: Divider()),
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 10),
@@ -382,7 +382,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                     GestureDetector(
                       onTap: () => Navigator.pop(context),
-                      child: Text(
+                      child: const Text(
                         "Sign In",
                         style: TextStyle(
                           color: AppColors.primary,

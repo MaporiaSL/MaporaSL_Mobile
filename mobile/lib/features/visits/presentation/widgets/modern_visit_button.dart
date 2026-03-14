@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/providers/accessibility_provider.dart';
 
@@ -35,7 +35,7 @@ class ModernVisitButton extends ConsumerWidget {
           ),
           boxShadow: [
             BoxShadow(
-              color: (isVisited ? Colors.teal : Colors.purple).withOpacity(0.4),
+              color: (isVisited ? Colors.teal : Colors.purple).withValues(alpha: 0.4),
               blurRadius: 12,
               offset: const Offset(0, 4),
             ),
@@ -64,3 +64,4 @@ class ModernVisitButton extends ConsumerWidget {
     );
   }
 }
+

@@ -1,11 +1,11 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/app_colors.dart';
-import '../data/models/place_visit.dart';
+import '../../../core/config/app_config.dart';
+import '../../profile/presentation/providers/profile_providers.dart';
 import '../providers/place_visit_provider.dart';
 import './visit_verification_error_screen.dart';
 import '../../visits/presentation/widgets/verification_checklist.dart';
-import 'dart:math' as math;
 
 /// Modal for marking a place as visited with optional notes and photos
 class MarkVisitModal extends ConsumerStatefulWidget {
@@ -34,7 +34,7 @@ class _MarkVisitModalState extends ConsumerState<MarkVisitModal> {
   final _notesController = TextEditingController();
   bool _includeNotes = false;
   bool _agreeToVerification = false;
-  
+
   // Checklist State
   List<VerificationStep> _steps = [];
   int _currentStepIndex = 0;
@@ -47,10 +47,22 @@ class _MarkVisitModalState extends ConsumerState<MarkVisitModal> {
 
   void _initSteps() {
     _steps = [
-      VerificationStep(label: 'Satellite Signal Strength', icon: Icons.wifi_tethering),
-      VerificationStep(label: 'Main Geofence Boundary Check', icon: Icons.adjust),
-      VerificationStep(label: 'Multi-Path Reflection Correction', icon: Icons.reorder),
-      VerificationStep(label: 'Atmospheric Data Validation', icon: Icons.cloud_done),
+      VerificationStep(
+        label: 'Satellite Signal Strength',
+        icon: Icons.wifi_tethering,
+      ),
+      VerificationStep(
+        label: 'Main Geofence Boundary Check',
+        icon: Icons.adjust,
+      ),
+      VerificationStep(
+        label: 'Multi-Path Reflection Correction',
+        icon: Icons.reorder,
+      ),
+      VerificationStep(
+        label: 'Atmospheric Data Validation',
+        icon: Icons.cloud_done,
+      ),
       VerificationStep(label: 'Proximity Finalization', icon: Icons.fact_check),
     ];
   }
@@ -69,7 +81,8 @@ class _MarkVisitModalState extends ConsumerState<MarkVisitModal> {
       return;
     }
 
-    final userId = ref.read(userIdProvider);
+    final userId =
+        ref.read(currentUserIdProvider) ?? AppConfig.profileFallbackUserId;
     try {
       await ref
           .read(placeVisitProvider(userId).notifier)
@@ -131,7 +144,7 @@ class _MarkVisitModalState extends ConsumerState<MarkVisitModal> {
           Navigator.pop(context);
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('✅ Visit to ${widget.placeName} recorded!'),
+              content: Text('âœ… Visit to ${widget.placeName} recorded!'),
               backgroundColor: Colors.green,
             ),
           );
@@ -147,16 +160,15 @@ class _MarkVisitModalState extends ConsumerState<MarkVisitModal> {
     }
   }
 
-
-
   @override
   Widget build(BuildContext context) {
-    final userId = ref.watch(userIdProvider);
+    final userId =
+        ref.watch(currentUserIdProvider) ?? AppConfig.profileFallbackUserId;
     final visitState = ref.watch(placeVisitProvider(userId));
     final int providerStepIndex = visitState.currentStepIndex;
     final String? error = visitState.error;
     final bool isVerifying = visitState.isVerifying;
-    final bool success = visitState.success;
+    final bool success = visitState.lastVisit?.validation.isValid ?? false;
 
     // Sync _steps with provider state
     for (int i = 0; i < _steps.length; i++) {
@@ -214,7 +226,7 @@ class _MarkVisitModalState extends ConsumerState<MarkVisitModal> {
                           vertical: 6,
                         ),
                         decoration: BoxDecoration(
-                          color: AppColors.primary.withOpacity(0.1),
+                          color: AppColors.primary.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: Text(
@@ -262,7 +274,7 @@ class _MarkVisitModalState extends ConsumerState<MarkVisitModal> {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        '📍 ${widget.latitude.toStringAsFixed(4)}, ${widget.longitude.toStringAsFixed(4)}',
+                        'ðŸ“ ${widget.latitude.toStringAsFixed(4)}, ${widget.longitude.toStringAsFixed(4)}',
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
                     ],
@@ -352,7 +364,7 @@ class _MarkVisitModalState extends ConsumerState<MarkVisitModal> {
         if (visitState.isVerifying)
           Positioned.fill(
             child: Container(
-              color: Colors.black.withOpacity(0.8),
+              color: Colors.black.withValues(alpha: 0.8),
               child: Center(
                 child: Container(
                   margin: const EdgeInsets.all(24),
@@ -367,9 +379,9 @@ class _MarkVisitModalState extends ConsumerState<MarkVisitModal> {
                       Text(
                         'Verifying Visit',
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.textDark,
-                            ),
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.textDark,
+                        ),
                       ),
                       const SizedBox(height: 32),
                       VerificationChecklist(
@@ -381,9 +393,9 @@ class _MarkVisitModalState extends ConsumerState<MarkVisitModal> {
                         'Please stay still while we verify your location',
                         textAlign: TextAlign.center,
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: AppColors.textMuted,
-                              fontStyle: FontStyle.italic,
-                            ),
+                          color: AppColors.textMuted,
+                          fontStyle: FontStyle.italic,
+                        ),
                       ),
                     ],
                   ),
@@ -419,7 +431,7 @@ class _MarkVisitModalState extends ConsumerState<MarkVisitModal> {
             maxLines: 3,
             maxLength: 500,
             decoration: InputDecoration(
-              hintText: 'What did you experience at this place? 📝',
+              hintText: 'What did you experience at this place? ðŸ“',
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
               ),
@@ -434,16 +446,16 @@ class _MarkVisitModalState extends ConsumerState<MarkVisitModal> {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.blue.withOpacity(0.05),
+        color: Colors.blue.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.blue.withOpacity(0.2)),
+        border: Border.all(color: Colors.blue.withValues(alpha: 0.2)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(Icons.security, color: AppColors.primary, size: 18),
+              const Icon(Icons.security, color: AppColors.primary, size: 18),
               const SizedBox(width: 8),
               Text(
                 'Security Check',
@@ -456,7 +468,7 @@ class _MarkVisitModalState extends ConsumerState<MarkVisitModal> {
           ),
           const SizedBox(height: 8),
           Text(
-            '✅ GPS location verified\n✅ Device integrity checked\n✅ Timestamp secured',
+            'âœ… GPS location verified\nâœ… Device integrity checked\nâœ… Timestamp secured',
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
               color: AppColors.textMuted,
               height: 1.6,
@@ -466,46 +478,5 @@ class _MarkVisitModalState extends ConsumerState<MarkVisitModal> {
       ),
     );
   }
-
-  Widget _buildAchievementCard(
-    PlaceAchievement achievement,
-    BuildContext context,
-  ) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            Colors.amber.withOpacity(0.2),
-            Colors.orange.withOpacity(0.1),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.amber.withOpacity(0.3)),
-      ),
-      child: Column(
-        children: [
-          Text(achievement.badgeEmoji, style: const TextStyle(fontSize: 48)),
-          const SizedBox(height: 12),
-          Text(
-            achievement.title,
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: Colors.amber.shade800,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            achievement.description,
-            textAlign: TextAlign.center,
-            style: Theme.of(
-              context,
-            ).textTheme.bodySmall?.copyWith(color: AppColors.textMuted),
-          ),
-        ],
-      ),
-    );
-  }
 }
+

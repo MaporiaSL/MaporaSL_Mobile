@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 import '../../../core/constants/map_constants.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
@@ -45,7 +45,7 @@ class _GameMapScreenState extends State<GameMapScreen> {
               child: Container(
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Colors.white.withOpacity(0.2),
+                  color: Colors.white.withValues(alpha: 0.2),
                 ),
                 padding: const EdgeInsets.all(8),
                 child: const Icon(
@@ -77,28 +77,30 @@ class _GameMapScreenState extends State<GameMapScreen> {
       // Bottom navigation bar
       bottomNavigationBar: CurvedNavigationBar(
         index: _selectedBottomNavIndex,
-        
+
         // ==========================================
         // YOUR COLORS GO HERE:
         // ==========================================
         color: Colors.blue.shade700, // The main color of the bar itself
-        buttonBackgroundColor: Colors.blue.shade900, // The color of the floating circle
-        backgroundColor: Colors.white, // ⚠️ CRITICAL: This must match your Scaffold's body color!
-        // ==========================================
+        buttonBackgroundColor:
+            Colors.blue.shade900, // The color of the floating circle
+        backgroundColor: Colors
+            .white, // âš ï¸ CRITICAL: This must match your Scaffold's body color!
 
+        // ==========================================
         onTap: (index) {
           setState(() {
             _selectedBottomNavIndex = index;
           });
           _handleBottomNavigation(index);
         },
-        
+
         // Don't forget to color your icons so they contrast with the bar!
         items: const <Widget>[
-          Icon(Icons.map, size: 30, color: Colors.white),       
-          Icon(Icons.flag, size: 30, color: Colors.white),      
-          Icon(Icons.inventory, size: 30, color: Colors.white), 
-          Icon(Icons.settings, size: 30, color: Colors.white),  
+          Icon(Icons.map, size: 30, color: Colors.white),
+          Icon(Icons.flag, size: 30, color: Colors.white),
+          Icon(Icons.inventory, size: 30, color: Colors.white),
+          Icon(Icons.settings, size: 30, color: Colors.white),
         ],
       ),
     );
@@ -147,7 +149,7 @@ class _GameMapScreenState extends State<GameMapScreen> {
       ),
     );
 
-    print('✅ Game map initialized with custom style');
+    debugPrint('âœ… Game map initialized with custom style');
   }
 
   @override

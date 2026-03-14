@@ -1,4 +1,4 @@
-# API Reference - Gemified Travel Portfolio
+﻿# API Reference - Gemified Travel Portfolio
 
 **Base URL**: `http://localhost:5000` (Dev host) / `http://10.0.2.2:5000` (Android emulator)  
 **Version**: 1.0.1  
@@ -96,7 +96,7 @@ Use Firebase Authentication (email/password or provider) to obtain an ID token:
 
 ### Create Travel
 **Endpoint**: `POST /api/travel`  
-**Auth**: Required (Firebase ID token) – bypassed in dev via mock auth middleware
+**Auth**: Required (Firebase ID token) â€“ bypassed in dev via mock auth middleware
 
 **Request**:
 ```json
@@ -124,7 +124,7 @@ Use Firebase Authentication (email/password or provider) to obtain an ID token:
 
 ### List Travels
 **Endpoint**: `GET /api/travel`  
-**Auth**: Required (Firebase ID token) – bypassed in dev via mock auth middleware
+**Auth**: Required (Firebase ID token) â€“ bypassed in dev via mock auth middleware
 
 **Query Parameters**:
 - `skip` (optional) - Offset for pagination (default 0)
@@ -150,7 +150,7 @@ Use Firebase Authentication (email/password or provider) to obtain an ID token:
 
 ### Get Travel
 **Endpoint**: `GET /api/travel/:travelId`  
-**Auth**: Required (Firebase ID token) – bypassed in dev via mock auth middleware
+**Auth**: Required (Firebase ID token) â€“ bypassed in dev via mock auth middleware
 
 **Response** (200):
 ```json
@@ -168,7 +168,7 @@ Use Firebase Authentication (email/password or provider) to obtain an ID token:
 
 ### Update Travel
 **Endpoint**: `PATCH /api/travel/:travelId`  
-**Auth**: Required (JWT) – bypassed in dev via mock auth middleware
+**Auth**: Required (JWT) â€“ bypassed in dev via mock auth middleware
 
 **Request**:
 ```json
@@ -182,7 +182,7 @@ Use Firebase Authentication (email/password or provider) to obtain an ID token:
 
 ### Delete Travel
 **Endpoint**: `DELETE /api/travel/:travelId`  
-**Auth**: Required (JWT) – bypassed in dev via mock auth middleware
+**Auth**: Required (JWT) â€“ bypassed in dev via mock auth middleware
 
 ---
 
@@ -609,3 +609,4 @@ API version is currently 1.0.0. Future versions may be introduced with breaking 
 ## Support
 
 For issues or questions, please refer to the project documentation or open an issue in the GitHub repository.
+

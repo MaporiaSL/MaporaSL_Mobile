@@ -1,4 +1,4 @@
-# Backend API Endpoints - Quick Reference
+﻿# Backend API Endpoints - Quick Reference
 
 **Base URL**: `http://localhost:5000` (Dev) / `http://10.0.2.2:5000` (Android Emulator)  
 **Version**: 1.0.1  
@@ -286,3 +286,4 @@ For issues or questions:
 - Check the [documentation](../../README.md)
 - Review [implementation guides](../../common/feature-implementation/)
 - Open an issue in the GitHub repository
+

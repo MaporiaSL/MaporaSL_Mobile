@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../utils/sample_trips_generator.dart';
 import '../providers/trips_provider.dart';
@@ -70,7 +70,7 @@ class TripsDebugPanel extends ConsumerWidget {
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text('✅ Created $created sample trips!'),
+                    content: Text('âœ… Created $created sample trips!'),
                     backgroundColor: Colors.green,
                   ),
                 );
@@ -99,7 +99,7 @@ class TripsDebugPanel extends ConsumerWidget {
                   Navigator.pop(context);
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
-                      content: Text('✅ Test trip created!'),
+                      content: Text('âœ… Test trip created!'),
                       backgroundColor: Colors.green,
                     ),
                   );
@@ -108,7 +108,7 @@ class TripsDebugPanel extends ConsumerWidget {
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('❌ Error: $e'),
+                      content: Text('âŒ Error: $e'),
                       backgroundColor: Colors.red,
                     ),
                   );
@@ -132,7 +132,7 @@ class TripsDebugPanel extends ConsumerWidget {
               showDialog(
                 context: context,
                 builder: (context) => AlertDialog(
-                  title: const Text('⚠️ Clear All Trips?'),
+                  title: const Text('âš ï¸ Clear All Trips?'),
                   content: const Text(
                     'This will delete all trips. This action cannot be undone.',
                   ),
@@ -159,7 +159,7 @@ class TripsDebugPanel extends ConsumerWidget {
                           Navigator.pop(context); // Close debug panel
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
-                              content: Text('🗑️ All trips cleared'),
+                              content: Text('ðŸ—‘ï¸ All trips cleared'),
                             ),
                           );
                         }
@@ -182,7 +182,7 @@ class TripsDebugPanel extends ConsumerWidget {
 
           const SizedBox(height: 8),
           Text(
-            '⚠️ Development tools only',
+            'âš ï¸ Development tools only',
             style: TextStyle(
               color: Colors.grey.shade600,
               fontSize: 12,

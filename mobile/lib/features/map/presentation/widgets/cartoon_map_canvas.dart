@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import '../../data/regions_data.dart';
 import '../../data/geojson_parser.dart';
 import '../painters/cartoon_map_painter.dart';

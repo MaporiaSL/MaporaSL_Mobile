@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../map/presentation/map_screen.dart';
 import '../../album/presentation/album_page.dart';
@@ -123,9 +123,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           height: 40,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: Colors.white.withOpacity(0.9),
+                            color: Colors.white.withValues(alpha: 0.9),
                             border: Border.all(
-                              color: Colors.white.withOpacity(0.7),
+                              color: Colors.white.withValues(alpha: 0.7),
                               width: 1.5,
                             ),
                             boxShadow: const [
@@ -156,3 +156,4 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
+

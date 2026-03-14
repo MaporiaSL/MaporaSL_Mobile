@@ -1,3 +1,4 @@
+﻿import 'package:flutter/foundation.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -17,9 +18,10 @@ class AuthInterceptor extends Interceptor {
         final token = await user.getIdToken();
         options.headers['Authorization'] = 'Bearer $token';
       } catch (e) {
-        print('Error fetching Firebase token: $e');
+        debugPrint('Error fetching Firebase token: $e');
       }
     }
     return handler.next(options);
   }
 }
+

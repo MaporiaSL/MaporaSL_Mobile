@@ -1,4 +1,4 @@
-# Travel API Endpoints
+﻿# Travel API Endpoints
 
 **Base URL**: `http://localhost:5000` (Dev) / `http://10.0.2.2:5000` (Android Emulator)  
 **Version**: 1.0.1
@@ -326,3 +326,4 @@ When `NODE_ENV !== 'production'`, authentication is bypassed with a mock user.
 - [Map Endpoints](./map-endpoints.md) - Get trip visualization as GeoJSON
 - [Trips Feature Implementation](../../common/feature-implementation/trips.md) - Complete implementation guide
 - [Travel Model Documentation](../database/models.md#travel-model) - Schema details
+

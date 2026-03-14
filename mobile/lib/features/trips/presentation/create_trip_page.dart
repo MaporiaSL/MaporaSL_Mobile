@@ -31,7 +31,7 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage> {
     'Public Transportation',
     'Vehicle (Car)',
     'Bike',
-    'Walking',    
+    'Walking',
   ];
 
   @override
@@ -61,11 +61,6 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage> {
     _descriptionCtrl.dispose();
     _startingLocationCtrl.dispose();
     super.dispose();
-  }
-
-
-  void _removePlace(int index) {
-    setState(() => _places.removeAt(index));
   }
 
   Future<void> _pickStartDate() async {
@@ -114,13 +109,17 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage> {
       return;
     }
 
-    final locations = _places.map((p) => TripLocation(name: p, day: 1)).toList();
+    final locations = _places
+        .map((p) => TripLocation(name: p, day: 1))
+        .toList();
 
     try {
       if (widget.trip == null) {
         final dto = CreateTripDto(
           title: _titleCtrl.text,
-          description: _descriptionCtrl.text.isEmpty ? null : _descriptionCtrl.text,
+          description: _descriptionCtrl.text.isEmpty
+              ? null
+              : _descriptionCtrl.text,
           startDate: _startDate,
           endDate: _endDate,
           locations: locations,
@@ -129,7 +128,9 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage> {
       } else {
         final dto = UpdateTripDto(
           title: _titleCtrl.text,
-          description: _descriptionCtrl.text.isEmpty ? null : _descriptionCtrl.text,
+          description: _descriptionCtrl.text.isEmpty
+              ? null
+              : _descriptionCtrl.text,
           startDate: _startDate,
           endDate: _endDate,
           locations: locations,
@@ -184,9 +185,12 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage> {
             maxLines: 3,
           ),
           const SizedBox(height: 16),
-          
+
           // Smart Starting Location
-          const Text('Starting Location', style: TextStyle(fontSize: 12, color: Colors.grey)),
+          const Text(
+            'Starting Location',
+            style: TextStyle(fontSize: 12, color: Colors.grey),
+          ),
           const SizedBox(height: 4),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
@@ -198,9 +202,13 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage> {
               children: [
                 Expanded(
                   child: Text(
-                    _startingLocationCtrl.text.isEmpty ? 'Search starting point...' : _startingLocationCtrl.text,
+                    _startingLocationCtrl.text.isEmpty
+                        ? 'Search starting point...'
+                        : _startingLocationCtrl.text,
                     style: TextStyle(
-                      color: _startingLocationCtrl.text.isEmpty ? Colors.grey.shade600 : Colors.black87,
+                      color: _startingLocationCtrl.text.isEmpty
+                          ? Colors.grey.shade600
+                          : Colors.black87,
                       fontSize: 16,
                     ),
                   ),
@@ -219,7 +227,9 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage> {
                               setState(() {
                                 _startingLocationCtrl.text = name;
                               });
-                              Navigator.pop(context); // Close the popup after picking
+                              Navigator.pop(
+                                context,
+                              ); // Close the popup after picking
                             },
                           ),
                         ),
@@ -260,7 +270,7 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage> {
 
           // Transportation Mode
           DropdownButtonFormField<String>(
-            value: _selectedTransport,
+            initialValue: _selectedTransport,
             decoration: const InputDecoration(
               labelText: 'Primary Mode of Transportation',
               border: OutlineInputBorder(),
@@ -282,15 +292,20 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage> {
             children: [
               Text(
                 'Destinations (${_places.length})',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                style: Theme.of(
+                  context,
+                ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
               ),
               if (_places.isNotEmpty)
                 TextButton(
                   onPressed: () {
                     setState(() => _places.clear());
                   },
-                  child: const Text('Clear All', style: TextStyle(color: Colors.red, fontSize: 12)),
-                )
+                  child: const Text(
+                    'Clear All',
+                    style: TextStyle(color: Colors.red, fontSize: 12),
+                  ),
+                ),
             ],
           ),
           const SizedBox(height: 12),
@@ -328,11 +343,24 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage> {
                   leading: CircleAvatar(
                     radius: 14,
                     backgroundColor: Colors.blue.shade600,
-                    child: Text('${index + 1}', style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold)),
+                    child: Text(
+                      '${index + 1}',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
-                  title: Text(place, style: const TextStyle(fontWeight: FontWeight.w500)),
+                  title: Text(
+                    place,
+                    style: const TextStyle(fontWeight: FontWeight.w500),
+                  ),
                   trailing: IconButton(
-                    icon: const Icon(Icons.remove_circle_outline, color: Colors.redAccent),
+                    icon: const Icon(
+                      Icons.remove_circle_outline,
+                      color: Colors.redAccent,
+                    ),
                     onPressed: () {
                       setState(() {
                         _places.removeAt(index);
@@ -363,7 +391,9 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage> {
                               _places.add(name);
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('Location already added!')),
+                                const SnackBar(
+                                  content: Text('Location already added!'),
+                                ),
                               );
                             }
                           });
@@ -380,7 +410,9 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage> {
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 foregroundColor: Colors.blue.shade700,
                 side: BorderSide(color: Colors.blue.shade300, width: 2),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
             ),
           ),
@@ -399,4 +431,3 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage> {
     );
   }
 }
-

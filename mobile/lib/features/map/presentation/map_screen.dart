@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/app_colors.dart';
 import '../data/regions_data.dart';
@@ -103,7 +103,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
           next.error == null) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('✅ Location verified successfully!'),
+            content: Text('âœ… Location verified successfully!'),
             backgroundColor: Colors.green,
             duration: Duration(seconds: 3),
           ),
@@ -132,7 +132,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          '🗺️ Discover Sri Lanka',
+          'ðŸ—ºï¸ Discover Sri Lanka',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         elevation: 0,
@@ -165,8 +165,8 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                   curve: Curves.easeInOutCubic,
                   transformAlignment: Alignment.topLeft,
                   transform: Matrix4.identity()
-                    ..translate(tx, ty)
-                    ..scale(scale),
+                    ..translateByDouble(tx, ty, 0.0, 1.0)
+                    ..scaleByDouble(scale, scale, 1.0, 1.0),
                   child: Stack(
                     children: [
                       CartoonMapCanvas(
@@ -344,8 +344,8 @@ class _FocusHintBar extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
         color: isDark
-            ? Colors.black.withOpacity(0.72)
-            : Colors.white.withOpacity(0.92),
+            ? Colors.black.withValues(alpha: 0.72)
+            : Colors.white.withValues(alpha: 0.92),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: isDark ? Colors.white24 : Colors.black12),
       ),

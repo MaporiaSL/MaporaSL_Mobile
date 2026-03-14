@@ -5,7 +5,8 @@ class ChangeEmailPasswordScreen extends StatefulWidget {
   const ChangeEmailPasswordScreen({super.key});
 
   @override
-  State<ChangeEmailPasswordScreen> createState() => _ChangeEmailPasswordScreenState();
+  State<ChangeEmailPasswordScreen> createState() =>
+      _ChangeEmailPasswordScreenState();
 }
 
 class _ChangeEmailPasswordScreenState extends State<ChangeEmailPasswordScreen> {
@@ -49,14 +50,17 @@ class _ChangeEmailPasswordScreenState extends State<ChangeEmailPasswordScreen> {
       final user = _authService.currentUser;
       if (user == null) throw Exception('Not logged in');
 
-      await user.updateEmail(_emailController.text.trim());
+      await user.verifyBeforeUpdateEmail(_emailController.text.trim());
       setState(() {
-        _successMessage = 'Email updated successfully. Verification email sent.';
+        _successMessage =
+            'Verification email sent. Confirm it to complete email update.';
       });
-      await user.sendEmailVerification();
     } catch (e) {
       if (e.toString().contains('requires-recent-login')) {
-        setState(() => _errorMessage = 'For security reasons, please log out and log back in before updating email.');
+        setState(
+          () => _errorMessage =
+              'For security reasons, please log out and log back in before updating email.',
+        );
       } else {
         setState(() => _errorMessage = 'Failed to update email: $e');
       }
@@ -81,7 +85,10 @@ class _ChangeEmailPasswordScreenState extends State<ChangeEmailPasswordScreen> {
       _passwordController.clear();
     } catch (e) {
       if (e.toString().contains('requires-recent-login')) {
-        setState(() => _errorMessage = 'For security reasons, please log out and log back in before changing password.');
+        setState(
+          () => _errorMessage =
+              'For security reasons, please log out and log back in before changing password.',
+        );
       } else {
         setState(() => _errorMessage = 'Failed to update password: $e');
       }
@@ -125,7 +132,9 @@ class _ChangeEmailPasswordScreenState extends State<ChangeEmailPasswordScreen> {
               // Email Update Section
               Card(
                 elevation: 2,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Form(
@@ -135,7 +144,10 @@ class _ChangeEmailPasswordScreenState extends State<ChangeEmailPasswordScreen> {
                       children: [
                         const Text(
                           'Update Email',
-                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                         const SizedBox(height: 16),
                         TextFormField(
@@ -148,8 +160,11 @@ class _ChangeEmailPasswordScreenState extends State<ChangeEmailPasswordScreen> {
                             ),
                           ),
                           validator: (value) {
-                            if (value == null || value.trim().isEmpty) return 'Email is required';
-                            if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
+                            if (value == null || value.trim().isEmpty)
+                              return 'Email is required';
+                            if (!RegExp(
+                              r'^[^@]+@[^@]+\.[^@]+',
+                            ).hasMatch(value)) {
                               return 'Enter a valid email';
                             }
                             return null;
@@ -171,7 +186,9 @@ class _ChangeEmailPasswordScreenState extends State<ChangeEmailPasswordScreen> {
               // Password Update Section
               Card(
                 elevation: 2,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Form(
@@ -181,7 +198,10 @@ class _ChangeEmailPasswordScreenState extends State<ChangeEmailPasswordScreen> {
                       children: [
                         const Text(
                           'Change Password',
-                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                         const SizedBox(height: 16),
                         TextFormField(
@@ -195,8 +215,10 @@ class _ChangeEmailPasswordScreenState extends State<ChangeEmailPasswordScreen> {
                             ),
                           ),
                           validator: (value) {
-                            if (value == null || value.isEmpty) return 'Password is required';
-                            if (value.length < 6) return 'Password must be at least 6 characters';
+                            if (value == null || value.isEmpty)
+                              return 'Password is required';
+                            if (value.length < 6)
+                              return 'Password must be at least 6 characters';
                             return null;
                           },
                         ),

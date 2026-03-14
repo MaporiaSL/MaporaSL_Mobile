@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'dart:ui';
 import '../../../../core/constants/app_colors.dart';
 
@@ -19,10 +19,10 @@ class MapLegend extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: isDark ? Colors.black.withOpacity(0.5) : Colors.white.withOpacity(0.7),
+            color: isDark ? Colors.black.withValues(alpha: 0.5) : Colors.white.withValues(alpha: 0.7),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: isDark ? Colors.white.withOpacity(0.1) : Colors.black.withOpacity(0.05),
+              color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.05),
               width: 1,
             ),
           ),
@@ -96,7 +96,7 @@ class _LegendItem extends StatelessWidget {
             shape: BoxShape.circle,
             boxShadow: [
               BoxShadow(
-                color: color.withOpacity(0.5),
+                color: color.withValues(alpha: 0.5),
                 blurRadius: 6,
                 spreadRadius: 1,
               )
@@ -117,4 +117,5 @@ class _LegendItem extends StatelessWidget {
     );
   }
 }
+
 
