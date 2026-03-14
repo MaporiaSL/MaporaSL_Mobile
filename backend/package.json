@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
+    "dev:bypass": "set AUTH_BYPASS=true&& set PROFILE_FALLBACK_USER_ID=test-user-123&& nodemon src/server.js",
     "seed:places": "node scripts/seed/seed-places.js",
     "seed:dev-user": "node scripts/seed/seed-dev-user.js",
     "seed:dev-exploration": "node scripts/seed/seed-dev-exploration.js",

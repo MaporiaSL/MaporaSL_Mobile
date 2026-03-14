@@ -1,5 +1,8 @@
-﻿import 'package:flutter/material.dart';
+﻿import 'dart:async';
+import 'dart:math' as math;
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../../../core/constants/app_colors.dart';
 import '../data/regions_data.dart';
 import 'widgets/cartoon_map_canvas.dart';
@@ -23,23 +26,10 @@ class _MapScreenState extends ConsumerState<MapScreen> {
   String? selectedDistrict;
   String? selectedProvince;
   bool _isDistrictFocused = false;
-  double _focusScale = 1.0;
-  Offset _focusFraction = const Offset(0.5, 0.5);
   ExplorationLocation? _selectedLocation;
 
   String _normalizeKey(String? value) {
     return value?.toString().trim().toLowerCase() ?? '';
-  }
-
-  Offset _latLngToCanvas(double latitude, double longitude, Size size) {
-    const minLat = 5.9;
-    const maxLat = 9.95;
-    const minLon = 79.65;
-    const maxLon = 81.95;
-
-    final x = ((longitude - minLon) / (maxLon - minLon)) * size.width;
-    final y = ((maxLat - latitude) / (maxLat - minLat)) * size.height;
-    return Offset(x, y);
   }
 
   DistrictAssignment? _assignmentForDistrict(
@@ -118,8 +108,6 @@ class _MapScreenState extends ConsumerState<MapScreen> {
       assignments,
       selectedDistrict,
     );
-    final selectedLocations =
-        selectedAssignment?.locations ?? const <ExplorationLocation>[];
 
     // Calculate district progress (0.0-1.0 for each district)
     final districtProgress = _calculateDistrictProgress(assignments);
@@ -145,29 +133,13 @@ class _MapScreenState extends ConsumerState<MapScreen> {
         top: false,
         child: LayoutBuilder(
           builder: (context, constraints) {
-            final size = Size(constraints.maxWidth, constraints.maxHeight);
-            final focusPx = Offset(
-              _focusFraction.dx * size.width,
-              _focusFraction.dy * size.height,
-            );
-            final center = Offset(size.width / 2, size.height / 2);
-            final scale = _isDistrictFocused ? _focusScale : 1.0;
-            final tx = _isDistrictFocused
-                ? center.dx - (focusPx.dx * scale)
-                : 0.0;
-            final ty = _isDistrictFocused
-                ? center.dy - (focusPx.dy * scale)
-                : 0.0;
-
             return Stack(
               children: [
                 AnimatedContainer(
                   duration: const Duration(milliseconds: 350),
                   curve: Curves.easeInOutCubic,
                   transformAlignment: Alignment.topLeft,
-                  transform: Matrix4.identity()
-                    ..translateByDouble(tx, ty, 0.0, 1.0)
-                    ..scaleByDouble(scale, scale, 1.0, 1.0),
+                  transform: Matrix4.identity(),
                   child: Stack(
                     children: [
                       CartoonMapCanvas(
@@ -190,9 +162,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                                   selectedDistrict = null;
                                   selectedProvince = null;
                                   _isDistrictFocused = false;
-                                  _focusScale = 1.0;
                                   _selectedLocation = null;
-                                  _focusFraction = const Offset(0.5, 0.5);
                                   return;
                                 }
 
@@ -203,9 +173,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                                   selectedDistrict = null;
                                   selectedProvince = null;
                                   _isDistrictFocused = false;
-                                  _focusScale = 1.0;
                                   _selectedLocation = null;
-                                  _focusFraction = const Offset(0.5, 0.5);
                                   return;
                                 }
 
@@ -216,77 +184,29 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                                     ? provinceName
                                     : null;
                                 _isDistrictFocused = true;
-                                _focusScale =
-                                    focusTarget?.suggestedScale ?? 2.15;
                                 _selectedLocation = null;
-
-                                if (focusTarget != null) {
-                                  _focusFraction = focusTarget.centroidFraction;
-                                } else {
-                                  final assignment = _assignmentForDistrict(
-                                    assignments,
-                                    districtName,
-                                  );
-                                  if (assignment != null &&
-                                      assignment.center != null) {
-                                    final centerPx = _latLngToCanvas(
-                                      assignment.center!.latitude,
-                                      assignment.center!.longitude,
-                                      size,
-                                    );
-                                    _focusFraction = Offset(
-                                      (centerPx.dx / size.width).clamp(
-                                        0.0,
-                                        1.0,
-                                      ),
-                                      (centerPx.dy / size.height).clamp(
-                                        0.0,
-                                        1.0,
-                                      ),
-                                    );
-                                  } else {
-                                    _focusFraction = tapFraction;
-                                  }
-                                }
                               });
                             },
                       ),
-                      if (_isDistrictFocused && selectedLocations.isNotEmpty)
-                        ...selectedLocations.map((location) {
-                          final point = _latLngToCanvas(
-                            location.latitude,
-                            location.longitude,
-                            size,
-                          );
-                          return Positioned(
-                            left: point.dx - 16,
-                            top: point.dy - 32,
-                            child: Semantics(
-                              label: '${location.name} marker',
-                              button: true,
-                              child: InkWell(
-                                borderRadius: BorderRadius.circular(24),
-                                onTap: () {
-                                  setState(() {
-                                    _selectedLocation = location;
-                                  });
-                                },
-                                child: Icon(
-                                  location.visited
-                                      ? Icons.location_on
-                                      : Icons.location_on_outlined,
-                                  size: 32,
-                                  color: location.visited
-                                      ? const Color(0xFF10B981)
-                                      : const Color(0xFFEF4444),
-                                ),
-                              ),
-                            ),
-                          );
-                        }),
                     ],
                   ),
                 ),
+
+                if (_isDistrictFocused && selectedAssignment != null)
+                  Positioned(
+                    left: 16,
+                    right: 16,
+                    top: 84,
+                    bottom: 16,
+                    child: _DistrictSatelliteMap(
+                      assignment: selectedAssignment,
+                      onLocationSelected: (location) {
+                        setState(() {
+                          _selectedLocation = location;
+                        });
+                      },
+                    ),
+                  ),
 
                 if (_isDistrictFocused)
                   Positioned(
@@ -303,9 +223,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                           selectedDistrict = null;
                           selectedProvince = null;
                           _isDistrictFocused = false;
-                          _focusScale = 1.0;
                           _selectedLocation = null;
-                          _focusFraction = const Offset(0.5, 0.5);
                         });
                       },
                     ),
@@ -493,6 +411,189 @@ class _PlaceDetailCard extends StatelessWidget {
       color: const Color(0xFFE2E8F0),
       child: const Center(
         child: Icon(Icons.photo, size: 40, color: Color(0xFF64748B)),
+      ),
+    );
+  }
+}
+
+class _DistrictSatelliteMap extends StatefulWidget {
+  final DistrictAssignment assignment;
+  final ValueChanged<ExplorationLocation> onLocationSelected;
+
+  const _DistrictSatelliteMap({
+    required this.assignment,
+    required this.onLocationSelected,
+  });
+
+  @override
+  State<_DistrictSatelliteMap> createState() => _DistrictSatelliteMapState();
+}
+
+class _DistrictSatelliteMapState extends State<_DistrictSatelliteMap> {
+  final Completer<GoogleMapController> _controller =
+      Completer<GoogleMapController>();
+
+  CameraPosition _initialCamera() {
+    if (widget.assignment.center != null) {
+      return CameraPosition(
+        target: LatLng(
+          widget.assignment.center!.latitude,
+          widget.assignment.center!.longitude,
+        ),
+        zoom: 10.8,
+      );
+    }
+
+    final first = widget.assignment.locations.isNotEmpty
+        ? widget.assignment.locations.first
+        : null;
+    return CameraPosition(
+      target: LatLng(first?.latitude ?? 7.8731, first?.longitude ?? 80.7718),
+      zoom: 9.5,
+    );
+  }
+
+  Future<void> _fitToDistrict() async {
+    if (!_controller.isCompleted) return;
+    final map = await _controller.future;
+
+    final bounds = widget.assignment.bounds;
+    if (bounds != null) {
+      final sw = LatLng(bounds.minLat, bounds.minLng);
+      final ne = LatLng(bounds.maxLat, bounds.maxLng);
+
+      try {
+        await map.animateCamera(
+          CameraUpdate.newLatLngBounds(
+            LatLngBounds(southwest: sw, northeast: ne),
+            56,
+          ),
+        );
+        return;
+      } catch (_) {
+        // Fall back to center zoom when bounds animation runs before map layout.
+      }
+    }
+
+    if (widget.assignment.center != null) {
+      await map.animateCamera(
+        CameraUpdate.newLatLngZoom(
+          LatLng(
+            widget.assignment.center!.latitude,
+            widget.assignment.center!.longitude,
+          ),
+          10.8,
+        ),
+      );
+    }
+  }
+
+  Set<Marker> _buildMarkers() {
+    return widget.assignment.locations.map((location) {
+      return Marker(
+        markerId: MarkerId(location.id),
+        position: LatLng(location.latitude, location.longitude),
+        icon: BitmapDescriptor.defaultMarkerWithHue(
+          location.visited
+              ? BitmapDescriptor.hueGreen
+              : BitmapDescriptor.hueRed,
+        ),
+        infoWindow: InfoWindow(
+          title: location.name,
+          snippet: location.visited ? 'Verified' : 'Tap to verify',
+        ),
+        onTap: () => widget.onLocationSelected(location),
+      );
+    }).toSet();
+  }
+
+  void _handleMapTap(LatLng point) {
+    final candidates = widget.assignment.locations.where((location) {
+      final distance = _distanceMeters(
+        point.latitude,
+        point.longitude,
+        location.latitude,
+        location.longitude,
+      );
+      return distance <= 160;
+    }).toList();
+
+    if (candidates.isEmpty) return;
+
+    if (candidates.length == 1) {
+      widget.onLocationSelected(candidates.first);
+      return;
+    }
+
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const ListTile(
+                title: Text('Nearby Markers'),
+                subtitle: Text('Multiple places overlap here. Select one.'),
+              ),
+              ...candidates.map(
+                (location) => ListTile(
+                  leading: Icon(
+                    location.visited
+                        ? Icons.location_on
+                        : Icons.location_on_outlined,
+                    color: location.visited
+                        ? const Color(0xFF10B981)
+                        : const Color(0xFFEF4444),
+                  ),
+                  title: Text(location.name),
+                  subtitle: Text(location.type),
+                  onTap: () {
+                    Navigator.pop(context);
+                    widget.onLocationSelected(location);
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  double _distanceMeters(double lat1, double lon1, double lat2, double lon2) {
+    const earthRadius = 6371000.0;
+    final dLat = _toRadians(lat2 - lat1);
+    final dLon = _toRadians(lon2 - lon1);
+    final a =
+        (math.sin(dLat / 2) * math.sin(dLat / 2)) +
+        math.cos(_toRadians(lat1)) *
+            math.cos(_toRadians(lat2)) *
+            (math.sin(dLon / 2) * math.sin(dLon / 2));
+    final c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a));
+    return earthRadius * c;
+  }
+
+  double _toRadians(double value) => value * 0.017453292519943295;
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(16),
+      child: GoogleMap(
+        mapType: MapType.satellite,
+        zoomControlsEnabled: true,
+        myLocationButtonEnabled: false,
+        myLocationEnabled: false,
+        initialCameraPosition: _initialCamera(),
+        markers: _buildMarkers(),
+        onMapCreated: (controller) {
+          if (!_controller.isCompleted) {
+            _controller.complete(controller);
+          }
+          _fitToDistrict();
+        },
+        onTap: _handleMapTap,
       ),
     );
   }
