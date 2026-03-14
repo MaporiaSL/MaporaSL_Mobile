@@ -1,4 +1,4 @@
-# Discovery Map Progression
+﻿# Discovery Map Progression
 
 Version: 1.0
 Last Updated: February 5, 2026
@@ -30,13 +30,13 @@ Each user receives a personalized set of exploration locations per district. Use
 
 ## Personalization Requirements
 - The number of assigned locations is randomized per user and per district.
-- Assignment is weighted so districts nearer to the user’s hometown are more likely to receive higher counts.
+- Assignment is weighted so districts nearer to the userâ€™s hometown are more likely to receive higher counts.
 - The weighting parameters are configurable and can be tuned without app updates.
 
 ## Data Sources
 ### Unlock Location Catalog (separate from trip planning)
 - Stored in a database collection.
-- Seeded from [project_resorces/places_seed_data_2026.json](../../project_resorces/places_seed_data_2026.json).
+- Seeded from [project_resources/places_seed_data_2026.json](../../../project_resources/places_seed_data_2026.json).
 - Includes district, province, location name, type, latitude, longitude.
 - Each district must have at least 3 active locations.
 
@@ -49,7 +49,7 @@ Track per user:
 - Metadata for anti-cheat and audit (timestamps, device hints).
 
 ## Rewards and XP
-- Assign lower XP for locations nearer to the user’s hometown district.
+- Assign lower XP for locations nearer to the userâ€™s hometown district.
 - Assign higher XP for distant districts to encourage exploration.
 - XP scaling uses distance tiers plus a small random bonus.
 - XP weights and bonus range are configurable without app updates.
@@ -58,8 +58,8 @@ Track per user:
 - Track XP events in a ledger for auditing and rollback.
 
 ## Reroll Policy
-- Show a dedicated “Your Exploration Map” onboarding screen after account creation.
-- Show a summary view with a “View Details” drill-down for full assignments.
+- Show a dedicated â€œYour Exploration Mapâ€ onboarding screen after account creation.
+- Show a summary view with a â€œView Detailsâ€ drill-down for full assignments.
 - Provide options to view assigned locations and perform the one-time reroll.
 - Warn users that reroll is irreversible and resets progress.
 - Block reroll after 35% total exploration (global assigned locations visited).
@@ -80,7 +80,7 @@ Track per user:
 - Log reroll actions with timestamp and optional user reason.
 - Collect reason from a selectable list with optional free-text.
 - Reason selection is required.
-- Free-text is required only when “Other” is selected.
+- Free-text is required only when â€œOtherâ€ is selected.
 - Prompt for reroll reason before code entry.
 
 ### Reroll Reason Options
@@ -122,3 +122,5 @@ Track per user:
 
 ## Open Decisions
 None.
+
+

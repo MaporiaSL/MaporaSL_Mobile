@@ -1,3 +1,4 @@
+﻿import 'package:flutter/foundation.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:gemified_travel_portfolio/core/config/app_config.dart';
@@ -24,10 +25,10 @@ class PlacesRepository {
       };
 
       final uri = Uri.parse('$baseUrl/places').replace(queryParameters: queryParams);
-      print('Fetching places from: $uri');
+      debugPrint('Fetching places from: $uri');
       
       final response = await http.get(uri);
-      print('Response status: ${response.statusCode}');
+      debugPrint('Response status: ${response.statusCode}');
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -37,8 +38,9 @@ class PlacesRepository {
         throw Exception('Failed to load places: ${response.statusCode}');
       }
     } catch (e) {
-      print('Error in getPlaces: $e');
+      debugPrint('Error in getPlaces: $e');
       throw Exception('Error fetching places: $e');
     }
   }
 }
+

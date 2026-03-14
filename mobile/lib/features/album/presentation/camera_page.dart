@@ -1,3 +1,4 @@
+﻿import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
@@ -182,7 +183,7 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
         photoPath: photoPath,
         onRetake: () {
           Navigator.pop(context);
-          File(photoPath).delete().catchError((_) {});
+          _deleteTempPhoto(photoPath);
         },
         // Direct save when inside an album
         onSaveDirect: hasAlbum
@@ -216,7 +217,7 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
       final result = await _service.uploadPhotoToLocationAlbum(File(photoPath));
 
       // Clean up local file after successful upload
-      File(photoPath).delete().catchError((_) {});
+      _deleteTempPhoto(photoPath);
 
       if (mounted) {
         setState(() => _isUploading = false);
@@ -242,7 +243,7 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
       await _service.uploadPhoto(albumId, File(photoPath));
 
       // Clean up local file after successful upload
-      File(photoPath).delete().catchError((_) {});
+      _deleteTempPhoto(photoPath);
 
       if (mounted) {
         setState(() => _isUploading = false);
@@ -259,6 +260,11 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
         ).showSnackBar(SnackBar(content: Text('Upload failed: $e')));
       }
     }
+  }
+
+  void _deleteTempPhoto(String photoPath) {
+    // Fire-and-forget cleanup; we don't want UI flow to fail on delete errors.
+    unawaited(File(photoPath).delete().catchError((_) => File(photoPath)));
   }
 
   @override
@@ -286,7 +292,7 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
 
     if (!_isInitialized || _controller == null) {
       return Scaffold(
-        backgroundColor: Colors.black.withOpacity(0.7),
+        backgroundColor: Colors.black.withValues(alpha: 0.7),
         body: const Center(
           child: CircularProgressIndicator(color: Colors.white, strokeWidth: 3),
         ),
@@ -294,7 +300,7 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
     }
 
     return Scaffold(
-      backgroundColor: Colors.black.withOpacity(0.85),
+      backgroundColor: Colors.black.withValues(alpha: 0.85),
       body: Stack(
         children: [
           // Camera preview
@@ -333,7 +339,7 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
                       ? _switchCamera
                       : null,
                 ),
-                // Capture button – 64px (was 80)
+                // Capture button â€“ 64px (was 80)
                 GestureDetector(
                   onTap: _isCapturing || _isUploading ? null : _takePhoto,
                   child: Container(
@@ -403,3 +409,4 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
     );
   }
 }
+

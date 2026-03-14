@@ -1,4 +1,4 @@
-# Database Indexes & Optimization
+﻿# Database Indexes & Optimization
 
 This document analyzes all indexes in MAPORIA's MongoDB database, their performance characteristics, and optimization recommendations.
 
@@ -80,9 +80,9 @@ User.find({ totalPlacesVisited: { $gte: 100 } })
 
 #### Optimization Notes
 
-- ✅ Firebase UID lookup is instant (unique index)
-- ✅ Email uniqueness enforced at database level
-- ⚠️ No index on `totalPlacesVisited` - leaderboard queries may be slow with large user base
+- âœ… Firebase UID lookup is instant (unique index)
+- âœ… Email uniqueness enforced at database level
+- âš ï¸ No index on `totalPlacesVisited` - leaderboard queries may be slow with large user base
 
 ---
 
@@ -134,20 +134,20 @@ Travel.find({
 **Compound Index Coverage**:
 ```javascript
 // Covered queries (most efficient):
-{ userId: 1 }                              // ✅ Uses prefix
-{ userId: 1, startDate: 1 }                 // ✅ Exact match
-{ userId: 1, startDate: 1, endDate: 1 }     // ✅ Extends compound
+{ userId: 1 }                              // âœ… Uses prefix
+{ userId: 1, startDate: 1 }                 // âœ… Exact match
+{ userId: 1, startDate: 1, endDate: 1 }     // âœ… Extends compound
 
 // Not covered:
-{ startDate: 1 }                            // ❌ No userId prefix
-{ endDate: 1 }                              // ❌ Not in index
+{ startDate: 1 }                            // âŒ No userId prefix
+{ endDate: 1 }                              // âŒ Not in index
 ```
 
 #### Optimization Notes
 
-- ✅ Compound index eliminates need for separate `userId` single index
-- ✅ Chronological sorting is index-supported
-- ⚠️ Text search on `title` requires regex scan (consider MongoDB Text Index)
+- âœ… Compound index eliminates need for separate `userId` single index
+- âœ… Chronological sorting is index-supported
+- âš ï¸ Text search on `title` requires regex scan (consider MongoDB Text Index)
 
 ---
 
@@ -226,10 +226,10 @@ Destination.find({
 **Redundant Indexes**:
 ```javascript
 // Single userId index is redundant
-userId: { index: true }  // ❌ Redundant
+userId: { index: true }  // âŒ Redundant
 
 // Compound index covers this
-{ userId: 1, travelId: 1 }  // ✅ Use this instead
+{ userId: 1, travelId: 1 }  // âœ… Use this instead
 ```
 
 **Recommendation**: Remove single `userId` index to save storage.
@@ -237,7 +237,7 @@ userId: { index: true }  // ❌ Redundant
 **Missing Index Opportunity**:
 ```javascript
 // Add for gamification queries
-{ userId: 1, districtId: 1, visited: 1 }  // ⚡ Recommended
+{ userId: 1, districtId: 1, visited: 1 }  // âš¡ Recommended
 ```
 
 #### Geospatial Index Details
@@ -274,8 +274,8 @@ $geoIntersects // Find intersecting geometries
 
 | Index | Type | Status |
 |-------|------|--------|
-| `_id` | Default | ✅ Present |
-| *(none)* | - | ⚠️ No custom indexes |
+| `_id` | Default | âœ… Present |
+| *(none)* | - | âš ï¸ No custom indexes |
 
 #### Common Queries
 
@@ -295,9 +295,9 @@ PrePlannedTrip.find().limit(20)
 
 #### Optimization Notes
 
-- ⚠️ **Current State**: No indexes = full collection scans
-- ✅ **Acceptable if**: Collection stays small (<1000 documents)
-- ⚡ **Recommended indexes**:
+- âš ï¸ **Current State**: No indexes = full collection scans
+- âœ… **Acceptable if**: Collection stays small (<1000 documents)
+- âš¡ **Recommended indexes**:
   ```javascript
   // Add if collection grows
   { difficulty: 1 }
@@ -323,7 +323,7 @@ Base write:           ~1ms
 + 3 single indexes:   ~0.5ms
 + 1 compound index:   ~0.3ms
 + 1 geospatial index: ~1.5ms
-─────────────────────────────
+â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 Total:                ~3.3ms
 ```
 
@@ -363,7 +363,7 @@ Destination.find({ travelId: ObjectId('...') })
 ```javascript
 // Without geospatial index
 // Performance: O(n) - calculates distance for every doc
-// 10k docs × 1ms each = 10 seconds
+// 10k docs Ã— 1ms each = 10 seconds
 
 // With 2dsphere index (current)
 // Performance: O(log n + k)
@@ -488,7 +488,7 @@ db.travels.aggregate([{ $indexStats: {} }])
 
 ## Recommendations
 
-### High Priority ⚡
+### High Priority âš¡
 
 1. **Remove Redundant Index** (Destination model):
    ```javascript
@@ -513,7 +513,7 @@ db.travels.aggregate([{ $indexStats: {} }])
 
 ---
 
-### Medium Priority 🔶
+### Medium Priority ðŸ”¶
 
 4. **Add Text Search** (Travel model):
    ```javascript
@@ -542,7 +542,7 @@ db.travels.aggregate([{ $indexStats: {} }])
 
 ---
 
-### Low Priority 📋
+### Low Priority ðŸ“‹
 
 7. **Sparse Index for Visited Destinations**:
    ```javascript
@@ -585,3 +585,4 @@ To implement recommended changes:
 - [relationships.md](./relationships.md) - How models relate
 - [MongoDB Index Documentation](https://docs.mongodb.com/manual/indexes/)
 - [Query Optimization Guide](https://docs.mongodb.com/manual/tutorial/optimize-query-performance-with-indexes-and-projections/)
+

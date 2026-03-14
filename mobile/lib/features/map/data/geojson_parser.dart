@@ -1,3 +1,4 @@
+﻿import 'package:flutter/foundation.dart';
 import 'dart:convert';
 import 'package:flutter/services.dart';
 
@@ -60,7 +61,7 @@ class GeoJsonParser {
         districtToProvince: districtToProvince,
       );
     } catch (e) {
-      print('Error loading GeoJSON from $assetPath: $e');
+      debugPrint('Error loading GeoJSON from $assetPath: $e');
       return const DistrictBoundaryData(boundaries: {}, districtToProvince: {});
     }
   }
@@ -93,7 +94,7 @@ class GeoJsonParser {
 
       return boundaries;
     } catch (e) {
-      print('Error loading GeoJSON from $assetPath: $e');
+      debugPrint('Error loading GeoJSON from $assetPath: $e');
       return {};
     }
   }
@@ -142,3 +143,4 @@ class DistrictBoundaryData {
     required this.districtToProvince,
   });
 }
+

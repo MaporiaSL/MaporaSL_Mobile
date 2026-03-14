@@ -1,15 +1,21 @@
+﻿import 'dart:async';
+import 'dart:convert';
+import 'dart:math' as math;
+import 'dart:ui' show ImageFilter;
 import 'package:flutter/material.dart';
-import 'dart:ui';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/services.dart';
+import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart' as mapbox;
 import '../../../core/constants/app_colors.dart';
 import '../data/regions_data.dart';
 import 'widgets/cartoon_map_canvas.dart';
-import 'widgets/map_legend.dart';
 import 'theme/map_visual_theme.dart';
 import '../../exploration/providers/exploration_provider.dart';
 import '../../../core/providers/theme_provider.dart';
 import '../../exploration/data/models/exploration_models.dart';
 import '../../visits/presentation/widgets/dynamic_visit_sheet.dart';
+
+final districtFocusProvider = StateProvider<bool>((ref) => false);
 
 /// Lightweight map screen displaying stylized Sri Lanka map with exploration assignments
 class MapScreen extends ConsumerStatefulWidget {
@@ -24,10 +30,25 @@ class MapScreen extends ConsumerStatefulWidget {
 class _MapScreenState extends ConsumerState<MapScreen> {
   String? selectedDistrict;
   String? selectedProvince;
-  bool _panelExpanded = true;
+  bool _isDistrictFocused = false;
+  ExplorationLocation? _selectedLocation;
 
   String _normalizeKey(String? value) {
     return value?.toString().trim().toLowerCase() ?? '';
+  }
+
+  DistrictAssignment? _assignmentForDistrict(
+    List<DistrictAssignment> assignments,
+    String? district,
+  ) {
+    if (district == null || district.isEmpty) return null;
+    final districtKey = _normalizeKey(district);
+    for (final assignment in assignments) {
+      if (_normalizeKey(assignment.district) == districtKey) {
+        return assignment;
+      }
+    }
+    return null;
   }
 
   /// Calculate district progress map from assignments (0.0-1.0 for each district)
@@ -71,12 +92,14 @@ class _MapScreenState extends ConsumerState<MapScreen> {
           ),
         );
       }
-      
+
       // Show success message when verification completes
-      if (previous?.isVerifying == true && !next.isVerifying && next.error == null) {
+      if (previous?.isVerifying == true &&
+          !next.isVerifying &&
+          next.error == null) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('✅ Location verified successfully!'),
+            content: Text('âœ… Location verified successfully!'),
             backgroundColor: Colors.green,
             duration: Duration(seconds: 3),
           ),
@@ -86,42 +109,112 @@ class _MapScreenState extends ConsumerState<MapScreen> {
 
     final explorationState = ref.watch(explorationProvider);
     final assignments = explorationState.assignments;
-    final lockedDistricts = assignments
-        .where((assignment) => assignment.unlockedAt == null)
-        .map((assignment) => assignment.district)
-        .toSet();
-
-    final selectedAssignment = assignments.firstWhere(
-      (assignment) =>
-          _normalizeKey(assignment.district) == _normalizeKey(selectedDistrict),
-      orElse: () => DistrictAssignment(
-        district: selectedDistrict ?? '',
-        province: selectedProvince ?? '',
-        assignedCount: 0,
-        visitedCount: 0,
-        unlockedAt: null,
-        locations: const <ExplorationLocation>[],
-      ),
+    final selectedAssignment = _assignmentForDistrict(
+      assignments,
+      selectedDistrict,
     );
-
-    final districtLocked = selectedDistrict == null
-        ? false
-        : lockedDistricts
-              .map(_normalizeKey)
-              .contains(_normalizeKey(selectedDistrict));
 
     // Calculate district progress (0.0-1.0 for each district)
     final districtProgress = _calculateDistrictProgress(assignments);
 
     // Watch the global theme provider
     final mapThemeStr = ref.watch(themeProvider);
-    final theme = (mapThemeStr == 'dark') 
-        ? MapVisualTheme.dark() 
+    final theme = (mapThemeStr == 'dark')
+        ? MapVisualTheme.dark()
         : const MapVisualTheme();
+
+    // Update district focus state asynchronously after build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(districtFocusProvider.notifier).state = _isDistrictFocused;
+    });
+
+    if (_isDistrictFocused && selectedAssignment != null) {
+      return Scaffold(
+        backgroundColor: Colors.black.withValues(alpha: 0.02),
+        extendBodyBehindAppBar: true,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          automaticallyImplyLeading: false,
+          actions: const [],
+        ),
+        // Close button as FAB - guaranteed to be on top and responsive
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            setState(() {
+              selectedDistrict = null;
+              selectedProvince = null;
+              _isDistrictFocused = false;
+              _selectedLocation = null;
+            });
+          },
+          backgroundColor: Colors.white.withValues(alpha: 0.25),
+          elevation: 0,
+          child: const Icon(Icons.close, color: Colors.white, size: 28),
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
+        body: SafeArea(
+          top: false,
+          child: Stack(
+            children: [
+              _DistrictSatelliteMap(
+                key: ValueKey(
+                  'district-map-${selectedAssignment.district.toLowerCase()}',
+                ),
+                assignment: selectedAssignment,
+                onLocationSelected: (location) {
+                  setState(() {
+                    _selectedLocation = location;
+                  });
+                },
+              ),
+              Positioned(
+                top: 12,
+                left: 16,
+                right: 0,
+                child: _DistrictHeaderBar(
+                  district: selectedDistrict ?? 'District',
+                ),
+              ),
+              if (_selectedLocation != null)
+                Positioned(
+                  left: 16,
+                  right: 16,
+                  bottom: 24,
+                  child: _PlaceDetailCard(
+                    location: _selectedLocation!,
+                    onClose: () {
+                      setState(() {
+                        _selectedLocation = null;
+                      });
+                    },
+                    onVerify: () {
+                      final location = _selectedLocation;
+                      if (location == null) return;
+                      DynamicVisitSheet.show(
+                        context,
+                        placeId: location.id,
+                        placeName: location.name,
+                        targetLat: location.latitude,
+                        targetLng: location.longitude,
+                        isExploration: true,
+                        explorationLocation: location,
+                      );
+                    },
+                  ),
+                ),
+            ],
+          ),
+        ),
+      );
+    }
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('🗺️ Discover Sri Lanka', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: const Text(
+          'ðŸ—ºï¸ Discover Sri Lanka',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         elevation: 0,
         backgroundColor: AppColors.background,
         foregroundColor: AppColors.textDark,
@@ -129,367 +222,95 @@ class _MapScreenState extends ConsumerState<MapScreen> {
       backgroundColor: AppColors.background,
       body: SafeArea(
         top: false,
-        child: Stack(
-          children: [
-            CartoonMapCanvas(
-              regions: sriLankaRegions,
-              selectedRegionId: selectedProvince,
-              selectedDistrictName: selectedDistrict,
-              theme: theme,
-              districtProgress: districtProgress,
-              onDistrictSelected: (districtName, provinceName) {
-                setState(() {
-                  if (selectedDistrict == districtName) {
-                    // Toggle off if same one tapped again
-                    selectedDistrict = null;
-                    selectedProvince = null;
-                  } else {
-                    selectedDistrict = districtName;
-                    selectedProvince =
-                        (provinceName != null && provinceName.isNotEmpty)
-                        ? provinceName
-                        : null;
-                  }
-                });
-              },
-            ),
-            Positioned(
-              bottom: 16,
-              left: 16,
-              right: 16,
-              child: AnimatedCrossFade(
-                duration: const Duration(milliseconds: 200),
-                crossFadeState: _panelExpanded
-                    ? CrossFadeState.showFirst
-                    : CrossFadeState.showSecond,
-                firstChild: _DistrictActionPanel(
-                  district: selectedDistrict,
-                  province: selectedProvince,
-                  locked: districtLocked,
-                  isLoading: explorationState.isLoading,
-                  assignedCount: selectedAssignment.assignedCount,
-                  visitedCount: selectedAssignment.visitedCount,
-                  locations: selectedAssignment.locations,
-                  onVerifyLocation: (location) {
-                    DynamicVisitSheet.show(
-                      context,
-                      placeId: location.id,
-                      placeName: location.name,
-                      targetLat: location.latitude,
-                      targetLng: location.longitude,
-                      isExploration: true,
-                      explorationLocation: location,
-                    );
-                  },
-                  onToggle: () {
-                    setState(() => _panelExpanded = !_panelExpanded);
-                  },
-                ),
-                secondChild: _CollapsedPanel(
-                  district: selectedDistrict,
-                  locked: districtLocked,
-                  onToggle: () {
-                    setState(() => _panelExpanded = !_panelExpanded);
-                  },
-                ),
-              ),
-            ),
-            // if (explorationState.isVerifying) const _VerificationOverlay(),
-            // legend removed
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _DistrictActionPanel extends StatelessWidget {
-  final String? district;
-  final String? province;
-  final bool locked;
-  final VoidCallback onToggle;
-  final bool isLoading;
-  final int assignedCount;
-  final int visitedCount;
-  final List<ExplorationLocation> locations;
-  final ValueChanged<ExplorationLocation> onVerifyLocation;
-
-  const _DistrictActionPanel({
-    required this.district,
-    required this.province,
-    required this.locked,
-    required this.onToggle,
-    required this.isLoading,
-    required this.assignedCount,
-    required this.visitedCount,
-    required this.locations,
-    required this.onVerifyLocation,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final title = district ?? 'Select a district';
-    final subtitle = district == null
-        ? 'Tap a district to reveal quests'
-        : 'Province: ${province ?? 'Unknown'}';
-
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(24),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-        child: Container(
-          decoration: BoxDecoration(
-            color: isDark 
-                ? Colors.black.withOpacity(0.5) 
-                : Colors.white.withOpacity(0.6),
-            borderRadius: BorderRadius.circular(24),
-            border: Border.all(
-              color: isDark ? Colors.white.withOpacity(0.1) : Colors.black.withOpacity(0.05),
-              width: 1,
-            ),
-          ),
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          title,
-                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            color: isDark ? Colors.white : AppColors.textDark,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: -0.5,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          subtitle,
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: isDark ? Colors.grey[400] : AppColors.textMuted,
-                          ),
-                        ),
-                        if (district != null) ...[
-                          const SizedBox(height: 12),
-                          Stack(
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(10),
-                                child: LinearProgressIndicator(
-                                  value: (visitedCount / (assignedCount > 0 ? assignedCount : 1)).clamp(0, 1),
-                                  minHeight: 8,
-                                  backgroundColor: isDark ? Colors.white12 : AppColors.border,
-                                  valueColor: AlwaysStoppedAnimation(isDark ? const Color(0xFF10B981) : const Color(0xFF059669)),
-                                ),
-                              ),
-                              if (visitedCount > 0)
-                                Positioned.fill(
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      color: (isDark ? const Color(0xFF10B981) : const Color(0xFF059669)).withOpacity(0.05),
-                                    ),
-                                  ),
-                                ),
-                            ],
-                          ),
-                          const SizedBox(height: 6),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'Exploration Progress',
-                                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                                  color: isDark ? Colors.grey[500] : AppColors.textMuted,
-                                ),
-                              ),
-                              Text(
-                                '$visitedCount / $assignedCount',
-                                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                                  color: isDark ? const Color(0xFF10B981) : const Color(0xFF059669),
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Row(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return Stack(
+              children: [
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 350),
+                  curve: Curves.easeInOutCubic,
+                  transformAlignment: Alignment.topLeft,
+                  transform: Matrix4.identity(),
+                  child: Stack(
                     children: [
-                      IconButton(
-                        onPressed: onToggle,
-                        icon: const Icon(Icons.unfold_less),
-                        color: isDark ? Colors.white60 : AppColors.textMuted,
-                        visualDensity: VisualDensity.compact,
-                        tooltip: 'Collapse',
+                      CartoonMapCanvas(
+                        regions: sriLankaRegions,
+                        selectedRegionId: selectedProvince,
+                        selectedDistrictName: selectedDistrict,
+                        focusMode: _isDistrictFocused,
+                        focusedDistrictName: selectedDistrict,
+                        theme: theme,
+                        districtProgress: districtProgress,
+                        onDistrictSelected:
+                            (
+                              districtName,
+                              provinceName,
+                              tapFraction,
+                              focusTarget,
+                            ) {
+                              setState(() {
+                                if (districtName.isEmpty) {
+                                  selectedDistrict = null;
+                                  selectedProvince = null;
+                                  _isDistrictFocused = false;
+                                  _selectedLocation = null;
+                                  return;
+                                }
+
+                                final sameDistrict =
+                                    _normalizeKey(selectedDistrict) ==
+                                    _normalizeKey(districtName);
+                                if (sameDistrict && _isDistrictFocused) {
+                                  selectedDistrict = null;
+                                  selectedProvince = null;
+                                  _isDistrictFocused = false;
+                                  _selectedLocation = null;
+                                  return;
+                                }
+
+                                selectedDistrict = districtName;
+                                selectedProvince =
+                                    (provinceName != null &&
+                                        provinceName.isNotEmpty)
+                                    ? provinceName
+                                    : null;
+                                _isDistrictFocused = true;
+                                _selectedLocation = null;
+                              });
+                            },
                       ),
-                      if (district != null)
-                        IconButton(
-                          onPressed: () {
-                            // Find the state and set selectedDistrict to null
-                            final state = context.findAncestorStateOfType<_MapScreenState>();
-                            state?.setState(() {
-                              state.selectedDistrict = null;
-                              state.selectedProvince = null;
-                            });
-                          },
-                          icon: const Icon(Icons.close),
-                          color: isDark ? Colors.white38 : AppColors.textMuted,
-                          visualDensity: VisualDensity.compact,
-                          tooltip: 'Clear Selection',
-                        ),
                     ],
                   ),
-                ],
-              ),
-              if (district != null) ...[
-                const SizedBox(height: 16),
-                _AssignedLocationList(
-                  isLoading: isLoading,
-                  locations: locations,
-                  onVerify: onVerifyLocation,
                 ),
+
+                if (_selectedLocation != null)
+                  Positioned(
+                    left: 16,
+                    right: 16,
+                    bottom: 24,
+                    child: _PlaceDetailCard(
+                      location: _selectedLocation!,
+                      onClose: () {
+                        setState(() {
+                          _selectedLocation = null;
+                        });
+                      },
+                      onVerify: () {
+                        final location = _selectedLocation;
+                        if (location == null) return;
+                        DynamicVisitSheet.show(
+                          context,
+                          placeId: location.id,
+                          placeName: location.name,
+                          targetLat: location.latitude,
+                          targetLng: location.longitude,
+                          isExploration: true,
+                          explorationLocation: location,
+                        );
+                      },
+                    ),
+                  ),
               ],
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _AssignedLocationList extends StatelessWidget {
-  final bool isLoading;
-  final List<ExplorationLocation> locations;
-  final ValueChanged<ExplorationLocation> onVerify;
-
-  const _AssignedLocationList({
-    required this.isLoading,
-    required this.locations,
-    required this.onVerify,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    if (isLoading) {
-      return Padding(
-        padding: const EdgeInsets.only(top: 12),
-        child: SizedBox(
-          height: 60,
-          child: Center(child: CircularProgressIndicator(strokeWidth: 2, color: isDark ? const Color(0xFF10B981) : const Color(0xFF059669))),
-        ),
-      );
-    }
-
-    if (locations.isEmpty) {
-      return Padding(
-        padding: const EdgeInsets.only(top: 12),
-        child: Text(
-          'No assigned locations yet.',
-          style: Theme.of(
-            context,
-          ).textTheme.bodySmall?.copyWith(color: isDark ? Colors.grey[500] : AppColors.textMuted),
-        ),
-      );
-    }
-
-    return Padding(
-      padding: const EdgeInsets.only(top: 4),
-      child: SizedBox(
-        height: 130,
-        child: ListView.separated(
-          itemCount: locations.length,
-          scrollDirection: Axis.horizontal,
-          padding: const EdgeInsets.symmetric(vertical: 8),
-          separatorBuilder: (_, __) => const SizedBox(width: 12),
-          itemBuilder: (context, index) {
-            final location = locations[index];
-            return Container(
-              width: 200,
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.03),
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: isDark ? Colors.white.withOpacity(0.1) : Colors.black.withOpacity(0.05),
-                  width: 1,
-                ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(
-                        location.visited ? Icons.check_circle : Icons.location_on,
-                        color: location.visited
-                            ? (isDark ? const Color(0xFF10B981) : const Color(0xFF059669))
-                            : (isDark ? const Color(0xFF06B6D4) : const Color(0xFF0891B2)),
-                        size: 16,
-                      ),
-                      const SizedBox(width: 6),
-                      Expanded(
-                        child: Text(
-                          location.name,
-                          style: Theme.of(context).textTheme.labelMedium
-                              ?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: isDark ? Colors.white : AppColors.textDark,
-                              ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const Spacer(),
-                  Text(
-                    location.type,
-                    style: Theme.of(context).textTheme.labelSmall
-                        ?.copyWith(color: isDark ? Colors.grey[400] : AppColors.textMuted),
-                  ),
-                  const SizedBox(height: 8),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: location.visited
-                          ? null
-                          : () => onVerify(location),
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 4),
-                        backgroundColor: location.visited
-                            ? Colors.transparent
-                            : (isDark ? const Color(0xFF10B981) : const Color(0xFF059669)).withOpacity(0.1),
-                        foregroundColor: location.visited
-                            ? (isDark ? Colors.white24 : Colors.black26)
-                            : (isDark ? const Color(0xFF10B981) : const Color(0xFF059669)),
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          side: BorderSide(
-                            color: location.visited ? Colors.transparent : (isDark ? const Color(0xFF10B981) : const Color(0xFF059669)).withOpacity(0.3),
-                          ),
-                        ),
-                      ),
-                      child: Text(
-                        location.visited ? 'Visited' : 'Discovery',
-                        style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
             );
           },
         ),
@@ -498,70 +319,789 @@ class _AssignedLocationList extends StatelessWidget {
   }
 }
 
-// class _VerificationOverlay extends StatelessWidget {
-// ... removed legacy overlay
-// }
+class _DistrictHeaderBar extends StatelessWidget {
+  final String district;
 
-class _CollapsedPanel extends StatelessWidget {
-  final String? district;
-  final bool locked;
-  final VoidCallback onToggle;
+  const _DistrictHeaderBar({required this.district});
 
-  const _CollapsedPanel({
-    required this.district,
-    required this.locked,
-    required this.onToggle,
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(16),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 12.0, sigmaY: 12.0),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Colors.white.withValues(alpha: 0.18),
+                Colors.white.withValues(alpha: 0.08),
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: Colors.white.withValues(alpha: 0.25),
+              width: 1.5,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.1),
+                blurRadius: 20,
+                spreadRadius: 0,
+              ),
+            ],
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Expanded(
+                child: Text(
+                  district,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 20,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+              ),
+              // Close button now handled by FAB above
+              const SizedBox(width: 8),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _PlaceDetailCard extends StatelessWidget {
+  final ExplorationLocation location;
+  final VoidCallback onClose;
+  final VoidCallback onVerify;
+
+  const _PlaceDetailCard({
+    required this.location,
+    required this.onClose,
+    required this.onVerify,
   });
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return GestureDetector(
-      onTap: onToggle,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-          child: Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: isDark ? Colors.black.withOpacity(0.5) : Colors.white.withOpacity(0.8),
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-              border: Border.all(
-                color: isDark ? Colors.white.withOpacity(0.1) : Colors.black.withOpacity(0.05),
-                width: 1,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(isDark ? 0.3 : 0.05),
-                  blurRadius: 20,
-                  offset: const Offset(0, -5),
-                )
-              ],
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  locked ? Icons.lock_outline : Icons.explore_outlined,
-                  size: 20,
-                  color: locked ? Colors.white38 : (isDark ? const Color(0xFF10B981) : const Color(0xFF059669)),
+    final imageUrl = location.photos.isNotEmpty ? location.photos.first : null;
+    return Semantics(
+      label: 'Place details for ${location.name}',
+      child: Card(
+        elevation: 8,
+        clipBehavior: Clip.antiAlias,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (imageUrl != null)
+              SizedBox(
+                height: 140,
+                width: double.infinity,
+                child: Image.network(
+                  imageUrl,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) => _fallbackHeader(),
                 ),
-                const SizedBox(width: 10),
-                Text(
-                  district ?? 'Select Location',
-                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: isDark ? Colors.white : AppColors.textDark,
+              )
+            else
+              _fallbackHeader(),
+            Padding(
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          location.name,
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: onClose,
+                        icon: const Icon(Icons.close),
+                        tooltip: 'Close',
+                      ),
+                    ],
                   ),
-                ),
-                const SizedBox(width: 8),
-                Icon(Icons.unfold_more, size: 20, color: isDark ? Colors.white60 : AppColors.textMuted),
-              ],
+                  const SizedBox(height: 4),
+                  Text(location.type.isEmpty ? 'Attraction' : location.type),
+                  const SizedBox(height: 8),
+                  Text(
+                    location.description?.isNotEmpty == true
+                        ? location.description!
+                        : 'No description available yet. Visit this location to contribute better details.',
+                  ),
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      onPressed: location.visited ? null : onVerify,
+                      icon: const Icon(Icons.verified),
+                      label: Text(
+                        location.visited
+                            ? 'Already Verified'
+                            : 'Verify This Place',
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
+          ],
         ),
       ),
+    );
+  }
+
+  Widget _fallbackHeader() {
+    return Container(
+      height: 120,
+      width: double.infinity,
+      color: const Color(0xFFE2E8F0),
+      child: const Center(
+        child: Icon(Icons.photo, size: 40, color: Color(0xFF64748B)),
+      ),
+    );
+  }
+}
+
+class _DistrictSatelliteMap extends StatefulWidget {
+  final DistrictAssignment assignment;
+  final ValueChanged<ExplorationLocation> onLocationSelected;
+
+  const _DistrictSatelliteMap({
+    super.key,
+    required this.assignment,
+    required this.onLocationSelected,
+  });
+
+  @override
+  State<_DistrictSatelliteMap> createState() => _DistrictSatelliteMapState();
+}
+
+class _DistrictSatelliteMapState extends State<_DistrictSatelliteMap> {
+  static const String _districtSourceId = 'district-focus-source';
+  static const String _districtFillLayerId = 'district-focus-fill';
+  static const String _districtLineLayerId = 'district-focus-line';
+  static const String _outsideMaskSourceId = 'district-outside-mask-source';
+  static const String _outsideMaskLayerId = 'district-outside-mask-fill';
+  static Map<String, dynamic>? _districtGeoJsonCache;
+
+  mapbox.MapboxMap? _mapboxMap;
+  mapbox.PointAnnotationManager? _pointManager;
+  mapbox.Cancelable? _tapCancelable;
+  String? _selectedDistrictGeoJson;
+  String? _outsideMaskGeoJson;
+  final Map<String, ExplorationLocation> _locationsByAnnotationId =
+      <String, ExplorationLocation>{};
+
+  @override
+  void didUpdateWidget(covariant _DistrictSatelliteMap oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final oldKey = oldWidget.assignment.district.toLowerCase();
+    final newKey = widget.assignment.district.toLowerCase();
+    if (oldKey != newKey) {
+      _reloadDistrictData();
+    }
+  }
+
+  @override
+  void dispose() {
+    _tapCancelable?.cancel();
+    _tapCancelable = null;
+    _clearDistrictLayers();
+    _pointManager = null;
+    _mapboxMap = null;
+    super.dispose();
+  }
+
+  String _normalizeDistrict(String value) {
+    final alphanumericOnly = value.toLowerCase().replaceAll(
+      RegExp(r'[^a-z0-9]'),
+      '',
+    );
+    return alphanumericOnly.trim();
+  }
+
+  Future<Map<String, dynamic>> _loadDistrictGeoJson() async {
+    if (_districtGeoJsonCache != null) {
+      return _districtGeoJsonCache!;
+    }
+
+    final raw = await rootBundle.loadString(
+      'assets/geojson/boundaries/LK-districts.geojson',
+    );
+    final decoded = jsonDecode(raw);
+    if (decoded is! Map<String, dynamic>) {
+      throw StateError('District GeoJSON is not a valid object');
+    }
+    _districtGeoJsonCache = decoded;
+    return decoded;
+  }
+
+  Map<String, dynamic>? _findDistrictFeature(Map<String, dynamic> geoJson) {
+    final features = geoJson['features'];
+    if (features is! List) return null;
+
+    final target = _normalizeDistrict(widget.assignment.district);
+    if (target.isEmpty) return null;
+
+    Map<String, dynamic>? fuzzyMatch;
+    for (final entry in features) {
+      if (entry is! Map<String, dynamic>) continue;
+      final properties = entry['properties'];
+      if (properties is! Map<String, dynamic>) continue;
+
+      final name = (properties['NAME_1'] ?? properties['name'])?.toString();
+      if (name == null || name.isEmpty) continue;
+
+      final token = _normalizeDistrict(name);
+      if (token == target) {
+        return entry;
+      }
+
+      if (token.contains(target) || target.contains(token)) {
+        fuzzyMatch ??= entry;
+      }
+    }
+
+    return fuzzyMatch;
+  }
+
+  String? _buildDistrictGeoJson(Map<String, dynamic>? feature) {
+    if (feature == null) return null;
+    return jsonEncode({
+      'type': 'FeatureCollection',
+      'features': [feature],
+    });
+  }
+
+  /// Extract all coordinate rings from a GeoJSON geometry (Polygon or MultiPolygon)
+  List<List<dynamic>> _extractOuterRings(Map<String, dynamic>? geometry) {
+    if (geometry == null) return const <List<dynamic>>[];
+    final type = geometry['type']?.toString();
+    final coordinates = geometry['coordinates'];
+    if (coordinates is! List || coordinates.isEmpty) {
+      return const <List<dynamic>>[];
+    }
+
+    final rings = <List<dynamic>>[];
+
+    if (type == 'Polygon') {
+      final polygon = coordinates.first;
+      if (polygon is List && polygon.isNotEmpty) {
+        final outer = polygon.first;
+        if (outer is List) {
+          rings.add(List<dynamic>.from(outer));
+        }
+      }
+    } else if (type == 'MultiPolygon') {
+      for (final polygon in coordinates) {
+        if (polygon is! List || polygon.isEmpty) continue;
+        final outer = polygon.first;
+        if (outer is List) {
+          rings.add(List<dynamic>.from(outer));
+        }
+      }
+    }
+
+    return rings;
+  }
+
+  /// Calculate bounding box from GeoJSON geometry coordinates
+  /// Returns [minLat, minLng, maxLat, maxLng] or null if geometry is invalid
+  List<double>? _calculateBoundsFromGeometry(Map<String, dynamic>? geometry) {
+    if (geometry == null) return null;
+
+    final type = geometry['type']?.toString();
+    final coordinates = geometry['coordinates'];
+    if (coordinates is! List || coordinates.isEmpty) return null;
+
+    final allCoords = <List<double>>[];
+
+    try {
+      if (type == 'Polygon') {
+        final polygon = coordinates.first;
+        if (polygon is List) {
+          for (final coord in polygon) {
+            if (coord is List && coord.length >= 2) {
+              allCoords.add([
+                (coord[1] as num).toDouble(), // lat
+                (coord[0] as num).toDouble(), // lng
+              ]);
+            }
+          }
+        }
+      } else if (type == 'MultiPolygon') {
+        for (final polygon in coordinates) {
+          if (polygon is! List) continue;
+          for (final ring in polygon) {
+            if (ring is! List) continue;
+            for (final coord in ring) {
+              if (coord is List && coord.length >= 2) {
+                allCoords.add([
+                  (coord[1] as num).toDouble(), // lat
+                  (coord[0] as num).toDouble(), // lng
+                ]);
+              }
+            }
+          }
+        }
+      }
+
+      if (allCoords.isEmpty) return null;
+
+      double minLat = allCoords.first[0];
+      double maxLat = allCoords.first[0];
+      double minLng = allCoords.first[1];
+      double maxLng = allCoords.first[1];
+
+      for (final coord in allCoords) {
+        minLat = math.min(minLat, coord[0]);
+        maxLat = math.max(maxLat, coord[0]);
+        minLng = math.min(minLng, coord[1]);
+        maxLng = math.max(maxLng, coord[1]);
+      }
+
+      return [minLat, minLng, maxLat, maxLng];
+    } catch (_) {
+      return null;
+    }
+  }
+
+  String? _buildOutsideMaskGeoJson(Map<String, dynamic>? feature) {
+    if (feature == null) return null;
+    final geometry = feature['geometry'];
+    if (geometry is! Map<String, dynamic>) return null;
+
+    final holes = _extractOuterRings(geometry);
+    if (holes.isEmpty) return null;
+
+    final worldRing = <List<double>>[
+      <double>[-180.0, -85.0],
+      <double>[180.0, -85.0],
+      <double>[180.0, 85.0],
+      <double>[-180.0, 85.0],
+      <double>[-180.0, -85.0],
+    ];
+
+    return jsonEncode({
+      'type': 'FeatureCollection',
+      'features': [
+        {
+          'type': 'Feature',
+          'properties': {},
+          'geometry': {
+            'type': 'Polygon',
+            'coordinates': <dynamic>[worldRing, ...holes],
+          },
+        },
+      ],
+    });
+  }
+
+  Future<void> _prepareDistrictGeometry() async {
+    try {
+      final geoJson = await _loadDistrictGeoJson();
+      final feature = _findDistrictFeature(geoJson);
+      _selectedDistrictGeoJson = _buildDistrictGeoJson(feature);
+      _outsideMaskGeoJson = _buildOutsideMaskGeoJson(feature);
+    } catch (_) {
+      _selectedDistrictGeoJson = null;
+      _outsideMaskGeoJson = null;
+    }
+  }
+
+  Future<void> _removeStyleLayer(String layerId) async {
+    final map = _mapboxMap;
+    if (map == null) return;
+    try {
+      await (map.style as dynamic).removeLayer(layerId);
+    } catch (_) {
+      // Layer may not exist yet.
+    }
+  }
+
+  Future<void> _removeStyleSource(String sourceId) async {
+    final map = _mapboxMap;
+    if (map == null) return;
+    try {
+      await (map.style as dynamic).removeStyleSource(sourceId);
+    } catch (_) {
+      // Source may not exist yet.
+    }
+  }
+
+  Future<void> _clearDistrictLayers() async {
+    await _removeStyleLayer(_districtLineLayerId);
+    await _removeStyleLayer(_districtFillLayerId);
+    await _removeStyleLayer(_outsideMaskLayerId);
+    await _removeStyleSource(_districtSourceId);
+    await _removeStyleSource(_outsideMaskSourceId);
+  }
+
+  Future<void> _applyDistrictLayers(mapbox.MapboxMap map) async {
+    await _clearDistrictLayers();
+
+    final districtGeoJson = _selectedDistrictGeoJson;
+    if (districtGeoJson == null) return;
+
+    final districtSource = mapbox.GeoJsonSource(
+      id: _districtSourceId,
+      data: districtGeoJson,
+    );
+    await map.style.addSource(districtSource);
+
+    // Add district fill and line layers first
+    await map.style.addLayer(
+      mapbox.FillLayer(
+        id: _districtFillLayerId,
+        sourceId: _districtSourceId,
+        fillColor: const Color(0xFF22C55E).toARGB32(),
+        fillOpacity: 0.14,
+      ),
+    );
+
+    await map.style.addLayer(
+      mapbox.LineLayer(
+        id: _districtLineLayerId,
+        sourceId: _districtSourceId,
+        lineColor: const Color(0xFF22C55E).toARGB32(),
+        lineOpacity: 0.95,
+        lineWidth: 3.0,
+      ),
+    );
+
+    // Add outside mask LAST so it renders on top of everything
+    final outsideMaskGeoJson = _outsideMaskGeoJson;
+    if (outsideMaskGeoJson != null) {
+      final maskSource = mapbox.GeoJsonSource(
+        id: _outsideMaskSourceId,
+        data: outsideMaskGeoJson,
+      );
+      await map.style.addSource(maskSource);
+      await map.style.addLayer(
+        mapbox.FillLayer(
+          id: _outsideMaskLayerId,
+          sourceId: _outsideMaskSourceId,
+          fillColor: 0xFF000000,
+          fillOpacity: 1.0,
+        ),
+      );
+    }
+  }
+
+  mapbox.CameraOptions _initialCamera() {
+    if (widget.assignment.center != null) {
+      return mapbox.CameraOptions(
+        center: mapbox.Point(
+          coordinates: mapbox.Position(
+            widget.assignment.center!.longitude,
+            widget.assignment.center!.latitude,
+          ),
+        ),
+        zoom: 10.8,
+      );
+    }
+
+    final first = widget.assignment.locations.isNotEmpty
+        ? widget.assignment.locations.first
+        : null;
+    return mapbox.CameraOptions(
+      center: mapbox.Point(
+        coordinates: mapbox.Position(
+          first?.longitude ?? 80.7718,
+          first?.latitude ?? 7.8731,
+        ),
+      ),
+      zoom: 9.5,
+    );
+  }
+
+  /// Fit the camera to the district bounds with interactive constraints
+  /// Uses GeoJSON geometry to calculate precise bounds with padding
+  Future<void> _fitToDistrict(mapbox.MapboxMap map) async {
+    // Try to calculate bounds from GeoJSON geometry first (most accurate)
+    List<double>? geomBounds;
+    if (_selectedDistrictGeoJson != null) {
+      try {
+        final geoJsonData = jsonDecode(_selectedDistrictGeoJson!);
+        final features = geoJsonData['features'] as List?;
+        if (features != null && features.isNotEmpty) {
+          final geometry = (features.first as Map<String, dynamic>)['geometry'];
+          geomBounds = _calculateBoundsFromGeometry(geometry);
+        }
+      } catch (_) {
+        // Fall through to assignment bounds if parsing fails
+      }
+    }
+
+    // Use assignment bounds as fallback
+    final bounds = geomBounds != null
+        ? GeoBounds(
+            minLat: geomBounds[0],
+            minLng: geomBounds[1],
+            maxLat: geomBounds[2],
+            maxLng: geomBounds[3],
+          )
+        : widget.assignment.bounds;
+
+    if (bounds != null) {
+      final sw = mapbox.Point(
+        coordinates: mapbox.Position(bounds.minLng, bounds.minLat),
+      );
+      final ne = mapbox.Point(
+        coordinates: mapbox.Position(bounds.maxLng, bounds.maxLat),
+      );
+
+      try {
+        // Set camera bounds to constrain panning within district area
+        // Add a small buffer (10% of bounds) to prevent edge clipping
+        final bufferLat = (bounds.maxLat - bounds.minLat) * 0.1;
+        final bufferLng = (bounds.maxLng - bounds.minLng) * 0.1;
+
+        await map.setBounds(
+          mapbox.CameraBoundsOptions(
+            bounds: mapbox.CoordinateBounds(
+              southwest: mapbox.Point(
+                coordinates: mapbox.Position(
+                  bounds.minLng - bufferLng,
+                  bounds.minLat - bufferLat,
+                ),
+              ),
+              northeast: mapbox.Point(
+                coordinates: mapbox.Position(
+                  bounds.maxLng + bufferLng,
+                  bounds.maxLat + bufferLat,
+                ),
+              ),
+              infiniteBounds: false,
+            ),
+            // Allow viewing full district at once while permitting detailed zooms
+            minZoom:
+                5.0, // Can zoom out to see full district and surrounding area
+            maxZoom: 16.0, // Can zoom in to see street details
+          ),
+        );
+
+        // Calculate optimal camera position to fit entire district with padding
+        final camera = await map.cameraForCoordinateBounds(
+          mapbox.CoordinateBounds(
+            southwest: sw,
+            northeast: ne,
+            infiniteBounds: false,
+          ),
+          // Generous padding creates comfortable "frame" effect around district
+          // Top: leave room for header bar; Bottom: leave room for detail cards
+          mapbox.MbxEdgeInsets(top: 80, left: 80, bottom: 120, right: 80),
+          null,
+          null,
+          9.0, // min zoom for fitted view
+          null,
+        );
+
+        // Smooth animated flight transition (1000ms for elegant UX)
+        // Gesture interactions enabled by GesturesConfiguration in build()
+        await map.easeTo(camera, mapbox.MapAnimationOptions(duration: 1000));
+        return;
+      } catch (e) {
+        // Fall back to center-based zoom if bounds fit fails
+        debugPrint('⚠️ Bounds fit failed: $e, falling back to center zoom');
+      }
+    }
+
+    // Fallback: zoom to center with reasonable zoom level
+    if (widget.assignment.center != null) {
+      await map.easeTo(
+        mapbox.CameraOptions(
+          center: mapbox.Point(
+            coordinates: mapbox.Position(
+              widget.assignment.center!.longitude,
+              widget.assignment.center!.latitude,
+            ),
+          ),
+          zoom: 11.0,
+        ),
+        mapbox.MapAnimationOptions(duration: 1000),
+      );
+    }
+  }
+
+  Future<void> _setupMarkers(mapbox.MapboxMap map) async {
+    final previousManager = _pointManager;
+    if (previousManager != null) {
+      _tapCancelable?.cancel();
+      _tapCancelable = null;
+      await map.annotations.removeAnnotationManager(previousManager);
+      _pointManager = null;
+    }
+
+    final manager = await map.annotations.createPointAnnotationManager();
+    _pointManager = manager;
+    await manager.setIconAllowOverlap(true);
+    await manager.setIconIgnorePlacement(true);
+
+    // Create markers with FOG OF WAR visual feedback:
+    // ✅ VISITED (Green) - User has verified this location
+    // ❌ UNVISITED (Red) - Location still needs verification
+    final markerOptions = widget.assignment.locations
+        .map(
+          (location) => mapbox.PointAnnotationOptions(
+            geometry: mapbox.Point(
+              coordinates: mapbox.Position(
+                location.longitude,
+                location.latitude,
+              ),
+            ),
+            iconImage: 'marker-15',
+            // Visited markers are larger and more opaque (fully revealed)
+            // Unvisited markers are smaller and more transparent (foggy)
+            iconSize: location.visited ? 2.2 : 1.5,
+            iconColor: location.visited
+                ? const Color(0xFF10B981)
+                      .toARGB32() // Emerald green for visited
+                : const Color(
+                    0xFFDC2626,
+                  ).toARGB32(), // Bright red for unvisited
+            iconOpacity: location.visited
+                ? 1.0
+                : 0.75, // Visited: fully visible, Unvisited: 75% visible
+          ),
+        )
+        .toList(growable: false);
+
+    final annotations = await manager.createMulti(markerOptions);
+    _locationsByAnnotationId.clear();
+    for (int i = 0; i < annotations.length; i++) {
+      final annotation = annotations[i];
+      if (annotation == null) continue;
+      _locationsByAnnotationId[annotation.id] = widget.assignment.locations[i];
+    }
+
+    _tapCancelable = manager.tapEvents(
+      onTap: (annotation) {
+        final location = _locationsByAnnotationId[annotation.id];
+        if (location != null) {
+          widget.onLocationSelected(location);
+        }
+      },
+    );
+  }
+
+  Future<void> _reloadDistrictData() async {
+    final map = _mapboxMap;
+    if (map == null) return;
+
+    await _prepareDistrictGeometry();
+    await _applyDistrictLayers(map);
+    await _fitToDistrict(map);
+    await _setupMarkers(map);
+  }
+
+  void _handleMapTap(mapbox.MapContentGestureContext tapContext) {
+    final tapped = tapContext.point.coordinates;
+    final candidates = widget.assignment.locations
+        .where((location) {
+          final distance = _distanceMeters(
+            tapped.lat.toDouble(),
+            tapped.lng.toDouble(),
+            location.latitude,
+            location.longitude,
+          );
+          return distance <= 160;
+        })
+        .toList(growable: false);
+
+    if (candidates.isEmpty) return;
+
+    if (candidates.length == 1) {
+      widget.onLocationSelected(candidates.first);
+      return;
+    }
+
+    showModalBottomSheet<void>(
+      context: context,
+      builder: (sheetContext) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const ListTile(
+                title: Text('Nearby Markers'),
+                subtitle: Text('Multiple places overlap here. Select one.'),
+              ),
+              ...candidates.map(
+                (location) => ListTile(
+                  leading: Icon(
+                    location.visited
+                        ? Icons.location_on
+                        : Icons.location_on_outlined,
+                    color: location.visited
+                        ? const Color(0xFF10B981)
+                        : const Color(0xFFEF4444),
+                  ),
+                  title: Text(location.name),
+                  subtitle: Text(location.type),
+                  onTap: () {
+                    Navigator.pop(sheetContext);
+                    widget.onLocationSelected(location);
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  double _distanceMeters(double lat1, double lon1, double lat2, double lon2) {
+    const earthRadius = 6371000.0;
+    final dLat = _toRadians(lat2 - lat1);
+    final dLon = _toRadians(lon2 - lon1);
+    final a =
+        (math.sin(dLat / 2) * math.sin(dLat / 2)) +
+        math.cos(_toRadians(lat1)) *
+            math.cos(_toRadians(lat2)) *
+            (math.sin(dLon / 2) * math.sin(dLon / 2));
+    final c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a));
+    return earthRadius * c;
+  }
+
+  double _toRadians(double value) => value * 0.017453292519943295;
+
+  @override
+  Widget build(BuildContext context) {
+    return mapbox.MapWidget(
+      key: ValueKey(
+        'district-mapbox-${widget.assignment.district.toLowerCase()}',
+      ),
+      // Vector streets map for better performance, clarity, and interactivity
+      // Compared to satellite: lighter data, easier to read, supports better overlays
+      styleUri: 'mapbox://styles/mapbox/streets-v12',
+      cameraOptions: _initialCamera(),
+      onMapCreated: (map) async {
+        _mapboxMap = map;
+        // Interactive zoom and pan are enabled by default in mapbox_maps_flutter
+        // Users can pinch-to-zoom and pan within bounds (set by setBounds in _fitToDistrict)
+        await _reloadDistrictData();
+      },
+      // Handle taps on map for location marker selection
+      onTapListener: _handleMapTap,
     );
   }
 }

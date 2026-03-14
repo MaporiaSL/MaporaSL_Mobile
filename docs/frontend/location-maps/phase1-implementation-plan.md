@@ -1,7 +1,7 @@
-# Map Feature - Phase 1 Implementation Plan
+﻿# Map Feature - Phase 1 Implementation Plan
 ## Cartoonish Map Foundation
 
-**Status:** Starting Fresh ✨  
+**Status:** Starting Fresh âœ¨  
 **Branch:** `map-feature`  
 **Snapshot Commit:** `f40959a` - Previous implementation for reference
 
@@ -16,27 +16,27 @@ Build a visually appealing, cartoon-style interactive map of Sri Lanka that serv
 
 ```
 MapScreen (main screen)
-├── AppBar (title + info button)
-├── CartoonMapCanvas (custom painted map)
-│   ├── Districts painted with colors
-│   ├── Landmarks as icons
-│   └── Interactive tap zones
-└── InfoPanel (bottom sheet)
-    ├── Selected region info
-    ├── Progress indicator
-    └── Quick stats
+â”œâ”€â”€ AppBar (title + info button)
+â”œâ”€â”€ CartoonMapCanvas (custom painted map)
+â”‚   â”œâ”€â”€ Districts painted with colors
+â”‚   â”œâ”€â”€ Landmarks as icons
+â”‚   â””â”€â”€ Interactive tap zones
+â””â”€â”€ InfoPanel (bottom sheet)
+    â”œâ”€â”€ Selected region info
+    â”œâ”€â”€ Progress indicator
+    â””â”€â”€ Quick stats
 ```
 
 ---
 
 ## Detailed Implementation Checklist
 
-### ✅ Done
+### âœ… Done
 - [x] Reset map_screen.dart to minimal state
 - [x] Created regions_data.dart with 9 provinces
 - [x] Created redesign plan document
 
-### 🔄 Phase 1.1: Cartoon Map Painter (Priority: HIGH)
+### ðŸ”„ Phase 1.1: Cartoon Map Painter (Priority: HIGH)
 - [ ] Create `cartoon_map_painter.dart`
   - Paint Sri Lanka background
   - Draw district boundaries
@@ -51,7 +51,7 @@ MapScreen (main screen)
 
 **Estimated Effort:** 4-6 hours
 
-### 🔄 Phase 1.2: Landmarks & Icons
+### ðŸ”„ Phase 1.2: Landmarks & Icons
 - [ ] Create `landmarks_painter.dart`
   - Paint landmarks as icons
   - Use Unicode symbols or simple shapes
@@ -63,7 +63,7 @@ MapScreen (main screen)
 
 **Estimated Effort:** 2-3 hours
 
-### 🔄 Phase 1.3: Interactive Info Panel
+### ðŸ”„ Phase 1.3: Interactive Info Panel
 - [ ] Create `info_panel.dart` component
   - Display selected region info
   - Show landmarks in region
@@ -77,7 +77,7 @@ MapScreen (main screen)
 
 **Estimated Effort:** 2-3 hours
 
-### 🔄 Phase 1.4: Polish & Animations
+### ðŸ”„ Phase 1.4: Polish & Animations
 - [ ] Add animations
   - Region selection fade-in
   - Info panel slide-up animation
@@ -101,18 +101,18 @@ MapScreen (main screen)
 
 ```
 mobile/lib/features/map/
-├── presentation/
-│   ├── map_screen.dart                 ✅ Fresh start
-│   └── widgets/
-│       ├── cartoon_map_canvas.dart     🔄 TODO
-│       ├── info_panel.dart             🔄 TODO
-│       └── landmark_overlay.dart       🔄 TODO
-├── utils/
-│   ├── cartoon_map_painter.dart        🔄 TODO
-│   ├── landmarks_painter.dart          🔄 TODO
-│   └── colors.dart                     🔄 TODO
-└── data/
-    └── regions_data.dart               ✅ Done
+â”œâ”€â”€ presentation/
+â”‚   â”œâ”€â”€ map_screen.dart                 âœ… Fresh start
+â”‚   â””â”€â”€ widgets/
+â”‚       â”œâ”€â”€ cartoon_map_canvas.dart     ðŸ”„ TODO
+â”‚       â”œâ”€â”€ info_panel.dart             ðŸ”„ TODO
+â”‚       â””â”€â”€ landmark_overlay.dart       ðŸ”„ TODO
+â”œâ”€â”€ utils/
+â”‚   â”œâ”€â”€ cartoon_map_painter.dart        ðŸ”„ TODO
+â”‚   â”œâ”€â”€ landmarks_painter.dart          ðŸ”„ TODO
+â”‚   â””â”€â”€ colors.dart                     ðŸ”„ TODO
+â””â”€â”€ data/
+    â””â”€â”€ regions_data.dart               âœ… Done
 ```
 
 ---
@@ -169,23 +169,23 @@ mobile/lib/features/map/
 
 ```
 MapScreen
-  ├─ selectedRegion (state)
-  ├─ CartoonMapCanvas
-  │   ├─ Get regions from regions_data.dart
-  │   ├─ Paint districts
-  │   ├─ Detect tap
-  │   └─ Call onRegionTapped()
-  └─ InfoPanel
-      ├─ Display selectedRegion details
-      ├─ Show landmarks
-      └─ Display dummy progress
+  â”œâ”€ selectedRegion (state)
+  â”œâ”€ CartoonMapCanvas
+  â”‚   â”œâ”€ Get regions from regions_data.dart
+  â”‚   â”œâ”€ Paint districts
+  â”‚   â”œâ”€ Detect tap
+  â”‚   â””â”€ Call onRegionTapped()
+  â””â”€ InfoPanel
+      â”œâ”€ Display selectedRegion details
+      â”œâ”€ Show landmarks
+      â””â”€ Display dummy progress
 ```
 
 ---
 
 ## Known Limitations (Phase 1)
 
-⚠️ These are intentional - we'll add in Phase 2+:
+âš ï¸ These are intentional - we'll add in Phase 2+:
 - No real trip data
 - No GPS/location tracking
 - No route visualization
@@ -199,3 +199,4 @@ MapScreen
 
 ## Testing Plan
 ```
+

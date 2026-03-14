@@ -1,10 +1,10 @@
-# Backend - Project Structure
+﻿# Backend - Project Structure
 
 **Understanding the codebase organization**
 
 ---
 
-## 📚 Quick Links
+## ðŸ“š Quick Links
 
 - [Main Structure](#-main-structure) - Overview
 - [Key Directories](#-key-directories) - Detailed breakdown
@@ -13,29 +13,29 @@
 
 ---
 
-## 🏗️ Main Structure
+## ðŸ—ï¸ Main Structure
 
 ```
 backend/
-├── src/                         # Application code
-│   ├── server.js                # Express app setup (START HERE)
-│   ├── config/                  # Configuration
-│   ├── controllers/             # Business logic (7 files)
-│   ├── models/                  # Database schemas (4 files)
-│   ├── routes/                  # API endpoints (7 files)
-│   ├── middleware/              # Authentication, validation
-│   ├── validators/              # Input validation
-│   └── utils/                   # Helper functions
-├── .env                         # Environment variables (GITIGNORED)
-├── .env.example                 # Template for .env
-├── package.json                 # Dependencies
-├── package-lock.json            # Locked versions
-└── README.md
+â”œâ”€â”€ src/                         # Application code
+â”‚   â”œâ”€â”€ server.js                # Express app setup (START HERE)
+â”‚   â”œâ”€â”€ config/                  # Configuration
+â”‚   â”œâ”€â”€ controllers/             # Business logic (7 files)
+â”‚   â”œâ”€â”€ models/                  # Database schemas (4 files)
+â”‚   â”œâ”€â”€ routes/                  # API endpoints (7 files)
+â”‚   â”œâ”€â”€ middleware/              # Authentication, validation
+â”‚   â”œâ”€â”€ validators/              # Input validation
+â”‚   â””â”€â”€ utils/                   # Helper functions
+â”œâ”€â”€ .env                         # Environment variables (GITIGNORED)
+â”œâ”€â”€ .env.example                 # Template for .env
+â”œâ”€â”€ package.json                 # Dependencies
+â”œâ”€â”€ package-lock.json            # Locked versions
+â””â”€â”€ README.md
 ```
 
 ---
 
-## 📂 Key Directories
+## ðŸ“‚ Key Directories
 
 ### `server.js` - Entry Point
 **File**: `backend/src/server.js`
@@ -54,7 +54,7 @@ Where everything starts:
 
 ```
 config/
-└── db.js              # MongoDB connection setup
+â””â”€â”€ db.js              # MongoDB connection setup
 ```
 
 **When to edit**: Changing database connection, adding config
@@ -66,13 +66,13 @@ Each controller handles a feature:
 
 ```
 controllers/
-├── authController.js          # User login/signup/logout
-├── userController.js          # User progress, achievements
-├── travelController.js        # Trip logs (travels)
-├── destinationController.js   # Places, attractions
-├── mapController.js           # Map data, GeoJSON
-├── geoController.js           # Geospatial queries
-└── preplannedTripsController.js # Pre-made itineraries
+â”œâ”€â”€ authController.js          # User login/signup/logout
+â”œâ”€â”€ userController.js          # User progress, achievements
+â”œâ”€â”€ travelController.js        # Trip logs (travels)
+â”œâ”€â”€ destinationController.js   # Places, attractions
+â”œâ”€â”€ mapController.js           # Map data, GeoJSON
+â”œâ”€â”€ geoController.js           # Geospatial queries
+â””â”€â”€ preplannedTripsController.js # Pre-made itineraries
 ```
 
 **File Pattern**: 
@@ -96,10 +96,10 @@ MongoDB schemas using Mongoose:
 
 ```
 models/
-├── User.js                 # User accounts, progress
-├── Travel.js               # Trip logs
-├── Destination.js          # Places, attractions
-└── PrePlannedTrip.js       # Pre-made itineraries
+â”œâ”€â”€ User.js                 # User accounts, progress
+â”œâ”€â”€ Travel.js               # Trip logs
+â”œâ”€â”€ Destination.js          # Places, attractions
+â””â”€â”€ PrePlannedTrip.js       # Pre-made itineraries
 ```
 
 **File Pattern**:
@@ -120,13 +120,13 @@ Define HTTP endpoints:
 
 ```
 routes/
-├── authRoutes.js          # /api/auth/*
-├── userRoutes.js          # /api/users/*
-├── travelRoutes.js        # /api/travel/*
-├── destinationRoutes.js   # /api/travel/:id/destinations/*
-├── mapRoutes.js           # /api/travel/:id/map/*
-├── geoRoutes.js           # /api/destinations/*
-└── preplannedTripsRoutes.js # /api/preplanned-trips/*
+â”œâ”€â”€ authRoutes.js          # /api/auth/*
+â”œâ”€â”€ userRoutes.js          # /api/users/*
+â”œâ”€â”€ travelRoutes.js        # /api/travel/*
+â”œâ”€â”€ destinationRoutes.js   # /api/travel/:id/destinations/*
+â”œâ”€â”€ mapRoutes.js           # /api/travel/:id/map/*
+â”œâ”€â”€ geoRoutes.js           # /api/destinations/*
+â””â”€â”€ preplannedTripsRoutes.js # /api/preplanned-trips/*
 ```
 
 **File Pattern**:
@@ -149,9 +149,9 @@ module.exports = router;
 
 ```
 middleware/
-├── auth.js              # JWT validation, user extraction
-├── validation.js        # Input validation
-└── errorHandler.js      # Global error handling
+â”œâ”€â”€ auth.js              # JWT validation, user extraction
+â”œâ”€â”€ validation.js        # Input validation
+â””â”€â”€ errorHandler.js      # Global error handling
 ```
 
 **Common middleware**:
@@ -168,10 +168,10 @@ Validation rules for each feature:
 
 ```
 validators/
-├── authValidators.js
-├── travelValidators.js
-├── destinationValidators.js
-└── ...
+â”œâ”€â”€ authValidators.js
+â”œâ”€â”€ travelValidators.js
+â”œâ”€â”€ destinationValidators.js
+â””â”€â”€ ...
 ```
 
 **When to edit**: Adding validation rules, new fields
@@ -181,16 +181,16 @@ validators/
 
 ```
 utils/
-├── geospatial.js        # Distance, boundary calculations
-├── transformers.js      # Data format conversions
-└── (other helpers)
+â”œâ”€â”€ geospatial.js        # Distance, boundary calculations
+â”œâ”€â”€ transformers.js      # Data format conversions
+â””â”€â”€ (other helpers)
 ```
 
 **When to edit**: Adding utility functions, refactoring common logic
 
 ---
 
-## 📋 File Organization
+## ðŸ“‹ File Organization
 
 ### How to Find Something
 
@@ -210,33 +210,33 @@ utils/
 
 ---
 
-## 🔄 Request Flow
+## ðŸ”„ Request Flow
 
 When a request comes in:
 
 ```
 1. HTTP Request
-   ↓
+   â†“
 2. server.js receives request
-   ↓
+   â†“
 3. Middleware processes (CORS, helmet, JWT)
-   ↓
+   â†“
 4. Route matches: routes/authRoutes.js, travelRoutes.js, etc.
-   ↓
+   â†“
 5. Validation: validators check input
-   ↓
+   â†“
 6. Controller executes: controllers/[name]Controller.js
-   ↓
+   â†“
 7. Model queries: models/[Model].js
-   ↓
+   â†“
 8. Database returns data
-   ↓
+   â†“
 9. Response sent back
 ```
 
 ---
 
-## 📊 Example: Adding a Feature
+## ðŸ“Š Example: Adding a Feature
 
 Let's say you want to add a "reviews" feature for places.
 
@@ -272,7 +272,7 @@ Add: POST review endpoint documentation
 
 ---
 
-## 🛠️ Common Tasks
+## ðŸ› ï¸ Common Tasks
 
 ### Running the server
 ```bash
@@ -298,13 +298,15 @@ npm test
 
 ---
 
-## 🔗 Related Documentation
+## ðŸ”— Related Documentation
 
 - [Backend Overview](../README.md) - Full backend docs
-- [Feature Implementation](../feature-implementation/) - Step-by-step guides
+- [Feature Implementation](../../common/feature-implementation/) - Step-by-step guides
 - [API Endpoints](../api-endpoints/) - All endpoints documented
 - [Database Schema](../database/models.md) - Data models
 
 ---
 
-**Next: Implement your first feature → [Feature Implementation](../feature-implementation/)**
+**Next: Implement your first feature â†’ [Feature Implementation](../../common/feature-implementation/)**
+
+

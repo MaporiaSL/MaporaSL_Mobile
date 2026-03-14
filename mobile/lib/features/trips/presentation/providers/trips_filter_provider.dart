@@ -55,10 +55,7 @@ final filteredTripsProvider = Provider<List<TripModel>>((ref) {
     // Apply status filter
     final matchesFilter =
         selectedFilter == TripFilter.all ||
-        (selectedFilter == TripFilter.active &&
-            trip.status == TripStatus.active) ||
-        (selectedFilter == TripFilter.completed &&
-            trip.status == TripStatus.completed);
+        trip.timelineStatus == selectedFilter.toTripStatus();
 
     return matchesSearch && matchesFilter;
   }).toList();

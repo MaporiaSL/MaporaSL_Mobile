@@ -270,8 +270,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 const SizedBox(height: 24),
 
-                Row(
-                  children: const [
+                const Row(
+                  children: [
                     Expanded(child: Divider()),
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 10),
@@ -317,7 +317,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         context,
                         MaterialPageRoute(builder: (_) => const SignUpScreen()),
                       ),
-                      child: Text(
+                      child: const Text(
                         "Sign up",
                         style: TextStyle(
                           color: AppColors.primary,

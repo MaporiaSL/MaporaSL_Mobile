@@ -1,4 +1,4 @@
-# Discovery Map Progression - Implementation Plan
+﻿# Discovery Map Progression - Implementation Plan
 
 Version: 1.0
 Last Updated: February 5, 2026
@@ -54,7 +54,7 @@ Implement personalized per-user location assignments per district, visit verific
   - createdAt, updatedAt
 
 ### 3. Seed Import
-- Import [project_resorces/places_seed_data_2026.json](../../project_resorces/places_seed_data_2026.json) into UnlockLocations.
+- Import [project_resources/places_seed_data_2026.json](../../../project_resources/places_seed_data_2026.json) into UnlockLocations.
 - Validate that each district has at least 3 active locations.
 
 ## Phase 2: Assignment Algorithm
@@ -83,8 +83,8 @@ Implement personalized per-user location assignments per district, visit verific
 - Reroll resets exploration badges tied to location unlocks.
 - Reroll resets all exploration counters tied to the map progression feature only.
 - Do not reset XP or badges earned from trip planning or general place visits.
-- Show a dedicated “Your Exploration Map” onboarding screen after account creation.
-- Use a summary view with a “View Details” drill-down for full assignments.
+- Show a dedicated â€œYour Exploration Mapâ€ onboarding screen after account creation.
+- Use a summary view with a â€œView Detailsâ€ drill-down for full assignments.
 - Include a warning modal before confirming reroll.
 - Require typing a 6-character confirmation code shown in the modal before executing reroll.
 - Code uses a random mix of letters and numbers.
@@ -96,7 +96,7 @@ Implement personalized per-user location assignments per district, visit verific
 - Log reroll actions with timestamp and optional user reason.
 - Collect reason from a selectable list with optional free-text.
 - Reason selection is required.
-- Free-text is required only when “Other” is selected.
+- Free-text is required only when â€œOtherâ€ is selected.
 - Prompt for reroll reason before code entry.
 
 ### Reroll Reason Options
@@ -166,7 +166,7 @@ Implement personalized per-user location assignments per district, visit verific
 - Provide progress indicators per district.
 - Label admin-override unlocks in the UI.
 - Show the label in the location detail panel only.
-- Show admin overrides as “Support Verified” events in the exploration timeline.
+- Show admin overrides as â€œSupport Verifiedâ€ events in the exploration timeline.
 - Place the exploration timeline in the Profile/Achievements area.
 
 ## Phase 6: Sharing Hooks
@@ -191,3 +191,5 @@ Implement personalized per-user location assignments per district, visit verific
 
 ## Open Decisions
 None.
+
+

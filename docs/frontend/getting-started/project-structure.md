@@ -1,10 +1,10 @@
-# Frontend - Project Structure
+﻿# Frontend - Project Structure
 
 **Understanding the codebase organization**
 
 ---
 
-## 📚 Quick Links
+## ðŸ“š Quick Links
 
 - [Main Structure](#-main-structure) - Overview
 - [Key Directories](#-key-directories) - Detailed breakdown
@@ -13,29 +13,29 @@
 
 ---
 
-## 🏗️ Main Structure
+## ðŸ—ï¸ Main Structure
 
 ```
 mobile/
-├── lib/                         # Application code
-│   ├── main.dart                # App entry point (START HERE)
-│   ├── core/                    # Global utilities
-│   ├── features/                # Feature modules
-│   ├── data/                    # Data layer (API, models)
-│   ├── models/                  # Shared data models
-│   └── providers/               # Riverpod state management
-├── test/                        # Tests
-├── android/                     # Android native code
-├── ios/                         # iOS native code
-├── web/, windows/, linux/, macos/  # Other platforms
-├── pubspec.yaml                 # Dependencies (IMPORTANT)
-├── .env                         # Environment variables
-└── README.md
+â”œâ”€â”€ lib/                         # Application code
+â”‚   â”œâ”€â”€ main.dart                # App entry point (START HERE)
+â”‚   â”œâ”€â”€ core/                    # Global utilities
+â”‚   â”œâ”€â”€ features/                # Feature modules
+â”‚   â”œâ”€â”€ data/                    # Data layer (API, models)
+â”‚   â”œâ”€â”€ models/                  # Shared data models
+â”‚   â””â”€â”€ providers/               # Riverpod state management
+â”œâ”€â”€ test/                        # Tests
+â”œâ”€â”€ android/                     # Android native code
+â”œâ”€â”€ ios/                         # iOS native code
+â”œâ”€â”€ web/, windows/, linux/, macos/  # Other platforms
+â”œâ”€â”€ pubspec.yaml                 # Dependencies (IMPORTANT)
+â”œâ”€â”€ .env                         # Environment variables
+â””â”€â”€ README.md
 ```
 
 ---
 
-## 📂 Key Directories
+## ðŸ“‚ Key Directories
 
 ### `main.dart` - Entry Point
 **File**: `mobile/lib/main.dart`
@@ -58,23 +58,23 @@ Shared code used across the app:
 
 ```
 core/
-├── theme/                    # App theming
-│   ├── app_colors.dart      # Color palette
-│   ├── app_text_styles.dart # Typography
-│   └── app_theme.dart       # Theme configuration
-├── constants/               # App constants
-│   ├── app_constants.dart   # Global constants
-│   └── dimensions.dart      # Spacing, sizes
-├── widgets/                 # Global widgets
-│   ├── app_bar.dart         # Custom AppBar
-│   ├── bottom_nav.dart      # Bottom navigation
-│   └── error_widget.dart    # Error display
-├── utils/                   # Helper functions
-│   ├── date_formatter.dart
-│   ├── string_utils.dart
-│   └── validators.dart
-└── errors/                  # Error handling
-    └── exceptions.dart      # Custom exceptions
+â”œâ”€â”€ theme/                    # App theming
+â”‚   â”œâ”€â”€ app_colors.dart      # Color palette
+â”‚   â”œâ”€â”€ app_text_styles.dart # Typography
+â”‚   â””â”€â”€ app_theme.dart       # Theme configuration
+â”œâ”€â”€ constants/               # App constants
+â”‚   â”œâ”€â”€ app_constants.dart   # Global constants
+â”‚   â””â”€â”€ dimensions.dart      # Spacing, sizes
+â”œâ”€â”€ widgets/                 # Global widgets
+â”‚   â”œâ”€â”€ app_bar.dart         # Custom AppBar
+â”‚   â”œâ”€â”€ bottom_nav.dart      # Bottom navigation
+â”‚   â””â”€â”€ error_widget.dart    # Error display
+â”œâ”€â”€ utils/                   # Helper functions
+â”‚   â”œâ”€â”€ date_formatter.dart
+â”‚   â”œâ”€â”€ string_utils.dart
+â”‚   â””â”€â”€ validators.dart
+â””â”€â”€ errors/                  # Error handling
+    â””â”€â”€ exceptions.dart      # Custom exceptions
 ```
 
 **When to edit**: Adding global colors, fonts, reusable widgets
@@ -88,31 +88,31 @@ Each feature is self-contained:
 
 ```
 features/
-├── auth/                          # Authentication feature
-│   ├── screens/                   # Full page screens
-│   │   ├── login_screen.dart
-│   │   ├── signup_screen.dart
-│   │   └── logout_screen.dart
-│   └── widgets/                   # Feature-specific widgets
-│       ├── login_form.dart
-│       ├── password_field.dart
-│       └── ...
-│
-├── places/                        # Places discovery
-│   ├── screens/
-│   │   ├── places_screen.dart     # List all places
-│   │   ├── place_detail_screen.dart  # Single place
-│   │   └── ...
-│   └── widgets/
-│       ├── place_card.dart        # Place list item
-│       ├── place_rating.dart      # Rating widget
-│       └── ...
-│
-├── trips/                         # Trip planning
-├── album/                         # Photos
-├── shop/                          # E-commerce
-├── map/                           # Map visualization
-└── ...
+â”œâ”€â”€ auth/                          # Authentication feature
+â”‚   â”œâ”€â”€ screens/                   # Full page screens
+â”‚   â”‚   â”œâ”€â”€ login_screen.dart
+â”‚   â”‚   â”œâ”€â”€ signup_screen.dart
+â”‚   â”‚   â””â”€â”€ logout_screen.dart
+â”‚   â””â”€â”€ widgets/                   # Feature-specific widgets
+â”‚       â”œâ”€â”€ login_form.dart
+â”‚       â”œâ”€â”€ password_field.dart
+â”‚       â””â”€â”€ ...
+â”‚
+â”œâ”€â”€ places/                        # Places discovery
+â”‚   â”œâ”€â”€ screens/
+â”‚   â”‚   â”œâ”€â”€ places_screen.dart     # List all places
+â”‚   â”‚   â”œâ”€â”€ place_detail_screen.dart  # Single place
+â”‚   â”‚   â””â”€â”€ ...
+â”‚   â””â”€â”€ widgets/
+â”‚       â”œâ”€â”€ place_card.dart        # Place list item
+â”‚       â”œâ”€â”€ place_rating.dart      # Rating widget
+â”‚       â””â”€â”€ ...
+â”‚
+â”œâ”€â”€ trips/                         # Trip planning
+â”œâ”€â”€ album/                         # Photos
+â”œâ”€â”€ shop/                          # E-commerce
+â”œâ”€â”€ map/                           # Map visualization
+â””â”€â”€ ...
 ```
 
 **File Pattern**:
@@ -131,21 +131,21 @@ Handles backend communication:
 
 ```
 data/
-├── api/                          # HTTP clients
-│   ├── api_client.dart          # Base HTTP setup
-│   ├── auth_api_client.dart     # Auth endpoints
-│   ├── places_api_client.dart   # Places endpoints
-│   ├── trips_api_client.dart    # Trips endpoints
-│   └── ...
-├── models/                       # Data models (DTOs)
-│   ├── user_model.dart
-│   ├── place_model.dart
-│   ├── trip_model.dart
-│   └── ...
-└── repositories/                 # Repository pattern
-    ├── auth_repository.dart      # Auth data access
-    ├── places_repository.dart    # Places data access
-    └── ...
+â”œâ”€â”€ api/                          # HTTP clients
+â”‚   â”œâ”€â”€ api_client.dart          # Base HTTP setup
+â”‚   â”œâ”€â”€ auth_api_client.dart     # Auth endpoints
+â”‚   â”œâ”€â”€ places_api_client.dart   # Places endpoints
+â”‚   â”œâ”€â”€ trips_api_client.dart    # Trips endpoints
+â”‚   â””â”€â”€ ...
+â”œâ”€â”€ models/                       # Data models (DTOs)
+â”‚   â”œâ”€â”€ user_model.dart
+â”‚   â”œâ”€â”€ place_model.dart
+â”‚   â”œâ”€â”€ trip_model.dart
+â”‚   â””â”€â”€ ...
+â””â”€â”€ repositories/                 # Repository pattern
+    â”œâ”€â”€ auth_repository.dart      # Auth data access
+    â”œâ”€â”€ places_repository.dart    # Places data access
+    â””â”€â”€ ...
 ```
 
 **When to edit**: Adding API calls, new data models, repositories
@@ -159,10 +159,10 @@ Data models used across the app:
 
 ```
 models/
-├── user_model.dart
-├── place_model.dart
-├── trip_model.dart
-└── ...
+â”œâ”€â”€ user_model.dart
+â”œâ”€â”€ place_model.dart
+â”œâ”€â”€ trip_model.dart
+â””â”€â”€ ...
 ```
 
 **When to edit**: Changing shared data structures
@@ -176,13 +176,13 @@ Riverpod providers for state:
 
 ```
 providers/
-├── auth_provider.dart            # Login, user state
-├── places_provider.dart          # Places list, filtering
-├── trips_provider.dart           # Trip data
-├── user_progress_provider.dart   # Achievements, stats
-├── map_provider.dart             # Map state
-├── cart_provider.dart            # Shopping cart
-└── ...
+â”œâ”€â”€ auth_provider.dart            # Login, user state
+â”œâ”€â”€ places_provider.dart          # Places list, filtering
+â”œâ”€â”€ trips_provider.dart           # Trip data
+â”œâ”€â”€ user_progress_provider.dart   # Achievements, stats
+â”œâ”€â”€ map_provider.dart             # Map state
+â”œâ”€â”€ cart_provider.dart            # Shopping cart
+â””â”€â”€ ...
 ```
 
 **File Pattern**:
@@ -202,7 +202,7 @@ final cartProvider = StateNotifierProvider<CartNotifier, CartState>((ref) {
 
 ---
 
-## 🎯 Feature Organization
+## ðŸŽ¯ Feature Organization
 
 ### Anatomy of a Feature
 
@@ -210,16 +210,16 @@ Let's look at the "Places" feature:
 
 ```
 features/places/
-├── screens/
-│   ├── places_screen.dart        # List of all places
-│   ├── place_detail_screen.dart  # Single place details
-│   └── place_search_screen.dart  # Search places
-│
-└── widgets/
-    ├── place_card.dart           # Item in list
-    ├── place_image.dart          # Image display
-    ├── place_rating.dart         # Star rating
-    └── ...
+â”œâ”€â”€ screens/
+â”‚   â”œâ”€â”€ places_screen.dart        # List of all places
+â”‚   â”œâ”€â”€ place_detail_screen.dart  # Single place details
+â”‚   â””â”€â”€ place_search_screen.dart  # Search places
+â”‚
+â””â”€â”€ widgets/
+    â”œâ”€â”€ place_card.dart           # Item in list
+    â”œâ”€â”€ place_image.dart          # Image display
+    â”œâ”€â”€ place_rating.dart         # Star rating
+    â””â”€â”€ ...
 
 Supporting files (elsewhere):
 - Provider: providers/places_provider.dart
@@ -232,25 +232,25 @@ Supporting files (elsewhere):
 
 ```
 1. Screen displays (e.g., places_screen.dart)
-   ↓
+   â†“
 2. Uses provider to get data (placesProvider)
-   ↓
+   â†“
 3. Provider fetches from repository
-   ↓
+   â†“
 4. Repository calls API client
-   ↓
+   â†“
 5. API client makes HTTP request to backend
-   ↓
-6. Response comes back → parsed into model
-   ↓
+   â†“
+6. Response comes back â†’ parsed into model
+   â†“
 7. Provider updates with new data
-   ↓
+   â†“
 8. Screen rebuilds with new data
 ```
 
 ---
 
-## 📋 File Naming Conventions
+## ðŸ“‹ File Naming Conventions
 
 Follow this pattern:
 
@@ -265,35 +265,35 @@ Follow this pattern:
 
 ---
 
-## 🔄 Request Flow
+## ðŸ”„ Request Flow
 
 When a user interacts with the app:
 
 ```
 1. User taps button on places_screen.dart
-   ↓
+   â†“
 2. Screen calls ref.watch(placesProvider)
-   ↓
+   â†“
 3. Provider fetches from repository
-   ↓
+   â†“
 4. Repository calls api_client.getPlaces()
-   ↓
+   â†“
 5. API client makes HTTP request to backend
-   ↓
+   â†“
 6. Backend returns JSON data
-   ↓
+   â†“
 7. JSON parsed into Place models
-   ↓
+   â†“
 8. Provider updates with data
-   ↓
+   â†“
 9. Screen rebuilds automatically
-   ↓
+   â†“
 10. User sees the list of places
 ```
 
 ---
 
-## 📊 Example: Adding a Feature
+## ðŸ“Š Example: Adding a Feature
 
 Let's say you want to add "Reviews" to places.
 
@@ -335,7 +335,7 @@ Add: Route for new screen
 
 ---
 
-## 🛠️ Common Tasks
+## ðŸ› ï¸ Common Tasks
 
 ### Running the app
 ```bash
@@ -367,17 +367,17 @@ flutter pub get
 
 ---
 
-## 🔗 Related Documentation
+## ðŸ”— Related Documentation
 
 - [Frontend Overview](../README.md) - Full frontend docs
-- [Feature Implementation](../feature-implementation/) - Step-by-step guides
-- [State Management](../state-management/) - Riverpod patterns
-- [Screen Layouts](../ui-components/screen-layouts.md) - Common layouts
+- [Feature Implementation](../../common/feature-implementation/) - Step-by-step guides
+- [State Management](../api-integration/) - Riverpod patterns
+- [Screen Layouts](../README.md) - Common layouts
 - [API Integration](../api-integration/) - Calling APIs
 
 ---
 
-## 📚 pubspec.yaml - Key Sections
+## ðŸ“š pubspec.yaml - Key Sections
 
 ```yaml
 dependencies:
@@ -409,4 +409,6 @@ dev_dependencies:
 
 ---
 
-**Next: Implement your first feature → [Feature Implementation](../feature-implementation/)**
+**Next: Implement your first feature â†’ [Feature Implementation](../../common/feature-implementation/)**
+
+

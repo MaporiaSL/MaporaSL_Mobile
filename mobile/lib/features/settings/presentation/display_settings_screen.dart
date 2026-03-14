@@ -177,7 +177,7 @@ class _DisplaySettingsScreenState extends ConsumerState<DisplaySettingsScreen> {
                                 setState(() => _units = newSelection.first);
                                 _updateDisplaySettings(ref.read(themeProvider));
                               },
-                              style: ButtonStyle(
+                              style: const ButtonStyle(
                                 visualDensity: VisualDensity.compact,
                               ),
                             ),

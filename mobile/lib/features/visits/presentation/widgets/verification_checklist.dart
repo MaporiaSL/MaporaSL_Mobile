@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 
 enum StepStatus { pending, checking, passed, failed }
 
@@ -50,7 +50,7 @@ class VerificationChecklist extends StatelessWidget {
                 width: 32,
                 height: 32,
                 decoration: BoxDecoration(
-                  color: iconColor.withOpacity(0.1),
+                  color: iconColor.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
                 child: isChecking 
@@ -86,3 +86,4 @@ class VerificationChecklist extends StatelessWidget {
     );
   }
 }
+

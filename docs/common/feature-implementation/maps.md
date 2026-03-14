@@ -1,4 +1,4 @@
-# Maps Feature Implementation
+﻿# Maps Feature Implementation
 
 **Feature**: Interactive Map Visualization  
 **Last Updated**: February 1, 2026
@@ -15,13 +15,13 @@ The Maps feature visualizes trips, destinations, and routes on an interactive ma
 
 ```
 Flutter App (Mapbox GL)
-         ↓
+         â†“
 API requests GeoJSON
-         ↓
+         â†“
 Backend generates GeoJSON from Destinations
-         ↓
+         â†“
 Returns FeatureCollection
-         ↓
+         â†“
 Mapbox renders layers
 ```
 
@@ -526,3 +526,4 @@ testWidgets('Map loads trip data', (tester) async {
 - [Geo Query Endpoints](../../backend/api-endpoints/geo-endpoints.md)
 - [Mapbox GL Flutter Documentation](https://pub.dev/packages/mapbox_gl)
 - [Destination Model](../../backend/database/models.md#destination-model)
+

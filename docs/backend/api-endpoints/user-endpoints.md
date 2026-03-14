@@ -1,4 +1,4 @@
-# User Profile API Endpoints
+﻿# User Profile API Endpoints
 
 **Base URL**: `http://localhost:5000` (Dev) / `http://10.0.2.2:5000` (Android Emulator)  
 **Version**: 1.0.1
@@ -395,3 +395,4 @@ curl "http://localhost:5000/api/user/auth0|user123/stats" \
 - [Authentication Endpoints](./auth-endpoints.md) - Register and login
 - [Achievements Feature Implementation](../../common/feature-implementation/achievements.md) - Gamification guide
 - [User Model Documentation](../database/models.md#user-model) - Schema details
+

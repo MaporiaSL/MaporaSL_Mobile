@@ -1,23 +1,23 @@
-# Places Data Replacement Audit & Plan
+﻿# Places Data Replacement Audit & Plan
 **Status**: Ready to Replace All Temporary Data  
 **Date**: February 17, 2026
 
 ---
 
-## 📊 TEMPORARY DATA SOURCES IDENTIFIED
+## ðŸ“Š TEMPORARY DATA SOURCES IDENTIFIED
 
 ### **1. Mobile Assets - Hardcoded Seed Data**
 
 | Location | File | Type | Purpose | Records |
 |----------|------|------|---------|---------|
 | **Primary** | `mobile/assets/data/places_seed_data_2026.json` | JSON (Local) | Dev/fallback places for exploration feature | ~25-42 per district |
-| **Fallback** | `project_resorces/places_seed_data_2026.json` | JSON (Asset) | Backup seed data | Same as above |
-| **Legacy** | `project_resorces/places_seed_data.json` | JSON (Archive) | Original seed file | Deprecated |
-| **Real Places** | `project_resorces/sri_lanka_real_places_100.json` | JSON (Resource) | 100 real Sri Lankan places | 100 places |
+| **Fallback** | `project_resources/places_seed_data_2026.json` | JSON (Asset) | Backup seed data | Same as above |
+| **Legacy** | `project_resources/places_seed_data.json` | JSON (Archive) | Original seed file | Deprecated |
+| **Real Places** | `project_resources/sri_lanka_real_places_100.json` | JSON (Resource) | 100 real Sri Lankan places | 100 places |
 
 ---
 
-## 🎯 WHERE TEMPORARY DATA IS CURRENTLY BEING USED
+## ðŸŽ¯ WHERE TEMPORARY DATA IS CURRENTLY BEING USED
 
 ### **A. EXPLORATION FEATURE (Map District Quest System)**
 
@@ -27,10 +27,10 @@
 
 **Current Flow**:
 ```
-1. loadAssignments() → _api.fetchAssignments() 
-2. If empty OR error → _loadDevAssignmentsFromAsset() [FALLBACK TO SEED]
+1. loadAssignments() â†’ _api.fetchAssignments() 
+2. If empty OR error â†’ _loadDevAssignmentsFromAsset() [FALLBACK TO SEED]
 3. Loads: 'assets/data/places_seed_data_2026.json'
-4. Parses districts → attractions → ExplorationLocation objects
+4. Parses districts â†’ attractions â†’ ExplorationLocation objects
 5. Hard-coded visited logic: "district == 'Colombo' && index == 0"
 ```
 
@@ -45,11 +45,11 @@
   - Visited count (locations visited)
 
 **Replacement Strategy**:
-- ✅ Remove `_devSeedAssignments` flag
-- ✅ Call API: `_api.fetchAssignments()` (backend returns real DB assignments)
-- ✅ If no API assignments: fetch places from `/api/places` by district
-- ✅ Create `ExplorationLocation` from DB Place objects
-- ✅ Remove hardcoded visited logic
+- âœ… Remove `_devSeedAssignments` flag
+- âœ… Call API: `_api.fetchAssignments()` (backend returns real DB assignments)
+- âœ… If no API assignments: fetch places from `/api/places` by district
+- âœ… Create `ExplorationLocation` from DB Place objects
+- âœ… Remove hardcoded visited logic
 
 ---
 
@@ -73,10 +73,10 @@ late List<String> _places;  // Currently: empty or placeholder
 - Destinations count calculated locally (not from DB)
 
 **Replacement Strategy**:
-- ✅ Create provider: `placesProvider` (fetch all places)
-- ✅ Show places list in trip creation (searchable/filterable)
-- ✅ Users select places → stored as `destinationIds` in Trip
-- ✅ Update `destinationCount` from selected places
+- âœ… Create provider: `placesProvider` (fetch all places)
+- âœ… Show places list in trip creation (searchable/filterable)
+- âœ… Users select places â†’ stored as `destinationIds` in Trip
+- âœ… Update `destinationCount` from selected places
 
 ---
 
@@ -90,9 +90,9 @@ late List<String> _places;  // Currently: empty or placeholder
 ```json
 {
   "productName": "...",
-  "districtId": "colombo",  ← Linked to district
-  "provinceId": "western",  ← Linked to province
-  "location": "..."         ← Generic text location
+  "districtId": "colombo",  â† Linked to district
+  "provinceId": "western",  â† Linked to province
+  "location": "..."         â† Generic text location
 }
 ```
 
@@ -103,11 +103,11 @@ late List<String> _places;  // Currently: empty or placeholder
 - No place metadata (coordinates, category, etc.)
 
 **Replacement Strategy**:
-- ✅ Add `placeId` field to products (FK to Place)
-- ✅ Fetch place details from `/api/places/:id` when showing product
-- ✅ Display place photos, coordinates, description
-- ✅ Link to place in map/exploration
-- ✅ Update seed script to use real place IDs from DB
+- âœ… Add `placeId` field to products (FK to Place)
+- âœ… Fetch place details from `/api/places/:id` when showing product
+- âœ… Display place photos, coordinates, description
+- âœ… Link to place in map/exploration
+- âœ… Update seed script to use real place IDs from DB
 
 ---
 
@@ -137,10 +137,10 @@ late List<String> _places;  // Currently: empty or placeholder
 - Photos not linked to real places
 
 **Replacement Strategy**:
-- ✅ Add optional `placeId` field to Album schema
-- ✅ When user creates album with place context → store `placeId`
-- ✅ Fetch place details from API when displaying album
-- ✅ Show richer metadata: place name, category, coordinates, etc.
+- âœ… Add optional `placeId` field to Album schema
+- âœ… When user creates album with place context â†’ store `placeId`
+- âœ… Fetch place details from API when displaying album
+- âœ… Show richer metadata: place name, category, coordinates, etc.
 
 ---
 
@@ -166,10 +166,10 @@ contributedPlaces: {
 - Statistics not updated when places approved
 
 **Replacement Strategy**:
-- ✅ When place is approved (admin) → update User.contributedPlaces
-- ✅ Fetch actual contributed places from `/api/places?contributor=userId`
-- ✅ Display real place cards in profile
-- ✅ Calculate stats from actual DB places
+- âœ… When place is approved (admin) â†’ update User.contributedPlaces
+- âœ… Fetch actual contributed places from `/api/places?contributor=userId`
+- âœ… Display real place cards in profile
+- âœ… Calculate stats from actual DB places
 
 ---
 
@@ -180,10 +180,10 @@ contributedPlaces: {
 **Current State**: Not yet using places data
 
 **Replacement Strategy**:
-- ✅ When creating share card → fetch place details from DB
-- ✅ Include place metadata: name, photo, district, category
-- ✅ Link card to actual place in system
-- ✅ Generate rich share preview
+- âœ… When creating share card â†’ fetch place details from DB
+- âœ… Include place metadata: name, photo, district, category
+- âœ… Link card to actual place in system
+- âœ… Generate rich share preview
 
 ---
 
@@ -196,13 +196,13 @@ contributedPlaces: {
 **Current**: Generic district/province references only
 
 **Replacement Strategy**:
-- ✅ Add place selection to album creation
-- ✅ Add "My Favorite Places" to user settings (from `/api/places`)
-- ✅ Use place data for context everywhere
+- âœ… Add place selection to album creation
+- âœ… Add "My Favorite Places" to user settings (from `/api/places`)
+- âœ… Use place data for context everywhere
 
 ---
 
-## 📋 DATABASE PLACES I NEED
+## ðŸ“‹ DATABASE PLACES I NEED
 
 ### **Required Fields in DB Place Object**:
 ```javascript
@@ -240,7 +240,7 @@ contributedPlaces: {
 
 ---
 
-## 🛠️ IMPLEMENTATION ROADMAP
+## ðŸ› ï¸ IMPLEMENTATION ROADMAP
 
 ### **Phase 1: Backend Setup**
 - [ ] Ensure `/api/places` endpoint returns paginated places
@@ -253,14 +253,14 @@ contributedPlaces: {
 ### **Phase 2: Frontend - Exploration**
 - [ ] Remove `_devSeedAssignments` flag from exploration provider
 - [ ] Update `loadAssignments()` to fetch real DB assignments
-- [ ] If no assignments exist → fetch places from `/api/places?district=X`
+- [ ] If no assignments exist â†’ fetch places from `/api/places?district=X`
 - [ ] Create `ExplorationLocation` from DB Place objects
 - [ ] Test with all 25 districts
 
 ### **Phase 3: Frontend - Trips**
 - [ ] Create `placesProvider` using PlacesRepository
 - [ ] Add place search/filter UI in trip creation
-- [ ] Users select places → store as `destinationIds`
+- [ ] Users select places â†’ store as `destinationIds`
 - [ ] Calculate `destinationCount` from selected places
 
 ### **Phase 4: Frontend - Shop**
@@ -283,43 +283,43 @@ contributedPlaces: {
 
 ---
 
-## 🗂️ FILES TO MODIFY
+## ðŸ—‚ï¸ FILES TO MODIFY
 
 ### **Frontend (Dart/Flutter)**
 
 | Priority | File | Change | Impact |
 |----------|------|--------|--------|
-| 🔴 High | `exploration/providers/exploration_provider.dart` | Remove seed fallback, use API | Exploration feature |
-| 🔴 High | `places/data/places_repository.dart` | Complete API implementation | All place fetching |
-| 🟠 Medium | `trips/presentation/create_trip_page.dart` | Integrate places UI | Trip creation |
-| 🟠 Medium | `shop/providers/real_store_providers.dart` | Add place linking | Shop feature |
-| 🟠 Medium | `album/presentation/album_creation.dart` | Add place selector | Album feature |
-| 🟡 Low | `profile/providers/profile_provider.dart` | Fetch contributed places | Profile view |
-| 🟡 Low | Create: `sharing/providers/sharing_provider.dart` | Share place cards | Sharing feature |
+| ðŸ”´ High | `exploration/providers/exploration_provider.dart` | Remove seed fallback, use API | Exploration feature |
+| ðŸ”´ High | `places/data/places_repository.dart` | Complete API implementation | All place fetching |
+| ðŸŸ  Medium | `trips/presentation/create_trip_page.dart` | Integrate places UI | Trip creation |
+| ðŸŸ  Medium | `shop/providers/real_store_providers.dart` | Add place linking | Shop feature |
+| ðŸŸ  Medium | `album/presentation/album_creation.dart` | Add place selector | Album feature |
+| ðŸŸ¡ Low | `profile/providers/profile_provider.dart` | Fetch contributed places | Profile view |
+| ðŸŸ¡ Low | Create: `sharing/providers/sharing_provider.dart` | Share place cards | Sharing feature |
 
 ### **Backend (Node.js)**
 
 | Priority | File | Change | Impact |
 |----------|------|--------|--------|
-| 🔴 High | `routes/placeRoutes.js` | Ensure all endpoints working | Place API |
-| 🔴 High | `controllers/placeController.js` | Test all CRUD operations | Place management |
-| 🟠 Medium | `models/RealStoreItem.js` | Add placeId field | Shop linking |
-| 🟠 Medium | `models/Album.js` | Add placeId field | Album linking |
-| 🟠 Medium | `models/User.js` | Update contributedPlaces tracking | User stats |
+| ðŸ”´ High | `routes/placeRoutes.js` | Ensure all endpoints working | Place API |
+| ðŸ”´ High | `controllers/placeController.js` | Test all CRUD operations | Place management |
+| ðŸŸ  Medium | `models/RealStoreItem.js` | Add placeId field | Shop linking |
+| ðŸŸ  Medium | `models/Album.js` | Add placeId field | Album linking |
+| ðŸŸ  Medium | `models/User.js` | Update contributedPlaces tracking | User stats |
 
 ### **Asset Files to Remove**
 
 ```
-❌ mobile/assets/data/places_seed_data_2026.json
-❌ project_resorces/places_seed_data_2026.json
-❌ project_resorces/places_seed_data.json
+âŒ mobile/assets/data/places_seed_data_2026.json
+âŒ project_resources/places_seed_data_2026.json
+âŒ project_resources/places_seed_data.json
 
-✅ Keep: project_resorces/sri_lanka_real_places_100.json (for initial seeding ONCE)
+âœ… Keep: project_resources/sri_lanka_real_places_100.json (for initial seeding ONCE)
 ```
 
 ---
 
-## ✅ SUCCESS CRITERIA
+## âœ… SUCCESS CRITERIA
 
 - [ ] All 25 districts load places from `/api/places`
 - [ ] Exploration shows real DB places, not seed data
@@ -333,24 +333,25 @@ contributedPlaces: {
 
 ---
 
-## 📌 GROWING PLACES LIST NOTE
+## ðŸ“Œ GROWING PLACES LIST NOTE
 
 The `sri_lanka_real_places_100.json` file contains the **"growing places list"** that:
 - Starts with 100 verified Sri Lankan attractions
 - Can be seeded ONCE into production DB
 - Users can submit NEW places via `/api/places/request`
-- Admin approves → automatically added as verified places
+- Admin approves â†’ automatically added as verified places
 - Over time, list grows organically via user contributions
 
 **THIS IS NOT A DEPENDENCY** - users can always use their own places, but these are curated/verified attractions in all districts.
 
 ---
 
-## 🚀 NEXT STEPS
+## ðŸš€ NEXT STEPS
 
 1. **Confirm DB Seeding**: Ensure `sri_lanka_real_places_100.json` is imported into MongoDB
-2. **Test API**: Run `GET /api/places` → should return paginated places
+2. **Test API**: Run `GET /api/places` â†’ should return paginated places
 3. **Pick First Feature**: Start with Exploration (most critical)
 4. **Update Sequentially**: Follow roadmap phases above
 5. **Remove Fallbacks**: Delete seed data files once all features use real DB
 6. **QA**: Test each feature end-to-end with real places
+

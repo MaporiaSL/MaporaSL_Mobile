@@ -266,3 +266,4 @@ Future<UserCredential> loginWithEmail(String email, String password) {
 # References
 - Alternative stacks: docs/ALTERNATIVE_STACKS.md
 - Implementation plan: docs/IMPLEMENTATION_STRATEGY.md
+

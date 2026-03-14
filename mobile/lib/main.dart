@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
 
@@ -21,7 +21,7 @@ void main() async {
     await dotenv.load(fileName: "../.env");
   } catch (e) {
     // .env file is optional
-    print('Note: .env file not found, using default config');
+    debugPrint('Note: .env file not found, using default config');
   }
 
   // Initialize Mapbox access token
@@ -50,9 +50,9 @@ class MaporiaApp extends ConsumerWidget {
       builder: (context, child) {
         return SecurityWrapper(
           child: MediaQuery(
-            data: MediaQuery.of(context).copyWith(
-              textScaler: TextScaler.linear(accessibility.fontSize),
-            ),
+            data: MediaQuery.of(
+              context,
+            ).copyWith(textScaler: TextScaler.linear(accessibility.fontSize)),
             child: child!,
           ),
         );
@@ -70,7 +70,8 @@ class SecurityWrapper extends ConsumerStatefulWidget {
   ConsumerState<SecurityWrapper> createState() => _SecurityWrapperState();
 }
 
-class _SecurityWrapperState extends ConsumerState<SecurityWrapper> with WidgetsBindingObserver {
+class _SecurityWrapperState extends ConsumerState<SecurityWrapper>
+    with WidgetsBindingObserver {
   bool _isLocked = false;
 
   @override
@@ -88,7 +89,8 @@ class _SecurityWrapperState extends ConsumerState<SecurityWrapper> with WidgetsB
 
   Future<void> _checkInitialLock() async {
     final prefs = await SharedPreferences.getInstance();
-    final isAppLockEnabled = prefs.getBool('security_app_lock_enabled') ?? false;
+    final isAppLockEnabled =
+        prefs.getBool('security_app_lock_enabled') ?? false;
     if (isAppLockEnabled && mounted) {
       setState(() => _isLocked = true);
     }
@@ -110,9 +112,7 @@ class _SecurityWrapperState extends ConsumerState<SecurityWrapper> with WidgetsB
       return Stack(
         children: [
           widget.child,
-          AppLockScreen(
-            onUnlock: () => setState(() => _isLocked = false),
-          ),
+          AppLockScreen(onUnlock: () => setState(() => _isLocked = false)),
         ],
       );
     }

@@ -17,6 +17,8 @@ class MapVisualTheme {
 
   final Color selectedDistrictBorderColor;
   final double selectedDistrictBorderWidth;
+  final Color selectedDistrictGlassTint;
+  final Color selectedDistrictGlowColor;
 
   final Set<String> lockedDistrictIds;
   final TextStyle labelStyle;
@@ -25,7 +27,7 @@ class MapVisualTheme {
   final Map<String, Color> regionFillOverrides;
 
   const MapVisualTheme({
-    this.backgroundColor = const Color(0xFFE0F2FE), // Light Blue (Water)
+    this.backgroundColor = const Color(0xFFF3F4F6), // Neutral atlas background
     this.borderColor = const Color(0xFF94A3B8), // Muted Slate
     this.borderWidth = 1.0,
     this.fogColor = const Color(0xFFF1F5F9), // Soft Cloud White
@@ -36,8 +38,12 @@ class MapVisualTheme {
     this.halfwayColor = const Color(0xFF6366F1), // indigo - 50%+
     this.quarterColor = const Color(0xFF94A3B8), // Slate - 25%+
     this.lockedColor = const Color(0xFFCBD5E1), // Light Slate (Fog) - <25%
-    this.selectedDistrictBorderColor = const Color(0xFF0EA5E9), // Blue highlight
+    this.selectedDistrictBorderColor = const Color(
+      0xFF0EA5E9,
+    ), // Blue highlight
     this.selectedDistrictBorderWidth = 2.0,
+    this.selectedDistrictGlassTint = const Color(0xFFBDE7F7),
+    this.selectedDistrictGlowColor = const Color(0xFFE9D5FF),
     this.lockedDistrictIds = const <String>{},
     this.labelStyle = const TextStyle(
       color: Color(0xFF334155), // Dark Slate Text
@@ -49,7 +55,7 @@ class MapVisualTheme {
 
   factory MapVisualTheme.dark() {
     return const MapVisualTheme(
-      backgroundColor: Color(0xFF0F172A), // Very dark blue
+      backgroundColor: Color(0xFF111827), // Neutral dark atlas background
       borderColor: Color(0xFF334155), // Dark slate
       fogColor: Color(0xFF1E293B), // Dark slate blue
       fogOpacity: 0.8,
@@ -58,6 +64,8 @@ class MapVisualTheme {
       halfwayColor: Color(0xFF6366F1),
       quarterColor: Color(0xFF64748B),
       lockedColor: Color(0xFF334155),
+      selectedDistrictGlassTint: Color(0xFF334155),
+      selectedDistrictGlowColor: Color(0xFF67E8F9),
       labelStyle: TextStyle(
         color: Color(0xFFF8FAFC), // Light text
         fontSize: 10,
