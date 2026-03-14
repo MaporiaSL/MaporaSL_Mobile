@@ -905,7 +905,7 @@ class _DistrictSatelliteMapState extends State<_DistrictSatelliteMap> {
               infiniteBounds: false,
             ),
             // Allow viewing full district at once while permitting detailed zooms
-            minZoom: 8.0, // Can see full district
+            minZoom: 5.0, // Can zoom out to see full district and surrounding area
             maxZoom: 16.0, // Can zoom in to see street details
           ),
         );
@@ -967,6 +967,9 @@ class _DistrictSatelliteMapState extends State<_DistrictSatelliteMap> {
     await manager.setIconAllowOverlap(true);
     await manager.setIconIgnorePlacement(true);
 
+    // Create markers with FOG OF WAR visual feedback:
+    // ✅ VISITED (Green) - User has verified this location
+    // ❌ UNVISITED (Red) - Location still needs verification
     final markerOptions = widget.assignment.locations
         .map(
           (location) => mapbox.PointAnnotationOptions(
@@ -977,11 +980,13 @@ class _DistrictSatelliteMapState extends State<_DistrictSatelliteMap> {
               ),
             ),
             iconImage: 'marker-15',
-            iconSize: location.visited ? 1.9 : 1.45,
+            // Visited markers are larger and more opaque (fully revealed)
+            // Unvisited markers are smaller and more transparent (foggy)
+            iconSize: location.visited ? 2.2 : 1.5,
             iconColor: location.visited
-                ? const Color(0xFF10B981).toARGB32()
-                : const Color(0xFFEF4444).toARGB32(),
-            iconOpacity: location.visited ? 0.98 : 0.86,
+                ? const Color(0xFF10B981).toARGB32() // Emerald green for visited
+                : const Color(0xFFDC2626).toARGB32(), // Bright red for unvisited
+            iconOpacity: location.visited ? 1.0 : 0.75, // Visited: fully visible, Unvisited: 75% visible
           ),
         )
         .toList(growable: false);
