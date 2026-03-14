@@ -5,7 +5,11 @@
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
-    "dev": "nodemon src/server.js"
+    "dev": "nodemon src/server.js",
+    "seed:places": "node scripts/seed/seed-places.js",
+    "seed:dev-user": "node scripts/seed/seed-dev-user.js",
+    "seed:dev-exploration": "node scripts/seed/seed-dev-exploration.js",
+    "seed:exploration-test": "npm run seed:places && npm run seed:dev-user && npm run seed:dev-exploration"
   },
   "dependencies": {
     "@turf/turf": "^7.3.2",

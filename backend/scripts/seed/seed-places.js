@@ -1,14 +1,16 @@
 const path = require('path');
-require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
+require('dotenv').config({ path: path.resolve(__dirname, '../../.env') });
 const mongoose = require('mongoose');
-const Destination = require('./src/models/Destination');
-const Place = require('./src/models/Place');
+const Destination = require('../../src/models/Destination');
+const Place = require('../../src/models/Place');
 const fs = require('fs');
+
+const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/maporia';
 
 // Connect to MongoDB
 const connectDB = async () => {
   try {
-    await mongoose.connect(process.env.MONGODB_URI);
+    await mongoose.connect(mongoUri);
     console.log('MongoDB Connected');
   } catch (err) {
     console.error('Failed to connect to MongoDB:', err.message);
@@ -21,7 +23,7 @@ const importData = async () => {
 
   try {
     // Try to read from places_seed_data_2026.json first
-    let dataPath = path.join(__dirname, '..', 'project_resorces', 'places_seed_data_2026.json');
+    let dataPath = path.join(__dirname, '..', '..', '..', 'project_resources', 'places_seed_data_2026.json');
     let seedData = null;
 
     if (fs.existsSync(dataPath)) {
@@ -30,7 +32,7 @@ const importData = async () => {
       seedData = JSON.parse(fileContent);
     } else {
       // Fall back to sri_lanka_real_places_100.json
-      dataPath = path.join(__dirname, '..', 'project_resorces', 'sri_lanka_real_places_100.json');
+      dataPath = path.join(__dirname, '..', '..', '..', 'project_resources', 'sri_lanka_real_places_100.json');
       if (!fs.existsSync(dataPath)) {
         console.error(`Error: No seed data files found`);
         process.exit(1);

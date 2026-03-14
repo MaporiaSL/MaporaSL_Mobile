@@ -1,17 +1,23 @@
 const mongoose = require('mongoose');
 const path = require('path');
-require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
-const connectDB = require('./src/config/db');
-const User = require('./src/models/User');
-const Place = require('./src/models/Place');
-const UserDistrictAssignment = require('./src/models/UserDistrictAssignment');
+require('dotenv').config({ path: path.resolve(__dirname, '../../.env') });
+const connectDB = require('../../src/config/db');
+const User = require('../../src/models/User');
+const Place = require('../../src/models/Place');
+const UserDistrictAssignment = require('../../src/models/UserDistrictAssignment');
+
+const devUserId = process.env.PROFILE_FALLBACK_USER_ID || 'test-user-123';
+
+if (!process.env.MONGODB_URI) {
+  process.env.MONGODB_URI = 'mongodb://localhost:27017/maporia';
+}
 
 async function seedDevExploration() {
   try {
     await connectDB();
     console.log('Connected to MongoDB');
 
-    const user = await User.findOne({ auth0Id: 'dev-user-123' });
+    const user = await User.findOne({ auth0Id: devUserId });
     if (!user) {
       console.error('Dev user not found. Run seed-dev-user.js first.');
       process.exit(1);
