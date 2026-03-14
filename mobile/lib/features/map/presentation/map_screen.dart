@@ -136,7 +136,23 @@ class _MapScreenState extends ConsumerState<MapScreen> {
           backgroundColor: Colors.transparent,
           elevation: 0,
           automaticallyImplyLeading: false,
+          actions: const [],
         ),
+        // Close button as FAB - guaranteed to be on top and responsive
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            setState(() {
+              selectedDistrict = null;
+              selectedProvince = null;
+              _isDistrictFocused = false;
+              _selectedLocation = null;
+            });
+          },
+          backgroundColor: Colors.white.withValues(alpha: 0.25),
+          elevation: 0,
+          child: const Icon(Icons.close, color: Colors.white, size: 28),
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
         body: SafeArea(
           top: false,
           child: Stack(
@@ -155,17 +171,9 @@ class _MapScreenState extends ConsumerState<MapScreen> {
               Positioned(
                 top: 12,
                 left: 16,
-                right: 16,
+                right: 0,
                 child: _DistrictHeaderBar(
                   district: selectedDistrict ?? 'District',
-                  onExit: () {
-                    setState(() {
-                      selectedDistrict = null;
-                      selectedProvince = null;
-                      _isDistrictFocused = false;
-                      _selectedLocation = null;
-                    });
-                  },
                 ),
               ),
               if (_selectedLocation != null)
@@ -313,9 +321,8 @@ class _MapScreenState extends ConsumerState<MapScreen> {
 
 class _DistrictHeaderBar extends StatelessWidget {
   final String district;
-  final VoidCallback onExit;
 
-  const _DistrictHeaderBar({required this.district, required this.onExit});
+  const _DistrictHeaderBar({required this.district});
 
   @override
   Widget build(BuildContext context) {
@@ -348,7 +355,7 @@ class _DistrictHeaderBar extends StatelessWidget {
             ],
           ),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
               Expanded(
@@ -362,28 +369,8 @@ class _DistrictHeaderBar extends StatelessWidget {
                   ),
                 ),
               ),
-              MouseRegion(
-                cursor: SystemMouseCursors.click,
-                child: GestureDetector(
-                  onTap: onExit,
-                  child: Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.15),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: Colors.white.withValues(alpha: 0.2),
-                      ),
-                    ),
-                    child: const Icon(
-                      Icons.close,
-                      color: Colors.white,
-                      size: 20,
-                    ),
-                  ),
-                ),
-              ),
+              // Close button now handled by FAB above
+              const SizedBox(width: 8),
             ],
           ),
         ),
@@ -905,7 +892,8 @@ class _DistrictSatelliteMapState extends State<_DistrictSatelliteMap> {
               infiniteBounds: false,
             ),
             // Allow viewing full district at once while permitting detailed zooms
-            minZoom: 5.0, // Can zoom out to see full district and surrounding area
+            minZoom:
+                5.0, // Can zoom out to see full district and surrounding area
             maxZoom: 16.0, // Can zoom in to see street details
           ),
         );
@@ -984,9 +972,14 @@ class _DistrictSatelliteMapState extends State<_DistrictSatelliteMap> {
             // Unvisited markers are smaller and more transparent (foggy)
             iconSize: location.visited ? 2.2 : 1.5,
             iconColor: location.visited
-                ? const Color(0xFF10B981).toARGB32() // Emerald green for visited
-                : const Color(0xFFDC2626).toARGB32(), // Bright red for unvisited
-            iconOpacity: location.visited ? 1.0 : 0.75, // Visited: fully visible, Unvisited: 75% visible
+                ? const Color(0xFF10B981)
+                      .toARGB32() // Emerald green for visited
+                : const Color(
+                    0xFFDC2626,
+                  ).toARGB32(), // Bright red for unvisited
+            iconOpacity: location.visited
+                ? 1.0
+                : 0.75, // Visited: fully visible, Unvisited: 75% visible
           ),
         )
         .toList(growable: false);

@@ -62,7 +62,8 @@ class ExplorationApi {
         latitude: 6.9271,
         longitude: 79.8400,
         visited: false, // ❌ Unvisited location (red marker - fog of war)
-        description: 'Iconic 5-star colonial hotel overlooking the Indian Ocean',
+        description:
+            'Iconic 5-star colonial hotel overlooking the Indian Ocean',
         category: 'hotel',
         photos: [],
       ),
@@ -95,7 +96,9 @@ class ExplorationApi {
         district: 'Colombo',
         province: 'Western',
         assignedCount: colomboLocations.length,
-        visitedCount: colomboLocations.where((l) => l.visited).length, // 3 visited
+        visitedCount: colomboLocations
+            .where((l) => l.visited)
+            .length, // 3 visited
         unlockedAt: DateTime.now().subtract(const Duration(days: 5)),
         isUnlocked: true,
         center: const GeoPoint(latitude: 6.9271, longitude: 79.8493),
