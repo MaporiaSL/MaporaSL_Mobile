@@ -603,6 +603,7 @@ class _DistrictSatelliteMapState extends State<_DistrictSatelliteMap> {
     });
   }
 
+  /// Extract all coordinate rings from a GeoJSON geometry (Polygon or MultiPolygon)
   List<List<dynamic>> _extractOuterRings(Map<String, dynamic>? geometry) {
     if (geometry == null) return const <List<dynamic>>[];
     final type = geometry['type']?.toString();
@@ -632,6 +633,67 @@ class _DistrictSatelliteMapState extends State<_DistrictSatelliteMap> {
     }
 
     return rings;
+  }
+
+  /// Calculate bounding box from GeoJSON geometry coordinates
+  /// Returns [minLat, minLng, maxLat, maxLng] or null if geometry is invalid
+  List<double>? _calculateBoundsFromGeometry(Map<String, dynamic>? geometry) {
+    if (geometry == null) return null;
+
+    final type = geometry['type']?.toString();
+    final coordinates = geometry['coordinates'];
+    if (coordinates is! List || coordinates.isEmpty) return null;
+
+    final allCoords = <List<double>>[];
+
+    try {
+      if (type == 'Polygon') {
+        final polygon = coordinates.first;
+        if (polygon is List) {
+          for (final coord in polygon) {
+            if (coord is List && coord.length >= 2) {
+              allCoords.add([
+                (coord[1] as num).toDouble(), // lat
+                (coord[0] as num).toDouble(), // lng
+              ]);
+            }
+          }
+        }
+      } else if (type == 'MultiPolygon') {
+        for (final polygon in coordinates) {
+          if (polygon is! List) continue;
+          for (final ring in polygon) {
+            if (ring is! List) continue;
+            for (final coord in ring) {
+              if (coord is List && coord.length >= 2) {
+                allCoords.add([
+                  (coord[1] as num).toDouble(), // lat
+                  (coord[0] as num).toDouble(), // lng
+                ]);
+              }
+            }
+          }
+        }
+      }
+
+      if (allCoords.isEmpty) return null;
+
+      double minLat = allCoords.first[0];
+      double maxLat = allCoords.first[0];
+      double minLng = allCoords.first[1];
+      double maxLng = allCoords.first[1];
+
+      for (final coord in allCoords) {
+        minLat = math.min(minLat, coord[0]);
+        maxLat = math.max(maxLat, coord[0]);
+        minLng = math.min(minLng, coord[1]);
+        maxLng = math.max(maxLng, coord[1]);
+      }
+
+      return [minLat, minLng, maxLat, maxLng];
+    } catch (_) {
+      return null;
+    }
   }
 
   String? _buildOutsideMaskGeoJson(Map<String, dynamic>? feature) {
@@ -783,8 +845,34 @@ class _DistrictSatelliteMapState extends State<_DistrictSatelliteMap> {
     );
   }
 
+  /// Fit the camera to the district bounds with interactive constraints
+  /// Uses GeoJSON geometry to calculate precise bounds with padding
   Future<void> _fitToDistrict(mapbox.MapboxMap map) async {
-    final bounds = widget.assignment.bounds;
+    // Try to calculate bounds from GeoJSON geometry first (most accurate)
+    List<double>? geomBounds;
+    if (_selectedDistrictGeoJson != null) {
+      try {
+        final geoJsonData = jsonDecode(_selectedDistrictGeoJson!);
+        final features = geoJsonData['features'] as List?;
+        if (features != null && features.isNotEmpty) {
+          final geometry = (features.first as Map<String, dynamic>)['geometry'];
+          geomBounds = _calculateBoundsFromGeometry(geometry);
+        }
+      } catch (_) {
+        // Fall through to assignment bounds if parsing fails
+      }
+    }
+
+    // Use assignment bounds as fallback
+    final bounds = geomBounds != null
+        ? GeoBounds(
+            minLat: geomBounds[0],
+            minLng: geomBounds[1],
+            maxLat: geomBounds[2],
+            maxLng: geomBounds[3],
+          )
+        : widget.assignment.bounds;
+
     if (bounds != null) {
       final sw = mapbox.Point(
         coordinates: mapbox.Position(bounds.minLng, bounds.minLat),
@@ -794,39 +882,63 @@ class _DistrictSatelliteMapState extends State<_DistrictSatelliteMap> {
       );
 
       try {
+        // Set camera bounds to constrain panning within district area
+        // Add a small buffer (10% of bounds) to prevent edge clipping
+        final bufferLat = (bounds.maxLat - bounds.minLat) * 0.1;
+        final bufferLng = (bounds.maxLng - bounds.minLng) * 0.1;
+
         await map.setBounds(
           mapbox.CameraBoundsOptions(
             bounds: mapbox.CoordinateBounds(
-              southwest: sw,
-              northeast: ne,
+              southwest: mapbox.Point(
+                coordinates: mapbox.Position(
+                  bounds.minLng - bufferLng,
+                  bounds.minLat - bufferLat,
+                ),
+              ),
+              northeast: mapbox.Point(
+                coordinates: mapbox.Position(
+                  bounds.maxLng + bufferLng,
+                  bounds.maxLat + bufferLat,
+                ),
+              ),
               infiniteBounds: false,
             ),
-            minZoom: 7.5,
-            maxZoom: 13.5,
+            // Allow viewing full district at once while permitting detailed zooms
+            minZoom: 8.0, // Can see full district
+            maxZoom: 16.0, // Can zoom in to see street details
           ),
         );
 
+        // Calculate optimal camera position to fit entire district with padding
         final camera = await map.cameraForCoordinateBounds(
           mapbox.CoordinateBounds(
             southwest: sw,
             northeast: ne,
             infiniteBounds: false,
           ),
-          mapbox.MbxEdgeInsets(top: 50, left: 50, bottom: 50, right: 50),
+          // Generous padding creates comfortable "frame" effect around district
+          // Top: leave room for header bar; Bottom: leave room for detail cards
+          mapbox.MbxEdgeInsets(top: 80, left: 80, bottom: 120, right: 80),
           null,
           null,
-          8.5,
+          9.0, // min zoom for fitted view
           null,
         );
-        await map.easeTo(camera, mapbox.MapAnimationOptions(duration: 700));
+
+        // Smooth animated flight transition (1000ms for elegant UX)
+        // Gesture interactions enabled by GesturesConfiguration in build()
+        await map.easeTo(camera, mapbox.MapAnimationOptions(duration: 1000));
         return;
-      } catch (_) {
-        // Fall back to center zoom when bounds fit cannot be calculated yet.
+      } catch (e) {
+        // Fall back to center-based zoom if bounds fit fails
+        debugPrint('⚠️ Bounds fit failed: $e, falling back to center zoom');
       }
     }
 
+    // Fallback: zoom to center with reasonable zoom level
     if (widget.assignment.center != null) {
-      await map.setCamera(
+      await map.easeTo(
         mapbox.CameraOptions(
           center: mapbox.Point(
             coordinates: mapbox.Position(
@@ -834,8 +946,9 @@ class _DistrictSatelliteMapState extends State<_DistrictSatelliteMap> {
               widget.assignment.center!.latitude,
             ),
           ),
-          zoom: 10.8,
+          zoom: 11.0,
         ),
+        mapbox.MapAnimationOptions(duration: 1000),
       );
     }
   }
@@ -979,12 +1092,17 @@ class _DistrictSatelliteMapState extends State<_DistrictSatelliteMap> {
       key: ValueKey(
         'district-mapbox-${widget.assignment.district.toLowerCase()}',
       ),
-      styleUri: 'mapbox://styles/mapbox/satellite-streets-v12',
+      // Vector streets map for better performance, clarity, and interactivity
+      // Compared to satellite: lighter data, easier to read, supports better overlays
+      styleUri: 'mapbox://styles/mapbox/streets-v12',
       cameraOptions: _initialCamera(),
       onMapCreated: (map) async {
         _mapboxMap = map;
+        // Interactive zoom and pan are enabled by default in mapbox_maps_flutter
+        // Users can pinch-to-zoom and pan within bounds (set by setBounds in _fitToDistrict)
         await _reloadDistrictData();
       },
+      // Handle taps on map for location marker selection
       onTapListener: _handleMapTap,
     );
   }

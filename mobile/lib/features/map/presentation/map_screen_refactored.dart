@@ -317,10 +317,7 @@ class _DistrictHeaderBar extends StatelessWidget {
   final String district;
   final VoidCallback onExit;
 
-  const _DistrictHeaderBar({
-    required this.district,
-    required this.onExit,
-  });
+  const _DistrictHeaderBar({required this.district, required this.onExit});
 
   @override
   Widget build(BuildContext context) {
@@ -953,7 +950,9 @@ class _DistrictVectorMapState extends State<_DistrictVectorMap> {
                   ),
                   title: Text(location.name),
                   subtitle: Text(
-                    location.visited ? 'Visited • ${location.type}' : location.type,
+                    location.visited
+                        ? 'Visited • ${location.type}'
+                        : location.type,
                   ),
                   onTap: () {
                     Navigator.pop(sheetContext);
