@@ -23,6 +23,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
   String? selectedDistrict;
   String? selectedProvince;
   bool _isDistrictFocused = false;
+  double _focusScale = 1.0;
   Offset _focusFraction = const Offset(0.5, 0.5);
   ExplorationLocation? _selectedLocation;
 
@@ -150,7 +151,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
               _focusFraction.dy * size.height,
             );
             final center = Offset(size.width / 2, size.height / 2);
-            final scale = _isDistrictFocused ? 2.15 : 1.0;
+            final scale = _isDistrictFocused ? _focusScale : 1.0;
             final tx = _isDistrictFocused
                 ? center.dx - (focusPx.dx * scale)
                 : 0.0;
@@ -178,12 +179,18 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                         theme: theme,
                         districtProgress: districtProgress,
                         onDistrictSelected:
-                            (districtName, provinceName, tapFraction) {
+                            (
+                              districtName,
+                              provinceName,
+                              tapFraction,
+                              focusTarget,
+                            ) {
                               setState(() {
                                 if (districtName.isEmpty) {
                                   selectedDistrict = null;
                                   selectedProvince = null;
                                   _isDistrictFocused = false;
+                                  _focusScale = 1.0;
                                   _selectedLocation = null;
                                   _focusFraction = const Offset(0.5, 0.5);
                                   return;
@@ -196,6 +203,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                                   selectedDistrict = null;
                                   selectedProvince = null;
                                   _isDistrictFocused = false;
+                                  _focusScale = 1.0;
                                   _selectedLocation = null;
                                   _focusFraction = const Offset(0.5, 0.5);
                                   return;
@@ -208,25 +216,37 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                                     ? provinceName
                                     : null;
                                 _isDistrictFocused = true;
+                                _focusScale =
+                                    focusTarget?.suggestedScale ?? 2.15;
                                 _selectedLocation = null;
 
-                                final assignment = _assignmentForDistrict(
-                                  assignments,
-                                  districtName,
-                                );
-                                if (assignment != null &&
-                                    assignment.center != null) {
-                                  final centerPx = _latLngToCanvas(
-                                    assignment.center!.latitude,
-                                    assignment.center!.longitude,
-                                    size,
-                                  );
-                                  _focusFraction = Offset(
-                                    (centerPx.dx / size.width).clamp(0.0, 1.0),
-                                    (centerPx.dy / size.height).clamp(0.0, 1.0),
-                                  );
+                                if (focusTarget != null) {
+                                  _focusFraction = focusTarget.centroidFraction;
                                 } else {
-                                  _focusFraction = tapFraction;
+                                  final assignment = _assignmentForDistrict(
+                                    assignments,
+                                    districtName,
+                                  );
+                                  if (assignment != null &&
+                                      assignment.center != null) {
+                                    final centerPx = _latLngToCanvas(
+                                      assignment.center!.latitude,
+                                      assignment.center!.longitude,
+                                      size,
+                                    );
+                                    _focusFraction = Offset(
+                                      (centerPx.dx / size.width).clamp(
+                                        0.0,
+                                        1.0,
+                                      ),
+                                      (centerPx.dy / size.height).clamp(
+                                        0.0,
+                                        1.0,
+                                      ),
+                                    );
+                                  } else {
+                                    _focusFraction = tapFraction;
+                                  }
                                 }
                               });
                             },
@@ -283,6 +303,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                           selectedDistrict = null;
                           selectedProvince = null;
                           _isDistrictFocused = false;
+                          _focusScale = 1.0;
                           _selectedLocation = null;
                           _focusFraction = const Offset(0.5, 0.5);
                         });

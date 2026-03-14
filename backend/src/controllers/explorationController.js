@@ -321,7 +321,7 @@ async function seedUnlockLocations(req, res) {
     const jsonPath = path.resolve(
       __dirname,
       '../../..',
-      'project_resources',
+      'project_resorces',
       'places_seed_data_2026.json'
     );
     const raw = fs.readFileSync(jsonPath, 'utf-8');

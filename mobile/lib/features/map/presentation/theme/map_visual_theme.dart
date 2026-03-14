@@ -27,7 +27,7 @@ class MapVisualTheme {
   final Map<String, Color> regionFillOverrides;
 
   const MapVisualTheme({
-    this.backgroundColor = const Color(0xFFE0F2FE), // Light Blue (Water)
+    this.backgroundColor = const Color(0xFFF3F4F6), // Neutral atlas background
     this.borderColor = const Color(0xFF94A3B8), // Muted Slate
     this.borderWidth = 1.0,
     this.fogColor = const Color(0xFFF1F5F9), // Soft Cloud White
@@ -55,7 +55,7 @@ class MapVisualTheme {
 
   factory MapVisualTheme.dark() {
     return const MapVisualTheme(
-      backgroundColor: Color(0xFF0F172A), // Very dark blue
+      backgroundColor: Color(0xFF111827), // Neutral dark atlas background
       borderColor: Color(0xFF334155), // Dark slate
       fogColor: Color(0xFF1E293B), // Dark slate blue
       fogOpacity: 0.8,

@@ -44,6 +44,18 @@ class CartoonMapPainter extends CustomPainter {
       Paint()..color = theme.backgroundColor,
     );
 
+    // Draw a subtle island silhouette so focused edge districts don't look like ocean-only views.
+    final islandSilhouette = Path();
+    for (final district in districtPaths.values) {
+      for (final path in district) {
+        islandSilhouette.addPath(path, Offset.zero);
+      }
+    }
+    canvas.drawPath(
+      islandSilhouette,
+      Paint()..color = theme.lockedColor.withValues(alpha: 0.20),
+    );
+
     // 2. Draw all provinces base (Subtle)
     for (final region in regions) {
       _drawProvince(canvas, size, region);
@@ -104,11 +116,19 @@ class CartoonMapPainter extends CustomPainter {
 
       // Get progress for this district
       final progress = districtProgress[districtId] ?? 0.0;
+      final reveal = progress.clamp(0.0, 1.0);
 
-      // Gradually clear fog: lerp between lockedColor (Fog) and target progress color
-      final targetColor = theme.getDistrictProgressColor(progress);
+      // District-specific colors + progressive reveal through fog.
+      final districtBaseColor = _districtBaseColor(districtId);
+      final targetColor =
+          Color.lerp(
+            districtBaseColor,
+            theme.getDistrictProgressColor(progress),
+            0.3,
+          ) ??
+          districtBaseColor;
       var fillColor =
-          Color.lerp(theme.lockedColor, targetColor, progress) ??
+          Color.lerp(theme.lockedColor, targetColor, 0.15 + (0.85 * reveal)) ??
           theme.lockedColor;
       if (isFocusedDistrict && focusMode) {
         fillColor =
@@ -119,7 +139,7 @@ class CartoonMapPainter extends CustomPainter {
           ? 0.12
           : (isFocusedDistrict && focusMode
                 ? 0.92
-                : (progress == 0 ? 0.5 : 0.8));
+                : (progress == 0 ? 0.44 : (0.58 + (0.30 * reveal))));
 
       final fillPaint = Paint()
         ..color = fillColor.withValues(alpha: opacity)
@@ -130,8 +150,8 @@ class CartoonMapPainter extends CustomPainter {
             (isFocusedDistrict && focusMode
                     ? theme.selectedDistrictBorderColor
                     : theme.borderColor)
-                .withValues(alpha: 
-                  shouldDim
+                .withValues(
+                  alpha: shouldDim
                       ? 0.06
                       : (isFocusedDistrict && focusMode
                             ? 0.45
@@ -150,6 +170,15 @@ class CartoonMapPainter extends CustomPainter {
         _drawDistrictLabelFor(canvas, districtId, districtPathList, progress);
       }
     }
+  }
+
+  Color _districtBaseColor(String districtId) {
+    final hash = districtId.toLowerCase().runes.fold<int>(
+      0,
+      (acc, rune) => ((acc * 31) + rune) & 0x7fffffff,
+    );
+    final hue = (hash % 360).toDouble();
+    return HSLColor.fromAHSL(1.0, hue, 0.62, 0.54).toColor();
   }
 
   /// Calculate centroid and draw district label
@@ -213,8 +242,8 @@ class CartoonMapPainter extends CustomPainter {
   void _drawGrainOverlay(Canvas canvas, Size size) {
     final isDark = theme.backgroundColor.computeLuminance() < 0.5;
     final paint = Paint()
-      ..color = (isDark ? Colors.white : const Color(0xFF334155)).withValues(alpha: 
-        0.04,
+      ..color = (isDark ? Colors.white : const Color(0xFF334155)).withValues(
+        alpha: 0.04,
       )
       ..strokeWidth = 1.0;
 
@@ -280,4 +309,3 @@ class CartoonMapPainter extends CustomPainter {
         oldDelegate.districtProgress != districtProgress;
   }
 }
-
