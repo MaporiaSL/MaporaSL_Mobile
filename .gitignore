@@ -109,6 +109,8 @@ linked_*.ds
 unlinked.ds
 unlinked_spec.ds
 **/GeneratedPluginRegistrant.*
+pubspec.lock
+**/pubspec.lock
 
 # Android related
 **/android/**/gradle-wrapper.jar
