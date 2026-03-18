@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../data/models/timeline_event.dart';
 import 'package:intl/intl.dart';
+import 'package:share_plus/share_plus.dart';
 
 class TimelineEventCard extends StatelessWidget {
   final TimelineEvent event;
@@ -62,19 +63,31 @@ class TimelineEventCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Icon(
-                      Icons.access_time_rounded,
-                      size: 14,
-                      color: AppColors.textMuted.withOpacity(0.8),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.access_time_rounded,
+                          size: 14,
+                          color: AppColors.textMuted.withOpacity(0.8),
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          DateFormat('MMM d, y • h:mm a').format(event.timestamp),
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                color: AppColors.textMuted.withOpacity(0.8),
+                                fontWeight: FontWeight.w600,
+                              ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(width: 4),
-                    Text(
-                      DateFormat('MMM d, y • h:mm a').format(event.timestamp),
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: AppColors.textMuted.withOpacity(0.8),
-                            fontWeight: FontWeight.w600,
-                          ),
+                    IconButton(
+                      onPressed: () => _showShareOptions(context, event),
+                      icon: Icon(Icons.share_rounded, size: 18, color: AppColors.textDark.withOpacity(0.6)),
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
                     ),
                   ],
                 ),
@@ -95,6 +108,74 @@ class TimelineEventCard extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  void _showShareOptions(BuildContext context, TimelineEvent event) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 40,
+                  height: 4,
+                  margin: const EdgeInsets.only(bottom: 16),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[300],
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+                Text(
+                  'Share "${event.title}"',
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 16),
+                ListTile(
+                  leading: CircleAvatar(
+                    backgroundColor: Colors.blueAccent.withValues(alpha: 0.1),
+                    foregroundColor: Colors.blueAccent,
+                    child: const Icon(Icons.public),
+                  ),
+                  title: const Text('Share to Community', style: TextStyle(fontWeight: FontWeight.w600)),
+                  subtitle: const Text('Post this memory to the in-app feed'),
+                  onTap: () {
+                    Navigator.pop(ctx);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Memory shared to Community!')),
+                    );
+                  },
+                ),
+                const Divider(indent: 70),
+                ListTile(
+                  leading: CircleAvatar(
+                    backgroundColor: Theme.of(context).primaryColor.withValues(alpha: 0.1),
+                    foregroundColor: Theme.of(context).primaryColor,
+                    child: const Icon(Icons.ios_share),
+                  ),
+                  title: const Text('Share to Social Media', style: TextStyle(fontWeight: FontWeight.w600)),
+                  subtitle: const Text('Share link externally'),
+                  onTap: () {
+                    Navigator.pop(ctx);
+                    final String shareText = 'Check out my latest memory: "${event.title}" on Maporia! 🌍✈️\n${event.description}';
+                    Share.share(shareText);
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
