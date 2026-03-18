@@ -50,8 +50,8 @@ class ProfileScreen extends ConsumerWidget {
                 ElevatedButton(
                   onPressed: () {
                     ref.invalidate(profileBootstrapProvider);
-                    ref.refresh(userProfileProvider);
-                    ref.refresh(userContributionsProvider);
+                    ref.invalidate(userProfileProvider);
+                    ref.invalidate(userContributionsProvider);
                   },
                   child: const Text('Retry'),
                 ),
