@@ -442,7 +442,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                     const SizedBox(height: 16),
 
                     DropdownButtonFormField<String>(
-                      value: _languageOptions.contains(_selectedLanguage)
+                      initialValue: _languageOptions.contains(_selectedLanguage)
                           ? _selectedLanguage
                           : _languageOptions.first,
                       decoration: const InputDecoration(
