@@ -7,6 +7,13 @@ import 'package:dio/dio.dart';
 // Mock Dio Provider since we don't want real API calls in widget tests
 final mockDioProvider = Provider<Dio>((ref) => Dio());
 
+/// Widget wrapper for testing Riverpod consumers
+Widget _wrapWithProvider(Widget child) {
+  return ProviderScope(
+    child: MaterialApp(home: Scaffold(body: child)),
+  );
+}
+
 void main() {
   group('ModernVisitButton Widget Tests', () {
     testWidgets('displays "Mark Visit" when isVisited is false', (
@@ -15,19 +22,19 @@ void main() {
       bool buttonTapped = false;
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: Center(
-              child: ModernVisitButton(
-                isVisited: false,
-                onTap: () {
-                  buttonTapped = true;
-                },
-              ),
+        _wrapWithProvider(
+          Center(
+            child: ModernVisitButton(
+              isVisited: false,
+              onTap: () {
+                buttonTapped = true;
+              },
             ),
           ),
         ),
       );
+
+      await tester.pumpAndSettle();
 
       // Verify the initial state
       expect(find.text('Mark Visit'), findsOneWidget);
@@ -36,7 +43,7 @@ void main() {
 
       // Tap the button
       await tester.tap(find.byType(ModernVisitButton));
-      await tester.pump();
+      await tester.pumpAndSettle();
 
       // Verify the tap was registered
       expect(buttonTapped, isTrue);
@@ -46,14 +53,12 @@ void main() {
       WidgetTester tester,
     ) async {
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: Center(
-              child: ModernVisitButton(isVisited: true, onTap: () {}),
-            ),
-          ),
+        _wrapWithProvider(
+          Center(child: ModernVisitButton(isVisited: true, onTap: () {})),
         ),
       );
+
+      await tester.pumpAndSettle();
 
       // Verify the visited state
       expect(find.text('Visited'), findsOneWidget);
