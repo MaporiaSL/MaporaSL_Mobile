@@ -32,11 +32,23 @@ const checkJwt = authBypassEnabled
 // Extracts the userId from the Firebase token (or URL in bypass mode)
 function extractUserId(req, res, next) {
   if (authBypassEnabled) {
+    // Keep auth endpoints stable in bypass mode.
+    // /api/auth/me, /api/auth/register, /api/auth/logout should all map to one dev UID.
+    if (req.baseUrl === '/api/auth') {
+      req.userId = 'test-user-123';
+      return next();
+    }
+
     // req.params is not yet populated in router.use(); parse req.path directly.
-    // Path patterns: /:uid, /:uid/contributions, /:uid/avatar
-    // Non-user paths: /leaderboard/top, /auth/logout (req.userId unused there)
+    // Path patterns under /api/profile: /:uid, /:uid/contributions, /:uid/avatar
     const match = req.path.match(/^\/([^/]+)/);
-    req.userId = match ? match[1] : 'test-user-123';
+    const firstSegment = match ? match[1] : null;
+    if (!firstSegment || firstSegment === 'leaderboard' || firstSegment === 'auth') {
+      req.userId = 'test-user-123';
+      return next();
+    }
+
+    req.userId = firstSegment;
     return next();
   }
   const uid = req?.auth?.uid || req?.auth?.sub;
