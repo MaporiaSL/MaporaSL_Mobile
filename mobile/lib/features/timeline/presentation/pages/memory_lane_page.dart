@@ -32,7 +32,7 @@ class _MemoryLanePageState extends ConsumerState<MemoryLanePage> {
             end: Alignment.bottomCenter,
             colors: [
               AppColors.background,
-              AppColors.background.withOpacity(0.95),
+              AppColors.background.withValues(alpha: 0.95),
             ],
           ),
         ),
@@ -58,7 +58,7 @@ class _MemoryLanePageState extends ConsumerState<MemoryLanePage> {
           Icon(
             Icons.explore_outlined,
             size: 80,
-            color: AppColors.textLight.withOpacity(0.5),
+            color: AppColors.textLight.withValues(alpha: 0.5),
           ),
           const SizedBox(height: 16),
           Text(
@@ -109,7 +109,7 @@ class _MemoryLanePageState extends ConsumerState<MemoryLanePage> {
             child: Text(
               error,
               textAlign: TextAlign.center,
-              style: TextStyle(color: AppColors.textLight),
+              style: const TextStyle(color: AppColors.textLight),
             ),
           ),
           const SizedBox(height: 24),
@@ -148,7 +148,7 @@ class _MemoryLanePageState extends ConsumerState<MemoryLanePage> {
                     painter: TimelineLinePainter(
                       isFirst: isFirst,
                       isLast: isLast,
-                      color: AppColors.primary.withOpacity(0.5),
+                      color: AppColors.primary.withValues(alpha: 0.5),
                     ),
                     child: Align(
                       alignment: Alignment.topCenter,
@@ -163,7 +163,7 @@ class _MemoryLanePageState extends ConsumerState<MemoryLanePage> {
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: _getEventColor(event.type).withOpacity(0.4),
+                              color: _getEventColor(event.type).withValues(alpha: 0.4),
                               blurRadius: 8,
                               offset: const Offset(0, 2),
                             ),
