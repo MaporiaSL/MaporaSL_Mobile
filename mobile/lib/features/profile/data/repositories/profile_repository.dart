@@ -33,14 +33,22 @@ class ProfileRepository {
     String userId, {
     String? name,
     String? avatarUrl,
+    String? bio,
+    String? hometownDistrict,
+    String? preferredLanguage,
+    List<String>? travelInterests,
   }) async {
     try {
       final data = await api.updateProfile(
         userId,
         name: name,
         avatarUrl: avatarUrl,
+        bio: bio,
+        hometownDistrict: hometownDistrict,
+        preferredLanguage: preferredLanguage,
+        travelInterests: travelInterests,
       );
-      return UserProfile.fromJson(data['user'] ?? {});
+      return UserProfile.fromJson(data);
     } catch (e) {
       rethrow;
     }
@@ -69,6 +77,85 @@ class ProfileRepository {
     try {
       final data = await api.getTopContributors(limit: limit);
       return List<Map<String, dynamic>>.from(data);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> submitPlaceContribution({
+    required String placeName,
+    required String description,
+    required String category,
+    required String province,
+    required String district,
+    required double latitude,
+    required double longitude,
+    required List<String> photoPaths,
+  }) async {
+    try {
+      await api.submitPlaceContribution(
+        placeName: placeName,
+        description: description,
+        category: category,
+        province: province,
+        district: district,
+        latitude: latitude,
+        longitude: longitude,
+        photoPaths: photoPaths,
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getPendingSubmissions() async {
+    try {
+      final data = await api.getPendingSubmissions();
+      return List<Map<String, dynamic>>.from(data);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Map<String, dynamic>> reviewSubmission(
+    String submissionId, {
+    required String status,
+    String? rejectionReason,
+  }) async {
+    try {
+      return await api.reviewSubmission(
+        submissionId,
+        status: status,
+        rejectionReason: rejectionReason,
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> resubmitContribution(
+    String submissionId, {
+    required String placeName,
+    required String description,
+    required String category,
+    required String province,
+    required String district,
+    required double latitude,
+    required double longitude,
+    List<String>? photoPaths,
+  }) async {
+    try {
+      await api.resubmitContribution(
+        submissionId,
+        placeName: placeName,
+        description: description,
+        category: category,
+        province: province,
+        district: district,
+        latitude: latitude,
+        longitude: longitude,
+        photoPaths: photoPaths,
+      );
     } catch (e) {
       rethrow;
     }

@@ -13,6 +13,10 @@ class AuthService {
 
   User? get currentUser => _auth.currentUser;
 
+  String? get currentUserEmail => _auth.currentUser?.email;
+
+  String? get currentUserDisplayName => _auth.currentUser?.displayName;
+
   bool get isEmailVerified => _auth.currentUser?.emailVerified ?? false;
 
   Future<String?> getIdToken() async {

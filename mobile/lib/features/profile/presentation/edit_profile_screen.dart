@@ -20,22 +20,57 @@ class EditProfileScreen extends ConsumerStatefulWidget {
 class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController _nameController;
+  late final TextEditingController _bioController;
+  late final TextEditingController _districtController;
+  late String _selectedLanguage;
+  late Set<String> _selectedInterests;
+
+  static const List<String> _languageOptions = <String>[
+    'English',
+    'Sinhala',
+    'Tamil',
+  ];
+
+  static const List<String> _interestOptions = <String>[
+    'Nature',
+    'Hiking',
+    'Wildlife',
+    'Food',
+    'Culture',
+    'History',
+    'Photography',
+    'Beaches',
+    'Adventure',
+    'City Tours',
+  ];
 
   /// Locally picked image (not yet uploaded)
   File? _pickedImage;
   bool _isUploadingAvatar = false;
+  bool _isOptimisticallySaving = false;
   String? _inlineError;
   String? _lastFailedUploadPath;
+  int _avatarCacheBuster = 0;
 
   @override
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: widget.initialProfile.name);
+    _bioController = TextEditingController(text: widget.initialProfile.bio);
+    _districtController = TextEditingController(
+      text: widget.initialProfile.hometownDistrict,
+    );
+    _selectedLanguage = widget.initialProfile.preferredLanguage.isNotEmpty
+        ? widget.initialProfile.preferredLanguage
+        : _languageOptions.first;
+    _selectedInterests = widget.initialProfile.travelInterests.toSet();
   }
 
   @override
   void dispose() {
     _nameController.dispose();
+    _bioController.dispose();
+    _districtController.dispose();
     super.dispose();
   }
 
@@ -160,6 +195,19 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     final userId = ref.read(currentUserIdProvider);
     if (userId == null) return;
 
+    final previousStateSnapshot = (
+      name: _nameController.text,
+      bio: _bioController.text,
+      district: _districtController.text,
+      language: _selectedLanguage,
+      interests: Set<String>.from(_selectedInterests),
+    );
+
+    setState(() {
+      _isOptimisticallySaving = true;
+      _inlineError = null;
+    });
+
     // Upload avatar first if a new image was picked
     if (_pickedImage != null) {
       setState(() => _isUploadingAvatar = true);
@@ -169,19 +217,39 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       final uploadState = ref.read(profileEditProvider);
       if (uploadState.error != null) {
         setState(() {
+          _isOptimisticallySaving = false;
           _inlineError = 'Avatar upload failed. Tap retry to try again.';
           _lastFailedUploadPath = _pickedImage!.path;
         });
         editNotifier.clearError();
         return;
       }
+      _avatarCacheBuster = DateTime.now().millisecondsSinceEpoch;
       _lastFailedUploadPath = null;
     }
 
-    // Save name if it changed
+    // Save profile details
     final newName = _nameController.text.trim();
-    if (newName != widget.initialProfile.name) {
-      await editNotifier.updateProfile(name: newName);
+    final newBio = _bioController.text.trim();
+    final newDistrict = _districtController.text.trim();
+    final newInterests = _selectedInterests.toList()..sort();
+    final currentInterests = widget.initialProfile.travelInterests.toList()..sort();
+
+    final hasProfileChanges =
+        newName != widget.initialProfile.name ||
+        newBio != widget.initialProfile.bio ||
+        newDistrict != widget.initialProfile.hometownDistrict ||
+        _selectedLanguage != widget.initialProfile.preferredLanguage ||
+        newInterests.join('|') != currentInterests.join('|');
+
+    if (hasProfileChanges) {
+      await editNotifier.updateProfileDetails(
+        name: newName,
+        bio: newBio,
+        hometownDistrict: newDistrict,
+        preferredLanguage: _selectedLanguage,
+        travelInterests: newInterests,
+      );
     }
 
     if (!mounted) return;
@@ -189,11 +257,21 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     final finalState = ref.read(profileEditProvider);
     if (finalState.error != null) {
       setState(() {
+        _isOptimisticallySaving = false;
+        _nameController.text = previousStateSnapshot.name;
+        _bioController.text = previousStateSnapshot.bio;
+        _districtController.text = previousStateSnapshot.district;
+        _selectedLanguage = previousStateSnapshot.language;
+        _selectedInterests = previousStateSnapshot.interests;
         _inlineError = 'Save failed. Please try again.';
       });
       editNotifier.clearError();
       return;
     }
+
+    setState(() {
+      _isOptimisticallySaving = false;
+    });
 
     // Invalidate the profile cache so ProfileScreen refreshes
     ref.invalidate(userProfileProvider);
@@ -212,7 +290,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final editState = ref.watch(profileEditProvider);
-    final isBusy = editState.isLoading || _isUploadingAvatar;
+    final isBusy = editState.isLoading || _isUploadingAvatar || _isOptimisticallySaving;
 
     // Determine which avatar to display (priority: newly picked > existing URL > initials)
     Widget avatarWidget;
@@ -224,7 +302,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     } else if (widget.initialProfile.avatarUrl.isNotEmpty) {
       avatarWidget = CircleAvatar(
         radius: 52,
-        backgroundImage: NetworkImage(widget.initialProfile.avatarUrl),
+        backgroundImage: NetworkImage('${widget.initialProfile.avatarUrl}?v=$_avatarCacheBuster'),
       );
     } else {
       avatarWidget = CircleAvatar(
@@ -243,7 +321,18 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       );
     }
 
-    return Scaffold(
+    return PopScope(
+      canPop: !isBusy,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
+        final navigator = Navigator.of(context);
+        final shouldDiscard = await _confirmDiscardIfNeeded();
+        if (!mounted) return;
+        if (shouldDiscard) {
+          navigator.pop();
+        }
+      },
+      child: Scaffold(
       appBar: AppBar(
         title: const Text('Edit Profile'),
         actions: [
@@ -324,12 +413,14 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                     // Name field
                     TextFormField(
                       controller: _nameController,
+                      maxLength: 40,
                       autovalidateMode: AutovalidateMode.onUserInteraction,
                       decoration: const InputDecoration(
                         labelText: 'Display name',
                         hintText: 'Enter your name',
                         border: OutlineInputBorder(),
                         prefixIcon: Icon(Icons.person_outline),
+                        helperText: 'This is visible on leaderboards and profile',
                       ),
                       textCapitalization: TextCapitalization.words,
                       validator: (value) {
@@ -344,6 +435,107 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                         }
                         return null;
                       },
+                    ),
+                    const SizedBox(height: 16),
+
+                    TextFormField(
+                      controller: _bioController,
+                      maxLines: 3,
+                      maxLength: 200,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      decoration: const InputDecoration(
+                        labelText: 'Bio',
+                        hintText: 'Tell others what kind of traveler you are',
+                        border: OutlineInputBorder(),
+                        prefixIcon: Icon(Icons.short_text),
+                      ),
+                      validator: (value) {
+                        final text = value?.trim() ?? '';
+                        if (text.length > 200) {
+                          return 'Bio must be under 200 characters';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 16),
+
+                    TextFormField(
+                      controller: _districtController,
+                      maxLength: 60,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      decoration: const InputDecoration(
+                        labelText: 'Hometown district',
+                        hintText: 'e.g. Colombo',
+                        border: OutlineInputBorder(),
+                        prefixIcon: Icon(Icons.location_city_outlined),
+                        helperText: 'Used to personalize local suggestions',
+                      ),
+                      validator: (value) {
+                        final text = value?.trim() ?? '';
+                        if (text.isEmpty) {
+                          return 'District cannot be empty';
+                        }
+                        if (text.length > 60) {
+                          return 'District must be under 60 characters';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 16),
+
+                    DropdownButtonFormField<String>(
+                      initialValue: _languageOptions.contains(_selectedLanguage)
+                          ? _selectedLanguage
+                          : _languageOptions.first,
+                      decoration: const InputDecoration(
+                        labelText: 'Preferred language',
+                        border: OutlineInputBorder(),
+                        prefixIcon: Icon(Icons.language),
+                      ),
+                      items: _languageOptions
+                          .map(
+                            (language) => DropdownMenuItem<String>(
+                              value: language,
+                              child: Text(language),
+                            ),
+                          )
+                          .toList(),
+                      onChanged: (value) {
+                        if (value == null) return;
+                        setState(() => _selectedLanguage = value);
+                      },
+                    ),
+                    const SizedBox(height: 16),
+
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        'Travel interests (${_selectedInterests.length}/10)',
+                        style: Theme.of(context).textTheme.titleSmall,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: _interestOptions.map((interest) {
+                        final selected = _selectedInterests.contains(interest);
+                        return FilterChip(
+                          label: Text(interest),
+                          selected: selected,
+                          onSelected: (value) {
+                            setState(() {
+                              if (value) {
+                                if (_selectedInterests.length < 10) {
+                                  _selectedInterests.add(interest);
+                                }
+                              } else {
+                                _selectedInterests.remove(interest);
+                              }
+                            });
+                          },
+                        );
+                      }).toList(),
                     ),
                     const SizedBox(height: 16),
 
@@ -388,6 +580,46 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                 ),
               ),
             ),
+      ),
     );
+  }
+
+  bool _hasUnsavedChanges() {
+    final newName = _nameController.text.trim();
+    final newBio = _bioController.text.trim();
+    final newDistrict = _districtController.text.trim();
+    final newInterests = _selectedInterests.toList()..sort();
+    final currentInterests = widget.initialProfile.travelInterests.toList()..sort();
+
+    return _pickedImage != null ||
+        newName != widget.initialProfile.name ||
+        newBio != widget.initialProfile.bio ||
+        newDistrict != widget.initialProfile.hometownDistrict ||
+        _selectedLanguage != widget.initialProfile.preferredLanguage ||
+        newInterests.join('|') != currentInterests.join('|');
+  }
+
+  Future<bool> _confirmDiscardIfNeeded() async {
+    if (!_hasUnsavedChanges()) return true;
+
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Discard changes?'),
+        content: const Text('You have unsaved profile changes. Leave without saving?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Keep Editing'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Discard'),
+          ),
+        ],
+      ),
+    );
+
+    return result ?? false;
   }
 }

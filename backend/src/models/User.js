@@ -22,9 +22,21 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: null
   },
+  bio: {
+    type: String,
+    default: ''
+  },
   hometownDistrict: {
     type: String,
     default: null
+  },
+  preferredLanguage: {
+    type: String,
+    default: 'English'
+  },
+  travelInterests: {
+    type: [String],
+    default: []
   },
   explorationUnlockedDistricts: {
     type: [String],
