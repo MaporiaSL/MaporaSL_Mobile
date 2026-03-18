@@ -89,6 +89,33 @@ async function getTimeline(req, res) {
       timelineEvents.push(...achievementEvents);
     }
 
+    // 4. Inject Upcoming Planned Trips
+    const upcomingEvents = [
+      {
+        id: `upcoming_trip_1`,
+        type: 'UPCOMING',
+        timestamp: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000),
+        title: 'Galle Fort Heritage Walk',
+        description: 'A weekend getaway walking the cobbled streets of the Dutch Fort. Architecture, cafes, and sunsets.',
+        metadata: {
+          daysRemaining: 10,
+          location: 'Galle Fort'
+        }
+      },
+      {
+        id: `upcoming_trip_2`,
+        type: 'UPCOMING',
+        timestamp: new Date(Date.now() + 18 * 24 * 60 * 60 * 1000),
+        title: 'Hikkaduwa Snorkeling Escape',
+        description: 'A quick dive into vibrant coral reefs and relaxing on the beach.',
+        metadata: {
+          daysRemaining: 18,
+          location: 'Hikkaduwa'
+        }
+      }
+    ];
+    timelineEvents.push(...upcomingEvents);
+
     // Sort all events chronologically (newest first)
     timelineEvents.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 
