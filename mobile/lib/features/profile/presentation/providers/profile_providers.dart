@@ -89,6 +89,11 @@ final authServiceProvider = Provider<AuthService>((ref) {
   return AuthService();
 });
 
+// Provider for Auth API (test seam for bootstrap flow)
+final authApiProvider = Provider<AuthApi>((ref) {
+  return AuthApi();
+});
+
 /// Provider for Dio instance (for profile API calls)
 final profileDioProvider = Provider<Dio>((ref) {
   final dio = Dio(
@@ -138,7 +143,7 @@ final currentUserIdProvider = Provider<String?>((ref) {
 
 final profileBootstrapProvider = FutureProvider<void>((ref) async {
   final authService = ref.watch(authServiceProvider);
-  final authApi = AuthApi();
+  final authApi = ref.watch(authApiProvider);
   final currentUser = authService.currentUser;
 
   if (!AppConfig.authBypass && currentUser == null) {
@@ -150,7 +155,7 @@ final profileBootstrapProvider = FutureProvider<void>((ref) async {
 
   if (!AppConfig.authBypass && currentUser != null) {
     try {
-      final token = await currentUser.getIdToken();
+      final token = await authService.getIdToken();
       if (token == null || token.isEmpty) {
         throw const ProfileLoadException(
           ProfileLoadErrorType.authLoading,
@@ -185,8 +190,8 @@ final profileBootstrapProvider = FutureProvider<void>((ref) async {
     );
   }
 
-  final email = currentUser?.email ?? 'test-user-123@local.test';
-  final displayName = currentUser?.displayName;
+  final email = authService.currentUserEmail ?? 'test-user-123@local.test';
+  final displayName = authService.currentUserDisplayName;
   final fallbackName = email.split('@').first;
   final district = await LocalPrefs.getHometownDistrict() ?? 'Colombo';
 

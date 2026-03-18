@@ -6,6 +6,167 @@ const { getStorage } = require('../config/firebase');
 const path = require('path');
 const crypto = require('crypto');
 
+const MAX_NAME_LENGTH = 40;
+const MAX_BIO_LENGTH = 200;
+const MAX_DISTRICT_LENGTH = 60;
+const MAX_LANGUAGE_LENGTH = 30;
+const MAX_INTERESTS = 10;
+
+function toTitleCase(value) {
+  return value
+    .toLowerCase()
+    .split(' ')
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(' ');
+}
+
+function sanitizePreferredLanguage(rawValue) {
+  const normalized = String(rawValue || '').trim().toLowerCase();
+  const supported = {
+    english: 'English',
+    sinhala: 'Sinhala',
+    tamil: 'Tamil',
+  };
+  return supported[normalized] || 'English';
+}
+
+function sanitizeTravelInterests(rawInterests) {
+  if (!Array.isArray(rawInterests)) return [];
+
+  const dedup = new Map();
+  for (const interest of rawInterests) {
+    const trimmed = String(interest || '').trim();
+    if (!trimmed) continue;
+    const normalized = toTitleCase(trimmed).slice(0, 30);
+    const key = normalized.toLowerCase();
+    if (!dedup.has(key)) {
+      dedup.set(key, normalized);
+    }
+    if (dedup.size >= MAX_INTERESTS) break;
+  }
+  return Array.from(dedup.values());
+}
+
+function sanitizeProfileUpdateInput(payload) {
+  const {
+    name,
+    avatarUrl,
+    bio,
+    hometownDistrict,
+    preferredLanguage,
+    travelInterests,
+  } = payload;
+
+  if (name != null) {
+    const trimmedName = String(name).trim();
+    if (trimmedName.length < 2) {
+      return { error: 'Name must be at least 2 characters' };
+    }
+    if (trimmedName.length > MAX_NAME_LENGTH) {
+      return { error: `Name must be under ${MAX_NAME_LENGTH} characters` };
+    }
+  }
+
+  if (bio != null && String(bio).trim().length > MAX_BIO_LENGTH) {
+    return { error: `Bio must be under ${MAX_BIO_LENGTH} characters` };
+  }
+
+  if (hometownDistrict != null && String(hometownDistrict).trim().length > MAX_DISTRICT_LENGTH) {
+    return { error: `District must be under ${MAX_DISTRICT_LENGTH} characters` };
+  }
+
+  if (preferredLanguage != null && String(preferredLanguage).trim().length > MAX_LANGUAGE_LENGTH) {
+    return { error: `Preferred language must be under ${MAX_LANGUAGE_LENGTH} characters` };
+  }
+
+  if (travelInterests != null && !Array.isArray(travelInterests)) {
+    return { error: 'travelInterests must be a list of strings' };
+  }
+
+  if (Array.isArray(travelInterests) && travelInterests.length > MAX_INTERESTS * 3) {
+    return { error: `Too many interests provided. Limit request size before save.` };
+  }
+
+  const updateDoc = {
+    ...(name != null && { name: String(name).trim() }),
+    ...(avatarUrl != null && { profilePicture: String(avatarUrl).trim() }),
+    ...(bio != null && { bio: String(bio).trim().slice(0, MAX_BIO_LENGTH) }),
+    ...(hometownDistrict != null && {
+      hometownDistrict: toTitleCase(String(hometownDistrict).trim()).slice(0, MAX_DISTRICT_LENGTH),
+    }),
+    ...(preferredLanguage != null && {
+      preferredLanguage: sanitizePreferredLanguage(preferredLanguage),
+    }),
+    ...(travelInterests != null && {
+      travelInterests: sanitizeTravelInterests(travelInterests),
+    }),
+  };
+
+  return { updateDoc };
+}
+
+async function buildProfileResponse(userId, userDoc) {
+  const user = userDoc || await User.findOne({ auth0Id: userId });
+  if (!user) return null;
+
+  const totalSubmitted = await PlaceSubmission.countDocuments({ userId });
+  const approvedCount = await PlaceSubmission.countDocuments({
+    userId,
+    status: 'approved',
+  });
+  const approvalRate = totalSubmitted > 0 ? approvedCount / totalSubmitted : 0;
+
+  const userBadges = await UserBadge.findOne({ userId });
+  const badgesList = userBadges ? userBadges.badges : [];
+
+  const rankedUsers = await PlaceSubmission.aggregate([
+    { $match: { status: 'approved' } },
+    { $group: { _id: '$userId', approvedCount: { $sum: 1 } } },
+    { $sort: { approvedCount: -1 } },
+  ]);
+
+  let leaderboardRank = 0;
+  rankedUsers.forEach((u, index) => {
+    if (u._id === userId) {
+      leaderboardRank = index + 1;
+    }
+  });
+
+  let impactCount = 0;
+  const submittedPlaces = await PlaceSubmission.find({
+    userId,
+    status: 'approved',
+  });
+  for (const submission of submittedPlaces) {
+    const usage = await PlaceUsageTracking.findOne({ placeId: submission._id });
+    if (usage) {
+      impactCount += usage.totalTimesAdded;
+    }
+  }
+
+  return {
+    user: {
+      id: user.auth0Id,
+      name: user.name,
+      email: user.email,
+      avatarUrl: user.profilePicture || '',
+      bio: user.bio || '',
+      hometownDistrict: user.hometownDistrict || '',
+      preferredLanguage: user.preferredLanguage || 'English',
+      travelInterests: user.travelInterests || [],
+    },
+    stats: {
+      totalSubmitted,
+      approvedCount,
+      approvalRate: parseFloat((approvalRate * 100).toFixed(2)),
+    },
+    badges: badgesList,
+    leaderboardRank,
+    impactCount,
+  };
+}
+
 function generateAvatarStoragePath(userId, originalName) {
   const ext = path.extname(originalName || '').toLowerCase() || '.jpg';
   const uniqueId = crypto.randomUUID();
@@ -26,72 +187,12 @@ async function getUserProfile(req, res) {
       return res.status(403).json({ error: 'Forbidden: Cannot access another user\'s profile' });
     }
 
-    // Fetch user basic info
-    const user = await User.findOne({ auth0Id: userId });
-    if (!user) {
+    const responseBody = await buildProfileResponse(userId);
+    if (!responseBody) {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    // Fetch submission stats
-    const totalSubmitted = await PlaceSubmission.countDocuments({ userId });
-    const approvedCount = await PlaceSubmission.countDocuments({
-      userId,
-      status: 'approved',
-    });
-    const approvalRate = totalSubmitted > 0 ? approvedCount / totalSubmitted : 0;
-
-    // Fetch user badges
-    const userBadges = await UserBadge.findOne({ userId });
-    const badgesList = userBadges ? userBadges.badges : [];
-
-    // Calculate leaderboard rank
-    const rankedUsers = await PlaceSubmission.aggregate([
-      { $match: { status: 'approved' } },
-      { $group: { _id: '$userId', approvedCount: { $sum: 1 } } },
-      { $sort: { approvedCount: -1 } },
-    ]);
-
-    let leaderboardRank = null;
-    rankedUsers.forEach((u, index) => {
-      if (u._id === userId) {
-        leaderboardRank = index + 1;
-      }
-    });
-
-    // Calculate impact metrics (how many users visited their contributed places)
-    let impactCount = 0;
-    const submittedPlaces = await PlaceSubmission.find({
-      userId,
-      status: 'approved',
-    });
-
-    for (const submission of submittedPlaces) {
-      const usage = await PlaceUsageTracking.findOne({ placeId: submission._id });
-      if (usage) {
-        impactCount += usage.totalTimesAdded;
-      }
-    }
-
-    res.status(200).json({
-      user: {
-        id: user.auth0Id,
-        name: user.name,
-        email: user.email,
-        avatarUrl: user.profilePicture || '',
-        bio: user.bio || '',
-        hometownDistrict: user.hometownDistrict || '',
-        preferredLanguage: user.preferredLanguage || 'English',
-        travelInterests: user.travelInterests || [],
-      },
-      stats: {
-        totalSubmitted,
-        approvedCount,
-        approvalRate: parseFloat((approvalRate * 100).toFixed(2)),
-      },
-      badges: badgesList,
-      leaderboardRank: leaderboardRank || 0,
-      impactCount,
-    });
+    res.status(200).json(responseBody);
   } catch (error) {
     console.error('Get user profile error:', error);
     res.status(500).json({ error: 'Failed to retrieve user profile' });
@@ -141,63 +242,22 @@ async function getUserContributions(req, res) {
 async function updateUserProfile(req, res) {
   try {
     const { userId } = req.params;
-    const {
-      name,
-      avatarUrl,
-      bio,
-      hometownDistrict,
-      preferredLanguage,
-      travelInterests,
-    } = req.body;
+    const payload = req.body || {};
 
     // Verify requesting user matches userId
     if (req.userId !== userId) {
       return res.status(403).json({ error: 'Forbidden: Cannot update another user\'s profile' });
     }
 
-    // Validate input
-    if (name && name.trim().length < 2) {
-      return res.status(400).json({ error: 'Name must be at least 2 characters' });
-    }
-    if (name && name.trim().length > 40) {
-      return res.status(400).json({ error: 'Name must be under 40 characters' });
-    }
-    if (bio != null && String(bio).trim().length > 200) {
-      return res.status(400).json({ error: 'Bio must be under 200 characters' });
-    }
-    if (hometownDistrict != null && String(hometownDistrict).trim().length > 60) {
-      return res.status(400).json({ error: 'District must be under 60 characters' });
-    }
-    if (preferredLanguage != null && String(preferredLanguage).trim().length > 30) {
-      return res.status(400).json({ error: 'Preferred language must be under 30 characters' });
-    }
-    if (travelInterests != null && !Array.isArray(travelInterests)) {
-      return res.status(400).json({ error: 'travelInterests must be a list of strings' });
-    }
-    if (Array.isArray(travelInterests) && travelInterests.length > 10) {
-      return res.status(400).json({ error: 'You can select up to 10 travel interests' });
+    const { error: validationError, updateDoc } = sanitizeProfileUpdateInput(payload);
+    if (validationError) {
+      return res.status(400).json({ error: validationError });
     }
 
     // Update user
     const updatedUser = await User.findOneAndUpdate(
       { auth0Id: userId },
-      {
-        ...(name && { name: name.trim() }),
-        ...(avatarUrl && { profilePicture: avatarUrl }),
-        ...(bio != null && { bio: String(bio).trim() }),
-        ...(hometownDistrict != null && {
-          hometownDistrict: String(hometownDistrict).trim(),
-        }),
-        ...(preferredLanguage != null && {
-          preferredLanguage: String(preferredLanguage).trim(),
-        }),
-        ...(Array.isArray(travelInterests) && {
-          travelInterests: travelInterests
-            .map((i) => String(i).trim())
-            .filter((i) => i.length > 0)
-            .slice(0, 10),
-        }),
-      },
+      updateDoc,
       { new: true }
     );
 
@@ -205,26 +265,14 @@ async function updateUserProfile(req, res) {
       return res.status(404).json({ error: 'User not found' });
     }
 
+    const responseBody = await buildProfileResponse(userId, updatedUser);
+    if (!responseBody) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
     res.status(200).json({
       message: 'Profile updated successfully',
-      user: {
-        id: updatedUser.auth0Id,
-        name: updatedUser.name,
-        email: updatedUser.email,
-        avatarUrl: updatedUser.profilePicture || '',
-        bio: updatedUser.bio || '',
-        hometownDistrict: updatedUser.hometownDistrict || '',
-        preferredLanguage: updatedUser.preferredLanguage || 'English',
-        travelInterests: updatedUser.travelInterests || [],
-      },
-      stats: {
-        totalSubmitted: 0,
-        approvedCount: 0,
-        approvalRate: 0,
-      },
-      badges: [],
-      leaderboardRank: 0,
-      impactCount: 0,
+      ...responseBody,
     });
   } catch (error) {
     console.error('Update user profile error:', error);
