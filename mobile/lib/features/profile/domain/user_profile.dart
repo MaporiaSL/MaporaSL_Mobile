@@ -117,25 +117,46 @@ class ContributedPlace {
   final String name;
   final String description;
   final bool approved;
+  final String status;
+  final DateTime? submittedAt;
+  final DateTime? reviewedAt;
   final DateTime? approvedAt;
+  final String? rejectionReason;
+  final String photoUrl;
 
   ContributedPlace({
     required this.id,
     required this.name,
     required this.description,
     required this.approved,
+    required this.status,
+    this.submittedAt,
+    this.reviewedAt,
     this.approvedAt,
+    this.rejectionReason,
+    required this.photoUrl,
   });
 
   factory ContributedPlace.fromJson(Map<String, dynamic> json) {
+    final rawStatus = (json['status'] ?? '').toString().toLowerCase();
+    final status = rawStatus.isEmpty ? (json['approved'] == true ? 'approved' : 'pending') : rawStatus;
     return ContributedPlace(
       id: json['id'] ?? '',
       name: json['name'] ?? '',
       description: json['description'] ?? '',
-      approved: json['approved'] ?? false,
-      approvedAt: json['approvedAt'] != null
-          ? DateTime.parse(json['approvedAt'])
+      approved: status == 'approved' || json['approved'] == true,
+      status: status,
+      submittedAt: json['submittedAt'] != null
+          ? DateTime.tryParse(json['submittedAt'].toString())
           : null,
+      reviewedAt: json['reviewedAt'] != null
+          ? DateTime.tryParse(json['reviewedAt'].toString())
+          : null,
+      approvedAt: json['approvedAt'] != null
+          ? DateTime.tryParse(json['approvedAt'].toString())
+          : null,
+      rejectionReason: json['rejectionReason']?.toString(),
+      photoUrl: json['photoUrl']?.toString() ?? '',
     );
   }
 
@@ -144,6 +165,11 @@ class ContributedPlace {
     'name': name,
     'description': description,
     'approved': approved,
+    'status': status,
+    'submittedAt': submittedAt?.toIso8601String(),
+    'reviewedAt': reviewedAt?.toIso8601String(),
     'approvedAt': approvedAt?.toIso8601String(),
+    'rejectionReason': rejectionReason,
+    'photoUrl': photoUrl,
   };
 }
