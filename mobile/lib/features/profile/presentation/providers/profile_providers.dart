@@ -61,6 +61,12 @@ class ProfileLoadException implements Exception {
         'We could not find your profile yet. We will create it now.',
       );
     }
+    if (status == 409) {
+      return const ProfileLoadException(
+        ProfileLoadErrorType.userNotRegistered,
+        'Your account is partially set up. Please retry profile sync.',
+      );
+    }
     if (status != null && status >= 500) {
       return const ProfileLoadException(
         ProfileLoadErrorType.server,
@@ -172,6 +178,11 @@ final profileBootstrapProvider = FutureProvider<void>((ref) async {
     if (e.response?.statusCode != 404) {
       throw ProfileLoadException.fromDio(e);
     }
+  } catch (_) {
+    throw const ProfileLoadException(
+      ProfileLoadErrorType.server,
+      'Could not verify your account right now. Please retry.',
+    );
   }
 
   final email = currentUser?.email ?? 'test-user-123@local.test';
@@ -212,7 +223,10 @@ final userProfileProvider = FutureProvider<UserProfile?>((ref) async {
     if (kDebugMode) {
       debugPrint('[ERROR] userId is null - user not authenticated');
     }
-    throw Exception('User not authenticated. Please login first.');
+    throw const ProfileLoadException(
+      ProfileLoadErrorType.missingToken,
+      'You are not signed in. Please log in to continue.',
+    );
   }
 
   try {
