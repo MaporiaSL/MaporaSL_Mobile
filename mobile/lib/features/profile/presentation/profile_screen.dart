@@ -37,25 +37,23 @@ class ProfileScreen extends ConsumerWidget {
                 const Icon(Icons.error_outline, size: 64, color: Colors.red),
                 const SizedBox(height: 16),
                 Text(
-                  'Error Loading Profile',
+                  _buildErrorUi(error).title,
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Colors.red),
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  error.toString(),
+                  _buildErrorUi(error).message,
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
                 const SizedBox(height: 16),
                 ElevatedButton(
-                  onPressed: () => ref.refresh(userProfileProvider),
+                  onPressed: () {
+                    ref.invalidate(profileBootstrapProvider);
+                    ref.refresh(userProfileProvider);
+                    ref.refresh(userContributionsProvider);
+                  },
                   child: const Text('Retry'),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Check Logs: User ID may be null (auth required)',
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.labelSmall,
                 ),
               ],
             ),
@@ -102,6 +100,20 @@ class ProfileScreen extends ConsumerWidget {
               children: [
                 // Header: Avatar, Name, Email
                 _buildProfileHeader(profile),
+                if (profile.bio.isNotEmpty) ...[
+                  const SizedBox(height: 12),
+                  Text(profile.bio),
+                ],
+                if (profile.travelInterests.isNotEmpty) ...[
+                  const SizedBox(height: 10),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: profile.travelInterests
+                        .map((interest) => Chip(label: Text(interest)))
+                        .toList(),
+                  ),
+                ],
                 const SizedBox(height: 24),
 
                 // Contribution Stats
@@ -195,10 +207,82 @@ class ProfileScreen extends ConsumerWidget {
                   color: Colors.grey[600],
                 ),
               ),
+              if (profile.hometownDistrict.isNotEmpty) ...[
+                const SizedBox(height: 6),
+                Text(
+                  profile.hometownDistrict,
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: Colors.grey[700],
+                  ),
+                ),
+              ],
+              if (profile.preferredLanguage.isNotEmpty) ...[
+                const SizedBox(height: 2),
+                Text(
+                  'Language: ${profile.preferredLanguage}',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey[600],
+                  ),
+                ),
+              ],
             ],
           ),
         ),
       ],
+    );
+  }
+
+  _ErrorUiData _buildErrorUi(Object error) {
+    if (error is ProfileLoadException) {
+      switch (error.type) {
+        case ProfileLoadErrorType.authLoading:
+          return const _ErrorUiData(
+            title: 'Preparing Your Session',
+            message: 'We are still setting up your sign-in token. Please try again.',
+          );
+        case ProfileLoadErrorType.missingToken:
+          return const _ErrorUiData(
+            title: 'Sign In Required',
+            message: 'Please sign in to access your profile.',
+          );
+        case ProfileLoadErrorType.expiredToken:
+          return const _ErrorUiData(
+            title: 'Session Expired',
+            message: 'Your login session expired. Sign in again to continue.',
+          );
+        case ProfileLoadErrorType.userNotRegistered:
+          return const _ErrorUiData(
+            title: 'Creating Your Profile',
+            message: 'We could not sync your account yet. Tap retry to complete setup.',
+          );
+        case ProfileLoadErrorType.offline:
+          return const _ErrorUiData(
+            title: 'No Internet Connection',
+            message: 'Connect to the internet and retry loading your profile.',
+          );
+        case ProfileLoadErrorType.forbidden:
+          return const _ErrorUiData(
+            title: 'Access Denied',
+            message: 'This profile request is not allowed right now. Try signing in again.',
+          );
+        case ProfileLoadErrorType.server:
+          return const _ErrorUiData(
+            title: 'Server Error',
+            message: 'The server is currently unavailable. Please try again shortly.',
+          );
+        case ProfileLoadErrorType.unknown:
+          return const _ErrorUiData(
+            title: 'Unable To Load Profile',
+            message: 'An unexpected error occurred. Please retry.',
+          );
+      }
+    }
+
+    return const _ErrorUiData(
+      title: 'Error Loading Profile',
+      message: 'An unexpected error occurred while loading profile data.',
     );
   }
 
@@ -428,4 +512,11 @@ class _StatCard extends StatelessWidget {
       ],
     );
   }
+}
+
+class _ErrorUiData {
+  final String title;
+  final String message;
+
+  const _ErrorUiData({required this.title, required this.message});
 }

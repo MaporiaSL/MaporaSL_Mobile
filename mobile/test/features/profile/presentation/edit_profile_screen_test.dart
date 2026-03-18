@@ -17,6 +17,10 @@ void main() {
     name: 'Old Name',
     email: 'test@example.com',
     avatarUrl: '',
+    bio: '',
+    hometownDistrict: 'Colombo',
+    preferredLanguage: 'English',
+    travelInterests: const [],
     totalSubmitted: 0,
     approvedCount: 0,
     approvalRate: 0,
@@ -33,6 +37,10 @@ void main() {
         any(),
         name: any(named: 'name'),
         avatarUrl: any(named: 'avatarUrl'),
+        bio: any(named: 'bio'),
+        hometownDistrict: any(named: 'hometownDistrict'),
+        preferredLanguage: any(named: 'preferredLanguage'),
+        travelInterests: any(named: 'travelInterests'),
       ),
     ).thenAnswer((_) async => initialProfile);
   });
@@ -80,6 +88,10 @@ void main() {
         'u1',
         name: 'New Name',
         avatarUrl: any(named: 'avatarUrl'),
+        bio: any(named: 'bio'),
+        hometownDistrict: any(named: 'hometownDistrict'),
+        preferredLanguage: any(named: 'preferredLanguage'),
+        travelInterests: any(named: 'travelInterests'),
       ),
     ).called(1);
   });

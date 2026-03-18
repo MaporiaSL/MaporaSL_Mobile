@@ -20,6 +20,29 @@ class EditProfileScreen extends ConsumerStatefulWidget {
 class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController _nameController;
+  late final TextEditingController _bioController;
+  late final TextEditingController _districtController;
+  late String _selectedLanguage;
+  late Set<String> _selectedInterests;
+
+  static const List<String> _languageOptions = <String>[
+    'English',
+    'Sinhala',
+    'Tamil',
+  ];
+
+  static const List<String> _interestOptions = <String>[
+    'Nature',
+    'Hiking',
+    'Wildlife',
+    'Food',
+    'Culture',
+    'History',
+    'Photography',
+    'Beaches',
+    'Adventure',
+    'City Tours',
+  ];
 
   /// Locally picked image (not yet uploaded)
   File? _pickedImage;
@@ -31,11 +54,21 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: widget.initialProfile.name);
+    _bioController = TextEditingController(text: widget.initialProfile.bio);
+    _districtController = TextEditingController(
+      text: widget.initialProfile.hometownDistrict,
+    );
+    _selectedLanguage = widget.initialProfile.preferredLanguage.isNotEmpty
+        ? widget.initialProfile.preferredLanguage
+        : _languageOptions.first;
+    _selectedInterests = widget.initialProfile.travelInterests.toSet();
   }
 
   @override
   void dispose() {
     _nameController.dispose();
+    _bioController.dispose();
+    _districtController.dispose();
     super.dispose();
   }
 
@@ -178,10 +211,28 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       _lastFailedUploadPath = null;
     }
 
-    // Save name if it changed
+    // Save profile details
     final newName = _nameController.text.trim();
-    if (newName != widget.initialProfile.name) {
-      await editNotifier.updateProfile(name: newName);
+    final newBio = _bioController.text.trim();
+    final newDistrict = _districtController.text.trim();
+    final newInterests = _selectedInterests.toList()..sort();
+    final currentInterests = widget.initialProfile.travelInterests.toList()..sort();
+
+    final hasProfileChanges =
+        newName != widget.initialProfile.name ||
+        newBio != widget.initialProfile.bio ||
+        newDistrict != widget.initialProfile.hometownDistrict ||
+        _selectedLanguage != widget.initialProfile.preferredLanguage ||
+        newInterests.join('|') != currentInterests.join('|');
+
+    if (hasProfileChanges) {
+      await editNotifier.updateProfileDetails(
+        name: newName,
+        bio: newBio,
+        hometownDistrict: newDistrict,
+        preferredLanguage: _selectedLanguage,
+        travelInterests: newInterests,
+      );
     }
 
     if (!mounted) return;
@@ -344,6 +395,105 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                         }
                         return null;
                       },
+                    ),
+                    const SizedBox(height: 16),
+
+                    TextFormField(
+                      controller: _bioController,
+                      maxLines: 3,
+                      maxLength: 200,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      decoration: const InputDecoration(
+                        labelText: 'Bio',
+                        hintText: 'Tell others what kind of traveler you are',
+                        border: OutlineInputBorder(),
+                        prefixIcon: Icon(Icons.short_text),
+                      ),
+                      validator: (value) {
+                        final text = value?.trim() ?? '';
+                        if (text.length > 200) {
+                          return 'Bio must be under 200 characters';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 16),
+
+                    TextFormField(
+                      controller: _districtController,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      decoration: const InputDecoration(
+                        labelText: 'Hometown district',
+                        hintText: 'e.g. Colombo',
+                        border: OutlineInputBorder(),
+                        prefixIcon: Icon(Icons.location_city_outlined),
+                      ),
+                      validator: (value) {
+                        final text = value?.trim() ?? '';
+                        if (text.isEmpty) {
+                          return 'District cannot be empty';
+                        }
+                        if (text.length > 60) {
+                          return 'District must be under 60 characters';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 16),
+
+                    DropdownButtonFormField<String>(
+                      value: _languageOptions.contains(_selectedLanguage)
+                          ? _selectedLanguage
+                          : _languageOptions.first,
+                      decoration: const InputDecoration(
+                        labelText: 'Preferred language',
+                        border: OutlineInputBorder(),
+                        prefixIcon: Icon(Icons.language),
+                      ),
+                      items: _languageOptions
+                          .map(
+                            (language) => DropdownMenuItem<String>(
+                              value: language,
+                              child: Text(language),
+                            ),
+                          )
+                          .toList(),
+                      onChanged: (value) {
+                        if (value == null) return;
+                        setState(() => _selectedLanguage = value);
+                      },
+                    ),
+                    const SizedBox(height: 16),
+
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        'Travel interests',
+                        style: Theme.of(context).textTheme.titleSmall,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: _interestOptions.map((interest) {
+                        final selected = _selectedInterests.contains(interest);
+                        return FilterChip(
+                          label: Text(interest),
+                          selected: selected,
+                          onSelected: (value) {
+                            setState(() {
+                              if (value) {
+                                if (_selectedInterests.length < 10) {
+                                  _selectedInterests.add(interest);
+                                }
+                              } else {
+                                _selectedInterests.remove(interest);
+                              }
+                            });
+                          },
+                        );
+                      }).toList(),
                     ),
                     const SizedBox(height: 16),
 

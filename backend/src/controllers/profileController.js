@@ -78,6 +78,10 @@ async function getUserProfile(req, res) {
         name: user.name,
         email: user.email,
         avatarUrl: user.profilePicture || '',
+        bio: user.bio || '',
+        hometownDistrict: user.hometownDistrict || '',
+        preferredLanguage: user.preferredLanguage || 'English',
+        travelInterests: user.travelInterests || [],
       },
       stats: {
         totalSubmitted,
@@ -137,7 +141,14 @@ async function getUserContributions(req, res) {
 async function updateUserProfile(req, res) {
   try {
     const { userId } = req.params;
-    const { name, avatarUrl } = req.body;
+    const {
+      name,
+      avatarUrl,
+      bio,
+      hometownDistrict,
+      preferredLanguage,
+      travelInterests,
+    } = req.body;
 
     // Verify requesting user matches userId
     if (req.userId !== userId) {
@@ -148,6 +159,24 @@ async function updateUserProfile(req, res) {
     if (name && name.trim().length < 2) {
       return res.status(400).json({ error: 'Name must be at least 2 characters' });
     }
+    if (name && name.trim().length > 40) {
+      return res.status(400).json({ error: 'Name must be under 40 characters' });
+    }
+    if (bio != null && String(bio).trim().length > 200) {
+      return res.status(400).json({ error: 'Bio must be under 200 characters' });
+    }
+    if (hometownDistrict != null && String(hometownDistrict).trim().length > 60) {
+      return res.status(400).json({ error: 'District must be under 60 characters' });
+    }
+    if (preferredLanguage != null && String(preferredLanguage).trim().length > 30) {
+      return res.status(400).json({ error: 'Preferred language must be under 30 characters' });
+    }
+    if (travelInterests != null && !Array.isArray(travelInterests)) {
+      return res.status(400).json({ error: 'travelInterests must be a list of strings' });
+    }
+    if (Array.isArray(travelInterests) && travelInterests.length > 10) {
+      return res.status(400).json({ error: 'You can select up to 10 travel interests' });
+    }
 
     // Update user
     const updatedUser = await User.findOneAndUpdate(
@@ -155,6 +184,19 @@ async function updateUserProfile(req, res) {
       {
         ...(name && { name: name.trim() }),
         ...(avatarUrl && { profilePicture: avatarUrl }),
+        ...(bio != null && { bio: String(bio).trim() }),
+        ...(hometownDistrict != null && {
+          hometownDistrict: String(hometownDistrict).trim(),
+        }),
+        ...(preferredLanguage != null && {
+          preferredLanguage: String(preferredLanguage).trim(),
+        }),
+        ...(Array.isArray(travelInterests) && {
+          travelInterests: travelInterests
+            .map((i) => String(i).trim())
+            .filter((i) => i.length > 0)
+            .slice(0, 10),
+        }),
       },
       { new: true }
     );
@@ -170,7 +212,19 @@ async function updateUserProfile(req, res) {
         name: updatedUser.name,
         email: updatedUser.email,
         avatarUrl: updatedUser.profilePicture || '',
+        bio: updatedUser.bio || '',
+        hometownDistrict: updatedUser.hometownDistrict || '',
+        preferredLanguage: updatedUser.preferredLanguage || 'English',
+        travelInterests: updatedUser.travelInterests || [],
       },
+      stats: {
+        totalSubmitted: 0,
+        approvedCount: 0,
+        approvalRate: 0,
+      },
+      badges: [],
+      leaderboardRank: 0,
+      impactCount: 0,
     });
   } catch (error) {
     console.error('Update user profile error:', error);
