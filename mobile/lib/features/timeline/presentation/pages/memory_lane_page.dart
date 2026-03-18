@@ -200,6 +200,8 @@ class _MemoryLanePageState extends ConsumerState<MemoryLanePage> {
 
   Color _getEventColor(TimelineEventType type) {
     switch (type) {
+      case TimelineEventType.upcoming:
+        return const Color(0xFF4CAF50);
       case TimelineEventType.visit:
         return AppColors.primary;
       case TimelineEventType.photo:
@@ -213,6 +215,8 @@ class _MemoryLanePageState extends ConsumerState<MemoryLanePage> {
 
   IconData _getEventIcon(TimelineEventType type) {
     switch (type) {
+      case TimelineEventType.upcoming:
+        return Icons.event_available_rounded;
       case TimelineEventType.visit:
         return Icons.location_on;
       case TimelineEventType.photo:

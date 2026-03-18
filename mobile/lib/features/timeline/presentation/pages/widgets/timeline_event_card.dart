@@ -100,6 +100,11 @@ class TimelineEventCard extends StatelessWidget {
 
   List<Color> _getCardGradient() {
     switch (event.type) {
+      case TimelineEventType.upcoming:
+        return [
+          const Color(0xFFE8F5E9),
+          const Color(0xFFC8E6C9),
+        ];
       case TimelineEventType.achievement:
         return [
           const Color(0xFFFFF7E6),
@@ -121,6 +126,8 @@ class TimelineEventCard extends StatelessWidget {
 
   Color _getShadowColor() {
     switch (event.type) {
+      case TimelineEventType.upcoming:
+        return const Color(0xFF4CAF50);
       case TimelineEventType.achievement:
         return AppColors.accent;
       case TimelineEventType.photo:
@@ -133,6 +140,8 @@ class TimelineEventCard extends StatelessWidget {
 
   Color _getBorderColor() {
     switch (event.type) {
+      case TimelineEventType.upcoming:
+        return const Color(0xFF81C784);
       case TimelineEventType.achievement:
         return AppColors.accent;
       case TimelineEventType.photo:
@@ -158,6 +167,11 @@ class TimelineEventCard extends StatelessWidget {
         label = 'MEMORY';
         color = AppColors.secondary;
         icon = Icons.camera_alt_rounded;
+        break;
+      case TimelineEventType.upcoming:
+        label = 'PLANNED';
+        color = const Color(0xFF4CAF50);
+        icon = Icons.event_available_rounded;
         break;
       case TimelineEventType.achievement:
         label = 'ACHIEVEMENT';

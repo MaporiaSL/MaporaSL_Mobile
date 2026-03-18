@@ -2,6 +2,7 @@ enum TimelineEventType {
   visit,
   photo,
   achievement,
+  upcoming,
   unknown
 }
 
@@ -27,6 +28,9 @@ class TimelineEvent {
     switch (json['type']) {
       case 'VISIT':
         eventType = TimelineEventType.visit;
+        break;
+      case 'UPCOMING':
+        eventType = TimelineEventType.upcoming;
         break;
       case 'PHOTO':
         eventType = TimelineEventType.photo;
