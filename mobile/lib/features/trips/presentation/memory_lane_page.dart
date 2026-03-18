@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:share_plus/share_plus.dart';
 
 import '../data/models/trip_model.dart';
 import '../../exploration/providers/exploration_provider.dart';
@@ -442,26 +441,20 @@ class _TripCard extends StatelessWidget {
               children: [
                 OutlinedButton.icon(
                   onPressed: onView,
-                  icon: const Icon(Icons.visibility, size: 18),
+                  icon: const Icon(Icons.visibility),
                   label: const Text('View'),
-                ),
-                const SizedBox(width: 8),
-                OutlinedButton.icon(
-                  onPressed: () => _showShareOptions(context, trip),
-                  icon: const Icon(Icons.share, size: 18),
-                  label: const Text('Share'),
                 ),
                 if (canEdit) ...[
                   const SizedBox(width: 8),
                   OutlinedButton.icon(
                     onPressed: onEdit,
-                    icon: const Icon(Icons.edit, size: 18),
+                    icon: const Icon(Icons.edit),
                     label: const Text('Edit'),
                   ),
                   const SizedBox(width: 8),
                   OutlinedButton.icon(
                     onPressed: onDelete,
-                    icon: const Icon(Icons.delete_outline, color: Colors.red, size: 18),
+                    icon: const Icon(Icons.delete_outline, color: Colors.red),
                     label: const Text('Delete'),
                   ),
                 ],
@@ -470,74 +463,6 @@ class _TripCard extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-
-  void _showShareOptions(BuildContext context, TripModel trip) {
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (ctx) {
-        return SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: 40,
-                  height: 4,
-                  margin: const EdgeInsets.only(bottom: 16),
-                  decoration: BoxDecoration(
-                    color: Colors.grey[300],
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-                Text(
-                  'Share "${trip.title}"',
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 16),
-                ListTile(
-                  leading: CircleAvatar(
-                    backgroundColor: Colors.blueAccent.withValues(alpha: 0.1),
-                    foregroundColor: Colors.blueAccent,
-                    child: const Icon(Icons.public),
-                  ),
-                  title: const Text('Share to Community', style: TextStyle(fontWeight: FontWeight.w600)),
-                  subtitle: const Text('Post this trip to the in-app feed'),
-                  onTap: () {
-                    Navigator.pop(ctx);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Trip shared to Community!')),
-                    );
-                  },
-                ),
-                const Divider(indent: 70),
-                ListTile(
-                  leading: CircleAvatar(
-                    backgroundColor: Theme.of(context).primaryColor.withValues(alpha: 0.1),
-                    foregroundColor: Theme.of(context).primaryColor,
-                    child: const Icon(Icons.ios_share),
-                  ),
-                  title: const Text('Share to Social Media', style: TextStyle(fontWeight: FontWeight.w600)),
-                  subtitle: const Text('Share link externally'),
-                  onTap: () {
-                    Navigator.pop(ctx);
-                    final String shareText = 'Check out my awesome trip: "${trip.title}" on Maporia! 🌍✈️\nDates: ${_dateRange(trip.startDate, trip.endDate)}';
-                    Share.share(shareText);
-                  },
-                ),
-              ],
-            ),
-          ),
-        );
-      },
     );
   }
 
