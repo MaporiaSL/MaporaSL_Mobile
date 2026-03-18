@@ -99,4 +99,47 @@ class ProfileApi {
       throw Exception('Error fetching leaderboard: $e');
     }
   }
+
+  Future<void> submitPlaceContribution({
+    required String placeName,
+    required String description,
+    required String category,
+    required String province,
+    required String district,
+    required double latitude,
+    required double longitude,
+    required List<String> photoPaths,
+  }) async {
+    try {
+      final photos = <MultipartFile>[];
+      for (final filePath in photoPaths) {
+        final filename = filePath.split(RegExp(r'[\\/]+')).last;
+        photos.add(await MultipartFile.fromFile(filePath, filename: filename));
+      }
+
+      final formData = FormData.fromMap({
+        'placeName': placeName,
+        'description': description,
+        'category': category,
+        'province': province,
+        'district': district,
+        'latitude': latitude.toString(),
+        'longitude': longitude.toString(),
+        'photos': photos,
+      });
+
+      final response = await _dio.post(
+        '/api/places/submit',
+        data: formData,
+        options: Options(contentType: 'multipart/form-data'),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) return;
+      throw Exception('Failed to submit place: ${response.statusCode}');
+    } on DioException {
+      rethrow;
+    } catch (e) {
+      throw Exception('Error submitting place: $e');
+    }
+  }
 }
