@@ -24,6 +24,11 @@ enum ProfileLoadErrorType {
   unknown,
 }
 
+void logProfileTelemetry(String event, {Map<String, Object?> details = const {}}) {
+  if (!kDebugMode) return;
+  debugPrint('[PROFILE_TELEMETRY] $event | $details');
+}
+
 class ProfileLoadException implements Exception {
   final ProfileLoadErrorType type;
   final String message;
@@ -119,6 +124,8 @@ final profileRepositoryProvider = Provider<ProfileRepository>((ref) {
   return ProfileRepository(api: api);
 });
 
+final profileRetryCountProvider = StateProvider<int>((ref) => 0);
+
 /// Provider for current user ID with debug logging
 final currentUserIdProvider = Provider<String?>((ref) {
   final authService = ref.watch(authServiceProvider);
@@ -180,10 +187,18 @@ final profileBootstrapProvider = FutureProvider<void>((ref) async {
     await authApi.getMe();
     return;
   } on DioException catch (e) {
+    logProfileTelemetry(
+      'bootstrap_get_me_failed',
+      details: {
+        'statusCode': e.response?.statusCode,
+        'type': e.type.name,
+      },
+    );
     if (e.response?.statusCode != 404) {
       throw ProfileLoadException.fromDio(e);
     }
   } catch (_) {
+    logProfileTelemetry('bootstrap_get_me_unexpected_error');
     throw const ProfileLoadException(
       ProfileLoadErrorType.server,
       'Could not verify your account right now. Please retry.',
@@ -205,8 +220,16 @@ final profileBootstrapProvider = FutureProvider<void>((ref) async {
     );
     await LocalPrefs.clearHometownDistrict();
   } on DioException catch (e) {
+    logProfileTelemetry(
+      'bootstrap_register_failed',
+      details: {
+        'statusCode': e.response?.statusCode,
+        'type': e.type.name,
+      },
+    );
     throw ProfileLoadException.fromDio(e);
   } catch (_) {
+    logProfileTelemetry('bootstrap_register_unexpected_error');
     throw const ProfileLoadException(
       ProfileLoadErrorType.userNotRegistered,
       'Unable to create your profile right now. Please try again.',
@@ -243,6 +266,13 @@ final userProfileProvider = FutureProvider<UserProfile?>((ref) async {
     return profile;
   } on DioException catch (e) {
     final mapped = ProfileLoadException.fromDio(e);
+    logProfileTelemetry(
+      'profile_fetch_failed',
+      details: {
+        'statusCode': e.response?.statusCode,
+        'type': mapped.type.name,
+      },
+    );
     if (kDebugMode) {
       debugPrint('[ERROR] Failed to load profile: $mapped');
     }
@@ -450,4 +480,78 @@ final logoutProvider = FutureProvider<void>((ref) async {
 final topContributorsProvider = FutureProvider<List<Map<String, dynamic>>>((ref) async {
   final repository = ref.watch(profileRepositoryProvider);
   return repository.getTopContributors(limit: 10);
+});
+
+class PlaceSubmissionState {
+  final bool isSubmitting;
+  final String? error;
+  final bool success;
+
+  const PlaceSubmissionState({
+    this.isSubmitting = false,
+    this.error,
+    this.success = false,
+  });
+
+  PlaceSubmissionState copyWith({
+    bool? isSubmitting,
+    String? error,
+    bool? success,
+  }) {
+    return PlaceSubmissionState(
+      isSubmitting: isSubmitting ?? this.isSubmitting,
+      error: error,
+      success: success ?? this.success,
+    );
+  }
+}
+
+class PlaceSubmissionNotifier extends StateNotifier<PlaceSubmissionState> {
+  PlaceSubmissionNotifier({required ProfileRepository repository})
+      : _repository = repository,
+        super(const PlaceSubmissionState());
+
+  final ProfileRepository _repository;
+
+  Future<void> submit({
+    required String placeName,
+    required String description,
+    required String category,
+    required String province,
+    required String district,
+    required double latitude,
+    required double longitude,
+    required List<String> photoPaths,
+  }) async {
+    state = state.copyWith(isSubmitting: true, error: null, success: false);
+    try {
+      await _repository.submitPlaceContribution(
+        placeName: placeName,
+        description: description,
+        category: category,
+        province: province,
+        district: district,
+        latitude: latitude,
+        longitude: longitude,
+        photoPaths: photoPaths,
+      );
+      state = state.copyWith(isSubmitting: false, error: null, success: true);
+    } catch (e) {
+      state = state.copyWith(
+        isSubmitting: false,
+        error: e.toString(),
+        success: false,
+      );
+    }
+  }
+
+  void clear() {
+    state = const PlaceSubmissionState();
+  }
+}
+
+final placeSubmissionProvider =
+    StateNotifierProvider.autoDispose<PlaceSubmissionNotifier, PlaceSubmissionState>((ref) {
+  final repository = ref.watch(profileRepositoryProvider);
+  return PlaceSubmissionNotifier(repository: repository);
 });
