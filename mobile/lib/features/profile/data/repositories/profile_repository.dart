@@ -81,4 +81,30 @@ class ProfileRepository {
       rethrow;
     }
   }
+
+  Future<void> submitPlaceContribution({
+    required String placeName,
+    required String description,
+    required String category,
+    required String province,
+    required String district,
+    required double latitude,
+    required double longitude,
+    required List<String> photoPaths,
+  }) async {
+    try {
+      await api.submitPlaceContribution(
+        placeName: placeName,
+        description: description,
+        category: category,
+        province: province,
+        district: district,
+        latitude: latitude,
+        longitude: longitude,
+        photoPaths: photoPaths,
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
 }
