@@ -35,13 +35,29 @@ class _DisplaySettingsScreenState extends ConsumerState<DisplaySettingsScreen> {
 
   Future<void> _fetchDisplaySettings() async {
     try {
-      setState(() {
-        _isLoading = false;
-      });
-    } catch (e) {
-      if (mounted) {
+      final user = _authService.currentUser;
+      if (user == null) {
         setState(() => _isLoading = false);
+        return;
       }
+
+      final response = await _apiClient.get('/api/users/${user.uid}/settings');
+      final display = response.data['display'] as Map<String, dynamic>?;
+
+      if (display != null && mounted) {
+        final savedTheme = display['mapTheme'] as String? ?? 'light';
+        // Sync Riverpod theme provider with the persisted value
+        ref.read(themeProvider.notifier).setTheme(savedTheme);
+        setState(() {
+          _cloudAnimation = display['cloudAnimation'] as bool? ?? true;
+          _units = display['units'] as String? ?? 'km';
+          _language = display['language'] as String? ?? 'English';
+        });
+      }
+    } catch (e) {
+      debugPrint('Failed to load display settings: $e');
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 

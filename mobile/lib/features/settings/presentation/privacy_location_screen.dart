@@ -75,22 +75,26 @@ class _PrivacyLocationScreenState extends State<PrivacyLocationScreen> {
   Future<void> _fetchPrivacySettings() async {
     try {
       final user = _authService.currentUser;
-      if (user == null) return;
-      
-      // We pull the privacy details alongside the user progress or profile. 
-      // For now, if we don't have a specialized GET endpoint, we maintain local state or default to true/false.
-      // E.g: final response = await _apiClient.get('/api/users/${user.uid}/profile');
-      //
-      // In a real implementation where GET /profile returns the user document,
-      // we would map it here. We'll default to the standard setup config:
-      
-      setState(() {
-        _isLoading = false;
-      });
+      if (user == null) {
+        setState(() => _isLoading = false);
+        return;
+      }
+
+      final response = await _apiClient.get('/api/users/${user.uid}/settings');
+      final privacy =
+          response.data['privacy'] as Map<String, dynamic>?;
+
+      if (privacy != null && mounted) {
+        setState(() {
+          _isPhotoPrivate = privacy['isPhotoPrivate'] as bool? ?? false;
+          _locationOnlyDuringCheckins =
+              privacy['locationDuringCheckinsOnly'] as bool? ?? true;
+        });
+      }
     } catch (e) {
-      setState(() {
-        _isLoading = false;
-      });
+      debugPrint('Failed to load privacy settings: $e');
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 

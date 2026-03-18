@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getUserProgress, getDistrictProgress, updateProfile, updatePrivacy, updateNotifications, updateDisplay, deleteUser } = require('../controllers/userController');
+const { getUserProgress, getDistrictProgress, updateProfile, updatePrivacy, updateNotifications, updateDisplay, deleteUser, getUserSettings } = require('../controllers/userController');
 const { checkJwt, extractUserId } = require('../middleware/auth');
 
 // Apply JWT middleware to all routes
@@ -20,6 +20,13 @@ router.get('/:userId/progress', getUserProgress);
  * @access  Private (JWT required)
  */
 router.get('/districts/:districtId/progress', getDistrictProgress);
+
+/**
+ * @route   GET /api/users/:userId/settings
+ * @desc    Get all user settings (notifications, display, privacy, security) in one call
+ * @access  Private (JWT required)
+ */
+router.get('/:userId/settings', getUserSettings);
 
 /**
  * @route   PUT /api/users/:userId/profile

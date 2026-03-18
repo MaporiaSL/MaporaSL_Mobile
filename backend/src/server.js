@@ -22,6 +22,7 @@ const explorationRoutes = require('./routes/explorationRoutes');
 const explorationAdminRoutes = require('./routes/explorationAdminRoutes');
 const securityRoutes = require('./routes/securityRoutes');
 const profileRoutes = require('./routes/profileRoutes');
+const feedbackRoutes = require('./routes/feedbackRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -71,6 +72,9 @@ app.use('/api/admin', explorationAdminRoutes);
 
 // Security settings (2FA, Sessions)
 app.use('/api/security', securityRoutes);
+
+// In-app feedback submissions
+app.use('/api/feedback', feedbackRoutes);
 
 // Real store (shop) routes
 app.use('/api/store', realStoreRoutes);
