@@ -18,13 +18,13 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _selectedIndex = 0;
+  int _selectedIndex = 2; // Default to Map in the middle
   bool _isCheckingProfile = true;
 
   final List<Widget> _screens = const [
-    MapScreen(travelId: 'default'), // 0 Map
+    TripsPage(), // 0 Trips
     AlbumPage(), // 1 Album
-    TripsPage(), // 2 Trips
+    MapScreen(travelId: 'default'), // 2 Map
     MemoryLanePage(), // 3 Timeline
     ShopPage(), // 4 Shop
   ];
@@ -75,7 +75,7 @@ class _HomeScreenState extends State<HomeScreen> {
           : Stack(
               children: [
                 _screens[_selectedIndex],
-                if (_selectedIndex == 0)
+                if (_selectedIndex == 2) // Map is now index 2
                 Positioned(
                   top: 130,
                   right: 16,
