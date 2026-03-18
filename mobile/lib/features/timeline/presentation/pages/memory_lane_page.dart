@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../models/timeline_event.dart';
+import '../../../../core/constants/app_colors.dart';
+import '../../data/models/timeline_event.dart';
 import '../providers/timeline_provider.dart';
 import 'widgets/timeline_event_card.dart';
 import 'widgets/timeline_line_painter.dart';
@@ -65,7 +65,7 @@ class _MemoryLanePageState extends ConsumerState<MemoryLanePage> {
             'Your journey hasn\'t started yet!',
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: AppColors.text,
+                  color: AppColors.textDark,
                 ),
           ),
           const SizedBox(height: 8),
