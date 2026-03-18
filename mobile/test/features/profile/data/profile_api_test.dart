@@ -1,14 +1,11 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
-import 'package:http_parser/http_parser.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gemified_travel_portfolio/features/profile/data/datasources/profile_api.dart';
 import 'package:mocktail/mocktail.dart';
 
 class MockDio extends Mock implements Dio {}
-
-class FakeMultipartFile extends Fake implements MultipartFile {}
-
-class FakeMediaType extends Fake implements MediaType {}
 
 void main() {
   late MockDio dio;
@@ -19,8 +16,6 @@ void main() {
     api = ProfileApi(dio: dio);
     registerFallbackValue(FormData());
     registerFallbackValue(const Options());
-    registerFallbackValue(FakeMultipartFile());
-    registerFallbackValue(FakeMediaType());
   });
 
   group('ProfileApi', () {
@@ -77,6 +72,10 @@ void main() {
         ),
       );
 
+      final tempDir = await Directory.systemTemp.createTemp('profile_api_test');
+      final photo1 = File('${tempDir.path}/photo1.jpg')..writeAsBytesSync([1, 2, 3, 4]);
+      final photo2 = File('${tempDir.path}/photo2.jpg')..writeAsBytesSync([5, 6, 7, 8]);
+
       await api.submitPlaceContribution(
         placeName: 'Sample Place',
         description: 'This is a valid description with more than fifty characters for submission.',
@@ -85,9 +84,9 @@ void main() {
         district: 'Colombo',
         latitude: 6.9271,
         longitude: 79.8612,
-        photoPaths: const [
-          'test/resources/photo1.jpg',
-          'test/resources/photo2.jpg',
+        photoPaths: [
+          photo1.path,
+          photo2.path,
         ],
       );
 
@@ -98,6 +97,8 @@ void main() {
           options: any(named: 'options'),
         ),
       ).called(1);
+
+      await tempDir.delete(recursive: true);
     });
   });
 }
