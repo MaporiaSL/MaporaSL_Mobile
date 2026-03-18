@@ -59,7 +59,7 @@ void main() {
     );
 
     await tester.enterText(find.byType(TextFormField).first, '');
-    await tester.tap(find.text('Save Changes'));
+    await tester.tap(find.text('Save').first);
     await tester.pumpAndSettle();
 
     expect(find.text('Name cannot be empty'), findsOneWidget);
@@ -79,7 +79,7 @@ void main() {
     );
 
     await tester.enterText(find.byType(TextFormField).first, 'New Name');
-    await tester.tap(find.text('Save Changes'));
+    await tester.tap(find.text('Save').first);
     await tester.pumpAndSettle();
     await tester.pump(const Duration(seconds: 3));
 
