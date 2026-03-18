@@ -213,18 +213,23 @@ async function getUserContributions(req, res) {
       return res.status(403).json({ error: 'Forbidden: Cannot access another user\'s contributions' });
     }
 
-    // Fetch only approved contributions
+    // Fetch all contribution statuses for full profile history
     const contributedPlaces = await PlaceSubmission.find(
-      { userId, status: 'approved' },
-      { placeName: 1, description: 1, approvedAt: 1, status: 1 }
-    ).sort({ approvedAt: -1 });
+      { userId },
+      { placeName: 1, description: 1, approvedAt: 1, submittedAt: 1, reviewedAt: 1, status: 1, rejectionReason: 1, photos: 1 }
+    ).sort({ submittedAt: -1 });
 
     const contributions = contributedPlaces.map((place) => ({
       id: place._id,
       name: place.placeName,
       description: place.description,
       approved: place.status === 'approved',
+      status: place.status,
+      submittedAt: place.submittedAt,
+      reviewedAt: place.reviewedAt,
       approvedAt: place.approvedAt,
+      rejectionReason: place.rejectionReason,
+      photoUrl: Array.isArray(place.photos) && place.photos.length > 0 ? place.photos[0] : '',
     }));
 
     res.status(200).json({ contributions });
