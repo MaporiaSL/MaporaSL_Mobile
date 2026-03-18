@@ -1,11 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import '../domain/user_profile.dart' as profile_model;
 import 'edit_profile_screen.dart';
+import 'place_submission_screen.dart';
 import 'providers/profile_providers.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
+
+  void _retryAll(WidgetRef ref) {
+    final retries = ref.read(profileRetryCountProvider.notifier);
+    retries.state = retries.state + 1;
+    logProfileTelemetry(
+      'profile_retry_clicked',
+      details: {'retryCount': retries.state},
+    );
+    ref.invalidate(profileBootstrapProvider);
+    ref.invalidate(userProfileProvider);
+    ref.invalidate(userContributionsProvider);
+    ref.invalidate(topContributorsProvider);
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -48,11 +63,7 @@ class ProfileScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: 16),
                   ElevatedButton(
-                    onPressed: () {
-                      ref.invalidate(profileBootstrapProvider);
-                      ref.invalidate(userProfileProvider);
-                      ref.invalidate(userContributionsProvider);
-                    },
+                    onPressed: () => _retryAll(ref),
                     child: const Text('Retry'),
                   ),
                   if (errorUi.showSignInAction) ...[
@@ -161,19 +172,37 @@ class ProfileScreen extends ConsumerWidget {
                 const SizedBox(height: 32),
 
                 // Edit Profile Button
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => EditProfileScreen(initialProfile: profile),
-                        ),
-                      );
-                    },
-                    child: const Text('Edit Profile'),
-                  ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => EditProfileScreen(initialProfile: profile),
+                            ),
+                          );
+                        },
+                        child: const Text('Edit Profile'),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const PlaceSubmissionScreen(),
+                            ),
+                          );
+                        },
+                        icon: const Icon(Icons.add_location_alt_outlined),
+                        label: const Text('Submit Place'),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -406,29 +435,77 @@ class ProfileScreen extends ConsumerWidget {
   ) {
     return asyncValue.when(
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, _) => Center(child: Text('Error: $error')),
+      error: (error, _) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Could not load submissions: $error'),
+          const SizedBox(height: 8),
+          Consumer(
+            builder: (context, ref, _) => OutlinedButton.icon(
+              onPressed: () => _retryAll(ref),
+              icon: const Icon(Icons.refresh),
+              label: const Text('Retry Contributions'),
+            ),
+          ),
+        ],
+      ),
       data: (places) {
         if (places.isEmpty) {
           return const Padding(
             padding: EdgeInsets.all(16),
-            child: Text('No contributions yet. Start suggesting places!'),
+            child: Text('No submissions yet. Tap "Submit Place" to contribute your first location.'),
           );
         }
 
         return Column(
           children: places
               .map((place) => ListTile(
-                    leading: Icon(
-                      place.approved ? Icons.verified : Icons.hourglass_empty,
-                      color: place.approved ? Colors.green : Colors.orange,
-                    ),
+                    contentPadding: EdgeInsets.zero,
+                    leading: place.photoUrl.isNotEmpty
+                        ? ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: Image.network(
+                              place.photoUrl,
+                              width: 44,
+                              height: 44,
+                              fit: BoxFit.cover,
+                              errorBuilder: (_, __, ___) => const Icon(Icons.image_not_supported),
+                            ),
+                          )
+                        : Icon(
+                            place.approved ? Icons.verified : Icons.hourglass_empty,
+                            color: place.approved ? Colors.green : Colors.orange,
+                          ),
                     title: Text(place.name),
-                    subtitle: Text(place.approved ? 'Approved' : 'Pending'),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(_statusLabel(place.status)),
+                        if (place.submittedAt != null)
+                          Text('Submitted: ${DateFormat.yMMMd().format(place.submittedAt!)}'),
+                        if (place.status == 'rejected' && (place.rejectionReason ?? '').isNotEmpty)
+                          Text('Reason: ${place.rejectionReason}'),
+                      ],
+                    ),
+                    trailing: place.reviewedAt != null
+                        ? Text(DateFormat.MMMd().format(place.reviewedAt!))
+                        : null,
                   ))
               .toList(),
         );
       },
     );
+  }
+
+  String _statusLabel(String status) {
+    switch (status) {
+      case 'approved':
+        return 'Approved';
+      case 'rejected':
+        return 'Rejected';
+      default:
+        return 'Pending Review';
+    }
   }
 
   Widget _buildLeaderboardAndImpact(profile_model.UserProfile profile) {
@@ -457,7 +534,20 @@ class ProfileScreen extends ConsumerWidget {
   Widget _buildTopContributorsSection(AsyncValue<List<Map<String, dynamic>>> asyncValue) {
     return asyncValue.when(
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, _) => Text('Could not load leaderboard: $error'),
+      error: (error, _) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Could not load leaderboard: $error'),
+          const SizedBox(height: 8),
+          Consumer(
+            builder: (context, ref, _) => OutlinedButton.icon(
+              onPressed: () => _retryAll(ref),
+              icon: const Icon(Icons.refresh),
+              label: const Text('Retry Leaderboard'),
+            ),
+          ),
+        ],
+      ),
       data: (contributors) {
         if (contributors.isEmpty) {
           return const Text('No leaderboard data yet.');
