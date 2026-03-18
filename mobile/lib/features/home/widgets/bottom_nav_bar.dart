@@ -23,9 +23,9 @@ class BottomNavBar extends StatelessWidget {
       onTap: onTap,
       height: 75, // Adjusted to fit text nicely
       items: <Widget>[
-        _buildNavItem(Icons.map, Icons.map_outlined, 'Map', 0),
+        _buildNavItem(Icons.card_travel, Icons.card_travel, 'Trips', 0),
         _buildNavItem(Icons.photo_album, Icons.photo_album_outlined, 'Album', 1),
-        _buildNavItem(Icons.card_travel, Icons.card_travel, 'Trips', 2), // Using card_travel for both as outlined doesn't exist natively for it
+        _buildNavItem(Icons.map, Icons.map_outlined, 'Map', 2),
         _buildNavItem(Icons.timeline, Icons.timeline_outlined, 'Timeline', 3),
         _buildNavItem(Icons.shopping_bag, Icons.shopping_bag_outlined, 'Shop', 4),
       ],
