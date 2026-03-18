@@ -292,7 +292,7 @@ class MiniVisitCard extends StatelessWidget {
                 color: AppColors.primary.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: Icon(
+              child: const Icon(
                 Icons.location_on,
                 color: AppColors.primary,
                 size: 24,
@@ -322,7 +322,7 @@ class MiniVisitCard extends StatelessWidget {
               ),
             ),
             if (visit.validation.status == 'approved')
-              Icon(Icons.verified, color: AppColors.primary, size: 20),
+              const Icon(Icons.verified, color: AppColors.primary, size: 20),
           ],
         ),
       ),

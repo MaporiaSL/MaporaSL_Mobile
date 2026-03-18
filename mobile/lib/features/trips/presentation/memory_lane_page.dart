@@ -4,7 +4,6 @@ import 'package:intl/intl.dart';
 
 import '../data/models/trip_model.dart';
 import '../../exploration/providers/exploration_provider.dart';
-import '../../exploration/data/models/exploration_models.dart';
 import 'widgets/quest_card.dart';
 import 'providers/trips_provider.dart';
 import 'create_trip_page.dart';

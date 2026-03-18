@@ -91,7 +91,7 @@ class VisitVerificationErrorScreen extends StatelessWidget {
         children: [
           Container(
             padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: Colors.red,
               shape: BoxShape.circle,
             ),
@@ -141,7 +141,7 @@ class VisitVerificationErrorScreen extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.warning_amber, color: Colors.orange, size: 24),
+              const Icon(Icons.warning_amber, color: Colors.orange, size: 24),
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
@@ -423,7 +423,7 @@ class VisitVerificationErrorScreen extends StatelessWidget {
           const Divider(height: 24),
           Row(
             children: [
-              Icon(Icons.straighten, color: AppColors.textMuted, size: 20),
+              const Icon(Icons.straighten, color: AppColors.textMuted, size: 20),
               const SizedBox(width: 8),
               Text(
                 'Distance: ',
@@ -518,7 +518,7 @@ class VisitVerificationErrorScreen extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.lightbulb_outline, color: Colors.blue, size: 24),
+              const Icon(Icons.lightbulb_outline, color: Colors.blue, size: 24),
               const SizedBox(width: 12),
               Text(
                 'How to Fix',
@@ -572,7 +572,7 @@ class VisitVerificationErrorScreen extends StatelessWidget {
                   ),
                 ),
               )
-              .toList(),
+              ,
         ],
       ),
     );
@@ -595,8 +595,8 @@ class VisitVerificationErrorScreen extends StatelessWidget {
           width: double.infinity,
           child: OutlinedButton(
             onPressed: onCancel ?? () => Navigator.pop(context),
-            child: const Text('Cancel'),
             style: OutlinedButton.styleFrom(padding: const EdgeInsets.all(16)),
+            child: const Text('Cancel'),
           ),
         ),
       ],

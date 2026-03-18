@@ -132,7 +132,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       child: Column(
         children: [
           ClipRRect(
-            borderRadius: BorderRadius.only(
+            borderRadius: const BorderRadius.only(
               bottomLeft: Radius.circular(30),
               bottomRight: Radius.circular(30),
             ),
@@ -156,7 +156,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   color: AppColors.textDark,
                 ),
                 children: [
-                  TextSpan(text: title + " "), // normal text
+                  TextSpan(text: "$title "), // normal text
                   WidgetSpan(
                     alignment: PlaceholderAlignment.baseline,
                     baseline: TextBaseline.alphabetic,

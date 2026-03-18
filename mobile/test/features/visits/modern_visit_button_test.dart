@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gemified_travel_portfolio/features/visits/presentation/widgets/modern_visit_button.dart';
-import 'package:gemified_travel_portfolio/features/visits/providers/visit_provider.dart';
 import 'package:dio/dio.dart';
 
 // Mock Dio Provider since we don't want real API calls in widget tests

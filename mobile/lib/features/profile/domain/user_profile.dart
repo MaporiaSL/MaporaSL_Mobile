@@ -3,6 +3,10 @@ class UserProfile {
   final String name;
   final String email;
   final String avatarUrl;
+  final String bio;
+  final String hometownDistrict;
+  final String preferredLanguage;
+  final List<String> travelInterests;
   final int totalSubmitted;
   final int approvedCount;
   final double approvalRate;
@@ -16,6 +20,10 @@ class UserProfile {
     required this.name,
     required this.email,
     required this.avatarUrl,
+    required this.bio,
+    required this.hometownDistrict,
+    required this.preferredLanguage,
+    required this.travelInterests,
     required this.totalSubmitted,
     required this.approvedCount,
     required this.approvalRate,
@@ -31,6 +39,13 @@ class UserProfile {
       name: json['user']['name'] ?? '',
       email: json['user']['email'] ?? '',
       avatarUrl: json['user']['avatarUrl'] ?? '',
+        bio: json['user']['bio'] ?? '',
+        hometownDistrict: json['user']['hometownDistrict'] ?? '',
+        preferredLanguage: json['user']['preferredLanguage'] ?? '',
+        travelInterests: (json['user']['travelInterests'] as List?)
+            ?.whereType<String>()
+            .toList() ??
+          const [],
       totalSubmitted: json['stats']['totalSubmitted'] ?? 0,
       approvedCount: json['stats']['approvedCount'] ?? 0,
       approvalRate: (json['stats']['approvalRate'] ?? 0).toDouble(),
@@ -49,6 +64,10 @@ class UserProfile {
       'name': name,
       'email': email,
       'avatarUrl': avatarUrl,
+      'bio': bio,
+      'hometownDistrict': hometownDistrict,
+      'preferredLanguage': preferredLanguage,
+      'travelInterests': travelInterests,
     },
     'stats': {
       'totalSubmitted': totalSubmitted,

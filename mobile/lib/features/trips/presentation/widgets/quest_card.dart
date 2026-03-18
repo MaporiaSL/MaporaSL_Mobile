@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../exploration/data/models/exploration_models.dart';
-import '../../../exploration/providers/exploration_provider.dart';
 import '../../../visits/presentation/widgets/dynamic_visit_sheet.dart';
 
 class QuestCard extends ConsumerWidget {

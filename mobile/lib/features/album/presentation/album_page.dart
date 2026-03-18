@@ -201,9 +201,9 @@ class _AlbumPageState extends State<AlbumPage> {
         elevation: 0,
         backgroundColor: colorScheme.surface,
         foregroundColor: colorScheme.onSurface,
-        actions: [
+        actions: const [
           // Reserve space for overlay profile icon
-          const SizedBox(width: 56),
+          SizedBox(width: 56),
         ],
       ),
       body: _buildBody(),

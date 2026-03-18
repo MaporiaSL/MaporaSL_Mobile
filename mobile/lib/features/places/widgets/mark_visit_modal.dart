@@ -443,7 +443,7 @@ class _MarkVisitModalState extends ConsumerState<MarkVisitModal> {
         children: [
           Row(
             children: [
-              Icon(Icons.security, color: AppColors.primary, size: 18),
+              const Icon(Icons.security, color: AppColors.primary, size: 18),
               const SizedBox(width: 8),
               Text(
                 'Security Check',

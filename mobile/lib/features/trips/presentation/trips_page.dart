@@ -83,7 +83,7 @@ class _TripsScreenState extends ConsumerState<TripsScreen>
             child: AnimatedSwitcher(
               duration: const Duration(milliseconds: 250),
               child: _activePanel == 0
-                  ? _PrePlannedPanel(key: const ValueKey('preplanned'))
+                  ? const _PrePlannedPanel(key: ValueKey('preplanned'))
                   : _CustomTripsPanel(
                       key: const ValueKey('custom'),
                       onCreateTrip: _navigateToCreateTrip,

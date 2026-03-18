@@ -116,7 +116,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     final districtProgress = _calculateDistrictProgress(assignments);
 
     // Use the default light theme with progressive colors
-    final theme = _mapTheme;
+    const theme = _mapTheme;
 
     return Scaffold(
       appBar: AppBar(

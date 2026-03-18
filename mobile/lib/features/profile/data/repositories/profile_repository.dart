@@ -33,14 +33,22 @@ class ProfileRepository {
     String userId, {
     String? name,
     String? avatarUrl,
+    String? bio,
+    String? hometownDistrict,
+    String? preferredLanguage,
+    List<String>? travelInterests,
   }) async {
     try {
       final data = await api.updateProfile(
         userId,
         name: name,
         avatarUrl: avatarUrl,
+        bio: bio,
+        hometownDistrict: hometownDistrict,
+        preferredLanguage: preferredLanguage,
+        travelInterests: travelInterests,
       );
-      return UserProfile.fromJson(data['user'] ?? {});
+      return UserProfile.fromJson(data);
     } catch (e) {
       rethrow;
     }

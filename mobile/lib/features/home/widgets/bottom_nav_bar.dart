@@ -25,7 +25,7 @@ class BottomNavBar extends StatelessWidget {
 
     return Container(
       height: 85,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: Colors.transparent,
       ),
       child: Stack(

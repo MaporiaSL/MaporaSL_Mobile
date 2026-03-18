@@ -1,9 +1,7 @@
 import 'dart:convert';
 import 'dart:math' as math;
 import 'package:flutter/services.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart' as mapbox;
 import '../../../../features/places/models/place.dart';
 import '../../../map/providers/map_provider.dart';
 

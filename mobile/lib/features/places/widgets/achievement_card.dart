@@ -232,7 +232,7 @@ class AchievementCard extends StatelessWidget {
                   right: 0,
                   child: Container(
                     padding: const EdgeInsets.all(2),
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       color: Colors.amber,
                       shape: BoxShape.circle,
                     ),
@@ -376,7 +376,7 @@ class _AchievementUnlockAlertState extends State<AchievementUnlockAlert>
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.card_giftcard, color: Colors.white, size: 16),
+                const Icon(Icons.card_giftcard, color: Colors.white, size: 16),
                 const SizedBox(width: 4),
                 Text(
                   '+${widget.achievement.rewards} points',
