@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+<<<<<<< Updated upstream
 import 'package:flutter/foundation.dart';
+=======
+>>>>>>> Stashed changes
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../../core/config/app_config.dart';
 import '../../home/presentation/home_screen.dart';
@@ -20,7 +23,11 @@ class AuthGate extends StatelessWidget {
         }
 
         if (snapshot.data == null) {
+<<<<<<< Updated upstream
           if (kDebugMode && AppConfig.authBypass) {
+=======
+          if (AppConfig.authBypass) {
+>>>>>>> Stashed changes
             return const HomeScreen();
           }
           return const LoginScreen();
