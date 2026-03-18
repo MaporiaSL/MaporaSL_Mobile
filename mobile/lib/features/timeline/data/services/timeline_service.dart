@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../core/services/api_client.dart';
+import '../../../../core/services/api_client.dart';
 import '../models/timeline_event.dart';
 
 class TimelineService {

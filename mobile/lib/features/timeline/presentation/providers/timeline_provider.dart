@@ -1,7 +1,11 @@
+import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/services/auth_service.dart';
-import '../models/timeline_event.dart';
-import '../services/timeline_service.dart';
+import '../../data/models/timeline_event.dart';
+import '../../data/services/timeline_service.dart';
+
+final authServiceProvider = Provider<AuthService>((ref) => AuthService());
+
 
 final timelineProvider = AsyncNotifierProvider<TimelineNotifier, List<TimelineEvent>>(() {
   return TimelineNotifier();
@@ -14,7 +18,7 @@ class TimelineNotifier extends AsyncNotifier<List<TimelineEvent>> {
   }
 
   Future<List<TimelineEvent>> _fetchTimeline() async {
-    final user = ref.read(authServiceProvider.notifier).currentUser;
+    final user = ref.read(authServiceProvider).currentUser;
     if (user == null) {
       return [];
     }

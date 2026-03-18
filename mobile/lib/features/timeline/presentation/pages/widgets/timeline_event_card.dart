@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../models/timeline_event.dart';
+import '../../../../../core/constants/app_colors.dart';
+import '../../../data/models/timeline_event.dart';
 import 'package:intl/intl.dart';
 
 class TimelineEventCard extends StatelessWidget {
@@ -10,52 +10,188 @@ class TimelineEventCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 4,
-      shadowColor: Colors.black26,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: _getCardGradient(),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: _getShadowColor().withOpacity(0.25),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+        border: Border.all(
+          color: _getBorderColor().withOpacity(0.6),
+          width: 1.5,
+        ),
       ),
-      color: AppColors.surface,
-      margin: EdgeInsets.zero,
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(20),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(20),
+          onTap: () {
+            // Placeholder for future gamified interaction
+          },
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
-                  child: Text(
-                    event.title,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.text,
-                        ),
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        event.title,
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                              fontWeight: FontWeight.w800,
+                              color: AppColors.textDark,
+                              letterSpacing: 0.2,
+                            ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    _buildQuestBadge(context),
+                  ],
                 ),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.access_time_rounded,
+                      size: 14,
+                      color: AppColors.textMuted.withOpacity(0.8),
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      DateFormat('MMM d, y • h:mm a').format(event.timestamp),
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: AppColors.textMuted.withOpacity(0.8),
+                            fontWeight: FontWeight.w600,
+                          ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
                 Text(
-                  DateFormat.yMMMd().format(event.timestamp),
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: AppColors.textLight,
+                  event.description,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: AppColors.textDark.withOpacity(0.85),
+                        height: 1.4,
                       ),
                 ),
+                if (_hasExtraContent()) ...[
+                  const SizedBox(height: 16),
+                  _buildExtraContent(context),
+                ]
               ],
             ),
-            const SizedBox(height: 8),
-            Text(
-              event.description,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: AppColors.textLight.withOpacity(0.8),
-                  ),
-            ),
-            if (_hasExtraContent()) ...[
-              const SizedBox(height: 12),
-              _buildExtraContent(context),
-            ]
-          ],
+          ),
         ),
+      ),
+    );
+  }
+
+  List<Color> _getCardGradient() {
+    switch (event.type) {
+      case TimelineEventType.achievement:
+        return [
+          const Color(0xFFFFF7E6),
+          const Color(0xFFFFEDB3),
+        ];
+      case TimelineEventType.photo:
+        return [
+          const Color(0xFFE6F9FA),
+          const Color(0xFFC7F1F4),
+        ];
+      case TimelineEventType.visit:
+      default:
+        return [
+          const Color(0xFFFFFFFF),
+          const Color(0xFFF3F5F7),
+        ];
+    }
+  }
+
+  Color _getShadowColor() {
+    switch (event.type) {
+      case TimelineEventType.achievement:
+        return AppColors.accent;
+      case TimelineEventType.photo:
+        return AppColors.primary;
+      case TimelineEventType.visit:
+      default:
+        return Colors.black26;
+    }
+  }
+
+  Color _getBorderColor() {
+    switch (event.type) {
+      case TimelineEventType.achievement:
+        return AppColors.accent;
+      case TimelineEventType.photo:
+        return AppColors.primaryLight;
+      case TimelineEventType.visit:
+      default:
+        return AppColors.border;
+    }
+  }
+
+  Widget _buildQuestBadge(BuildContext context) {
+    String label;
+    Color color;
+    IconData icon;
+
+    switch (event.type) {
+      case TimelineEventType.visit:
+        label = 'VISIT';
+        color = AppColors.primary;
+        icon = Icons.location_on_rounded;
+        break;
+      case TimelineEventType.photo:
+        label = 'MEMORY';
+        color = AppColors.secondary;
+        icon = Icons.camera_alt_rounded;
+        break;
+      case TimelineEventType.achievement:
+        label = 'ACHIEVEMENT';
+        color = AppColors.accent;
+        icon = Icons.stars_rounded;
+        break;
+      default:
+        label = 'EVENT';
+        color = AppColors.textMuted;
+        icon = Icons.circle;
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.12),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: color.withOpacity(0.3)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 14, color: color),
+          const SizedBox(width: 4),
+          Text(
+            label,
+            style: TextStyle(
+              color: color,
+              fontSize: 10,
+              fontWeight: FontWeight.w800,
+              letterSpacing: 0.8,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -73,18 +209,37 @@ class TimelineEventCard extends StatelessWidget {
   Widget _buildExtraContent(BuildContext context) {
     if (event.type == TimelineEventType.photo) {
       final imageUrl = event.metadata['imageUrl'] as String;
-      return ClipRRect(
-        borderRadius: BorderRadius.circular(8),
-        child: Image.network(
-          imageUrl,
-          height: 120,
-          width: double.infinity,
-          fit: BoxFit.cover,
-          errorBuilder: (context, error, stackTrace) => Container(
-            height: 120,
+      return Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 8,
+              offset: const Offset(0, 4),
+            )
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(16),
+          child: Image.network(
+            imageUrl,
+            height: 180,
             width: double.infinity,
-            color: Colors.grey[800],
-            child: const Icon(Icons.broken_image, color: Colors.white54),
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) => Container(
+              height: 180,
+              width: double.infinity,
+              color: AppColors.surfaceMuted,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.broken_image_rounded, color: AppColors.textMuted, size: 40),
+                  const SizedBox(height: 8),
+                  Text('Image unavailable', style: TextStyle(color: AppColors.textMuted)),
+                ],
+              ),
+            ),
           ),
         ),
       );
@@ -92,23 +247,53 @@ class TimelineEventCard extends StatelessWidget {
 
     if (event.type == TimelineEventType.achievement) {
       return Container(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: AppColors.accent.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: AppColors.accent.withOpacity(0.3)),
+          color: Colors.white.withOpacity(0.8),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: AppColors.accent.withOpacity(0.4)),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.accent.withOpacity(0.08),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            )
+          ],
         ),
         child: Row(
           children: [
-            const Icon(Icons.star, color: AppColors.accent, size: 28),
-            const SizedBox(width: 12),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: AppColors.accent.withOpacity(0.15),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.emoji_events_rounded, color: AppColors.accent, size: 36),
+            ),
+            const SizedBox(width: 16),
             Expanded(
-              child: Text(
-                'Explorer Badge Unlocked!',
-                style: TextStyle(
-                  color: AppColors.accent,
-                  fontWeight: FontWeight.bold,
-                ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Badge Unlocked!',
+                    style: TextStyle(
+                      color: AppColors.accent,
+                      fontWeight: FontWeight.w900,
+                      fontSize: 16,
+                      letterSpacing: 0.3,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Amazing progress. Keep exploring!',
+                    style: TextStyle(
+                      color: AppColors.textMuted,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
