@@ -83,7 +83,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           IconButton(
             icon: const Icon(Icons.logout),
             tooltip: 'Logout',
-            onPressed: () => _showLogoutConfirmation(context),
+            onPressed: () => _showLogoutConfirmation(context, ref),
           ),
         ],
       ),
@@ -632,7 +632,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     }
   }
 
-  void _showLogoutConfirmation(BuildContext context) {
+  void _showLogoutConfirmation(BuildContext context, WidgetRef ref) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -643,7 +643,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           TextButton(
             onPressed: () {
               Navigator.pop(context);
-              _performLogout(context);
+              _performLogout(context, ref);
             },
             child: const Text('Logout'),
           ),
@@ -652,7 +652,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     );
   }
 
-  Future<void> _performLogout(BuildContext context) async {
+  Future<void> _performLogout(BuildContext context, WidgetRef ref) async {
     try {
       final authService = ref.read(authServiceProvider);
       await authService.signOut();
