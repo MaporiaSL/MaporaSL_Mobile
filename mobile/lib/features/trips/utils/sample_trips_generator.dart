@@ -55,15 +55,6 @@ class SampleTripsGenerator {
         endDate: now.add(const Duration(days: 52)),
         locations: ['Trincomalee', 'Arugam Bay', 'Batticaloa', 'Pasikuda'],
       ),
-      // Planned Adventure 4
-      CreateTripDto(
-        title: 'Galle Fort Heritage Walk',
-        description:
-            'A weekend getaway walking the cobbled streets of the Dutch Fort. Architecture, cafes, and sunsets.',
-        startDate: now.add(const Duration(days: 10)),
-        endDate: now.add(const Duration(days: 12)),
-        locations: ['Galle Fort', 'Dutch Hospital'],
-      ),
 
       // Completed Journey 1
       CreateTripDto(
