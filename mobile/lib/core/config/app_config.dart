@@ -8,20 +8,27 @@ class AppConfig {
   );
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
   // AUTH_BYPASS_ANCHOR: set to false to re-enable auth.
   static const bool authBypass = true;
 =======
   // Temporary local-dev bypass. Set false (or pass --dart-define=AUTH_BYPASS=false)
   // to restore login flow.
+=======
+  // AUTH_BYPASS_ANCHOR: override with --dart-define=AUTH_BYPASS=false.
+>>>>>>> Stashed changes
   static const bool authBypass = bool.fromEnvironment(
     'AUTH_BYPASS',
     defaultValue: true,
   );
+<<<<<<< Updated upstream
 
   // Optional development fallback UID when auth bypass is enabled.
   static const String profileFallbackUserId = String.fromEnvironment(
     'PROFILE_FALLBACK_USER_ID',
     defaultValue: 'test-user-123',
   );
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 }
