@@ -123,6 +123,12 @@ const placeSubmissionSchema = new mongoose.Schema(
       type: Date,
       default: null,
     },
+    promotedPlaceId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Place',
+      default: null,
+      index: true,
+    },
   },
   { timestamps: true }
 );

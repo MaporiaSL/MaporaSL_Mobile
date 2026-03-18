@@ -109,6 +109,20 @@ const placeSchema = new mongoose.Schema(
         type: String,
         default: null,
       },
+      auth0Id: {
+        type: String,
+        default: null,
+      },
+    },
+    sourceSubmissionId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'PlaceSubmission',
+      default: null,
+      index: true,
+    },
+    mergedSubmissionIds: {
+      type: [mongoose.Schema.Types.ObjectId],
+      default: [],
     },
     verified: {
       type: Boolean,

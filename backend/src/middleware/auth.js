@@ -6,7 +6,7 @@ const authBypassEnabled = process.env.AUTH_BYPASS === 'true';
 // Validates Firebase ID token and attaches payload to req.auth
 const checkJwt = authBypassEnabled
   ? (req, res, next) => {
-      req.auth = { uid: 'test-user-123' };
+      req.auth = { uid: 'test-user-123', admin: true };
       next();
     }
   : async (req, res, next) => {
