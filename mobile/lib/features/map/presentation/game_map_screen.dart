@@ -94,6 +94,7 @@ class _GameMapScreenState extends State<GameMapScreen> {
           });
           _handleBottomNavigation(index);
         },
+<<<<<<< HEAD
 
         // Don't forget to color your icons so they contrast with the bar!
         items: const <Widget>[
@@ -101,6 +102,19 @@ class _GameMapScreenState extends State<GameMapScreen> {
           Icon(Icons.flag, size: 30, color: Colors.white),
           Icon(Icons.inventory, size: 30, color: Colors.white),
           Icon(Icons.settings, size: 30, color: Colors.white),
+=======
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.map), label: 'Map'),
+          BottomNavigationBarItem(icon: Icon(Icons.flag), label: 'Timeline'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.inventory),
+            label: 'Inventory',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'Settings',
+          ),
+>>>>>>> origin/timeline-kaushal
         ],
       ),
     );
@@ -112,9 +126,9 @@ class _GameMapScreenState extends State<GameMapScreen> {
         // Map screen (already here)
         break;
       case 1:
-        // Quests
+        // Timeline
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Quests section - Coming soon!')),
+          const SnackBar(content: Text('Timeline section - Coming soon!')),
         );
         break;
       case 2:

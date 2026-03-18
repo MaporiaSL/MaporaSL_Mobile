@@ -51,9 +51,64 @@ class TripsPage extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+<<<<<<< HEAD
               Text(
                 "Recommendation",
                 style: Theme.of(context).textTheme.titleLarge,
+=======
+              // Image Section
+              AspectRatio(
+                aspectRatio: 1,
+                child: Container(
+                  color: Colors.grey.shade200,
+                  child:
+                      place.photos.isNotEmpty
+                          ? Image.network(
+                            place.photos.first,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return const Icon(Icons.image_not_supported);
+                            },
+                          )
+                          : const Icon(Icons.place, size: 32),
+                ),
+              ),
+              // Info Section
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        place.name,
+                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        distanceText,
+                        style: TextStyle(fontSize: 13, color: Colors.blue.shade700, fontWeight: FontWeight.w500),
+                      ),
+                      const SizedBox(height: 2),
+                      Expanded(
+                        child: Text(
+                          place.description ?? '',
+                          style: Theme.of(context).textTheme.bodySmall,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const Padding(
+                padding: EdgeInsets.only(right: 12),
+                child: Icon(Icons.chevron_right, color: Colors.grey),
+>>>>>>> origin/timeline-kaushal
               ),
               TextButton(onPressed: () {}, child: const Text("View All")),
             ],

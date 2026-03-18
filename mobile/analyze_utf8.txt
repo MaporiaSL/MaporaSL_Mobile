@@ -1,0 +1,82 @@
+﻿Analyzing timeline...
+
+  error - data\services\timeline_service.dart:3:8 - Target of URI doesn't exist: '../../../core/services/api_client.dart'. Try creating the file referenced by the URI, or try using a URI for a file that does exist. - uri_does_not_exist
+  error - data\services\timeline_service.dart:7:9 - Undefined class 'ApiClient'. Try changing the name to the name of an existing class, or creating a class with the name 'ApiClient'. - undefined_class
+  error - data\services\timeline_service.dart:32:31 - Undefined name 'apiClientProvider'. Try correcting the name to one that is defined, or defining the name. - undefined_identifier
+  error - presentation\pages\memory_lane_page.dart:4:8 - Target of URI doesn't exist: '../models/timeline_event.dart'. Try creating the file referenced by the URI, or try using a URI for a file that does exist. - uri_does_not_exist
+  error - presentation\pages\memory_lane_page.dart:68:36 - The getter 'text' isn't defined for the type 'AppColors'. Try importing the library that defines 'text', correcting the name to the name of an existing getter, or defining a getter or field named 'text'. - undefined_getter
+  error - presentation\pages\memory_lane_page.dart:127:34 - The name 'TimelineEvent' isn't a type, so it can't be used as a type argument. Try correcting the name to an existing type, or defining a type named 'TimelineEvent'. - non_type_as_type_argument
+  error - presentation\pages\memory_lane_page.dart:201:24 - Undefined class 'TimelineEventType'. Try changing the name to the name of an existing class, or creating a class with the name 'TimelineEventType'. - undefined_class
+  error - presentation\pages\memory_lane_page.dart:203:12 - Undefined name 'TimelineEventType'. Try correcting the name to one that is defined, or defining the name. - undefined_identifier
+  error - presentation\pages\memory_lane_page.dart:205:12 - Undefined name 'TimelineEventType'. Try correcting the name to one that is defined, or defining the name. - undefined_identifier
+  error - presentation\pages\memory_lane_page.dart:207:12 - Undefined name 'TimelineEventType'. Try correcting the name to one that is defined, or defining the name. - undefined_identifier
+  error - presentation\pages\memory_lane_page.dart:214:26 - Undefined class 'TimelineEventType'. Try changing the name to the name of an existing class, or creating a class with the name 'TimelineEventType'. - undefined_class
+  error - presentation\pages\memory_lane_page.dart:216:12 - Undefined name 'TimelineEventType'. Try correcting the name to one that is defined, or defining the name. - undefined_identifier
+  error - presentation\pages\memory_lane_page.dart:218:12 - Undefined name 'TimelineEventType'. Try correcting the name to one that is defined, or defining the name. - undefined_identifier
+  error - presentation\pages\memory_lane_page.dart:220:12 - Undefined name 'TimelineEventType'. Try correcting the name to one that is defined, or defining the name. - undefined_identifier
+  error - presentation\pages\widgets\timeline_event_card.dart:2:8 - Target of URI doesn't exist: '../../../../core/constants/app_colors.dart'. Try creating the file referenced by the URI, or try using a URI for a file that does exist. - uri_does_not_exist
+  error - presentation\pages\widgets\timeline_event_card.dart:3:8 - Target of URI doesn't exist: '../../../models/timeline_event.dart'. Try creating the file referenced by the URI, or try using a URI for a file that does exist. - uri_does_not_exist
+  error - presentation\pages\widgets\timeline_event_card.dart:7:9 - Undefined class 'TimelineEvent'. Try changing the name to the name of an existing class, or creating a class with the name 'TimelineEvent'. - undefined_class
+  error - presentation\pages\widgets\timeline_event_card.dart:54:38 - Undefined name 'AppColors'. Try correcting the name to one that is defined, or defining the name. - undefined_identifier
+  error - presentation\pages\widgets\timeline_event_card.dart:69:30 - Undefined name 'AppColors'. Try correcting the name to one that is defined, or defining the name. - undefined_identifier
+  error - presentation\pages\widgets\timeline_event_card.dart:75:36 - Undefined name 'AppColors'. Try correcting the name to one that is defined, or defining the name. - undefined_identifier
+  error - presentation\pages\widgets\timeline_event_card.dart:85:32 - Undefined name 'AppColors'. Try correcting the name to one that is defined, or defining the name. - undefined_identifier
+  error - presentation\pages\widgets\timeline_event_card.dart:103:12 - Undefined name 'TimelineEventType'. Try correcting the name to one that is defined, or defining the name. - undefined_identifier
+  error - presentation\pages\widgets\timeline_event_card.dart:108:12 - Undefined name 'TimelineEventType'. Try correcting the name to one that is defined, or defining the name. - undefined_identifier
+  error - presentation\pages\widgets\timeline_event_card.dart:113:12 - Undefined name 'TimelineEventType'. Try correcting the name to one that is defined, or defining the name. - undefined_identifier
+  error - presentation\pages\widgets\timeline_event_card.dart:124:12 - Undefined name 'TimelineEventType'. Try correcting the name to one that is defined, or defining the name. - undefined_identifier
+  error - presentation\pages\widgets\timeline_event_card.dart:125:16 - Undefined name 'AppColors'. Try correcting the name to one that is defined, or defining the name. - undefined_identifier
+  error - presentation\pages\widgets\timeline_event_card.dart:126:12 - Undefined name 'TimelineEventType'. Try correcting the name to one that is defined, or defining the name. - undefined_identifier
+  error - presentation\pages\widgets\timeline_event_card.dart:127:16 - Undefined name 'AppColors'. Try correcting the name to one that is defined, or defining the name. - undefined_identifier
+  error - presentation\pages\widgets\timeline_event_card.dart:128:12 - Undefined name 'TimelineEventType'. Try correcting the name to one that is defined, or defining the name. - undefined_identifier
+  error - presentation\pages\widgets\timeline_event_card.dart:136:12 - Undefined name 'TimelineEventType'. Try correcting the name to one that is defined, or defining the name. - undefined_identifier
+  error - presentation\pages\widgets\timeline_event_card.dart:137:16 - Undefined name 'AppColors'. Try correcting the name to one that is defined, or defining the name. - undefined_identifier
+  error - presentation\pages\widgets\timeline_event_card.dart:138:12 - Undefined name 'TimelineEventType'. Try correcting the name to one that is defined, or defining the name. - undefined_identifier
+  error - presentation\pages\widgets\timeline_event_card.dart:139:16 - Undefined name 'AppColors'. Try correcting the name to one that is defined, or defining the name. - undefined_identifier
+  error - presentation\pages\widgets\timeline_event_card.dart:140:12 - Undefined name 'TimelineEventType'. Try correcting the name to one that is defined, or defining the name. - undefined_identifier
+  error - presentation\pages\widgets\timeline_event_card.dart:142:16 - Undefined name 'AppColors'. Try correcting the name to one that is defined, or defining the name. - undefined_identifier
+  error - presentation\pages\widgets\timeline_event_card.dart:152:12 - Undefined name 'TimelineEventType'. Try correcting the name to one that is defined, or defining the name. - undefined_identifier
+  error - presentation\pages\widgets\timeline_event_card.dart:154:17 - Undefined name 'AppColors'. Try correcting the name to one that is defined, or defining the name. - undefined_identifier
+  error - presentation\pages\widgets\timeline_event_card.dart:157:12 - Undefined name 'TimelineEventType'. Try correcting the name to one that is defined, or defining the name. - undefined_identifier
+  error - presentation\pages\widgets\timeline_event_card.dart:159:17 - Undefined name 'AppColors'. Try correcting the name to one that is defined, or defining the name. - undefined_identifier
+  error - presentation\pages\widgets\timeline_event_card.dart:162:12 - Undefined name 'TimelineEventType'. Try correcting the name to one that is defined, or defining the name. - undefined_identifier
+  error - presentation\pages\widgets\timeline_event_card.dart:164:17 - Undefined name 'AppColors'. Try correcting the name to one that is defined, or defining the name. - undefined_identifier
+  error - presentation\pages\widgets\timeline_event_card.dart:169:17 - Undefined name 'AppColors'. Try correcting the name to one that is defined, or defining the name. - undefined_identifier
+  error - presentation\pages\widgets\timeline_event_card.dart:200:23 - Undefined name 'TimelineEventType'. Try correcting the name to one that is defined, or defining the name. - undefined_identifier
+  error - presentation\pages\widgets\timeline_event_card.dart:203:23 - Undefined name 'TimelineEventType'. Try correcting the name to one that is defined, or defining the name. - undefined_identifier
+  error - presentation\pages\widgets\timeline_event_card.dart:210:23 - Undefined name 'TimelineEventType'. Try correcting the name to one that is defined, or defining the name. - undefined_identifier
+  error - presentation\pages\widgets\timeline_event_card.dart:233:22 - Undefined name 'AppColors'. Try correcting the name to one that is defined, or defining the name. - undefined_identifier
+  error - presentation\pages\widgets\timeline_event_card.dart:237:65 - Invalid constant value. - invalid_constant
+  error - presentation\pages\widgets\timeline_event_card.dart:237:65 - Undefined name 'AppColors'. Try correcting the name to one that is defined, or defining the name. - undefined_identifier
+  error - presentation\pages\widgets\timeline_event_card.dart:239:69 - Undefined name 'AppColors'. Try correcting the name to one that is defined, or defining the name. - undefined_identifier
+  error - presentation\pages\widgets\timeline_event_card.dart:248:23 - Undefined name 'TimelineEventType'. Try correcting the name to one that is defined, or defining the name. - undefined_identifier
+  error - presentation\pages\widgets\timeline_event_card.dart:254:37 - Undefined name 'AppColors'. Try correcting the name to one that is defined, or defining the name. - undefined_identifier
+  error - presentation\pages\widgets\timeline_event_card.dart:257:22 - Undefined name 'AppColors'. Try correcting the name to one that is defined, or defining the name. - undefined_identifier
+  error - presentation\pages\widgets\timeline_event_card.dart:268:24 - Undefined name 'AppColors'. Try correcting the name to one that is defined, or defining the name. - undefined_identifier
+  error - presentation\pages\widgets\timeline_event_card.dart:271:68 - Invalid constant value. - invalid_constant
+  error - presentation\pages\widgets\timeline_event_card.dart:271:68 - Undefined name 'AppColors'. Try correcting the name to one that is defined, or defining the name. - undefined_identifier
+  error - presentation\pages\widgets\timeline_event_card.dart:281:30 - Undefined name 'AppColors'. Try correcting the name to one that is defined, or defining the name. - undefined_identifier
+  error - presentation\pages\widgets\timeline_event_card.dart:291:30 - Undefined name 'AppColors'. Try correcting the name to one that is defined, or defining the name. - undefined_identifier
+  error - presentation\providers\timeline_provider.dart:3:8 - Target of URI doesn't exist: '../models/timeline_event.dart'. Try creating the file referenced by the URI, or try using a URI for a file that does exist. - uri_does_not_exist
+  error - presentation\providers\timeline_provider.dart:4:8 - Target of URI doesn't exist: '../services/timeline_service.dart'. Try creating the file referenced by the URI, or try using a URI for a file that does exist. - uri_does_not_exist
+  error - presentation\providers\timeline_provider.dart:6:71 - The name 'TimelineEvent' isn't a type, so it can't be used as a type argument. Try correcting the name to an existing type, or defining a type named 'TimelineEvent'. - non_type_as_type_argument
+  error - presentation\providers\timeline_provider.dart:10:51 - The name 'TimelineEvent' isn't a type, so it can't be used as a type argument. Try correcting the name to an existing type, or defining a type named 'TimelineEvent'. - non_type_as_type_argument
+  error - presentation\providers\timeline_provider.dart:12:3 - Undefined class 'FutureOr'. Try changing the name to the name of an existing class, or creating a class with the name 'FutureOr'. - undefined_class
+  error - presentation\providers\timeline_provider.dart:12:17 - The name 'TimelineEvent' isn't a type, so it can't be used as a type argument. Try correcting the name to an existing type, or defining a type named 'TimelineEvent'. - non_type_as_type_argument
+  error - presentation\providers\timeline_provider.dart:16:15 - The name 'TimelineEvent' isn't a type, so it can't be used as a type argument. Try correcting the name to an existing type, or defining a type named 'TimelineEvent'. - non_type_as_type_argument
+  error - presentation\providers\timeline_provider.dart:17:27 - Undefined name 'authServiceProvider'. Try correcting the name to one that is defined, or defining the name. - undefined_identifier
+  error - presentation\providers\timeline_provider.dart:22:38 - Undefined name 'timelineServiceProvider'. Try correcting the name to one that is defined, or defining the name. - undefined_identifier
+   info - presentation\pages\memory_lane_page.dart:35:36 - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement. - deprecated_member_use
+   info - presentation\pages\memory_lane_page.dart:61:40 - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement. - deprecated_member_use
+   info - presentation\pages\memory_lane_page.dart:112:22 - Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation. - prefer_const_constructors
+   info - presentation\pages\memory_lane_page.dart:151:48 - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement. - deprecated_member_use
+   info - presentation\pages\memory_lane_page.dart:166:65 - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement. - deprecated_member_use
+   info - presentation\pages\widgets\timeline_event_card.dart:23:38 - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement. - deprecated_member_use
+   info - presentation\pages\widgets\timeline_event_card.dart:29:36 - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement. - deprecated_member_use
+   info - presentation\pages\widgets\timeline_event_card.dart:176:22 - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement. - deprecated_member_use
+   info - presentation\pages\widgets\timeline_event_card.dart:178:41 - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement. - deprecated_member_use
+   info - presentation\pages\widgets\timeline_event_card.dart:215:22 - Use 'const' literals as arguments to constructors of '@immutable' classes. Try adding 'const' before the literal. - prefer_const_literals_to_create_immutables
+   info - presentation\pages\widgets\timeline_event_card.dart:216:13 - Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation. - prefer_const_constructors
+   info - presentation\pages\widgets\timeline_event_card.dart:252:31 - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement. - deprecated_member_use
+
+78 issues found.

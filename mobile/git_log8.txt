@@ -1,0 +1,8 @@
+﻿df95308 feat(timeline): implement UPCOMING event type mapping and gamified card UI
+520bc8f feat(backend): add upcoming planning trips to timeline API
+ef7663f chore(trips): add Hikkaduwa Snorkeling Escape to planned trips
+f9215f1 chore(trips): add Galle Fort Heritage Walk to planned trips
+9acef8e Merge branch 'timeline-kaushal' of https://github.com/MaporiaSL/MaporaSL_Mobile into timeline-kaushal
+5bf193f Trips feature updates
+6ece95b chore(android): update gradle properties
+1f1424f feat(trips): implement interactive share options to community and social media

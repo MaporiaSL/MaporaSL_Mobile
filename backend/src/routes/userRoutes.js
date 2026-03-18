@@ -1,6 +1,11 @@
 const express = require('express');
 const router = express.Router();
+<<<<<<< HEAD
 const { getUserProgress, getDistrictProgress, updateProfile, updatePrivacy, updateNotifications, updateDisplay, deleteUser } = require('../controllers/userController');
+=======
+const { getUserProgress, getDistrictProgress } = require('../controllers/userController');
+const { getTimeline } = require('../controllers/timelineController');
+>>>>>>> origin/timeline-kaushal
 const { checkJwt, extractUserId } = require('../middleware/auth');
 
 // Apply JWT middleware to all routes
@@ -22,6 +27,7 @@ router.get('/:userId/progress', getUserProgress);
 router.get('/districts/:districtId/progress', getDistrictProgress);
 
 /**
+<<<<<<< HEAD
  * @route   PUT /api/users/:userId/profile
  * @desc    Update user profile (name, avatar)
  * @access  Private (JWT required)
@@ -55,5 +61,12 @@ router.put('/:userId/display', updateDisplay);
  * @access  Private (JWT required)
  */
 router.delete('/:userId', deleteUser);
+=======
+ * @route   GET /api/users/:userId/timeline
+ * @desc    Get unified timeline events for a user
+ * @access  Private (JWT required, must match userId)
+ */
+router.get('/:userId/timeline', getTimeline);
+>>>>>>> origin/timeline-kaushal
 
 module.exports = router;
