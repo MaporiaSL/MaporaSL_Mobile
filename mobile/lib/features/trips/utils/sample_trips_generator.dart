@@ -65,6 +65,16 @@ class SampleTripsGenerator {
         locations: ['Galle Fort', 'Dutch Hospital'],
       ),
 
+      // Planned Adventure 5
+      CreateTripDto(
+        title: 'Hikkaduwa Snorkeling Escape',
+        description:
+            'A quick dive into vibrant coral reefs and relaxing on the beach.',
+        startDate: now.add(const Duration(days: 18)),
+        endDate: now.add(const Duration(days: 20)),
+        locations: ['Hikkaduwa', 'Coral Sanctuary'],
+      ),
+
       // Completed Journey 1
       CreateTripDto(
         title: 'Colombo City Explorer',
