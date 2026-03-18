@@ -13,7 +13,7 @@ class MockProfileRepository extends Mock implements ProfileRepository {}
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets('Edit profile save flow updates name', (tester) async {
+  testWidgets('Edit profile save flow updates extended profile fields', (tester) async {
     final repository = MockProfileRepository();
 
     final initialProfile = UserProfile(
@@ -58,20 +58,34 @@ void main() {
       ),
     );
 
-    await tester.enterText(find.byType(TextFormField).first, 'Integration Name');
-    await tester.tap(find.text('Save Changes'));
+    await tester.enterText(find.byType(TextFormField).at(0), 'Integration Name');
+    await tester.enterText(find.byType(TextFormField).at(1), 'Loves hiking and culture trails');
+    await tester.enterText(find.byType(TextFormField).at(2), 'Galle');
+    await tester.tap(find.byType(FilterChip).first);
+
+    await tester.tap(find.byType(DropdownButtonFormField<String>));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Tamil').last);
     await tester.pumpAndSettle();
 
-    verify(
+    await tester.tap(find.text('Save').first);
+    await tester.pumpAndSettle();
+
+    final verification = verify(
       () => repository.updateProfile(
         'u1',
         name: 'Integration Name',
         avatarUrl: any(named: 'avatarUrl'),
-        bio: any(named: 'bio'),
-        hometownDistrict: any(named: 'hometownDistrict'),
-        preferredLanguage: any(named: 'preferredLanguage'),
-        travelInterests: any(named: 'travelInterests'),
+        bio: 'Loves hiking and culture trails',
+        hometownDistrict: 'Galle',
+        preferredLanguage: 'Tamil',
+        travelInterests: captureAny(named: 'travelInterests'),
       ),
-    ).called(1);
+    );
+    verification.called(1);
+
+    final capturedInterests = verification.captured.single as List<String>;
+
+    expect(capturedInterests, isNotEmpty);
   });
 }
