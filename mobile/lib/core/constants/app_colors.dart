@@ -18,6 +18,7 @@ class AppColors {
   static const Color success = Color(0xFF1F8A70);
   static const Color warning = Color(0xFFB7791F);
   static const Color error = Color(0xFFB42318);
+  static const Color accent = Color(0xFFFFB020); // Golden accent for gamified UI
 
   // Dark theme surfaces.
   static const Color backgroundDark = Color(0xFF0B0F14);
