@@ -15,7 +15,7 @@ void main() {
     dio = MockDio();
     api = ProfileApi(dio: dio);
     registerFallbackValue(FormData());
-    registerFallbackValue(const Options());
+    registerFallbackValue(Options());
   });
 
   group('ProfileApi', () {

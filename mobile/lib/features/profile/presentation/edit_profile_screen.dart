@@ -325,10 +325,11 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       canPop: !isBusy,
       onPopInvokedWithResult: (didPop, result) async {
         if (didPop) return;
+        final navigator = Navigator.of(context);
         final shouldDiscard = await _confirmDiscardIfNeeded();
         if (!mounted) return;
         if (shouldDiscard) {
-          Navigator.of(context).pop();
+          navigator.pop();
         }
       },
       child: Scaffold(
