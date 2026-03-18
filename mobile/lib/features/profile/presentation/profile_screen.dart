@@ -25,40 +25,48 @@ class ProfileScreen extends ConsumerWidget {
         ],
       ),
       body: profileAsyncValue.when(
-        loading: () => const Center(
-          child: CircularProgressIndicator(),
-        ),
-        error: (error, stackTrace) => Center(
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(Icons.error_outline, size: 64, color: Colors.red),
-                const SizedBox(height: 16),
-                Text(
-                  _buildErrorUi(error).title,
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Colors.red),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  _buildErrorUi(error).message,
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-                const SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: () {
-                    ref.invalidate(profileBootstrapProvider);
-                    ref.invalidate(userProfileProvider);
-                    ref.invalidate(userContributionsProvider);
-                  },
-                  child: const Text('Retry'),
-                ),
-              ],
+        loading: () => _buildLoadingSkeleton(context),
+        error: (error, stackTrace) {
+          final errorUi = _buildErrorUi(error);
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.error_outline, size: 64, color: Colors.red),
+                  const SizedBox(height: 16),
+                  Text(
+                    errorUi.title,
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Colors.red),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    errorUi.message,
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () {
+                      ref.invalidate(profileBootstrapProvider);
+                      ref.invalidate(userProfileProvider);
+                      ref.invalidate(userContributionsProvider);
+                    },
+                    child: const Text('Retry'),
+                  ),
+                  if (errorUi.showSignInAction) ...[
+                    const SizedBox(height: 8),
+                    TextButton(
+                      onPressed: () => _performLogout(context, ref),
+                      child: const Text('Sign In Again'),
+                    ),
+                  ],
+                ],
+              ),
             ),
-          ),
-        ),
+          );
+        },
         data: (profile) {
           if (profile == null) {
             return Center(
@@ -246,11 +254,13 @@ class ProfileScreen extends ConsumerWidget {
           return const _ErrorUiData(
             title: 'Sign In Required',
             message: 'Please sign in to access your profile.',
+            showSignInAction: true,
           );
         case ProfileLoadErrorType.expiredToken:
           return const _ErrorUiData(
             title: 'Session Expired',
             message: 'Your login session expired. Sign in again to continue.',
+            showSignInAction: true,
           );
         case ProfileLoadErrorType.userNotRegistered:
           return const _ErrorUiData(
@@ -283,6 +293,52 @@ class ProfileScreen extends ConsumerWidget {
     return const _ErrorUiData(
       title: 'Error Loading Profile',
       message: 'An unexpected error occurred while loading profile data.',
+    );
+  }
+
+  Widget _buildLoadingSkeleton(BuildContext context) {
+    final placeholder = Colors.grey.shade300;
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              CircleAvatar(radius: 40, backgroundColor: placeholder),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(height: 16, width: 160, color: placeholder),
+                    const SizedBox(height: 8),
+                    Container(height: 12, width: 220, color: placeholder),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 24),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: List.generate(
+              3,
+              (_) => Container(height: 64, width: 86, color: placeholder),
+            ),
+          ),
+          const SizedBox(height: 24),
+          Container(height: 16, width: 170, color: placeholder),
+          const SizedBox(height: 12),
+          ...List.generate(
+            3,
+            (_) => Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Container(height: 44, width: double.infinity, color: placeholder),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -517,6 +573,11 @@ class _StatCard extends StatelessWidget {
 class _ErrorUiData {
   final String title;
   final String message;
+  final bool showSignInAction;
 
-  const _ErrorUiData({required this.title, required this.message});
+  const _ErrorUiData({
+    required this.title,
+    required this.message,
+    this.showSignInAction = false,
+  });
 }
