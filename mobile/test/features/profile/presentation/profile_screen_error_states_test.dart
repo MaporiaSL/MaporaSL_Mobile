@@ -52,4 +52,27 @@ void main() {
     expect(find.textContaining('Connect to the internet'), findsOneWidget);
     expect(find.textContaining('Exception:'), findsNothing);
   });
+
+  testWidgets('shows sign-in required message for signed-out state', (tester) async {
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          userProfileProvider.overrideWith((ref) async {
+            throw const ProfileLoadException(
+              ProfileLoadErrorType.missingToken,
+              'You are not signed in. Please log in to continue.',
+            );
+          }),
+          userContributionsProvider.overrideWith((ref) async => []),
+          topContributorsProvider.overrideWith((ref) async => []),
+        ],
+        child: const MaterialApp(home: ProfileScreen()),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+
+    expect(find.text('Sign In Required'), findsOneWidget);
+    expect(find.text('Sign In Again'), findsOneWidget);
+  });
 }
