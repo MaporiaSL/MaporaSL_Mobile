@@ -1,4 +1,4 @@
-# MAPORIA – Gemified Travel Portfolio Mobile App
+﻿# MAPORIA â€“ Gemified Travel Portfolio Mobile App
 
 > **Source of Truth & Technical Documentation (v1.0)**
 
@@ -13,7 +13,7 @@ This document acts as the **single source of truth** for the MAPORIA mobile appl
 
 ---
 
-## 📁 Documentation Structure (Logical Files)
+## ðŸ“ Documentation Structure (Logical Files)
 
 This single document represents multiple `.md` files merged for clarity:
 
@@ -36,7 +36,7 @@ This single document represents multiple `.md` files merged for clarity:
 
 ## Project Name
 
-**MAPORIA** – A Gemified Travel Portfolio of Sri Lanka
+**MAPORIA** â€“ A Gemified Travel Portfolio of Sri Lanka
 
 ## Project Type
 
@@ -66,10 +66,10 @@ The app encourages **physical travel**, **exploration**, and **cultural discover
 
 ### World Structure
 
-* **Country** → Sri Lanka
-* **Provinces** → 9
-* **Districts** → 25
-* **Places** → Multiple per district
+* **Country** â†’ Sri Lanka
+* **Provinces** â†’ 9
+* **Districts** â†’ 25
+* **Places** â†’ Multiple per district
 
 ### Fog / Cloud Mechanism
 
@@ -86,8 +86,8 @@ The app encourages **physical travel**, **exploration**, and **cultural discover
 
 ### Unlock Logic
 
-* Visiting all places in a district → **District unlocked**
-* Unlocking all districts in a province → **Province unlocked**
+* Visiting all places in a district â†’ **District unlocked**
+* Unlocking all districts in a province â†’ **Province unlocked**
 
 ---
 
@@ -97,8 +97,8 @@ The app encourages **physical travel**, **exploration**, and **cultural discover
 
 ## Places System (Core Foundation)
 
-**Status**: 📋 Planning Phase – Ready for implementation  
-**Criticality**: 🔴 CRITICAL – Central to all trip planning
+**Status**: ðŸ“‹ Planning Phase â€“ Ready for implementation  
+**Criticality**: ðŸ”´ CRITICAL â€“ Central to all trip planning
 
 This is not a dedicated UI page, but a **foundational data system** that every user encounters when planning trips.
 
@@ -112,16 +112,16 @@ This is not a dedicated UI page, but a **foundational data system** that every u
 ### Feature Highlight: Gamified Contributions
 
 Users who suggest new places earn:
-- 🏅 Badges: Explorer (1), Local Guide (5), Curator (10), Legend (20+)
-- 📊 Public profile stats: "Places Contributed"
-- 👥 Leaderboard position
-- 🎖️ Special recognition on contributed place cards
+- ðŸ… Badges: Explorer (1), Local Guide (5), Curator (10), Legend (20+)
+- ðŸ“Š Public profile stats: "Places Contributed"
+- ðŸ‘¥ Leaderboard position
+- ðŸŽ–ï¸ Special recognition on contributed place cards
 
 ### Documentation References
 
-- **Feature Spec**: [PLACES_FEATURE_SPEC.md](../06_implementation/PLACES_FEATURE_SPEC.md)
-- **Implementation Plan**: [PLACES_IMPLEMENTATION_PLAN.md](../06_implementation/PLACES_IMPLEMENTATION_PLAN.md)
-- **Seed Data**: [places_seed_data.json](../../project_resorces/places_seed_data.json) (42 curated places)
+- **Feature Spec**: [PLACES_FEATURE_SPEC.md](../_archive/PLACES_FEATURE_SPEC.md)
+- **Implementation Plan**: [PLACES_IMPLEMENTATION_PLAN.md](../_archive/PLACES_IMPLEMENTATION_PLAN.md)
+- **Seed Data**: [places_seed_data.json](../../project_resources/places_seed_data.json) (42 curated places)
 
 ---
 
@@ -129,17 +129,17 @@ Users who suggest new places earn:
 
 * App Launch
 
-  * If not logged in → Login / Register screen
-  * If logged in → Home Map Screen
+  * If not logged in â†’ Login / Register screen
+  * If logged in â†’ Home Map Screen
 
 Authentication supports:
 
 * Email + Password
-* OAuth (Google – optional)
+* OAuth (Google â€“ optional)
 
 ---
 
-## Home Screen – Interactive Sri Lanka Map
+## Home Screen â€“ Interactive Sri Lanka Map
 
 ### Map Characteristics
 
@@ -150,7 +150,7 @@ Authentication supports:
 
 ### Map Interactions
 
-* Tap District → Popup Panel
+* Tap District â†’ Popup Panel
 * Popup contains:
 
   * District description
@@ -166,7 +166,7 @@ Authentication supports:
 1. User opens place from district panel
 2. App requests GPS permission
 3. GPS coordinates compared with place geotag
-4. If within allowed radius → Mark as visited
+4. If within allowed radius â†’ Mark as visited
 
 ### Result
 
@@ -210,9 +210,9 @@ Achievements are:
 
 * MAPORIA team creates themed itineraries
 * Examples:
-  - "Cultural Triangle Heritage Tour" (Sigiriya → Dambulla → Kandy)
-  - "South Coast Beach Escape" (Mirissa → Unawatuna → Galle)
-  - "Highland Adventure" (Ella → Horton Plains → Nuwara Eliya)
+  - "Cultural Triangle Heritage Tour" (Sigiriya â†’ Dambulla â†’ Kandy)
+  - "South Coast Beach Escape" (Mirissa â†’ Unawatuna â†’ Galle)
+  - "Highland Adventure" (Ella â†’ Horton Plains â†’ Nuwara Eliya)
 
 * User adapts:
   - Dates
@@ -298,7 +298,7 @@ Each trip shows:
 
 ---
 
-## Add New Place (User Contribution – Verified Submission)
+## Add New Place (User Contribution â€“ Verified Submission)
 
 ### User Submission Workflow
 
@@ -365,10 +365,10 @@ As users contribute verified places:
 
 | Contributions | Badge | Icon |
 |---|---|---|
-| 1 approved | Explorer | 🏅 |
-| 5 approved | Local Guide | 🎖️ |
-| 10 approved | Place Curator | 👑 |
-| 20+ approved | Community Legend | 🌟 |
+| 1 approved | Explorer | ðŸ… |
+| 5 approved | Local Guide | ðŸŽ–ï¸ |
+| 10 approved | Place Curator | ðŸ‘‘ |
+| 20+ approved | Community Legend | ðŸŒŸ |
 
 ### Impact Metrics
 
@@ -504,17 +504,17 @@ Supabase Backend
 - List pending place submissions with status badges
 - Photo gallery viewer with contributor info
 - Verification checklist:
-  - ✅ Place exists (cross-reference Google Maps)
-  - ✅ Coordinates accurate
-  - ✅ No duplicate
-  - ✅ Public/legitimate location
-  - ✅ Photos match location
-  - ✅ Legal/safe to visit
+  - âœ… Place exists (cross-reference Google Maps)
+  - âœ… Coordinates accurate
+  - âœ… No duplicate
+  - âœ… Public/legitimate location
+  - âœ… Photos match location
+  - âœ… Legal/safe to visit
 
 **Actions**:
-- Approve → Place added to catalog, contributor notified + badge earned
-- Reject → Submission deleted, contributor notified with reason
-- Request Changes → Send feedback to contributor, keep submission pending
+- Approve â†’ Place added to catalog, contributor notified + badge earned
+- Reject â†’ Submission deleted, contributor notified with reason
+- Request Changes â†’ Send feedback to contributor, keep submission pending
 
 ### Community Moderation
 
@@ -536,35 +536,35 @@ Supabase Backend
 
 # 12. Implementation Roadmap
 
-### Phase 1 – Foundation
+### Phase 1 â€“ Foundation
 
 * Auth
 * Map UI
 * DB setup
 * **Places API + seed data import** (50-100 curated locations)
 
-### Phase 2 – Core Gameplay
+### Phase 2 â€“ Core Gameplay
 
 * Visit logic
 * Achievements
 * Cloud system
 * **Place discovery UI** (search, filter, detail view, integration with trip creation)
 
-### Phase 3 – Trips & Media
+### Phase 3 â€“ Trips & Media
 
 * Trip planner (integrated with Places system)
 * Camera
 * Album
 * **User place submission form** with photo upload
 
-### Phase 4 – Admin & Moderation
+### Phase 4 â€“ Admin & Moderation
 
 * Admin dashboard (web)
 * **Place submission review workflow** (approve/reject/changes)
 * Contributor stats & badges
 * Leaderboard
 
-### Phase 5 – Shop & Monetization
+### Phase 5 â€“ Shop & Monetization
 
 * **In-game Shop** (marketplace for cosmetics, map themes, boosters)
   * Gemstone currency (earned through gameplay)
@@ -578,7 +578,7 @@ Supabase Backend
 * Analytics dashboard for monetization metrics
 * Optional Phase 2: In-app payment integration (IAP)
 
-### Phase 6 – Social & Polish
+### Phase 6 â€“ Social & Polish
 
 * Sharing (achievements, loadouts, profile)
 * Animations & visual effects
@@ -588,3 +588,5 @@ Supabase Backend
 ---
 
 **End of Documentation**
+
+

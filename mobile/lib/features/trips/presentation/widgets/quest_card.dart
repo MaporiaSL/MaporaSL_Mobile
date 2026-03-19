@@ -1,16 +1,12 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../exploration/data/models/exploration_models.dart';
-import '../../../exploration/providers/exploration_provider.dart';
 import '../../../visits/presentation/widgets/dynamic_visit_sheet.dart';
 
 class QuestCard extends ConsumerWidget {
   final DistrictAssignment assignment;
 
-  const QuestCard({
-    super.key,
-    required this.assignment,
-  });
+  const QuestCard({super.key, required this.assignment});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -32,7 +28,10 @@ class QuestCard extends ConsumerWidget {
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(assignment.province, style: Theme.of(context).textTheme.bodySmall),
+            Text(
+              assignment.province,
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
             const SizedBox(height: 8),
             _buildProgressBar(context, progress),
           ],
@@ -40,7 +39,9 @@ class QuestCard extends ConsumerWidget {
         trailing: isUnlocked
             ? const Icon(Icons.verified, color: Colors.green)
             : Text('${assignment.visitedCount}/${assignment.assignedCount}'),
-        children: assignment.locations.map((loc) => _buildLocationTile(context, ref, loc)).toList(),
+        children: assignment.locations
+            .map((loc) => _buildLocationTile(context, ref, loc))
+            .toList(),
       ),
     );
   }
@@ -49,7 +50,9 @@ class QuestCard extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        color: isUnlocked ? Colors.green.withOpacity(0.1) : Colors.orange.withOpacity(0.1),
+        color: isUnlocked
+            ? Colors.green.withValues(alpha: 0.1)
+            : Colors.orange.withValues(alpha: 0.1),
         shape: BoxShape.circle,
       ),
       child: Icon(
@@ -73,7 +76,11 @@ class QuestCard extends ConsumerWidget {
     );
   }
 
-  Widget _buildLocationTile(BuildContext context, WidgetRef ref, ExplorationLocation location) {
+  Widget _buildLocationTile(
+    BuildContext context,
+    WidgetRef ref,
+    ExplorationLocation location,
+  ) {
     return ListTile(
       dense: true,
       leading: Icon(
@@ -108,3 +115,4 @@ class QuestCard extends ConsumerWidget {
     );
   }
 }
+

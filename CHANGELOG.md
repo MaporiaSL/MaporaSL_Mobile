@@ -1,4 +1,4 @@
-# MAPORIA Development Changelog
+﻿# MAPORIA Development Changelog
 
 > **Purpose**: Track all major changes, decisions, and milestones in the project
 
@@ -73,7 +73,7 @@
 - **Mobile**: Two shop tabs, cart system, receipt uploader
 - **Database**: 5 new collections (3 for real store, 2 for in-app)
 - **Currency**: LKR for real store, Gemstones/Travel Coins for in-app
-- **Payment**: Manual bank transfer (Phase 1) → Payment gateway (Phase 5)
+- **Payment**: Manual bank transfer (Phase 1) â†’ Payment gateway (Phase 5)
 
 ### Phase Timeline
 - **Phase 1-2** (2-3 weeks): Real store MVP (products, cart, manual checkout)
@@ -112,7 +112,7 @@
 - **Documentation**:
   - `docs/06_implementation/PLACES_FEATURE_SPEC.md` - Complete feature spec with data models, workflows, and success metrics
   - `docs/06_implementation/PLACES_IMPLEMENTATION_PLAN.md` - 6-phase step-by-step implementation guide (50+ pages)
-  - `project_resorces/places_seed_data.json` - Initial 42 curated Sri Lankan attractions with full metadata
+  - `project_resources/places_seed_data.json` - Initial 42 curated Sri Lankan attractions with full metadata
 
 - **Updated Project Docs**:
   - `docs/01_planning/PROJECT_SOURCE_OF_TRUTH.md` - Added Places as critical foundation, updated roadmap phases 1-5
@@ -180,23 +180,23 @@
   - Updated PHASE2_DETAILED_PLAN.md marking all 9 steps complete
 
 ### Completed Tasks
-- ✅ Step 1: express-validator package installed
-- ✅ Step 2: Travel model created with indexes and validation hooks
-- ✅ Step 3: Destination model created with nested relationships
-- ✅ Step 4: Input validators for both models
-- ✅ Step 5: Travel controller with all CRUD operations
-- ✅ Step 6: Destination controller with nested resource handling
-- ✅ Step 7: Routes for both travel and destinations with mergeParams
-- ✅ Step 8: Routes wired into server with JWT middleware chain
-- ✅ Step 9: API endpoints tested and verified
+- âœ… Step 1: express-validator package installed
+- âœ… Step 2: Travel model created with indexes and validation hooks
+- âœ… Step 3: Destination model created with nested relationships
+- âœ… Step 4: Input validators for both models
+- âœ… Step 5: Travel controller with all CRUD operations
+- âœ… Step 6: Destination controller with nested resource handling
+- âœ… Step 7: Routes for both travel and destinations with mergeParams
+- âœ… Step 8: Routes wired into server with JWT middleware chain
+- âœ… Step 9: API endpoints tested and verified
 
 ### Testing & Validation
-- ✅ Server boots without errors with new routes
-- ✅ Health endpoint responds (unprotected)
-- ✅ Travel endpoints protected by JWT (401 without token)
-- ✅ Routes wired correctly with proper middleware order
-- ✅ Nested destination routes configured with mergeParams: true
-- ✅ Error handling chain working (404 for missing resources)
+- âœ… Server boots without errors with new routes
+- âœ… Health endpoint responds (unprotected)
+- âœ… Travel endpoints protected by JWT (401 without token)
+- âœ… Routes wired correctly with proper middleware order
+- âœ… Nested destination routes configured with mergeParams: true
+- âœ… Error handling chain working (404 for missing resources)
 
 ### Technical Details
 - **Model Indexes**: Single on userId; compound on (userId, startDate) for travel; (userId, travelId) for destinations
@@ -248,38 +248,38 @@
   - `docs/02_implementation/AUTH_FEATURE_SPEC.md` - API contracts & testing matrix
 
 ### Completed Tasks
-- ✅ Step 1: Backend project structure initialized
-- ✅ Step 2: MongoDB Atlas connection configured & validated
-- ✅ Step 3: User model with indexes created
-- ✅ Step 4: Auth0 JWT middleware implemented
-- ✅ Step 5: Auth controller with full business logic
-- ✅ Step 6: Auth routes with protection
-- ✅ Step 7: Server integration with error handling
-- ✅ Step 9: All endpoints tested & verified (register, me, logout)
+- âœ… Step 1: Backend project structure initialized
+- âœ… Step 2: MongoDB Atlas connection configured & validated
+- âœ… Step 3: User model with indexes created
+- âœ… Step 4: Auth0 JWT middleware implemented
+- âœ… Step 5: Auth controller with full business logic
+- âœ… Step 6: Auth routes with protection
+- âœ… Step 7: Server integration with error handling
+- âœ… Step 9: All endpoints tested & verified (register, me, logout)
 
 ### Testing & Validation
-- ✅ MongoDB connection established (Atlas)
-- ✅ Health check endpoint responds
-- ✅ Auth0 token retrieval (Client Credentials flow)
-- ✅ JWT validation on protected routes
-- ✅ User registration with duplicate handling
-- ✅ User profile retrieval (GET /me)
-- ✅ Logout endpoint response
+- âœ… MongoDB connection established (Atlas)
+- âœ… Health check endpoint responds
+- âœ… Auth0 token retrieval (Client Credentials flow)
+- âœ… JWT validation on protected routes
+- âœ… User registration with duplicate handling
+- âœ… User profile retrieval (GET /me)
+- âœ… Logout endpoint response
 
 ### Technical Details
 - **Backend Stack**: Node.js + Express.js + MongoDB + Auth0 (JWT RS256)
 - **Database**: MongoDB Atlas (Cloud)
 - **Auth**: Auth0 with JWKS-RSA for public key validation
-- **Middleware Chain**: helmet → cors → morgan → express.json → JWT validation → route handlers
+- **Middleware Chain**: helmet â†’ cors â†’ morgan â†’ express.json â†’ JWT validation â†’ route handlers
 - **Error Handling**: Structured JSON responses with proper HTTP status codes
 - **Data Isolation**: All queries scoped by `userId` (from Auth0 `sub` claim)
 
 ### Security Measures Implemented
-- ✅ RS256 JWT signature validation against Auth0 public keys
-- ✅ CORS configured for localhost development
-- ✅ Helmet security headers enabled
-- ✅ MongoDB unique indexes on auth0Id and email
-- ✅ Sensitive credentials in `.env` (not committed)
+- âœ… RS256 JWT signature validation against Auth0 public keys
+- âœ… CORS configured for localhost development
+- âœ… Helmet security headers enabled
+- âœ… MongoDB unique indexes on auth0Id and email
+- âœ… Sensitive credentials in `.env` (not committed)
 
 ### Decisions Made
 - **Auth Approach**: Auth0 (external provider) instead of custom JWT
@@ -339,7 +339,7 @@
   - **Hosting**: Vercel/Railway (free tier)
 
 ### Security Concerns Identified
-- ⚠️ **CRITICAL**: Mapbox API token exposed in `mobile/lib/main.dart` (line 12)
+- âš ï¸ **CRITICAL**: Mapbox API token exposed in `mobile/lib/main.dart` (line 12)
   - **Action Required**: Move to environment variables
   - **Priority**: HIGH
 
@@ -348,7 +348,7 @@
 - **Frontend**: Basic Flutter structure exists with some started features
   - Existing features: home, map, profile, settings
   - Using: Riverpod for state management, Google Fonts, Mapbox
-- **Documentation**: ✅ Organized and structured
+- **Documentation**: âœ… Organized and structured
 
 ### Next Actions
 1. Move sensitive keys to environment variables
@@ -415,3 +415,4 @@
 ---
 
 **Note**: All team members should update this file when making significant changes or decisions.
+

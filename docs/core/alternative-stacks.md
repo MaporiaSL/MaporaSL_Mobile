@@ -1,4 +1,4 @@
-# MAPORIA Alternative Tech Stacks - Professional Architecture
+﻿# MAPORIA Alternative Tech Stacks - Professional Architecture
 
 > **For University Project Prototypes**  
 > **Date**: January 1, 2026  
@@ -10,35 +10,35 @@
 
 ```
 Monolithic Backend (Supabase):
-┌─────────────────┐
-│   Supabase      │
-├─────────────────┤
-│ Auth            │
-│ Database        │
-│ Storage         │
-│ Realtime        │
-└─────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚   Supabase      â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ Auth            â”‚
+â”‚ Database        â”‚
+â”‚ Storage         â”‚
+â”‚ Realtime        â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 
 Problems:
-❌ Vendor lock-in
-❌ Harder to replace components
-❌ Less flexible
+âŒ Vendor lock-in
+âŒ Harder to replace components
+âŒ Less flexible
 
 ---
 
 Microservices/Separated Stack:
-┌──────────────┐  ┌──────────────┐  ┌──────────────┐
-│ Auth Service │  │ Database     │  │ Storage      │
-│ (Auth0/JWT)  │  │ (MongoDB)    │  │ (Firebase/S3)│
-└──────────────┘  └──────────────┘  └──────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚ Auth Service â”‚  â”‚ Database     â”‚  â”‚ Storage      â”‚
+â”‚ (Auth0/JWT)  â”‚  â”‚ (MongoDB)    â”‚  â”‚ (Firebase/S3)â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 
 Benefits:
-✅ Professional architecture
-✅ Easy to replace any component
-✅ Scale independently
-✅ Matches real-world systems
-✅ Better for learning
-✅ Prepare for enterprise migration
+âœ… Professional architecture
+âœ… Easy to replace any component
+âœ… Scale independently
+âœ… Matches real-world systems
+âœ… Better for learning
+âœ… Prepare for enterprise migration
 ```
 
 ---
@@ -49,15 +49,15 @@ Benefits:
 
 ```
 Flutter App
-    ↓
-┌─────────────────────────────────────────────────┐
-│         Express.js API (Node.js)                │
-│         Your custom backend server              │
-└───────────────┬─────────────────┬───────────────┘
-                │                 │
-       ┌────────┴────────┐  ┌─────┴──────────┐
-       │                 │  │                │
-       ↓                 ↓  ↓                ↓
+    â†“
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚         Express.js API (Node.js)                â”‚
+â”‚         Your custom backend server              â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                â”‚                 â”‚
+       â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+       â”‚                 â”‚  â”‚                â”‚
+       â†“                 â†“  â†“                â†“
     MongoDB         Firebase         Auth0/JWT
     (Database)      (Storage)        (Auth)
     Atlas           Storage
@@ -69,30 +69,30 @@ Flutter App
 
 ```
 Why Express.js?
-✅ Simple, lightweight
-✅ Perfect for learning
-✅ Large ecosystem
-✅ Easy to deploy
-✅ Great documentation
-✅ Industry standard for startups
-✅ Free hosting options
+âœ… Simple, lightweight
+âœ… Perfect for learning
+âœ… Large ecosystem
+âœ… Easy to deploy
+âœ… Great documentation
+âœ… Industry standard for startups
+âœ… Free hosting options
 ```
 
 ### 2. **Database: MongoDB Atlas** (FREE)
 
 ```
 Free tier:
-✅ 512MB storage
-✅ Unlimited requests
-✅ 3 replicas
-✅ Auto-backup
-✅ M0 cluster (always free)
+âœ… 512MB storage
+âœ… Unlimited requests
+âœ… 3 replicas
+âœ… Auto-backup
+âœ… M0 cluster (always free)
 
 Perfect for:
-✅ University projects
-✅ Prototypes
-✅ Up to ~100k users
-✅ Document-based data (flexible schema)
+âœ… University projects
+âœ… Prototypes
+âœ… Up to ~100k users
+âœ… Document-based data (flexible schema)
 ```
 
 ### 3. **Authentication: Multiple Options**
@@ -108,25 +108,25 @@ Perfect for:
 
 ```
 Free tier:
-✅ 5GB storage
-✅ 1GB/day download
-✅ Easy CDN
+âœ… 5GB storage
+âœ… 1GB/day download
+âœ… Easy CDN
 
 Perfect for:
-✅ Photos
-✅ User avatars
-✅ Media files
+âœ… Photos
+âœ… User avatars
+âœ… Media files
 ```
 
 ### 5. **Hosting Options** (FREE)
 
 | Platform | Free Tier | Storage | Why |
 |----------|-----------|---------|-----|
-| **Vercel** | ✅ Yes | Unlimited | Best for Node.js |
-| **Render** | ✅ Yes | Unlimited | Good alternative |
-| **Railway** | ✅ Limited ($5 credit) | Sufficient | Easy migration |
-| **Heroku** | ❌ Free tier removed | - | Use alternatives |
-| **Google Cloud** | ✅ $300 credit | Large | Good long-term |
+| **Vercel** | âœ… Yes | Unlimited | Best for Node.js |
+| **Render** | âœ… Yes | Unlimited | Good alternative |
+| **Railway** | âœ… Limited ($5 credit) | Sufficient | Easy migration |
+| **Heroku** | âŒ Free tier removed | - | Use alternatives |
+| **Google Cloud** | âœ… $300 credit | Large | Good long-term |
 
 ---
 
@@ -147,15 +147,15 @@ Hosting:   Vercel (free) or Railway
 
 ```
 Mobile App (Flutter)
-    │
-    ├─ JWT Token (stored securely)
-    │
-    ↓
+    â”‚
+    â”œâ”€ JWT Token (stored securely)
+    â”‚
+    â†“
 Express.js Server
-    │
-    ├─────────────────────┬────────────────┐
-    │                     │                │
-    ↓                     ↓                ↓
+    â”‚
+    â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+    â”‚                     â”‚                â”‚
+    â†“                     â†“                â†“
 MongoDB         Firebase             Logic
 (Visits,        (Photos,             (Validation,
  Trips,         Avatars)            Calculations)
@@ -167,55 +167,55 @@ MongoDB         Firebase             Logic
 
 ```
 backend/
-├── src/
-│   ├── server.ts                    # Main entry
-│   ├── config/
-│   │   ├── database.ts              # MongoDB connection
-│   │   ├── firebase.ts              # Firebase config
-│   │   └── env.ts                   # Environment variables
-│   ├── middleware/
-│   │   ├── auth.ts                  # JWT verification
-│   │   ├── errorHandler.ts
-│   │   └── corsHandler.ts
-│   ├── routes/
-│   │   ├── auth.routes.ts           # /auth/register, /auth/login
-│   │   ├── users.routes.ts          # /users/profile
-│   │   ├── places.routes.ts         # /places
-│   │   ├── visits.routes.ts         # /visits
-│   │   ├── trips.routes.ts          # /trips
-│   │   ├── photos.routes.ts         # /photos
-│   │   └── achievements.routes.ts   # /achievements
-│   ├── controllers/
-│   │   ├── auth.controller.ts       # Business logic
-│   │   ├── users.controller.ts
-│   │   ├── places.controller.ts
-│   │   ├── visits.controller.ts
-│   │   ├── trips.controller.ts
-│   │   └── achievements.controller.ts
-│   ├── models/
-│   │   ├── User.ts                  # MongoDB schemas
-│   │   ├── Place.ts
-│   │   ├── Visit.ts
-│   │   ├── Trip.ts
-│   │   ├── Achievement.ts
-│   │   └── Photo.ts
-│   ├── services/
-│   │   ├── auth.service.ts          # Auth logic
-│   │   ├── user.service.ts
-│   │   ├── place.service.ts
-│   │   ├── visit.service.ts
-│   │   ├── firebase.service.ts      # Storage uploads
-│   │   └── jwt.service.ts
-│   ├── utils/
-│   │   ├── validators.ts
-│   │   ├── helpers.ts
-│   │   └── errors.ts
-│   └── types/
-│       └── index.ts                 # TypeScript types
-├── package.json
-├── tsconfig.json
-├── .env.example
-└── README.md
+â”œâ”€â”€ src/
+â”‚   â”œâ”€â”€ server.ts                    # Main entry
+â”‚   â”œâ”€â”€ config/
+â”‚   â”‚   â”œâ”€â”€ database.ts              # MongoDB connection
+â”‚   â”‚   â”œâ”€â”€ firebase.ts              # Firebase config
+â”‚   â”‚   â””â”€â”€ env.ts                   # Environment variables
+â”‚   â”œâ”€â”€ middleware/
+â”‚   â”‚   â”œâ”€â”€ auth.ts                  # JWT verification
+â”‚   â”‚   â”œâ”€â”€ errorHandler.ts
+â”‚   â”‚   â””â”€â”€ corsHandler.ts
+â”‚   â”œâ”€â”€ routes/
+â”‚   â”‚   â”œâ”€â”€ auth.routes.ts           # /auth/register, /auth/login
+â”‚   â”‚   â”œâ”€â”€ users.routes.ts          # /users/profile
+â”‚   â”‚   â”œâ”€â”€ places.routes.ts         # /places
+â”‚   â”‚   â”œâ”€â”€ visits.routes.ts         # /visits
+â”‚   â”‚   â”œâ”€â”€ trips.routes.ts          # /trips
+â”‚   â”‚   â”œâ”€â”€ photos.routes.ts         # /photos
+â”‚   â”‚   â””â”€â”€ achievements.routes.ts   # /achievements
+â”‚   â”œâ”€â”€ controllers/
+â”‚   â”‚   â”œâ”€â”€ auth.controller.ts       # Business logic
+â”‚   â”‚   â”œâ”€â”€ users.controller.ts
+â”‚   â”‚   â”œâ”€â”€ places.controller.ts
+â”‚   â”‚   â”œâ”€â”€ visits.controller.ts
+â”‚   â”‚   â”œâ”€â”€ trips.controller.ts
+â”‚   â”‚   â””â”€â”€ achievements.controller.ts
+â”‚   â”œâ”€â”€ models/
+â”‚   â”‚   â”œâ”€â”€ User.ts                  # MongoDB schemas
+â”‚   â”‚   â”œâ”€â”€ Place.ts
+â”‚   â”‚   â”œâ”€â”€ Visit.ts
+â”‚   â”‚   â”œâ”€â”€ Trip.ts
+â”‚   â”‚   â”œâ”€â”€ Achievement.ts
+â”‚   â”‚   â””â”€â”€ Photo.ts
+â”‚   â”œâ”€â”€ services/
+â”‚   â”‚   â”œâ”€â”€ auth.service.ts          # Auth logic
+â”‚   â”‚   â”œâ”€â”€ user.service.ts
+â”‚   â”‚   â”œâ”€â”€ place.service.ts
+â”‚   â”‚   â”œâ”€â”€ visit.service.ts
+â”‚   â”‚   â”œâ”€â”€ firebase.service.ts      # Storage uploads
+â”‚   â”‚   â””â”€â”€ jwt.service.ts
+â”‚   â”œâ”€â”€ utils/
+â”‚   â”‚   â”œâ”€â”€ validators.ts
+â”‚   â”‚   â”œâ”€â”€ helpers.ts
+â”‚   â”‚   â””â”€â”€ errors.ts
+â”‚   â””â”€â”€ types/
+â”‚       â””â”€â”€ index.ts                 # TypeScript types
+â”œâ”€â”€ package.json
+â”œâ”€â”€ tsconfig.json
+â”œâ”€â”€ .env.example
+â””â”€â”€ README.md
 ```
 
 ## Example: Express Auth Endpoint (Custom JWT)
@@ -544,7 +544,7 @@ export class VisitsController {
 
       // Create visit (automatically scoped to userId)
       const visit = new Visit({
-        userId,        // ← User is automatically scoped
+        userId,        // â† User is automatically scoped
         placeId,
         visitedAt: new Date(),
       });
@@ -567,17 +567,17 @@ export class VisitsController {
 
 ```
 Difference:
-Instead of custom JWT → Use Auth0
+Instead of custom JWT â†’ Use Auth0
 
 Benefits:
-✅ Don't maintain auth code
-✅ Social login ready
-✅ Professional security
-✅ MFA support
+âœ… Don't maintain auth code
+âœ… Social login ready
+âœ… Professional security
+âœ… MFA support
 
 Free tier:
-✅ 7,000 users
-✅ 1M active users
+âœ… 7,000 users
+âœ… 1M active users
 ```
 
 ## Setup
@@ -632,12 +632,12 @@ class Auth0Service {
 
 ```
 Flutter App
-    ↓
+    â†“
 Express.js API
-    ↓
-┌────────────────┬────────────────┐
-│                │                │
-↓                ↓                ↓
+    â†“
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                â”‚                â”‚
+â†“                â†“                â†“
 Firebase         MongoDB        Custom
 Auth            (if using)      Logic
 ```
@@ -646,10 +646,10 @@ Auth            (if using)      Logic
 
 ```
 Use when:
-✅ Want social login (Google, Facebook)
-✅ Want push notifications
-✅ Want analytics
-✅ But also want custom backend control
+âœ… Want social login (Google, Facebook)
+âœ… Want push notifications
+âœ… Want analytics
+âœ… But also want custom backend control
 ```
 
 ## Setup
@@ -705,72 +705,72 @@ export async function firebaseAuthMiddleware(
 
 ```
 Why Nest.js?
-✅ Enterprise framework
-✅ TypeScript-first
-✅ Dependency injection
-✅ Modular architecture
-✅ Professional patterns
-✅ Scalable
-✅ Good for portfolio
+âœ… Enterprise framework
+âœ… TypeScript-first
+âœ… Dependency injection
+âœ… Modular architecture
+âœ… Professional patterns
+âœ… Scalable
+âœ… Good for portfolio
 ```
 
 ## Project Structure
 
 ```
 backend/
-├── src/
-│   ├── main.ts                      # Entry point
-│   ├── app.module.ts                # App module
-│   ├── auth/
-│   │   ├── auth.controller.ts
-│   │   ├── auth.service.ts
-│   │   ├── auth.module.ts
-│   │   ├── jwt.strategy.ts
-│   │   └── local.strategy.ts
-│   ├── users/
-│   │   ├── users.controller.ts
-│   │   ├── users.service.ts
-│   │   ├── users.module.ts
-│   │   ├── schemas/
-│   │   │   └── user.schema.ts
-│   │   └── dto/
-│   │       ├── create-user.dto.ts
-│   │       └── update-user.dto.ts
-│   ├── places/
-│   │   ├── places.controller.ts
-│   │   ├── places.service.ts
-│   │   ├── places.module.ts
-│   │   ├── schemas/
-│   │   │   └── place.schema.ts
-│   │   └── dto/
-│   │       ├── create-place.dto.ts
-│   │       └── place-query.dto.ts
-│   ├── visits/
-│   │   ├── visits.controller.ts
-│   │   ├── visits.service.ts
-│   │   ├── visits.module.ts
-│   │   └── schemas/
-│   │       └── visit.schema.ts
-│   ├── trips/
-│   │   ├── trips.controller.ts
-│   │   ├── trips.service.ts
-│   │   ├── trips.module.ts
-│   │   └── schemas/
-│   │       └── trip.schema.ts
-│   ├── common/
-│   │   ├── guards/
-│   │   │   └── jwt-auth.guard.ts
-│   │   ├── decorators/
-│   │   │   └── user.decorator.ts
-│   │   └── filters/
-│   │       └── http-exception.filter.ts
-│   └── config/
-│       ├── database.config.ts
-│       ├── firebase.config.ts
-│       └── env.ts
-├── test/
-├── package.json
-└── docker-compose.yml
+â”œâ”€â”€ src/
+â”‚   â”œâ”€â”€ main.ts                      # Entry point
+â”‚   â”œâ”€â”€ app.module.ts                # App module
+â”‚   â”œâ”€â”€ auth/
+â”‚   â”‚   â”œâ”€â”€ auth.controller.ts
+â”‚   â”‚   â”œâ”€â”€ auth.service.ts
+â”‚   â”‚   â”œâ”€â”€ auth.module.ts
+â”‚   â”‚   â”œâ”€â”€ jwt.strategy.ts
+â”‚   â”‚   â””â”€â”€ local.strategy.ts
+â”‚   â”œâ”€â”€ users/
+â”‚   â”‚   â”œâ”€â”€ users.controller.ts
+â”‚   â”‚   â”œâ”€â”€ users.service.ts
+â”‚   â”‚   â”œâ”€â”€ users.module.ts
+â”‚   â”‚   â”œâ”€â”€ schemas/
+â”‚   â”‚   â”‚   â””â”€â”€ user.schema.ts
+â”‚   â”‚   â””â”€â”€ dto/
+â”‚   â”‚       â”œâ”€â”€ create-user.dto.ts
+â”‚   â”‚       â””â”€â”€ update-user.dto.ts
+â”‚   â”œâ”€â”€ places/
+â”‚   â”‚   â”œâ”€â”€ places.controller.ts
+â”‚   â”‚   â”œâ”€â”€ places.service.ts
+â”‚   â”‚   â”œâ”€â”€ places.module.ts
+â”‚   â”‚   â”œâ”€â”€ schemas/
+â”‚   â”‚   â”‚   â””â”€â”€ place.schema.ts
+â”‚   â”‚   â””â”€â”€ dto/
+â”‚   â”‚       â”œâ”€â”€ create-place.dto.ts
+â”‚   â”‚       â””â”€â”€ place-query.dto.ts
+â”‚   â”œâ”€â”€ visits/
+â”‚   â”‚   â”œâ”€â”€ visits.controller.ts
+â”‚   â”‚   â”œâ”€â”€ visits.service.ts
+â”‚   â”‚   â”œâ”€â”€ visits.module.ts
+â”‚   â”‚   â””â”€â”€ schemas/
+â”‚   â”‚       â””â”€â”€ visit.schema.ts
+â”‚   â”œâ”€â”€ trips/
+â”‚   â”‚   â”œâ”€â”€ trips.controller.ts
+â”‚   â”‚   â”œâ”€â”€ trips.service.ts
+â”‚   â”‚   â”œâ”€â”€ trips.module.ts
+â”‚   â”‚   â””â”€â”€ schemas/
+â”‚   â”‚       â””â”€â”€ trip.schema.ts
+â”‚   â”œâ”€â”€ common/
+â”‚   â”‚   â”œâ”€â”€ guards/
+â”‚   â”‚   â”‚   â””â”€â”€ jwt-auth.guard.ts
+â”‚   â”‚   â”œâ”€â”€ decorators/
+â”‚   â”‚   â”‚   â””â”€â”€ user.decorator.ts
+â”‚   â”‚   â””â”€â”€ filters/
+â”‚   â”‚       â””â”€â”€ http-exception.filter.ts
+â”‚   â””â”€â”€ config/
+â”‚       â”œâ”€â”€ database.config.ts
+â”‚       â”œâ”€â”€ firebase.config.ts
+â”‚       â””â”€â”€ env.ts
+â”œâ”€â”€ test/
+â”œâ”€â”€ package.json
+â””â”€â”€ docker-compose.yml
 ```
 
 ## Nest.js Example
@@ -891,15 +891,15 @@ export class VisitsController {
 | Factor | Option 1A (Express + Custom JWT) | Option 1B (Express + Auth0) | Option 2 (Firebase + Express) | Option 3 (Nest.js) |
 |--------|--------------------------------|----------------------------|-------------------------------|------------------|
 | **Complexity** | Easy | Easy | Medium | Hard |
-| **Learning Value** | ✅✅✅ High | ✅ Good | ✅ Good | ✅✅✅ Very High |
-| **Production Ready** | ✅ Good | ✅✅ Excellent | ✅ Good | ✅✅ Excellent |
+| **Learning Value** | âœ…âœ…âœ… High | âœ… Good | âœ… Good | âœ…âœ…âœ… Very High |
+| **Production Ready** | âœ… Good | âœ…âœ… Excellent | âœ… Good | âœ…âœ… Excellent |
 | **Time to MVP** | 1 week | 3 days | 3 days | 2 weeks |
-| **Free Tier** | ✅ Good | ✅✅ Good | ✅✅ Excellent | ✅ Good |
+| **Free Tier** | âœ… Good | âœ…âœ… Good | âœ…âœ… Excellent | âœ… Good |
 | **Maintenance** | Medium (JWT) | Low (Auth0 handles) | Low | Medium-High |
-| **Portfolio Value** | ✅✅ Good | ✅ Good | ✅ Medium | ✅✅✅ Excellent |
-| **Social Login** | ❌ Need OAuth | ✅ Easy | ✅ Easy | Need OAuth |
-| **Push Notifications** | ❌ Need Firebase | ⚠️ Can integrate | ✅ Built-in | Need Firebase |
-| **Real-time** | ❌ Manual setup | ⚠️ Manual setup | ✅ Firebase Realtime | ❌ Manual setup |
+| **Portfolio Value** | âœ…âœ… Good | âœ… Good | âœ… Medium | âœ…âœ…âœ… Excellent |
+| **Social Login** | âŒ Need OAuth | âœ… Easy | âœ… Easy | Need OAuth |
+| **Push Notifications** | âŒ Need Firebase | âš ï¸ Can integrate | âœ… Built-in | Need Firebase |
+| **Real-time** | âŒ Manual setup | âš ï¸ Manual setup | âœ… Firebase Realtime | âŒ Manual setup |
 
 ---
 
@@ -910,28 +910,28 @@ export class VisitsController {
 ### Why?
 
 ```
-✅ Best learning experience
+âœ… Best learning experience
   - Understand authentication end-to-end
   - Learn backend fundamentals
   - Understand JWT tokens
   - Great for examiners to see
 
-✅ Professional architecture
+âœ… Professional architecture
   - Separate concerns
   - Scalable design
   - Portfolio-worthy
 
-✅ Free forever
+âœ… Free forever
   - No service costs
   - Can migrate later
   - MongoDB free tier sufficient
 
-✅ Fast implementation
+âœ… Fast implementation
   - Start in 1 week
   - Straightforward flow
   - Can focus on features
 
-✅ Easy to explain in presentation
+âœ… Easy to explain in presentation
   - Show JWT flow
   - Explain data isolation
   - Demonstrate separate services
@@ -941,18 +941,18 @@ export class VisitsController {
 
 ```
 Option 1B (Auth0):
-❌ Less learning (Auth0 handles auth)
-❌ Less to explain in university presentation
+âŒ Less learning (Auth0 handles auth)
+âŒ Less to explain in university presentation
 
 Option 2 (Firebase):
-❌ Vendor lock-in (Firebase)
-❌ Less control
-❌ Not as "professional looking"
+âŒ Vendor lock-in (Firebase)
+âŒ Less control
+âŒ Not as "professional looking"
 
 Option 3 (Nest.js):
-⚠️ Too complex for MVP
-⚠️ Takes more time
-✅ Good if you have 3+ months
+âš ï¸ Too complex for MVP
+âš ï¸ Takes more time
+âœ… Good if you have 3+ months
 ```
 
 ---
@@ -960,37 +960,37 @@ Option 3 (Nest.js):
 # Stack Recommendation: Express.js + MongoDB
 
 ```
-┌────────────────────────────────────────────────┐
-│        MAPORIA - University Project            │
-├────────────────────────────────────────────────┤
-│                                                │
-│  Frontend:                                     │
-│  └─ Flutter (Dart) - already planned          │
-│                                                │
-│  Backend:                                      │
-│  ├─ Node.js + Express.js                      │
-│  ├─ TypeScript (optional but recommended)     │
-│  └─ Custom JWT authentication                 │
-│                                                │
-│  Database:                                     │
-│  ├─ MongoDB Atlas (free M0 cluster)           │
-│  ├─ Mongoose ORM                              │
-│  └─ Indexes for performance                   │
-│                                                │
-│  Storage:                                      │
-│  ├─ Firebase Storage (user photos)            │
-│  └─ Cloudinary free tier (alternative)        │
-│                                                │
-│  Notifications:                                │
-│  └─ Firebase Cloud Messaging                  │
-│                                                │
-│  Hosting:                                      │
-│  ├─ Vercel (free)                             │
-│  └─ MongoDB Atlas (free)                      │
-│                                                │
-│  Cost: $0/month (for prototype)                │
-│                                                │
-└────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚        MAPORIA - University Project            â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚                                                â”‚
+â”‚  Frontend:                                     â”‚
+â”‚  â””â”€ Flutter (Dart) - already planned          â”‚
+â”‚                                                â”‚
+â”‚  Backend:                                      â”‚
+â”‚  â”œâ”€ Node.js + Express.js                      â”‚
+â”‚  â”œâ”€ TypeScript (optional but recommended)     â”‚
+â”‚  â””â”€ Custom JWT authentication                 â”‚
+â”‚                                                â”‚
+â”‚  Database:                                     â”‚
+â”‚  â”œâ”€ MongoDB Atlas (free M0 cluster)           â”‚
+â”‚  â”œâ”€ Mongoose ORM                              â”‚
+â”‚  â””â”€ Indexes for performance                   â”‚
+â”‚                                                â”‚
+â”‚  Storage:                                      â”‚
+â”‚  â”œâ”€ Firebase Storage (user photos)            â”‚
+â”‚  â””â”€ Cloudinary free tier (alternative)        â”‚
+â”‚                                                â”‚
+â”‚  Notifications:                                â”‚
+â”‚  â””â”€ Firebase Cloud Messaging                  â”‚
+â”‚                                                â”‚
+â”‚  Hosting:                                      â”‚
+â”‚  â”œâ”€ Vercel (free)                             â”‚
+â”‚  â””â”€ MongoDB Atlas (free)                      â”‚
+â”‚                                                â”‚
+â”‚  Cost: $0/month (for prototype)                â”‚
+â”‚                                                â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ---
@@ -1070,21 +1070,21 @@ vercel
 
 ```
 Week 1: Backend Setup
-├─ Create Express project
-├─ Setup MongoDB
-├─ Create JWT auth
-└─ Test with Postman
+â”œâ”€ Create Express project
+â”œâ”€ Setup MongoDB
+â”œâ”€ Create JWT auth
+â””â”€ Test with Postman
 
 Week 2: Flutter Integration
-├─ Update Flutter to call your API
-├─ Test login/register
-└─ Implement data isolation
+â”œâ”€ Update Flutter to call your API
+â”œâ”€ Test login/register
+â””â”€ Implement data isolation
 
 Week 3+: Features
-├─ Places API
-├─ Visits API
-├─ Trips API
-└─ Photos integration
+â”œâ”€ Places API
+â”œâ”€ Visits API
+â”œâ”€ Trips API
+â””â”€ Photos integration
 ```
 
 ---
@@ -1101,4 +1101,5 @@ Week 3+: Features
 
 ---
 
-**Which option interests you most?** I can create a detailed setup guide for the one you choose! 🚀
+**Which option interests you most?** I can create a detailed setup guide for the one you choose! ðŸš€
+

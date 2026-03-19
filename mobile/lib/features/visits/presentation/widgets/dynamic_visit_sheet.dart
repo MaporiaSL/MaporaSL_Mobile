@@ -1,4 +1,4 @@
-import 'dart:ui';
+﻿import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../features/exploration/data/models/exploration_models.dart';
@@ -138,15 +138,15 @@ class _DynamicVisitSheetState extends ConsumerState<DynamicVisitSheet>
       child: Container(
         height: MediaQuery.of(context).size.height * 0.65,
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface.withOpacity(0.85),
+          color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.85),
           borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
           border: Border.all(
-            color: Colors.white.withOpacity(0.2),
+            color: Colors.white.withValues(alpha: 0.2),
             width: 1.5,
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.2),
+              color: Colors.black.withValues(alpha: 0.2),
               blurRadius: 30,
               offset: const Offset(0, -10),
             )
@@ -159,7 +159,7 @@ class _DynamicVisitSheetState extends ConsumerState<DynamicVisitSheet>
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: Colors.grey.withOpacity(0.3),
+                color: Colors.grey.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(10),
               ),
             ),
@@ -206,9 +206,9 @@ class _DynamicVisitSheetState extends ConsumerState<DynamicVisitSheet>
                         shape: BoxShape.circle,
                         gradient: SweepGradient(
                           colors: [
-                            Colors.blue.withOpacity(0.0),
-                            Colors.blue.withOpacity(0.5),
-                            Colors.blue.withOpacity(0.0),
+                            Colors.blue.withValues(alpha: 0.0),
+                            Colors.blue.withValues(alpha: 0.5),
+                            Colors.blue.withValues(alpha: 0.0),
                           ],
                           stops: const [0.0, 0.5, 1.0],
                         ),
@@ -222,7 +222,7 @@ class _DynamicVisitSheetState extends ConsumerState<DynamicVisitSheet>
                 height: 100,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  border: Border.all(color: Colors.blue.withOpacity(0.3), width: 2),
+                  border: Border.all(color: Colors.blue.withValues(alpha: 0.3), width: 2),
                 ),
               ),
               const Icon(Icons.location_searching, size: 30, color: Colors.blue),
@@ -267,7 +267,7 @@ class _DynamicVisitSheetState extends ConsumerState<DynamicVisitSheet>
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: Colors.teal.withOpacity(0.2),
+                    color: Colors.teal.withValues(alpha: 0.2),
                   ),
                   child: const Icon(Icons.check_circle, size: 60, color: Colors.teal),
                 ),
@@ -323,7 +323,7 @@ class _DynamicVisitSheetState extends ConsumerState<DynamicVisitSheet>
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: Colors.red.withOpacity(0.1),
+              color: Colors.red.withValues(alpha: 0.1),
             ),
             child: const Icon(Icons.error_outline, size: 40, color: Colors.red),
           ),
@@ -371,3 +371,4 @@ class _DynamicVisitSheetState extends ConsumerState<DynamicVisitSheet>
     );
   }
 }
+

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/real_store_models.dart';
 import '../providers/real_store_providers.dart';
@@ -90,8 +90,10 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
       PayHere.startPayment(
         paymentObject,
         (paymentId) {
-          print("PayHere One-Time Payment Success. Payment Id: $paymentId");
-          ref.refresh(shoppingCartProvider);
+          debugPrint(
+            "PayHere One-Time Payment Success. Payment Id: $paymentId",
+          );
+          final _ = ref.refresh(shoppingCartProvider);
           if (mounted) {
             Navigator.of(context).pushReplacement(
               MaterialPageRoute(builder: (_) => const OrderSuccessPage()),
@@ -99,7 +101,7 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
           }
         },
         (error) {
-          print("PayHere One-Time Payment Error. Error: $error");
+          debugPrint("PayHere One-Time Payment Error. Error: $error");
           if (mounted) {
             ScaffoldMessenger.of(
               context,
@@ -107,7 +109,7 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
           }
         },
         () {
-          print("PayHere One-Time Payment Dismissed");
+          debugPrint("PayHere One-Time Payment Dismissed");
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('Payment cancelled by user')),

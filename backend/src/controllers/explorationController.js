@@ -85,6 +85,86 @@ function computeXp(tier) {
   return config.base + getRandomInt(0, config.bonusMax);
 }
 
+async function pickFallbackHometownDistrict() {
+  const placeGroup = await Place.aggregate([
+    { $match: { isActive: true } },
+    { $group: { _id: '$district', count: { $sum: 1 } } },
+    { $sort: { count: -1 } },
+    { $limit: 1 },
+  ]);
+
+  if (placeGroup.length && placeGroup[0]._id) {
+    return placeGroup[0]._id;
+  }
+
+  const unlockGroup = await UnlockLocation.aggregate([
+    { $match: { isActive: true } },
+    { $group: { _id: '$district', count: { $sum: 1 } } },
+    { $sort: { count: -1 } },
+    { $limit: 1 },
+  ]);
+
+  if (unlockGroup.length && unlockGroup[0]._id) {
+    return unlockGroup[0]._id;
+  }
+
+  return null;
+}
+
+function buildDistrictGeoMeta(locations) {
+  if (!locations || !locations.length) {
+    return {
+      center: null,
+      bounds: null,
+    };
+  }
+
+  let minLat = Number.POSITIVE_INFINITY;
+  let maxLat = Number.NEGATIVE_INFINITY;
+  let minLng = Number.POSITIVE_INFINITY;
+  let maxLng = Number.NEGATIVE_INFINITY;
+  let latSum = 0;
+  let lngSum = 0;
+  let count = 0;
+
+  locations.forEach((location) => {
+    if (
+      typeof location.latitude !== 'number' ||
+      typeof location.longitude !== 'number'
+    ) {
+      return;
+    }
+
+    minLat = Math.min(minLat, location.latitude);
+    maxLat = Math.max(maxLat, location.latitude);
+    minLng = Math.min(minLng, location.longitude);
+    maxLng = Math.max(maxLng, location.longitude);
+    latSum += location.latitude;
+    lngSum += location.longitude;
+    count += 1;
+  });
+
+  if (count === 0) {
+    return {
+      center: null,
+      bounds: null,
+    };
+  }
+
+  return {
+    center: {
+      latitude: latSum / count,
+      longitude: lngSum / count,
+    },
+    bounds: {
+      minLat,
+      maxLat,
+      minLng,
+      maxLng,
+    },
+  };
+}
+
 async function updateExplorationProgress(userId) {
   const assignments = await UserDistrictAssignment.find({ userId });
   const totalAssigned = assignments.reduce(
@@ -320,14 +400,32 @@ async function getAssignments(req, res) {
     // If user has no assignments yet, initialize them
     if (assignments.length === 0) {
       const user = await User.findOne({ auth0Id: req.userId });
-      if (!user || !user.hometownDistrict) {
-        return res.status(400).json({
-          error: 'User must set hometown district before starting exploration',
-        });
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+
+      let hometownDistrict = user.hometownDistrict;
+      if (!hometownDistrict) {
+        hometownDistrict = await pickFallbackHometownDistrict();
+        if (!hometownDistrict) {
+          return res.status(400).json({
+            error: 'No active exploration places available to initialize assignments',
+          });
+        }
+
+        await User.findOneAndUpdate(
+          { auth0Id: req.userId },
+          {
+            $set: {
+              hometownDistrict,
+              updatedAt: new Date(),
+            },
+          }
+        );
       }
 
       // Create assignments for this user
-      await assignExplorationForUser(req.userId, user.hometownDistrict);
+      await assignExplorationForUser(req.userId, hometownDistrict);
       
       // Fetch the newly created assignments
       assignments = await UserDistrictAssignment.find({
@@ -355,7 +453,7 @@ async function getAssignments(req, res) {
       locations.map((location) => [location._id.toString(), location])
     );
 
-    const payload = assignments.map((assignment) => {
+    let payload = assignments.map((assignment) => {
       const locationsForDistrict = assignment.assignedLocationIds
         .map((id) => {
           const location = locationMap.get(id.toString());
@@ -377,15 +475,96 @@ async function getAssignments(req, res) {
         })
         .filter(Boolean);
 
+      const geoMeta = buildDistrictGeoMeta(locationsForDistrict);
+
       return {
         district: assignment.district,
         province: assignment.province,
         assignedCount: assignment.assignedCount,
         visitedCount: assignment.visitedCount,
         unlockedAt: assignment.unlockedAt,
+        isUnlocked: Boolean(assignment.unlockedAt),
+        center: geoMeta.center,
+        bounds: geoMeta.bounds,
         locations: locationsForDistrict,
       };
     });
+
+    const hasAssignments = payload.length > 0;
+    const totalResolvedLocations = payload.reduce(
+      (sum, assignment) => sum + assignment.locations.length,
+      0
+    );
+
+    // Auto-heal stale assignment references for users that have assignments but
+    // no resolvable locations (e.g., after place source migration).
+    if (hasAssignments && totalResolvedLocations === 0) {
+      const user = await User.findOne({ auth0Id: req.userId });
+      if (user?.hometownDistrict) {
+        await assignExplorationForUser(req.userId, user.hometownDistrict, {
+          assignmentFixedAt: user.assignmentFixedAt || new Date(),
+        });
+
+        assignments = await UserDistrictAssignment.find({
+          userId: req.userId,
+        });
+
+        const reassignedIds = assignments.flatMap(
+          (assignment) => assignment.assignedLocationIds
+        );
+
+        let reassignedLocations = await Place.find({
+          _id: { $in: reassignedIds },
+        });
+
+        if (reassignedLocations.length === 0) {
+          reassignedLocations = await UnlockLocation.find({
+            _id: { $in: reassignedIds },
+          });
+        }
+
+        const reassignedMap = new Map(
+          reassignedLocations.map((location) => [location._id.toString(), location])
+        );
+
+        payload = assignments.map((assignment) => {
+          const locationsForDistrict = assignment.assignedLocationIds
+            .map((id) => {
+              const location = reassignedMap.get(id.toString());
+              if (!location) return null;
+              const visited = assignment.visitedLocationIds.some(
+                (visitedId) => visitedId.toString() === id.toString()
+              );
+              return {
+                id: location._id,
+                name: location.name,
+                type: location.type || location.category || 'attraction',
+                latitude: location.latitude,
+                longitude: location.longitude,
+                description: location.description || null,
+                category: location.category || null,
+                photos: location.photos || [],
+                visited,
+              };
+            })
+            .filter(Boolean);
+
+          const geoMeta = buildDistrictGeoMeta(locationsForDistrict);
+
+          return {
+            district: assignment.district,
+            province: assignment.province,
+            assignedCount: assignment.assignedCount,
+            visitedCount: assignment.visitedCount,
+            unlockedAt: assignment.unlockedAt,
+            isUnlocked: Boolean(assignment.unlockedAt),
+            center: geoMeta.center,
+            bounds: geoMeta.bounds,
+            locations: locationsForDistrict,
+          };
+        });
+      }
+    }
 
     res.status(200).json({ assignments: payload });
   } catch (error) {

@@ -1,4 +1,4 @@
-# Pre-Planned Trips API Endpoints
+﻿# Pre-Planned Trips API Endpoints
 
 **Base URL**: `http://localhost:5000` (Dev) / `http://10.0.2.2:5000` (Android Emulator)  
 **Version**: 1.0.1
@@ -326,3 +326,4 @@ Pre-planned trips are organized by category:
 - [Destination Endpoints](./destination-endpoints.md) - Manage trip destinations
 - [Trips Feature Implementation](../../common/feature-implementation/trips.md) - Complete implementation guide
 - [PrePlannedTrip Model Documentation](../database/models.md#preplannedtrip-model) - Schema details
+

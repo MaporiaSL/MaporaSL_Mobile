@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/trips_filter_provider.dart';
 
@@ -27,7 +27,7 @@ class FilterChips extends ConsumerWidget {
               backgroundColor: Colors.grey.shade100,
               selectedColor: Theme.of(
                 context,
-              ).colorScheme.primary.withOpacity(0.2),
+              ).colorScheme.primary.withValues(alpha: 0.2),
               checkmarkColor: Theme.of(context).colorScheme.primary,
               labelStyle: TextStyle(
                 color: isSelected
@@ -42,3 +42,4 @@ class FilterChips extends ConsumerWidget {
     );
   }
 }
+

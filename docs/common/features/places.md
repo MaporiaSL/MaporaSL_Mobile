@@ -1,9 +1,9 @@
-# Places Feature Specification
+﻿# Places Feature Specification
 
 **Version**: 1.0  
 **Date**: January 27, 2026  
-**Status**: 📋 Planning Phase  
-**Priority**: 🔴 CRITICAL - Core system foundation
+**Status**: ðŸ“‹ Planning Phase  
+**Priority**: ðŸ”´ CRITICAL - Core system foundation
 
 ---
 
@@ -52,22 +52,22 @@ Each place stores complete location metadata:
 **Process Flow**:
 ```
 User Submits Place
-    ↓
+    â†“
 Form Validation (photos, location, data)
-    ↓
+    â†“
 Place Request Created (status: pending)
-    ↓
+    â†“
 Admin Review Dashboard
-    ├─ View photos & location
-    ├─ Check duplicates
-    ├─ Verify legitimacy
-    └─ Check restrictions
-    ↓
+    â”œâ”€ View photos & location
+    â”œâ”€ Check duplicates
+    â”œâ”€ Verify legitimacy
+    â””â”€ Check restrictions
+    â†“
 If Approved:
-    ├─ Place added to main list
-    ├─ User gets achievement badge
-    ├─ Notification sent
-    └─ Contributor info displayed
+    â”œâ”€ Place added to main list
+    â”œâ”€ User gets achievement badge
+    â”œâ”€ Notification sent
+    â””â”€ Contributor info displayed
 ```
 
 **Required Fields**:
@@ -122,10 +122,10 @@ If Approved:
 ### 4. Gamification & Achievements
 
 **Badges**:
-- 🏅 **Explorer** (Added 1 place)
-- 🎖️ **Local Guide** (Added 5 places)
-- 👑 **Place Curator** (Added 10+ places)
-- 🌟 **Community Legend** (Added 20+ places)
+- ðŸ… **Explorer** (Added 1 place)
+- ðŸŽ–ï¸ **Local Guide** (Added 5 places)
+- ðŸ‘‘ **Place Curator** (Added 10+ places)
+- ðŸŒŸ **Community Legend** (Added 20+ places)
 
 **Profile Stats**:
 - Total places contributed
@@ -380,3 +380,4 @@ If Approved:
 - Curated Places Data: `project_resources/places_seed_data.json`
 - API Reference: `docs/04_api/API_REFERENCE.md`
 - Database Schema: `docs/03_architecture/DATABASE_SCHEMA.md`
+

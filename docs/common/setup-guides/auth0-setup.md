@@ -1,10 +1,10 @@
-# Auth0 Setup Guide
+﻿# Auth0 Setup Guide
 
 **Status**: Deprecated (project migrating to Firebase Auth)  
 **Last Updated**: January 24, 2026  
 **Auth0 Version**: Latest (2026)
 
-> This project is moving to Firebase Authentication for native in‑app login.
+> This project is moving to Firebase Authentication for native inâ€‘app login.
 > Use the new guide: [Firebase Auth Setup](firebase-auth-setup.md)
 
 ---
@@ -66,7 +66,7 @@ This guide walks you through setting up Auth0 for the Gemified Travel Portfolio 
 
 ### Step 1: Create an Application
 
-1. In Auth0 Dashboard, go to **Applications** → **Applications**
+1. In Auth0 Dashboard, go to **Applications** â†’ **Applications**
 2. Click **"+ Create Application"**
 3. Enter application name: `Gemified Travel Backend`
 4. Select application type: **Machine to Machine Applications**
@@ -84,8 +84,8 @@ This guide walks you through setting up Auth0 for the Gemified Travel Portfolio 
    - **Allowed Logout URLs**: `http://localhost:3000`
    - **Allowed Web Origins**: `http://localhost:3000`
 
-3. Scroll down to **Advanced Settings** → **Grant Types**:
-   - Ensure **Client Credentials** is enabled ✅
+3. Scroll down to **Advanced Settings** â†’ **Grant Types**:
+   - Ensure **Client Credentials** is enabled âœ…
    - This allows server-to-server authentication
 
 4. Click **"Save Changes"**
@@ -96,7 +96,7 @@ This guide walks you through setting up Auth0 for the Gemified Travel Portfolio 
 
 ### Step 1: Create an API
 
-1. In Auth0 Dashboard, go to **Applications** → **APIs**
+1. In Auth0 Dashboard, go to **Applications** â†’ **APIs**
 2. Click **"+ Create API"**
 3. Fill in the form:
    - **Name**: `Gemified Travel API`
@@ -120,7 +120,7 @@ This guide walks you through setting up Auth0 for the Gemified Travel Portfolio 
 
 1. Still in your API page, go to **Machine to Machine Applications** tab
 2. Find your `Gemified Travel Backend` application
-3. Toggle it to **Authorized** ✅
+3. Toggle it to **Authorized** âœ…
 4. Optionally select specific permissions (scopes) if you defined any
 5. Click **"Update"**
 
@@ -131,27 +131,27 @@ This guide walks you through setting up Auth0 for the Gemified Travel Portfolio 
 You need four values for your backend `.env` file:
 
 ### 1. AUTH0_DOMAIN
-- Found in: **Applications** → Your App → **Settings** → **Domain**
+- Found in: **Applications** â†’ Your App â†’ **Settings** â†’ **Domain**
 - Format: `your-tenant.us.auth0.com` or `your-tenant.eu.auth0.com`
 - Example: `gemified-travel.us.auth0.com`
 - **Do NOT include** `https://` prefix
 
 ### 2. AUTH0_AUDIENCE
-- Found in: **Applications** → **APIs** → Your API → **Settings** → **Identifier**
+- Found in: **Applications** â†’ **APIs** â†’ Your API â†’ **Settings** â†’ **Identifier**
 - Format: Usually a URL-like string
 - Example: `https://api.gemified-travel.com`
 
 ### 3. AUTH0_CLIENT_ID (for testing)
-- Found in: **Applications** → Your App → **Settings** → **Client ID**
+- Found in: **Applications** â†’ Your App â†’ **Settings** â†’ **Client ID**
 - Format: Random alphanumeric string
 - Example: `abc123def456xyz789`
 
 ### 4. AUTH0_CLIENT_SECRET (for testing)
-- Found in: **Applications** → Your App → **Settings** → **Client Secret**
+- Found in: **Applications** â†’ Your App â†’ **Settings** â†’ **Client Secret**
 - Click **"Show"** to reveal
 - Format: Long random string
 - Example: `aBcDeFgHiJkLmNoPqRsTuVwXyZ1234567890`
-- ⚠️ **Keep this SECRET** - never commit to git
+- âš ï¸ **Keep this SECRET** - never commit to git
 
 ### Add to .env File
 
@@ -250,7 +250,7 @@ $env:AUTH_TOKEN = $token
 
 ### Method 4: Using Auth0 Test Tab (Quick Test)
 
-1. In Auth0 Dashboard, go to **Applications** → **APIs**
+1. In Auth0 Dashboard, go to **Applications** â†’ **APIs**
 2. Click on your API
 3. Go to **Test** tab
 4. Click **"Copy Token"** button
@@ -348,22 +348,22 @@ Your backend uses these JWT claims:
 
 ```
 1. User sends request with JWT in Authorization header
-   → Authorization: Bearer <token>
+   â†’ Authorization: Bearer <token>
 
 2. checkJwt middleware intercepts request
-   → Extracts token from header
-   → Fetches Auth0 public key from JWKS endpoint
-   → Verifies signature using RS256 algorithm
-   → Validates aud, iss, exp claims
+   â†’ Extracts token from header
+   â†’ Fetches Auth0 public key from JWKS endpoint
+   â†’ Verifies signature using RS256 algorithm
+   â†’ Validates aud, iss, exp claims
 
 3. If valid:
-   → Token payload attached to req.auth
-   → extractUserId middleware runs
-   → req.userId = req.auth.sub
+   â†’ Token payload attached to req.auth
+   â†’ extractUserId middleware runs
+   â†’ req.userId = req.auth.sub
 
 4. Controller receives request
-   → Uses req.userId to filter database queries
-   → Returns only user's own data
+   â†’ Uses req.userId to filter database queries
+   â†’ Returns only user's own data
 ```
 
 ---
@@ -376,10 +376,10 @@ Your backend uses these JWT claims:
 
 **Solution**:
 ```bash
-# ❌ Wrong
+# âŒ Wrong
 curl http://localhost:5000/api/travel
 
-# ✅ Correct
+# âœ… Correct
 curl -H "Authorization: Bearer YOUR_TOKEN" http://localhost:5000/api/travel
 ```
 
@@ -421,7 +421,7 @@ echo "TOKEN_PAYLOAD" | base64 -d | jq
 **Cause**: Application not authorized for API
 
 **Solution**:
-1. Go to Auth0 Dashboard → APIs → Your API
+1. Go to Auth0 Dashboard â†’ APIs â†’ Your API
 2. Click **Machine to Machine Applications** tab
 3. Ensure your application is toggled **ON** (Authorized)
 4. Click **Update**
@@ -435,10 +435,10 @@ echo "TOKEN_PAYLOAD" | base64 -d | jq
 
 **Solution**:
 ```javascript
-// ❌ Wrong
+// âŒ Wrong
 headers: { Authorization: token }
 
-// ✅ Correct
+// âœ… Correct
 headers: { Authorization: `Bearer ${token}` }
 ```
 
@@ -446,7 +446,7 @@ headers: { Authorization: `Bearer ${token}` }
 
 ## Security Best Practices
 
-### ✅ DO
+### âœ… DO
 
 - Store `CLIENT_SECRET` in `.env` (never in code)
 - Add `.env` to `.gitignore`
@@ -455,7 +455,7 @@ headers: { Authorization: `Bearer ${token}` }
 - Set token expiration (default 24h is good)
 - Use separate Auth0 tenants for dev/staging/production
 
-### ❌ DON'T
+### âŒ DON'T
 
 - Commit credentials to git
 - Share `CLIENT_SECRET` publicly
@@ -479,7 +479,7 @@ CLIENT_ORIGIN=https://yourdomain.com  # Update to production URL
 
 ### Application URLs
 
-In Auth0 Dashboard → Applications → Your App:
+In Auth0 Dashboard â†’ Applications â†’ Your App:
 - **Allowed Callback URLs**: Add production URL
 - **Allowed Logout URLs**: Add production URL
 - **Allowed Web Origins**: Add production URL
@@ -487,7 +487,7 @@ In Auth0 Dashboard → Applications → Your App:
 ### Token Expiration
 
 - Default: 24 hours (86400 seconds)
-- To change: Auth0 Dashboard → APIs → Your API → Settings → Token Expiration
+- To change: Auth0 Dashboard â†’ APIs â†’ Your API â†’ Settings â†’ Token Expiration
 - Recommended: 24 hours for development, 1 hour for production
 
 ---
@@ -496,12 +496,12 @@ In Auth0 Dashboard → Applications → Your App:
 
 After completing Auth0 setup:
 
-1. ✅ Verify you can obtain JWT tokens
-2. ✅ Test protected endpoints with tokens
-3. ✅ Register your user account
-4. 📱 Integrate Auth0 SDK in Flutter mobile app (Phase 3)
-5. 🔐 Add role-based permissions (optional)
-6. 📊 Monitor authentication logs in Auth0 Dashboard
+1. âœ… Verify you can obtain JWT tokens
+2. âœ… Test protected endpoints with tokens
+3. âœ… Register your user account
+4. ðŸ“± Integrate Auth0 SDK in Flutter mobile app (Phase 3)
+5. ðŸ” Add role-based permissions (optional)
+6. ðŸ“Š Monitor authentication logs in Auth0 Dashboard
 
 ---
 
@@ -523,5 +523,7 @@ For Auth0-specific issues:
 
 For project-specific issues:
 - Check project documentation in `docs/`
-- Review [API_REFERENCE.md](../04_api/API_REFERENCE.md)
-- Check [TROUBLESHOOTING.md](../05_setup_guides/TROUBLESHOOTING.md) (if exists)
+- Review [API_REFERENCE.md](../../backend/api-endpoints/api-reference.md)
+- Check [TROUBLESHOOTING.md](./local-development.md) (if exists)
+
+

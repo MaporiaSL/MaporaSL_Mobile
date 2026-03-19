@@ -1,4 +1,4 @@
-# Destination API Endpoints
+﻿# Destination API Endpoints
 
 **Base URL**: `http://localhost:5000` (Dev) / `http://10.0.2.2:5000` (Android Emulator)  
 **Version**: 1.0.1
@@ -354,3 +354,4 @@ This field is automatically synced from `latitude` and `longitude` fields on sav
 - [Map Endpoints](./map-endpoints.md) - Visualize destinations
 - [Destinations Feature Implementation](../../common/feature-implementation/places.md) - Complete implementation guide
 - [Destination Model Documentation](../database/models.md#destination-model) - Schema details
+

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
 import '../data/models/place_visit.dart';
 
@@ -24,7 +24,7 @@ class VisitStatusBadge extends StatelessWidget {
     return Container(
       padding: _getPadding(),
       decoration: BoxDecoration(
-        color: AppColors.primary.withOpacity(0.2),
+        color: AppColors.primary.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(_getBorderRadius()),
         border: Border.all(color: AppColors.primary, width: 2),
       ),
@@ -203,7 +203,7 @@ class _VisitAchievementPopupState extends State<VisitAchievementPopup>
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
+                  color: Colors.black.withValues(alpha: 0.2),
                   blurRadius: 8,
                   offset: const Offset(0, 4),
                 ),
@@ -243,7 +243,7 @@ class _VisitAchievementPopupState extends State<VisitAchievementPopup>
                       Text(
                         widget.achievement.description,
                         style: TextStyle(
-                          color: Colors.white.withOpacity(0.9),
+                          color: Colors.white.withValues(alpha: 0.9),
                           fontSize: 12,
                         ),
                       ),
@@ -289,10 +289,10 @@ class MiniVisitCard extends StatelessWidget {
               width: 48,
               height: 48,
               decoration: BoxDecoration(
-                color: AppColors.primary.withOpacity(0.1),
+                color: AppColors.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: Icon(
+              child: const Icon(
                 Icons.location_on,
                 color: AppColors.primary,
                 size: 24,
@@ -322,7 +322,7 @@ class MiniVisitCard extends StatelessWidget {
               ),
             ),
             if (visit.validation.status == 'approved')
-              Icon(Icons.verified, color: AppColors.primary, size: 20),
+              const Icon(Icons.verified, color: AppColors.primary, size: 20),
           ],
         ),
       ),
@@ -342,3 +342,4 @@ class MiniVisitCard extends StatelessWidget {
     }
   }
 }
+

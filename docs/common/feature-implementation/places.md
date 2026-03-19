@@ -1,4 +1,4 @@
-# Places Feature Implementation
+﻿# Places Feature Implementation
 
 **Feature**: Places & Attractions Discovery  
 **Last Updated**: February 1, 2026
@@ -14,16 +14,16 @@ The Places feature allows users to discover Sri Lankan attractions, tourist dest
 ## Architecture
 
 ```
-┌─────────────────┐
-│  Places Data    │  ← Pre-seeded JSON with SL attractions
-│  (Static)       │
-└────────┬────────┘
-         │ Seeded into MongoDB
-         ▼
-┌─────────────────┐
-│   Destination   │  ← When user adds to trip
-│     Model       │
-└─────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  Places Data    â”‚  â† Pre-seeded JSON with SL attractions
+â”‚  (Static)       â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+         â”‚ Seeded into MongoDB
+         â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚   Destination   â”‚  â† When user adds to trip
+â”‚     Model       â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 **Note**: Places are currently implemented as part of the Destination model. Future enhancement could separate into a dedicated `Place` model.
@@ -251,7 +251,7 @@ Contains Sri Lankan attractions with:
 
 ### How to Seed
 
-**Create seed script** (`backend/seed-places.js`):
+**Create seed script** (`backend/scripts/seed/seed-places.js`):
 ```javascript
 const mongoose = require('mongoose');
 const Destination = require('./src/models/Destination');
@@ -286,7 +286,7 @@ seedPlaces();
 **Run seed**:
 ```bash
 cd backend
-node seed-places.js
+node backend/scripts/seed/seed-places.js
 ```
 
 ---
@@ -441,3 +441,4 @@ expect(results.first.name, contains('Sigiriya'));
 - [Geospatial Queries](../../backend/api-endpoints/geo-endpoints.md)
 - [Maps Feature](./maps.md)
 - [Gamification](./achievements.md)
+

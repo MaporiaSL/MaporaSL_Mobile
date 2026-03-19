@@ -1,4 +1,4 @@
-# Geospatial Query API Endpoints
+﻿# Geospatial Query API Endpoints
 
 **Base URL**: `http://localhost:5000` (Dev) / `http://10.0.2.2:5000` (Android Emulator)  
 **Version**: 1.0.1
@@ -354,3 +354,4 @@ Query parameters use standard `lat`, `lng` naming for clarity.
 - [Maps Feature Implementation](../../common/feature-implementation/maps.md) - Complete implementation guide
 - [Destination Model](../database/models.md#destination-model) - Geospatial schema details
 - [MongoDB Geospatial Queries](https://docs.mongodb.com/manual/geospatial-queries/)
+

@@ -6,10 +6,12 @@ class SecuritySettingsScreen extends ConsumerStatefulWidget {
   const SecuritySettingsScreen({super.key});
 
   @override
-  ConsumerState<SecuritySettingsScreen> createState() => _SecuritySettingsScreenState();
+  ConsumerState<SecuritySettingsScreen> createState() =>
+      _SecuritySettingsScreenState();
 }
 
-class _SecuritySettingsScreenState extends ConsumerState<SecuritySettingsScreen> {
+class _SecuritySettingsScreenState
+    extends ConsumerState<SecuritySettingsScreen> {
   @override
   void initState() {
     super.initState();
@@ -22,16 +24,15 @@ class _SecuritySettingsScreenState extends ConsumerState<SecuritySettingsScreen>
     final securityNotifier = ref.read(securityProvider.notifier);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Security'),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text('Security'), centerTitle: true),
       body: ListView(
         padding: const EdgeInsets.all(16.0),
         children: [
           _buildSectionHeader('App Protection'),
           Card(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
             child: ListTile(
               leading: const Icon(Icons.lock_outline, color: Colors.blueAccent),
               title: const Text('App Lock'),
@@ -42,12 +43,14 @@ class _SecuritySettingsScreenState extends ConsumerState<SecuritySettingsScreen>
               ),
             ),
           ),
-          
+
           const SizedBox(height: 24),
-          
+
           _buildSectionHeader('Active Sessions'),
           Card(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
             child: Column(
               children: [
                 if (securityState.isLoading)
@@ -58,36 +61,53 @@ class _SecuritySettingsScreenState extends ConsumerState<SecuritySettingsScreen>
                 else if (securityState.activeSessions.isEmpty)
                   const ListTile(title: Text('No active sessions found'))
                 else
-                  ...securityState.activeSessions.map((session) => ListTile(
-                    leading: const Icon(Icons.devices, color: Colors.teal),
-                    title: Text(session['device'] ?? 'Unknown Device'),
-                    subtitle: Text('IP: ${session['ip']} • ${session['lastUsed']}'),
-                    trailing: const Icon(Icons.info_outline, size: 16),
-                  )),
+                  ...securityState.activeSessions.map(
+                    (session) => ListTile(
+                      leading: const Icon(Icons.devices, color: Colors.teal),
+                      title: Text(session['device'] ?? 'Unknown Device'),
+                      subtitle: Text(
+                        'IP: ${session['ip']} • ${session['lastUsed']}',
+                      ),
+                      trailing: const Icon(Icons.info_outline, size: 16),
+                    ),
+                  ),
                 const Divider(height: 1),
                 TextButton.icon(
-                  onPressed: () => _showLogoutConfirmation(context, securityNotifier),
+                  onPressed: () =>
+                      _showLogoutConfirmation(context, securityNotifier),
                   icon: const Icon(Icons.logout, color: Colors.redAccent),
-                  label: const Text('Logout all other devices', style: TextStyle(color: Colors.redAccent)),
+                  label: const Text(
+                    'Logout all other devices',
+                    style: TextStyle(color: Colors.redAccent),
+                  ),
                 ),
               ],
             ),
           ),
-          
+
           const SizedBox(height: 24),
-          
+
           _buildSectionHeader('Two-Factor Authentication'),
           Card(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
             child: ListTile(
               leading: const Icon(Icons.security, color: Colors.orangeAccent),
               title: const Text('2FA (Authenticator App)'),
-              subtitle: Text(securityState.is2FAEnabled ? 'Enabled' : 'Disabled'),
+              subtitle: Text(
+                securityState.is2FAEnabled ? 'Enabled' : 'Disabled',
+              ),
               trailing: ElevatedButton(
-                onPressed: () => _handle2FAToggle(context, securityState, securityNotifier),
+                onPressed: () =>
+                    _handle2FAToggle(context, securityState, securityNotifier),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: securityState.is2FAEnabled ? Colors.red.shade50 : Colors.blue.shade50,
-                  foregroundColor: securityState.is2FAEnabled ? Colors.red : Colors.blue,
+                  backgroundColor: securityState.is2FAEnabled
+                      ? Colors.red.shade50
+                      : Colors.blue.shade50,
+                  foregroundColor: securityState.is2FAEnabled
+                      ? Colors.red
+                      : Colors.blue,
                   elevation: 0,
                 ),
                 child: Text(securityState.is2FAEnabled ? 'Disable' : 'Set Up'),
@@ -113,38 +133,58 @@ class _SecuritySettingsScreenState extends ConsumerState<SecuritySettingsScreen>
     );
   }
 
-  void _showLogoutConfirmation(BuildContext context, SecurityNotifier notifier) {
+  void _showLogoutConfirmation(
+    BuildContext context,
+    SecurityNotifier notifier,
+  ) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Logout all devices?'),
-        content: const Text('This will log you out from all other devices where you are currently signed in.'),
+        content: const Text(
+          'This will log you out from all other devices where you are currently signed in.',
+        ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
           TextButton(
             onPressed: () {
               notifier.logoutAllDevices();
               Navigator.pop(context);
             },
-            child: const Text('Logout All', style: TextStyle(color: Colors.red)),
+            child: const Text(
+              'Logout All',
+              style: TextStyle(color: Colors.red),
+            ),
           ),
         ],
       ),
     );
   }
 
-  void _handle2FAToggle(BuildContext context, SecurityState state, SecurityNotifier notifier) async {
+  void _handle2FAToggle(
+    BuildContext context,
+    SecurityState state,
+    SecurityNotifier notifier,
+  ) async {
     if (state.is2FAEnabled) {
       notifier.disable2FA();
     } else {
       final setup = await notifier.setup2FA();
-      if (setup != null && mounted) {
+      if (!context.mounted) return;
+      if (setup != null) {
         _show2FASetupDialog(context, setup, notifier);
       }
     }
   }
 
-  void _show2FASetupDialog(BuildContext context, Map<String, dynamic> setup, SecurityNotifier notifier) {
+  void _show2FASetupDialog(
+    BuildContext context,
+    Map<String, dynamic> setup,
+    SecurityNotifier notifier,
+  ) {
     final controller = TextEditingController();
     showDialog(
       context: context,
@@ -159,7 +199,10 @@ class _SecuritySettingsScreenState extends ConsumerState<SecuritySettingsScreen>
               Image.network(setup['qrCode'], height: 150, width: 150),
               const SizedBox(height: 16),
               const Text('Or enter this code manually:'),
-              SelectableText(setup['secret'], style: const TextStyle(fontWeight: FontWeight.bold)),
+              SelectableText(
+                setup['secret'],
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
               const SizedBox(height: 24),
               TextField(
                 controller: controller,
@@ -174,11 +217,17 @@ class _SecuritySettingsScreenState extends ConsumerState<SecuritySettingsScreen>
           ),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
           ElevatedButton(
             onPressed: () async {
-              final success = await notifier.verifyAndEnable2FA(controller.text);
-              if (success && mounted) {
+              final success = await notifier.verifyAndEnable2FA(
+                controller.text,
+              );
+              if (!context.mounted) return;
+              if (success) {
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('2FA enabled successfully!')),

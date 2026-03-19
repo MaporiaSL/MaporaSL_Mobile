@@ -1,4 +1,4 @@
-# API Integration Guide
+﻿# API Integration Guide
 
 **For**: Flutter Frontend Developers  
 **Last Updated**: February 1, 2026
@@ -15,13 +15,13 @@ This guide shows how the Flutter frontend integrates with the Node.js/Express ba
 
 ```
 Flutter App
-     ↓
+     â†“
 ApiClient (Dio)
-     ↓
+     â†“
 JWT Token Injection
-     ↓
+     â†“
 Backend API (Express.js)
-     ↓
+     â†“
 MongoDB
 ```
 
@@ -553,8 +553,10 @@ void main() {
 
 ## See Also
 
-- [Auth API Endpoints](../backend/api-endpoints/auth-endpoints.md)
-- [Travel API Endpoints](../backend/api-endpoints/travel-endpoints.md)
-- [Authentication Implementation](../common/feature-implementation/authentication.md)
+- [Auth API Endpoints](../../backend/api-endpoints/auth-endpoints.md)
+- [Travel API Endpoints](../../backend/api-endpoints/travel-endpoints.md)
+- [Authentication Implementation](../../common/feature-implementation/authentication.md)
 - [Dio Documentation](https://pub.dev/packages/dio)
 - [Riverpod Documentation](https://riverpod.dev)
+
+

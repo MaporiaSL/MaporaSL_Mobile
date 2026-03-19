@@ -1,4 +1,4 @@
-# Database Schema Documentation
+﻿# Database Schema Documentation
 
 **Database**: MongoDB (Atlas)  
 **ORM**: Mongoose  
@@ -216,54 +216,54 @@ All data is isolated by `userId` to ensure users can only access their own data.
 ### Entity Relationship Diagram
 
 ```
-┌─────────────────┐
-│     User        │
-│  firebaseUid (UK)   │
-│  email (UK)     │
-│  name           │
-└────────┬────────┘
-         │ 1
-         │
-         │ has many
-         │
-         ┼ N
-┌────────┴────────┐
-│     Travel      │
-│  userId (FK)    │
-│  title          │
-│  startDate      │
-│  endDate        │
-└────────┬────────┘
-         │ 1
-         │
-         │ has many
-         │
-         ┼ N
-┌────────┴────────┐
-│  Destination    │
-│  userId (FK)    │
-│  travelId (FK)  │
-│  name           │
-│  latitude       │
-│  longitude      │
-└─────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚     User        â”‚
+â”‚  firebaseUid (UK)   â”‚
+â”‚  email (UK)     â”‚
+â”‚  name           â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+         â”‚ 1
+         â”‚
+         â”‚ has many
+         â”‚
+         â”¼ N
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚     Travel      â”‚
+â”‚  userId (FK)    â”‚
+â”‚  title          â”‚
+â”‚  startDate      â”‚
+â”‚  endDate        â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+         â”‚ 1
+         â”‚
+         â”‚ has many
+         â”‚
+         â”¼ N
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  Destination    â”‚
+â”‚  userId (FK)    â”‚
+â”‚  travelId (FK)  â”‚
+â”‚  name           â”‚
+â”‚  latitude       â”‚
+â”‚  longitude      â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### Relationship Details
 
-**User → Travel** (One-to-Many)
+**User â†’ Travel** (One-to-Many)
 - One user can have multiple travels
 - Each travel belongs to exactly one user
 - Foreign Key: `Travel.userId` references `User._id`
 - Cascade: Deleting user does NOT auto-delete travels (handle in application logic if needed)
 
-**Travel → Destination** (One-to-Many)
+**Travel â†’ Destination** (One-to-Many)
 - One travel can have multiple destinations
 - Each destination belongs to exactly one travel
 - Foreign Key: `Destination.travelId` references `Travel._id`
 - Cascade: Deleting travel DOES auto-delete all associated destinations
 
-**User → Destination** (One-to-Many)
+**User â†’ Destination** (One-to-Many)
 - Destinations also store `userId` for direct user filtering
 - This denormalization improves query performance
 - Allows efficient "all my destinations" queries without joining through travels
@@ -341,7 +341,7 @@ Destination.find({
 ### User Registration Flow
 
 ```
-1. User authenticates with Firebase Auth → Receives ID token
+1. User authenticates with Firebase Auth â†’ Receives ID token
 2. Frontend calls POST /api/auth/register with JWT
 3. Backend extracts firebaseUid from ID token
 4. Check if User with firebaseUid exists
@@ -381,7 +381,7 @@ When Travel is deleted:
 1. User calls DELETE /api/travel/:travelId
 2. Backend verifies Travel belongs to user
 3. Delete all Destinations where travelId matches
-   → Destination.deleteMany({ travelId: travelId })
+   â†’ Destination.deleteMany({ travelId: travelId })
 4. Delete the Travel document
 5. Return success (200)
 ```
@@ -453,7 +453,7 @@ mongorestore --uri="mongodb+srv://..." backup/
 **v1.0.0** (Current - January 24, 2026):
 - Initial schema with User, Travel, Destination collections
 - Basic indexes for performance
-- Cascade delete for Travel → Destination
+- Cascade delete for Travel â†’ Destination
 
 ### Future Considerations
 
@@ -474,10 +474,10 @@ mongorestore --uri="mongodb+srv://..." backup/
 ## Performance Optimization
 
 **Current Optimizations**:
-- ✅ Indexes on frequently queried fields
-- ✅ Compound indexes for sorted queries
-- ✅ Denormalized userId in Destination for direct filtering
-- ✅ Pre-save hooks for automatic updatedAt
+- âœ… Indexes on frequently queried fields
+- âœ… Compound indexes for sorted queries
+- âœ… Denormalized userId in Destination for direct filtering
+- âœ… Pre-save hooks for automatic updatedAt
 
 **Future Optimizations**:
 - Add indexes on `visited` field for filtering visited/unvisited destinations
@@ -525,8 +525,9 @@ Travel.find({ userId: req.userId }).select('title startDate endDate')
 **DON'T**:
 ```javascript
 // Never query without userId filtering
-Travel.find({}) // ❌ Security risk!
+Travel.find({}) // âŒ Security risk!
 
 // Avoid fetching large arrays without pagination
-Travel.find({ userId: req.userId }) // ❌ Use limit/skip
+Travel.find({ userId: req.userId }) // âŒ Use limit/skip
 ```
+

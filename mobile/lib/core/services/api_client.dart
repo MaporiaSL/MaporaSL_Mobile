@@ -1,3 +1,4 @@
+﻿import 'package:flutter/foundation.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../config/app_config.dart';
@@ -19,16 +20,16 @@ class ApiClient {
             ..interceptors.add(AuthInterceptor())
             ..interceptors.add(InterceptorsWrapper(
               onRequest: (options, handler) {
-                print('>>> [API CLIENT DIO] REQUEST TO: ${options.uri.toString()}');
+                debugPrint('>>> [API CLIENT DIO] REQUEST TO: ${options.uri.toString()}');
                 return handler.next(options);
               },
               onResponse: (response, handler) {
-                print('>>> [API CLIENT DIO] RESPONSE: ${response.statusCode}');
+                debugPrint('>>> [API CLIENT DIO] RESPONSE: ${response.statusCode}');
                 return handler.next(response);
               },
               onError: (DioException e, handler) {
-                print('>>> [API CLIENT DIO] ERROR: ${e.response?.statusCode} AT ${e.requestOptions.uri.toString()}');
-                print('>>> [API CLIENT DIO] ERROR DATA: ${e.response?.data}');
+                debugPrint('>>> [API CLIENT DIO] ERROR: ${e.response?.statusCode} AT ${e.requestOptions.uri.toString()}');
+                debugPrint('>>> [API CLIENT DIO] ERROR DATA: ${e.response?.data}');
                 return handler.next(e);
               }
             ));
@@ -87,3 +88,4 @@ class ApiClient {
 final apiClientProvider = Provider<ApiClient>((ref) {
   return ApiClient();
 });
+

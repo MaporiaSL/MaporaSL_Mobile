@@ -1,4 +1,4 @@
-# Sharing
+﻿# Sharing
 
 Version: 1.0
 Last Updated: February 5, 2026
@@ -22,7 +22,7 @@ A standalone feature that lets users share achievements, exploration progress, a
 
 ## Rules
 - Allow sharing even when unlocks were granted via admin override.
-- Include a subtle “Verified by Support” tag in shares for admin overrides.
+- Include a subtle â€œVerified by Supportâ€ tag in shares for admin overrides.
 - Tag is always shown and cannot be hidden.
 
 ## Branding Requirements
@@ -49,3 +49,4 @@ A standalone feature that lets users share achievements, exploration progress, a
 ## Non-Goals
 - In-app social feed.
 - Direct messaging.
+

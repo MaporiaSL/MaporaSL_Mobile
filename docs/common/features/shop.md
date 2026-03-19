@@ -1,4 +1,4 @@
-# Shop Feature Specification
+﻿# Shop Feature Specification
 
 **Version**: 2.0  
 **Last Updated**: January 29, 2026  
@@ -26,9 +26,9 @@ The MAPORIA Shop is a **hybrid e-commerce platform** with two integrated section
 
 ### Purchase Flow
 ```
-Browse Items → Add to Cart → Checkout → Bank Transfer Details
-→ User Transfers Offline → Upload Receipt → Order Confirmation
-→ Admin Verification → Order Processing → Shipping & Delivery
+Browse Items â†’ Add to Cart â†’ Checkout â†’ Bank Transfer Details
+â†’ User Transfers Offline â†’ Upload Receipt â†’ Order Confirmation
+â†’ Admin Verification â†’ Order Processing â†’ Shipping & Delivery
 ```
 
 ### Pricing
@@ -44,7 +44,7 @@ Browse Items → Add to Cart → Checkout → Bank Transfer Details
 
 ### Order Status Flow
 ```
-pending_payment → payment_received → processing → shipped → delivered
+pending_payment â†’ payment_received â†’ processing â†’ shipped â†’ delivered
 ```
 
 ---
@@ -60,7 +60,7 @@ pending_payment → payment_received → processing → shipped → delivered
 
 ### Purchase Flow
 ```
-Browse Items → Select Item → Confirm Purchase → Add to Inventory → Equip
+Browse Items â†’ Select Item â†’ Confirm Purchase â†’ Add to Inventory â†’ Equip
 ```
 
 ### Pricing
@@ -170,7 +170,7 @@ DELETE /api/admin/store/items/:id    - Delete product
 
 ## Payment Verification Workflow
 
-1. User uploads receipt → Status: `pending`
+1. User uploads receipt â†’ Status: `pending`
 2. Admin reviews receipt image
 3. Admin verifies amount matches order total
 4. **If valid**: Status: `verified`, order moves to `payment_received`
@@ -288,8 +288,11 @@ class ShopConfig {
 ---
 
 ## File References
-- [Implementation Plan](./SHOP_IMPLEMENTATION.md)
-- [Project Roadmap](../01_planning/PROJECT_SOURCE_OF_TRUTH.md)
-- [API Reference](../04_api/API_REFERENCE.md)
+- [Implementation Plan](../feature-implementation/shop-implementation.md)
+- [Project Roadmap](../../core/project-source-of-truth.md)
+- [API Reference](../../backend/api-endpoints/api-reference.md)
 
-**Status**: ✅ Complete | **Next**: Development Kickoff
+**Status**: âœ… Complete | **Next**: Development Kickoff
+
+
+

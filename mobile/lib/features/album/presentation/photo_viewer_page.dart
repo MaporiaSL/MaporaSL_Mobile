@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
 import 'package:gemified_travel_portfolio/features/album/data/models/photo_model.dart';
@@ -162,7 +162,7 @@ class _PhotoViewerPageState extends State<PhotoViewerPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black.withOpacity(0.9),
+      backgroundColor: Colors.black.withValues(alpha: 0.9),
       extendBodyBehindAppBar: true,
       appBar: _showControls
           ? AppBar(
@@ -254,3 +254,4 @@ class _PhotoViewerPageState extends State<PhotoViewerPage> {
     );
   }
 }
+

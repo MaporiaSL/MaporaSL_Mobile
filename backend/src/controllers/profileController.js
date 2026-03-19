@@ -6,6 +6,8 @@ const { getStorage } = require('../config/firebase');
 const path = require('path');
 const crypto = require('crypto');
 
+const authBypassEnabled = process.env.AUTH_BYPASS === 'true';
+
 function generateAvatarStoragePath(userId, originalName) {
   const ext = path.extname(originalName || '').toLowerCase() || '.jpg';
   const uniqueId = crypto.randomUUID();
@@ -21,8 +23,8 @@ async function getUserProfile(req, res) {
   try {
     const { userId } = req.params;
 
-    // Verify requesting user matches userId
-    if (req.userId !== userId) {
+    // Verify requesting user matches userId (skipped in bypass mode)
+    if (!authBypassEnabled && req.userId !== userId) {
       return res.status(403).json({ error: 'Forbidden: Cannot access another user\'s profile' });
     }
 
@@ -103,8 +105,8 @@ async function getUserContributions(req, res) {
   try {
     const { userId } = req.params;
 
-    // Verify requesting user matches userId
-    if (req.userId !== userId) {
+    // Verify requesting user matches userId (skipped in bypass mode)
+    if (!authBypassEnabled && req.userId !== userId) {
       return res.status(403).json({ error: 'Forbidden: Cannot access another user\'s contributions' });
     }
 
@@ -139,8 +141,8 @@ async function updateUserProfile(req, res) {
     const { userId } = req.params;
     const { name, avatarUrl } = req.body;
 
-    // Verify requesting user matches userId
-    if (req.userId !== userId) {
+    // Verify requesting user matches userId (skipped in bypass mode)
+    if (!authBypassEnabled && req.userId !== userId) {
       return res.status(403).json({ error: 'Forbidden: Cannot update another user\'s profile' });
     }
 
@@ -245,7 +247,7 @@ async function uploadUserAvatar(req, res) {
   try {
     const { userId } = req.params;
 
-    if (req.userId !== userId) {
+    if (!authBypassEnabled && req.userId !== userId) {
       return res.status(403).json({ error: 'Forbidden: Cannot update another user\'s avatar' });
     }
 

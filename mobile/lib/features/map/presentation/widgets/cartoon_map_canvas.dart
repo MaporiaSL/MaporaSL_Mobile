@@ -1,8 +1,18 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import '../../data/regions_data.dart';
 import '../../data/geojson_parser.dart';
 import '../painters/cartoon_map_painter.dart';
 import '../theme/map_visual_theme.dart';
+
+class DistrictFocusTarget {
+  final Offset centroidFraction;
+  final double suggestedScale;
+
+  const DistrictFocusTarget({
+    required this.centroidFraction,
+    required this.suggestedScale,
+  });
+}
 
 /// Interactive cartoonish map canvas
 /// Detects region taps and displays selection feedback
@@ -12,9 +22,16 @@ class CartoonMapCanvas extends StatefulWidget {
   final String? selectedDistrictName;
   final VoidCallback? onRegionTapped;
   final Function(String regionId)? onRegionSelected;
-  final void Function(String districtName, String? provinceName)?
+  final void Function(
+    String districtName,
+    String? provinceName,
+    Offset tapFraction,
+    DistrictFocusTarget? focusTarget,
+  )?
   onDistrictSelected;
   final MapVisualTheme theme;
+  final bool focusMode;
+  final String? focusedDistrictName;
 
   /// Map of district ID to completion percentage (0.0 - 1.0)
   final Map<String, double> districtProgress;
@@ -28,6 +45,8 @@ class CartoonMapCanvas extends StatefulWidget {
     this.onRegionSelected,
     this.onDistrictSelected,
     this.theme = const MapVisualTheme(),
+    this.focusMode = false,
+    this.focusedDistrictName,
     this.districtProgress = const <String, double>{},
   });
 
@@ -66,7 +85,7 @@ class _CartoonMapCanvasState extends State<CartoonMapCanvas> {
         _boundariesLoaded = true;
       });
     } catch (e) {
-      print('Error loading boundaries: $e');
+      debugPrint('Error loading boundaries: $e');
       setState(() => _boundariesLoaded = true);
     }
   }
@@ -119,6 +138,32 @@ class _CartoonMapCanvasState extends State<CartoonMapCanvas> {
     }
 
     return inside;
+  }
+
+  DistrictFocusTarget? _buildFocusTarget(String districtId, Size size) {
+    final paths = _districtPaths[districtId];
+    if (paths == null || paths.isEmpty) return null;
+
+    Rect? bounds;
+    for (final path in paths) {
+      final rect = path.getBounds();
+      bounds = bounds == null ? rect : bounds.expandToInclude(rect);
+    }
+
+    if (bounds == null || bounds.isEmpty) return null;
+
+    const margin = 56.0;
+    final fitX = size.width / (bounds.width + margin);
+    final fitY = size.height / (bounds.height + margin);
+    final suggestedScale = (fitX < fitY ? fitX : fitY).clamp(1.25, 3.3);
+
+    return DistrictFocusTarget(
+      centroidFraction: Offset(
+        (bounds.center.dx / size.width).clamp(0.0, 1.0),
+        (bounds.center.dy / size.height).clamp(0.0, 1.0),
+      ),
+      suggestedScale: suggestedScale,
+    );
   }
 
   void _rebuildPathCache(Size size) {
@@ -220,15 +265,39 @@ class _CartoonMapCanvasState extends State<CartoonMapCanvas> {
               details.localPosition,
               size,
             );
+            final tapFraction = Offset(
+              (details.localPosition.dx / size.width).clamp(0.0, 1.0),
+              (details.localPosition.dy / size.height).clamp(0.0, 1.0),
+            );
             if (tappedRegionId != null) {
+              final isTapOutsideFocusedDistrict =
+                  widget.focusMode &&
+                  widget.focusedDistrictName != null &&
+                  widget.focusedDistrictName!.toLowerCase() !=
+                      tappedRegionId.toLowerCase();
+
+              if (isTapOutsideFocusedDistrict) {
+                // While focused, tapping another district exits to full-map mode.
+                widget.onRegionSelected?.call('');
+                widget.onDistrictSelected?.call('', null, tapFraction, null);
+                widget.onRegionTapped?.call();
+                return;
+              }
+
               final provinceName = _districtToProvince[tappedRegionId];
+              final focusTarget = _buildFocusTarget(tappedRegionId, size);
               widget.onRegionSelected?.call(tappedRegionId);
-              widget.onDistrictSelected?.call(tappedRegionId, provinceName);
+              widget.onDistrictSelected?.call(
+                tappedRegionId,
+                provinceName,
+                tapFraction,
+                focusTarget,
+              );
               widget.onRegionTapped?.call();
             } else {
               // Clear selection if background tapped
               widget.onRegionSelected?.call('');
-              widget.onDistrictSelected?.call('', null);
+              widget.onDistrictSelected?.call('', null, tapFraction, null);
               widget.onRegionTapped?.call();
             }
           },
@@ -240,6 +309,8 @@ class _CartoonMapCanvasState extends State<CartoonMapCanvas> {
                 regions: _regions,
                 selectedRegionId: widget.selectedRegionId,
                 selectedDistrictName: widget.selectedDistrictName,
+                focusMode: widget.focusMode,
+                focusedDistrictName: widget.focusedDistrictName,
                 provincePaths: _provincePaths,
                 districtPaths: _districtPaths,
                 provinceLabelPositions: _provinceLabelPositions,

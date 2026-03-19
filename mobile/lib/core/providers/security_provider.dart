@@ -1,8 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../services/api_client.dart';
 
-final securityProvider = StateNotifierProvider<SecurityNotifier, SecurityState>((ref) {
+final securityProvider =
+    StateNotifierProvider<SecurityNotifier, SecurityState>((ref) {
   return SecurityNotifier();
 });
 
@@ -40,6 +42,7 @@ class SecurityState {
 
 class SecurityNotifier extends StateNotifier<SecurityState> {
   final LocalAuthentication _auth = LocalAuthentication();
+  final ApiClient _apiClient = ApiClient();
   late SharedPreferences _prefs;
 
   SecurityNotifier() : super(SecurityState()) {
@@ -75,26 +78,28 @@ class SecurityNotifier extends StateNotifier<SecurityState> {
       final authenticated = await authenticate();
       if (!authenticated) return;
     }
-    
+
     await _prefs.setBool('security_app_lock_enabled', value);
     state = state.copyWith(isAppLockEnabled: value);
   }
 
-  // --- Backend Integration (Placeholders for now) ---
-  
+  // --- Backend Integration ---
+
   Future<void> fetchSessions() async {
     state = state.copyWith(isLoading: true);
     try {
-      // Logic to call GET /api/security/sessions
-      // Using placeholder data for initial UI implementation
-      await Future.delayed(const Duration(milliseconds: 500));
-      state = state.copyWith(
-        activeSessions: [
-          {'id': '1', 'device': 'iPhone 13', 'ip': '192.168.1.1', 'lastUsed': 'Just now'},
-          {'id': '2', 'device': 'Samsung S22', 'ip': '10.0.0.5', 'lastUsed': '2 hours ago'},
-        ],
-        isLoading: false,
-      );
+      final response = await _apiClient.get('/api/security/sessions');
+      final data = response.data as Map<String, dynamic>;
+      final sessions = (data['sessions'] as List<dynamic>).map((s) {
+        // Normalise the session document fields for display
+        return {
+          'id': s['_id']?.toString() ?? '',
+          'device': s['device'] ?? 'Unknown Device',
+          'ip': s['ipAddress'] ?? s['ip'] ?? 'Unknown IP',
+          'lastUsed': _formatDate(s['lastUsedAt']?.toString()),
+        };
+      }).toList();
+      state = state.copyWith(activeSessions: sessions, isLoading: false);
     } catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString());
     }
@@ -103,8 +108,7 @@ class SecurityNotifier extends StateNotifier<SecurityState> {
   Future<void> logoutAllDevices() async {
     state = state.copyWith(isLoading: true);
     try {
-      // Logic to call POST /api/security/sessions/logout-all
-      await Future.delayed(const Duration(seconds: 1));
+      await _apiClient.post('/api/security/sessions/logout-all');
       state = state.copyWith(activeSessions: [], isLoading: false);
     } catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString());
@@ -113,11 +117,11 @@ class SecurityNotifier extends StateNotifier<SecurityState> {
 
   Future<Map<String, dynamic>?> setup2FA() async {
     try {
-      // Logic to call POST /api/security/2fa/setup
-      // Returns {qrCode, secret}
+      final response = await _apiClient.post('/api/security/2fa/setup');
+      final data = response.data as Map<String, dynamic>;
       return {
-        'secret': 'JBSWY3DPEHPK3PXP',
-        'qrCode': 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=otpauth://totp/Maporia:user@example.com?secret=JBSWY3DPEHPK3PXP&issuer=Maporia'
+        'secret': data['secret'],
+        'qrCode': data['qrCode'],
       };
     } catch (e) {
       state = state.copyWith(error: e.toString());
@@ -127,21 +131,37 @@ class SecurityNotifier extends StateNotifier<SecurityState> {
 
   Future<bool> verifyAndEnable2FA(String token) async {
     try {
-      // Logic to call POST /api/security/2fa/verify
-      await Future.delayed(const Duration(milliseconds: 500));
+      await _apiClient.post('/api/security/2fa/verify', data: {'token': token});
       state = state.copyWith(is2FAEnabled: true);
       return true;
     } catch (e) {
+      state = state.copyWith(error: e.toString());
       return false;
     }
   }
 
   Future<void> disable2FA() async {
     try {
-      // Logic to call POST /api/security/2fa/disable
+      await _apiClient.post('/api/security/2fa/disable');
       state = state.copyWith(is2FAEnabled: false);
     } catch (e) {
       state = state.copyWith(error: e.toString());
+    }
+  }
+
+  // --- Helpers ---
+
+  String _formatDate(String? dateStr) {
+    if (dateStr == null) return 'Unknown';
+    try {
+      final dt = DateTime.parse(dateStr).toLocal();
+      final diff = DateTime.now().difference(dt);
+      if (diff.inMinutes < 1) return 'Just now';
+      if (diff.inMinutes < 60) return '${diff.inMinutes}m ago';
+      if (diff.inHours < 24) return '${diff.inHours}h ago';
+      return '${diff.inDays}d ago';
+    } catch (_) {
+      return 'Unknown';
     }
   }
 }

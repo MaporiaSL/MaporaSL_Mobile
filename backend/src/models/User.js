@@ -110,7 +110,11 @@ const userSchema = new mongoose.Schema({
     achievements: { type: Boolean, default: true },
     trips: { type: Boolean, default: true },
     places: { type: Boolean, default: true },
-    social: { type: Boolean, default: true }
+    social: { type: Boolean, default: true },
+    // New notification types
+    nearbyTrips: { type: Boolean, default: true },
+    placeVisits: { type: Boolean, default: true },
+    celebrations: { type: Boolean, default: true }
   },
   security: {
     twoFactorSecret: { type: String, default: null },

@@ -1,4 +1,4 @@
-# Map Refactor: Performance & Light Theme Implementation Plan
+﻿# Map Refactor: Performance & Light Theme Implementation Plan
 
 **Status**: Phase 1 Complete | Phase 2 Starting  
 **Date**: February 17, 2026  
@@ -6,7 +6,7 @@
 
 ---
 
-## ✅ Phase 1: Complete (Reroll Removal + Light Theme Update)
+## âœ… Phase 1: Complete (Reroll Removal + Light Theme Update)
 
 ### What Was Done
 1. **Removed all reroll UI/UX**:
@@ -29,40 +29,40 @@
 4. **Simplified animations**:
    - Removed parallax + 3D tilt transforms (CPU-heavy on mid-tier devices)
    - Removed pulse animation controller (unnecessary jank)
-   - Reduced cross-fade duration (220ms → 200ms)
+   - Reduced cross-fade duration (220ms â†’ 200ms)
    - Removed box shadows from dark theme; using flat card design
 
 ---
 
-## 🔍 Phase 1 Audit: Performance Bottlenecks Identified
+## ðŸ” Phase 1 Audit: Performance Bottlenecks Identified
 
 ### Current Map Code Analysis
 
-**CartoonMapCanvas** ([mobile/lib/features/map/presentation/widgets/cartoon_map_canvas.dart](mobile/lib/features/map/presentation/widgets/cartoon_map_canvas.dart)):
-- ✅ GeoJSON parsing happens once on init (good)
-- ✅ Path caching implemented (prevents re-computation)
-- ⚠️ `_rebuildPathCache()` rebuilds entire path map on size change (could be optimized)
-- ⚠️ Tap detection runs full polygon point-in-polygon check (O(n) per tap, ~25 districts)
+**CartoonMapCanvas** ([../../../mobile/lib/features/map/presentation/widgets/cartoon_map_canvas.dart](../../../mobile/lib/features/map/presentation/widgets/cartoon_map_canvas.dart)):
+- âœ… GeoJSON parsing happens once on init (good)
+- âœ… Path caching implemented (prevents re-computation)
+- âš ï¸ `_rebuildPathCache()` rebuilds entire path map on size change (could be optimized)
+- âš ï¸ Tap detection runs full polygon point-in-polygon check (O(n) per tap, ~25 districts)
 
-**MapScreen** ([mobile/lib/features/map/presentation/map_screen.dart](mobile/lib/features/map/presentation/map_screen.dart)):
-- ⚠️ **Removed 3D transforms** (Matrix4 rotation, translation) - **Major jank source**
-- ⚠️ **Removed pulse animation** - unnecessary repaints every 1.4s
-- ⚠️ **Removed parallax gesture handling** - setState() on every pan update (CPU spikes)
-- ✅ AnimatedCrossFade for panel state (efficient)
-- ✅ Lazy location list with ListView.builder (good for many locations)
+**MapScreen** ([../../../mobile/lib/features/map/presentation/map_screen.dart](../../../mobile/lib/features/map/presentation/map_screen.dart)):
+- âš ï¸ **Removed 3D transforms** (Matrix4 rotation, translation) - **Major jank source**
+- âš ï¸ **Removed pulse animation** - unnecessary repaints every 1.4s
+- âš ï¸ **Removed parallax gesture handling** - setState() on every pan update (CPU spikes)
+- âœ… AnimatedCrossFade for panel state (efficient)
+- âœ… Lazy location list with ListView.builder (good for many locations)
 
-**CartoonMapPainter** ([mobile/lib/features/map/presentation/painters/cartoon_map_painter.dart](mobile/lib/features/map/presentation/painters/cartoon_map_painter.dart)):
-- ⚠️ Draws all districts on every frame (not culled)
-- ⚠️ Draws shadows on all labels (expensive shadow blur)
-- ⚠️ Draws rim light and extrusion effects unconditionally
+**CartoonMapPainter** ([../../../mobile/lib/features/map/presentation/painters/cartoon_map_painter.dart](../../../mobile/lib/features/map/presentation/painters/cartoon_map_painter.dart)):
+- âš ï¸ Draws all districts on every frame (not culled)
+- âš ï¸ Draws shadows on all labels (expensive shadow blur)
+- âš ï¸ Draws rim light and extrusion effects unconditionally
 
 ---
 
-## 🎯 Phase 2: Rendering Optimization (2–4 days)
+## ðŸŽ¯ Phase 2: Rendering Optimization (2â€“4 days)
 
 ### Performance Goals
 - **No frame drops below 60 FPS** on Android 10+ devices
-- **Tap response time** < 100ms (tap → panel update)
+- **Tap response time** < 100ms (tap â†’ panel update)
 - **Memory usage** < 150MB for map + canvas
 - **First load** < 1.5s
 
@@ -118,7 +118,7 @@
 
 ---
 
-## 🎨 Phase 3: UI Architecture Refactor (3–5 days)
+## ðŸŽ¨ Phase 3: UI Architecture Refactor (3â€“5 days)
 
 ### Current Issues
 - `MapScreen` mixes canvas + panels + state all in one widget
@@ -130,10 +130,10 @@
 #### 3.1 Split into Focused Widgets
 ```
 MapScreen (main, state management, scaffold)
-├─ MapCanvasWidget (canvas, tap detection, rendering)
-├─ MapHUDWidget (top-left stats, fixed position, minimal repaints)
-└─ DistrictPanelSheet (bottom sheet, assignments, actions)
-    └─ LocationListBuilder (lazy list with caching)
+â”œâ”€ MapCanvasWidget (canvas, tap detection, rendering)
+â”œâ”€ MapHUDWidget (top-left stats, fixed position, minimal repaints)
+â””â”€ DistrictPanelSheet (bottom sheet, assignments, actions)
+    â””â”€ LocationListBuilder (lazy list with caching)
 ```
 
 #### 3.2 State Management Cleanup
@@ -163,7 +163,7 @@ MapScreen (main, state management, scaffold)
 
 ---
 
-## 📱 Phase 4: Light Theme Polish (1–2 days)
+## ðŸ“± Phase 4: Light Theme Polish (1â€“2 days)
 
 ### Remaining Tasks
 - [ ] Test on Android emulator (light theme rendering)
@@ -179,7 +179,7 @@ MapScreen (main, state management, scaffold)
 
 ---
 
-## ✨ Phase 5: Smooth Interaction & Motion (2–3 days)
+## âœ¨ Phase 5: Smooth Interaction & Motion (2â€“3 days)
 
 ### Interaction Patterns
 - [ ] **Tap-to-panel response** (< 100ms)
@@ -188,7 +188,7 @@ MapScreen (main, state management, scaffold)
 
 - [ ] **District selection feedback**:
   - Visual outline on tap
-  - Scale animation (1.0 → 1.02 → 1.0)
+  - Scale animation (1.0 â†’ 1.02 â†’ 1.0)
   - Color change (immediate)
 
 - [ ] **Panel expand/collapse**:
@@ -203,7 +203,7 @@ MapScreen (main, state management, scaffold)
 
 ---
 
-## 🧪 Phase 6: QA & Validation (2–3 days)
+## ðŸ§ª Phase 6: QA & Validation (2â€“3 days)
 
 ### Device Testing Matrix
 - **Android 10 (mid-tier, Snapdragon 665+)**: Target 60 FPS
@@ -214,14 +214,14 @@ MapScreen (main, state management, scaffold)
 - [ ] Use Flutter DevTools (timeline, memory, CPU)
 - [ ] Run in profile mode (`flutter run --release`)
 - [ ] Measure:
-  - First load time (≤ 1.5s)
-  - Frame rate (≥ 60 FPS on mid-tier)
+  - First load time (â‰¤ 1.5s)
+  - Frame rate (â‰¥ 60 FPS on mid-tier)
   - Memory delta during district selection (< 5MB)
 
 ### Accessibility
 - [ ] High-contrast mode testing
 - [ ] Screen reader (TalkBack) navigation
-- [ ] Tap targets (≥ 48x48 dp)
+- [ ] Tap targets (â‰¥ 48x48 dp)
 
 ### Visual QA
 - [ ] Light theme consistency across all screens
@@ -231,13 +231,13 @@ MapScreen (main, state management, scaffold)
 
 ---
 
-## Files to Modify (Phase 2–6)
+## Files to Modify (Phase 2â€“6)
 
 | File | Phase | Change |
 |------|-------|--------|
 | `cartoon_map_painter.dart` | 2 | Remove shadows, rim light, extrusion; simplify draw logic |
-| `cartoon_map_canvas.dart` | 2–3 | Add path cache singleton, optimize hit detection |
-| `map_screen.dart` | 3–5 | Split into focused widgets, use Riverpod selectors |
+| `cartoon_map_canvas.dart` | 2â€“3 | Add path cache singleton, optimize hit detection |
+| `map_screen.dart` | 3â€“5 | Split into focused widgets, use Riverpod selectors |
 | `regions_data.dart` | 2 | Pre-compute label positions |
 | `map_visual_theme.dart` | 4 | Light theme values (already done) |
 
@@ -245,15 +245,15 @@ MapScreen (main, state management, scaffold)
 
 ## Success Checklist
 
-- ✅ Reroll removed (Phase 1)
-- ✅ Light theme applied (Phase 1)
-- ✅ No parallax/3D transforms (Phase 1)
-- ⏳ Painter optimized (Phase 2)
-- ⏳ Path caching implemented (Phase 2)
-- ⏳ UI split into widgets (Phase 3)
-- ⏳ Riverpod state management (Phase 3)
-- ⏳ 60+ FPS on mid-tier device (Phase 6)
-- ⏳ < 100ms tap response (Phase 6)
+- âœ… Reroll removed (Phase 1)
+- âœ… Light theme applied (Phase 1)
+- âœ… No parallax/3D transforms (Phase 1)
+- â³ Painter optimized (Phase 2)
+- â³ Path caching implemented (Phase 2)
+- â³ UI split into widgets (Phase 3)
+- â³ Riverpod state management (Phase 3)
+- â³ 60+ FPS on mid-tier device (Phase 6)
+- â³ < 100ms tap response (Phase 6)
 
 ---
 
@@ -264,5 +264,7 @@ Proceed to **Phase 2: Rendering Optimization** when ready.
 Start with:
 1. Simplify `CartoonMapPainter` (remove effects)
 2. Implement path cache singleton
-3. Test on device → measure frame rate
+3. Test on device â†’ measure frame rate
+
+
 

@@ -1,4 +1,4 @@
-# Local Development Setup Guide
+﻿# Local Development Setup Guide
 
 **Last Updated**: January 26, 2026  
 **Target OS**: Windows (adaptable for macOS/Linux)
@@ -206,14 +206,14 @@ Create a test script to verify MongoDB connection:
 
 ```bash
 # In backend directory
-node -e "require('dotenv').config(); console.log('✅ Environment loaded'); console.log('MongoDB URI:', process.env.MONGODB_URI ? '✅ Set' : '❌ Missing'); console.log('Firebase Project ID:', process.env.FIREBASE_PROJECT_ID ? '✅ Set' : '❌ Missing');"
+node -e "require('dotenv').config(); console.log('âœ… Environment loaded'); console.log('MongoDB URI:', process.env.MONGODB_URI ? 'âœ… Set' : 'âŒ Missing'); console.log('Firebase Project ID:', process.env.FIREBASE_PROJECT_ID ? 'âœ… Set' : 'âŒ Missing');"
 ```
 
 **Expected output**:
 ```
-✅ Environment loaded
-MongoDB URI: ✅ Set
-Firebase Project ID: ✅ Set
+âœ… Environment loaded
+MongoDB URI: âœ… Set
+Firebase Project ID: âœ… Set
 ```
 
 ---
@@ -493,32 +493,32 @@ $destinationsResponse | ConvertTo-Json -Depth 5
 
 ```
 backend/
-├── src/
-│   ├── config/
-│   │   └── db.js              # MongoDB connection
-│   ├── middleware/
-│   │   └── auth.js            # ID token validation
-│   ├── models/
-│   │   ├── User.js            # User schema
-│   │   ├── Travel.js          # Travel schema
-│   │   └── Destination.js     # Destination schema
-│   ├── controllers/
-│   │   ├── authController.js      # Auth logic
-│   │   ├── travelController.js    # Travel CRUD
-│   │   └── destinationController.js  # Destination CRUD
-│   ├── routes/
-│   │   ├── authRoutes.js          # Auth endpoints
-│   │   ├── travelRoutes.js        # Travel endpoints
-│   │   └── destinationRoutes.js   # Destination endpoints
-│   ├── validators/
-│   │   ├── travelValidator.js     # Travel input validation
-│   │   └── destinationValidator.js  # Destination input validation
-│   └── server.js              # Express app entry point
-├── .env                       # Environment variables (not in git)
-├── .env.example               # Template for .env
-├── .gitignore                 # Git ignore rules
-├── package.json               # Dependencies and scripts
-└── package-lock.json          # Dependency lock file
+â”œâ”€â”€ src/
+â”‚   â”œâ”€â”€ config/
+â”‚   â”‚   â””â”€â”€ db.js              # MongoDB connection
+â”‚   â”œâ”€â”€ middleware/
+â”‚   â”‚   â””â”€â”€ auth.js            # ID token validation
+â”‚   â”œâ”€â”€ models/
+â”‚   â”‚   â”œâ”€â”€ User.js            # User schema
+â”‚   â”‚   â”œâ”€â”€ Travel.js          # Travel schema
+â”‚   â”‚   â””â”€â”€ Destination.js     # Destination schema
+â”‚   â”œâ”€â”€ controllers/
+â”‚   â”‚   â”œâ”€â”€ authController.js      # Auth logic
+â”‚   â”‚   â”œâ”€â”€ travelController.js    # Travel CRUD
+â”‚   â”‚   â””â”€â”€ destinationController.js  # Destination CRUD
+â”‚   â”œâ”€â”€ routes/
+â”‚   â”‚   â”œâ”€â”€ authRoutes.js          # Auth endpoints
+â”‚   â”‚   â”œâ”€â”€ travelRoutes.js        # Travel endpoints
+â”‚   â”‚   â””â”€â”€ destinationRoutes.js   # Destination endpoints
+â”‚   â”œâ”€â”€ validators/
+â”‚   â”‚   â”œâ”€â”€ travelValidator.js     # Travel input validation
+â”‚   â”‚   â””â”€â”€ destinationValidator.js  # Destination input validation
+â”‚   â””â”€â”€ server.js              # Express app entry point
+â”œâ”€â”€ .env                       # Environment variables (not in git)
+â”œâ”€â”€ .env.example               # Template for .env
+â”œâ”€â”€ .gitignore                 # Git ignore rules
+â”œâ”€â”€ package.json               # Dependencies and scripts
+â””â”€â”€ package-lock.json          # Dependency lock file
 ```
 
 ---
@@ -582,7 +582,7 @@ MongooseServerSelectionError: Could not connect to any servers in your MongoDB A
 
 **Solutions**:
 1. **Check IP Whitelist**:
-   - MongoDB Atlas → Network Access
+   - MongoDB Atlas â†’ Network Access
    - Ensure 0.0.0.0/0 is whitelisted (development)
 
 2. **Verify Connection String**:
@@ -592,7 +592,7 @@ MongooseServerSelectionError: Could not connect to any servers in your MongoDB A
 
 3. **Test Connection**:
    ```bash
-   node -e "const mongoose = require('mongoose'); require('dotenv').config(); mongoose.connect(process.env.MONGODB_URI).then(() => console.log('✅ Connected')).catch(e => console.log('❌ Error:', e.message));"
+   node -e "const mongoose = require('mongoose'); require('dotenv').config(); mongoose.connect(process.env.MONGODB_URI).then(() => console.log('âœ… Connected')).catch(e => console.log('âŒ Error:', e.message));"
    ```
 
 ---
@@ -603,10 +603,10 @@ MongooseServerSelectionError: Could not connect to any servers in your MongoDB A
 
 1. **Missing Authorization Header**:
    ```powershell
-   # ❌ Wrong
+   # âŒ Wrong
    Invoke-RestMethod -Uri "http://localhost:5000/api/travel"
    
-   # ✅ Correct
+   # âœ… Correct
    Invoke-RestMethod -Uri "http://localhost:5000/api/travel" -Headers @{ "Authorization" = "Bearer $TOKEN" }
    ```
 
@@ -676,11 +676,11 @@ npm install -g nodemon
    - No spaces around `=`
    - No quotes around values (unless value has spaces)
    ```env
-   # ❌ Wrong
+   # âŒ Wrong
    PORT = 5000
    MONGODB_URI = "mongodb+srv://..."
    
-   # ✅ Correct
+   # âœ… Correct
    PORT=5000
    MONGODB_URI=mongodb+srv://...
    ```
@@ -693,11 +693,11 @@ npm install -g nodemon
 
 After successful setup:
 
-1. ✅ **Review API Documentation**: [API_REFERENCE.md](../04_api/API_REFERENCE.md)
-2. ✅ **Understand Database Schema**: [DATABASE_SCHEMA.md](../03_architecture/DATABASE_SCHEMA.md)
-3. 📱 **Set up Flutter Mobile App** (future phase)
-4. 🗺️ **Integrate Map Features** (Phase 3)
-5. 🧪 **Write Tests** (future phase)
+1. âœ… **Review API Documentation**: [API_REFERENCE.md](../../backend/api-endpoints/api-reference.md)
+2. âœ… **Understand Database Schema**: [DATABASE_SCHEMA.md](../architecture/database-schema.md)
+3. ðŸ“± **Set up Flutter Mobile App** (future phase)
+4. ðŸ—ºï¸ **Integrate Map Features** (Phase 3)
+5. ðŸ§ª **Write Tests** (future phase)
 
 ---
 
@@ -737,7 +737,7 @@ Recommended extensions:
 
 ### Enable Auto-Save
 
-VS Code → File → Auto Save (or `Ctrl+,` → search "auto save")
+VS Code â†’ File â†’ Auto Save (or `Ctrl+,` â†’ search "auto save")
 
 ### Use Git Branches
 
@@ -769,4 +769,6 @@ npm update express
 
 ---
 
-**Happy coding! 🚀**
+**Happy coding! ðŸš€**
+
+

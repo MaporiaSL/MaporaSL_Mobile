@@ -1,5 +1,10 @@
 const User = require('../models/User');
 const Destination = require('../models/Destination');
+const Session = require('../models/Session');
+const PlaceVisit = require('../models/PlaceVisit');
+const Album = require('../models/Album');
+
+const authBypassEnabled = process.env.AUTH_BYPASS === 'true';
 
 /**
  * Get user progress - unlocked districts, provinces, achievements
@@ -9,8 +14,8 @@ async function getUserProgress(req, res) {
   try {
     const { userId } = req.params;
 
-    // Verify requesting user matches the userId in URL
-    if (req.userId !== userId) {
+    // Verify requesting user matches the userId in URL (skipped in bypass mode)
+    if (!authBypassEnabled && req.userId !== userId) {
       return res.status(403).json({ error: 'Forbidden: Cannot access another user\'s progress' });
     }
 
@@ -210,7 +215,7 @@ async function updateProfile(req, res) {
     const { userId } = req.params;
     const { name, profilePicture } = req.body;
 
-    if (req.userId !== userId) {
+    if (!authBypassEnabled && req.userId !== userId) {
       return res.status(403).json({ error: 'Forbidden: Cannot update another user\'s profile' });
     }
 
@@ -240,14 +245,61 @@ async function updateProfile(req, res) {
 }
 
 /**
- * Delete user account and associated data (GDPR)
+ * Get all user settings in a single call (for populating settings screens)
+ * GET /api/users/:userId/settings
+ */
+async function getUserSettings(req, res) {
+  try {
+    const { userId } = req.params;
+
+    if (!authBypassEnabled && req.userId !== userId) {
+      return res.status(403).json({ error: 'Forbidden: Cannot access another user\'s settings' });
+    }
+
+    const user = await User.findOne({ auth0Id: userId });
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    res.status(200).json({
+      notifications: {
+        achievements: user.notifications?.achievements ?? true,
+        trips: user.notifications?.trips ?? true,
+        places: user.notifications?.places ?? true,
+        social: user.notifications?.social ?? true,
+        nearbyTrips: user.notifications?.nearbyTrips ?? true,
+        placeVisits: user.notifications?.placeVisits ?? true,
+        celebrations: user.notifications?.celebrations ?? true,
+      },
+      display: {
+        mapTheme: user.display?.mapTheme ?? 'light',
+        cloudAnimation: user.display?.cloudAnimation ?? true,
+        units: user.display?.units ?? 'km',
+        language: user.display?.language ?? 'English',
+      },
+      privacy: {
+        isPhotoPrivate: user.isPhotoPrivate ?? true,
+        locationDuringCheckinsOnly: user.locationDuringCheckinsOnly ?? true,
+      },
+      security: {
+        twoFactorEnabled: user.security?.twoFactorEnabled ?? false,
+      },
+    });
+  } catch (error) {
+    console.error('getUserSettings error:', error);
+    res.status(500).json({ error: 'Failed to retrieve user settings' });
+  }
+}
+
+/**
+ * Delete user account and associated data (GDPR-compliant cascade delete)
  * DELETE /api/users/:userId
  */
 async function deleteUser(req, res) {
   try {
     const { userId } = req.params;
 
-    if (req.userId !== userId) {
+    if (!authBypassEnabled && req.userId !== userId) {
       return res.status(403).json({ error: 'Forbidden: Cannot delete another user\'s account' });
     }
 
@@ -256,11 +308,16 @@ async function deleteUser(req, res) {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    // Delete user document and associated destinations
-    await User.deleteOne({ auth0Id: userId });
-    await Destination.deleteMany({ userId });
+    // Cascade delete across all related collections
+    await Promise.all([
+      User.deleteOne({ auth0Id: userId }),
+      Destination.deleteMany({ userId }),
+      Session.deleteMany({ userId }),
+      PlaceVisit.deleteMany({ userId }),
+      Album.deleteMany({ userId }),
+    ]);
 
-    res.status(200).json({ message: 'User account and associated data deleted successfully' });
+    res.status(200).json({ message: 'User account and all associated data deleted successfully' });
   } catch (error) {
     console.error('Delete user error:', error);
     res.status(500).json({ error: 'Failed to delete user account' });
@@ -276,7 +333,7 @@ async function updatePrivacy(req, res) {
     const { userId } = req.params;
     const { isPhotoPrivate, locationDuringCheckinsOnly } = req.body;
 
-    if (req.userId !== userId) {
+    if (!authBypassEnabled && req.userId !== userId) {
       return res.status(403).json({ error: 'Forbidden: Cannot update another user\'s privacy settings' });
     }
 
@@ -312,7 +369,7 @@ async function updateNotifications(req, res) {
     const { userId } = req.params;
     const { achievements, trips, places, social } = req.body;
 
-    if (req.userId !== userId) {
+    if (!authBypassEnabled && req.userId !== userId) {
       return res.status(403).json({ error: 'Forbidden: Cannot update another user\'s notifications' });
     }
 
@@ -352,7 +409,7 @@ async function updateDisplay(req, res) {
     const { userId } = req.params;
     const { mapTheme, cloudAnimation, units, language } = req.body;
 
-    if (req.userId !== userId) {
+    if (!authBypassEnabled && req.userId !== userId) {
       return res.status(403).json({ error: 'Forbidden: Cannot update another user\'s display settings' });
     }
 
@@ -391,5 +448,6 @@ module.exports = {
   updatePrivacy,
   updateNotifications,
   updateDisplay,
-  deleteUser
+  deleteUser,
+  getUserSettings,
 };

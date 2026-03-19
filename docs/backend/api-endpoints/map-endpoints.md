@@ -1,4 +1,4 @@
-# Map & Geospatial API Endpoints
+﻿# Map & Geospatial API Endpoints
 
 **Base URL**: `http://localhost:5000` (Dev) / `http://10.0.2.2:5000` (Android Emulator)  
 **Version**: 1.0.1
@@ -173,7 +173,7 @@ Get convex hull boundary polygon enclosing all trip destinations.
   "properties": {
     "type": "boundary",
     "area": 2847.32,
-    "areaUnit": "km²",
+    "areaUnit": "kmÂ²",
     "destinations": 12,
     "travelId": "679f5e8d3c2a1b4e5f6a7b8c",
     "travelName": "Sri Lanka Adventure"
@@ -328,3 +328,4 @@ curl "http://localhost:5000/api/travel/679f5e8d3c2a1b4e5f6a7b8c/terrain" \
 - [Geospatial Query Endpoints](./geo-endpoints.md) - Find nearby/bounded destinations
 - [Destination Endpoints](./destination-endpoints.md) - Manage individual destinations
 - [Maps Feature Implementation](../../common/feature-implementation/maps.md) - Complete implementation guide
+

@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 import 'package:flutter/foundation.dart' show debugPrint;
@@ -53,7 +53,7 @@ class PlaceVisitRepository {
       } catch (_) {}
 
       final requestJson = request.toJson();
-      debugPrint('➡️ PlaceVisit request starting');
+      debugPrint('âž¡ï¸ PlaceVisit request starting');
       debugPrint('Base URL: ${_dio.options.baseUrl}');
       debugPrint('Request path: $requestPath');
       debugPrint('Resolved URL: $resolvedUrl');
@@ -83,7 +83,7 @@ class PlaceVisitRepository {
           ? (e.response?.data['error'] ?? e.response?.data['message'])
           : null;
 
-      debugPrint('❌ PlaceVisit API error');
+      debugPrint('âŒ PlaceVisit API error');
       debugPrint('Method: ${e.requestOptions.method}');
       debugPrint('URL: ${e.requestOptions.uri}');
       debugPrint('Base URL: ${e.requestOptions.baseUrl}');
@@ -94,7 +94,7 @@ class PlaceVisitRepository {
 
       if (e.response?.statusCode == 404) {
         debugPrint(
-          '⚠️ 404 Debug Hint: verify backend is running and route POST /api/places/:id/visit is mounted.',
+          'âš ï¸ 404 Debug Hint: verify backend is running and route POST /api/places/:id/visit is mounted.',
         );
       }
 
@@ -133,7 +133,7 @@ class PlaceVisitRepository {
         // In production, integrate with flutter_compass or device orientation
         compassHeading = null; // TODO: Integrate compass
       } catch (e) {
-        print('Error getting compass heading: $e');
+        debugPrint('Error getting compass heading: $e');
       }
 
       // ========== COLLECT DEVICE INFO ==========
@@ -289,3 +289,4 @@ class PlaceVisitRepository {
     return null;
   }
 }
+

@@ -1,4 +1,4 @@
-# Achievements & Gamification Implementation
+﻿# Achievements & Gamification Implementation
 
 **Feature**: Progress Tracking & Rewards  
 **Last Updated**: February 1, 2026
@@ -15,14 +15,14 @@ The Achievements feature tracks user progress exploring Sri Lanka through distri
 
 ```
 User visits Destination
-         ↓
+         â†“
 districtId extracted
-         ↓
+         â†“
 User.unlockedDistricts[] updated
 User.totalPlacesVisited++ 
-         ↓
+         â†“
 Check achievement thresholds
-         ↓
+         â†“
 Award achievement & XP
 ```
 
@@ -460,4 +460,6 @@ test('Load achievements', () async {
 
 - [User Model Documentation](../../backend/database/models.md#user-model)
 - [Destination Implementation](./places.md)
-- [Frontend State Management](../../frontend/state-management/)
+- [Frontend State Management](../../frontend/README.md)
+
+

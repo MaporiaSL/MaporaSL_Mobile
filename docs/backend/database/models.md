@@ -1,4 +1,4 @@
-# Database Models Documentation
+﻿# Database Models Documentation
 
 This document provides comprehensive documentation for all Mongoose models used in MAPORIA. Each model is documented with its purpose, schema structure, validation rules, and usage examples.
 
@@ -24,14 +24,14 @@ Stores user account information and gamification progress. Integrated with Fireb
 
 | Field | Type | Required | Default | Indexed | Description |
 |-------|------|----------|---------|---------|-------------|
-| `firebaseUid` | String | ✓ | - | ✓ (unique) | Firebase user identifier |
-| `email` | String | ✓ | - | ✓ (unique) | User email (lowercase) |
-| `name` | String | ✓ | - | - | User's display name |
+| `firebaseUid` | String | âœ“ | - | âœ“ (unique) | Firebase user identifier |
+| `email` | String | âœ“ | - | âœ“ (unique) | User email (lowercase) |
+| `name` | String | âœ“ | - | - | User's display name |
 | `profilePicture` | String | - | null | - | URL to profile image |
 | `unlockedDistricts` | [String] | - | [] | - | Array of unlocked district IDs |
 | `unlockedProvinces` | [String] | - | [] | - | Array of unlocked province IDs |
 | `achievements` | [Object] | - | [] | - | Achievement progress tracking |
-| `achievements.districtId` | String | ✓ | - | - | District identifier |
+| `achievements.districtId` | String | âœ“ | - | - | District identifier |
 | `achievements.progress` | Number | - | 0 | - | Progress percentage (0-100) |
 | `achievements.unlockedAt` | Date | - | null | - | Unlock timestamp |
 | `totalPlacesVisited` | Number | - | 0 | - | Total visited destinations counter |
@@ -112,11 +112,11 @@ Represents a travel trip or journey planned by a user. Contains trip metadata an
 
 | Field | Type | Required | Default | Indexed | Description |
 |-------|------|----------|---------|---------|-------------|
-| `userId` | String | ✓ | - | ✓ | Firebase UID (foreign key) |
-| `title` | String | ✓ | - | - | Trip title (min 3 chars) |
+| `userId` | String | âœ“ | - | âœ“ | Firebase UID (foreign key) |
+| `title` | String | âœ“ | - | - | Trip title (min 3 chars) |
 | `description` | String | - | null | - | Optional trip description |
-| `startDate` | Date | ✓ | - | ✓ (compound) | Trip start date |
-| `endDate` | Date | ✓ | - | - | Trip end date |
+| `startDate` | Date | âœ“ | - | âœ“ (compound) | Trip start date |
+| `endDate` | Date | âœ“ | - | - | Trip end date |
 | `locations` | [String] | - | [] | - | Array of location names |
 | `createdAt` | Date | - | Date.now | - | Record creation timestamp |
 | `updatedAt` | Date | - | Date.now | - | Last update timestamp |
@@ -194,18 +194,18 @@ Represents individual destinations/places within a trip. Supports geospatial que
 
 | Field | Type | Required | Default | Indexed | Description |
 |-------|------|----------|---------|---------|-------------|
-| `userId` | String | ✓ | - | ✓ (compound) | Firebase UID |
-| `travelId` | ObjectId | ✓ | - | ✓ (compound) | Reference to Travel document |
-| `name` | String | ✓ | - | - | Destination name (min 2 chars) |
-| `latitude` | Number | ✓ | - | - | Latitude coordinate (-90 to 90) |
-| `longitude` | Number | ✓ | - | - | Longitude coordinate (-180 to 180) |
+| `userId` | String | âœ“ | - | âœ“ (compound) | Firebase UID |
+| `travelId` | ObjectId | âœ“ | - | âœ“ (compound) | Reference to Travel document |
+| `name` | String | âœ“ | - | - | Destination name (min 2 chars) |
+| `latitude` | Number | âœ“ | - | - | Latitude coordinate (-90 to 90) |
+| `longitude` | Number | âœ“ | - | - | Longitude coordinate (-180 to 180) |
 | `notes` | String | - | null | - | Optional user notes |
 | `visited` | Boolean | - | false | - | Visit status flag |
 | `visitedAt` | Date | - | null | - | Visit timestamp |
-| `districtId` | String | - | null | ✓ | District identifier for gamification |
+| `districtId` | String | - | null | âœ“ | District identifier for gamification |
 | `location` | Object | - | - | 2dsphere | GeoJSON point for geospatial queries |
 | `location.type` | String | - | 'Point' | - | GeoJSON type (always 'Point') |
-| `location.coordinates` | [Number] | ✓ | - | 2dsphere | [longitude, latitude] array |
+| `location.coordinates` | [Number] | âœ“ | - | 2dsphere | [longitude, latitude] array |
 | `createdAt` | Date | - | Date.now | - | Record creation timestamp |
 | `updatedAt` | Date | - | Date.now | - | Last update timestamp |
 
@@ -313,10 +313,10 @@ Stores curated trip templates for users to browse and adopt. Used for trip sugge
 
 | Field | Type | Required | Default | Indexed | Description |
 |-------|------|----------|---------|---------|-------------|
-| `title` | String | ✓ | - | - | Trip template name |
-| `description` | String | ✓ | - | - | Detailed trip description |
-| `difficulty` | String | ✓ | - | - | Trip difficulty (Easy/Moderate/Hard) |
-| `durationDays` | Number | ✓ | - | - | Trip duration (min 1 day) |
+| `title` | String | âœ“ | - | - | Trip template name |
+| `description` | String | âœ“ | - | - | Detailed trip description |
+| `difficulty` | String | âœ“ | - | - | Trip difficulty (Easy/Moderate/Hard) |
+| `durationDays` | Number | âœ“ | - | - | Trip duration (min 1 day) |
 | `xpReward` | Number | - | 100 | - | Experience points reward |
 | `placeIds` | [String] | - | [] | - | Array of place identifiers |
 | `tags` | [String] | - | [] | - | Category tags (culture, nature, etc) |
@@ -394,9 +394,9 @@ All models use `createdAt` and `updatedAt` fields with automatic timestamp manag
 Three models (`User`, `Travel`, `Destination`) use `userId` (Firebase UID string) for user association. This enables multi-tenant data isolation and fast user-specific queries.
 
 ### Soft References
-- `Travel.userId` → `User.firebaseUid` (string reference)
-- `Destination.userId` → `User.firebaseUid` (string reference)
-- `Destination.travelId` → `Travel._id` (ObjectId reference)
+- `Travel.userId` â†’ `User.firebaseUid` (string reference)
+- `Destination.userId` â†’ `User.firebaseUid` (string reference)
+- `Destination.travelId` â†’ `Travel._id` (ObjectId reference)
 
 ### Geospatial Data
 `Destination` model uses GeoJSON Point format for location storage, enabling MongoDB's geospatial query operators (`$near`, `$geoWithin`, etc.).
@@ -408,3 +408,4 @@ Three models (`User`, `Travel`, `Destination`) use `userId` (Firebase UID string
 - **See [relationships.md](./relationships.md)** for detailed model relationship diagrams
 - **See [indexes-optimization.md](./indexes-optimization.md)** for index performance analysis
 - **See [API Endpoints](../api-endpoints/)** for how these models are accessed via REST API
+

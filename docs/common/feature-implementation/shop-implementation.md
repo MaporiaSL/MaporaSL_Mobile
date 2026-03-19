@@ -1,4 +1,4 @@
-# Shop Implementation Plan
+﻿# Shop Implementation Plan
 
 **Version**: 2.0  
 **Date**: January 29, 2026  
@@ -904,6 +904,7 @@ module.exports = router;
 **Week 2-3**: Beta test Phase 2 with users  
 **Week 3-4**: Admin dashboard internal testing  
 **Week 4-5**: Phase 4 integration testing  
-**Week 5**: Production rollout (10% → 50% → 100%)
+**Week 5**: Production rollout (10% â†’ 50% â†’ 100%)
 
-**Status**: ✅ Ready for development | See SHOP.md for specification
+**Status**: âœ… Ready for development | See SHOP.md for specification
+

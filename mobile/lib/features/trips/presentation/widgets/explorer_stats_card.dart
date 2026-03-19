@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/trips_stats_provider.dart';
 
@@ -22,7 +22,7 @@ class ExplorerStatsCard extends ConsumerWidget {
             children: [
               Row(
                 children: [
-                  const Text('🏆', style: TextStyle(fontSize: 28)),
+                  const Text('ðŸ†', style: TextStyle(fontSize: 28)),
                   const SizedBox(width: 12),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -51,7 +51,7 @@ class ExplorerStatsCard extends ConsumerWidget {
                     decoration: BoxDecoration(
                       color: _getLevelColor(
                         stats.travelerLevel,
-                      ).withOpacity(0.1),
+                      ).withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
                         color: _getLevelColor(stats.travelerLevel),
@@ -151,7 +151,7 @@ class _StatItem extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Icon(icon, color: color, size: 28),
@@ -174,3 +174,4 @@ class _StatItem extends StatelessWidget {
     );
   }
 }
+

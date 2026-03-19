@@ -1,4 +1,4 @@
-import 'dart:convert';
+﻿import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart' as mapbox;
@@ -140,9 +140,9 @@ class MapController {
       await _mapboxMap!.style.addSource(source);
       _activeSources.add(sourceId);
 
-      debugPrint('✅ Added GeoJSON source: $sourceId');
+      debugPrint('âœ… Added GeoJSON source: $sourceId');
     } catch (e) {
-      debugPrint('❌ Error adding GeoJSON source: $e');
+      debugPrint('âŒ Error adding GeoJSON source: $e');
     }
   }
 
@@ -171,9 +171,9 @@ class MapController {
       await _mapboxMap!.style.addLayer(layer);
       _activeLayers.add(layerId);
 
-      debugPrint('✅ Added symbol layer: $layerId');
+      debugPrint('âœ… Added symbol layer: $layerId');
     } catch (e) {
-      debugPrint('❌ Error adding symbol layer: $e');
+      debugPrint('âŒ Error adding symbol layer: $e');
     }
   }
 
@@ -201,9 +201,9 @@ class MapController {
       await _mapboxMap!.style.addLayer(layer);
       _activeLayers.add(layerId);
 
-      debugPrint('✅ Added line layer: $layerId');
+      debugPrint('âœ… Added line layer: $layerId');
     } catch (e) {
-      debugPrint('❌ Error adding line layer: $e');
+      debugPrint('âŒ Error adding line layer: $e');
     }
   }
 
@@ -229,9 +229,9 @@ class MapController {
       await _mapboxMap!.style.addLayer(layer);
       _activeLayers.add(layerId);
 
-      debugPrint('✅ Added fill layer: $layerId');
+      debugPrint('âœ… Added fill layer: $layerId');
     } catch (e) {
-      debugPrint('❌ Error adding fill layer: $e');
+      debugPrint('âŒ Error adding fill layer: $e');
     }
   }
 
@@ -242,9 +242,9 @@ class MapController {
     try {
       await (_mapboxMap!.style as dynamic).removeLayer(layerId);
       _activeLayers.remove(layerId);
-      debugPrint('✅ Removed layer: $layerId');
+      debugPrint('âœ… Removed layer: $layerId');
     } catch (e) {
-      debugPrint('❌ Error removing layer: $e');
+      debugPrint('âŒ Error removing layer: $e');
     }
   }
 
@@ -265,9 +265,9 @@ class MapController {
       // Remove the source
       await (_mapboxMap!.style as dynamic).removeSource(sourceId);
       _activeSources.remove(sourceId);
-      debugPrint('✅ Removed source: $sourceId');
+      debugPrint('âœ… Removed source: $sourceId');
     } catch (e) {
-      debugPrint('❌ Error removing source: $e');
+      debugPrint('âŒ Error removing source: $e');
     }
   }
 
@@ -285,9 +285,9 @@ class MapController {
       );
 
       await (_mapboxMap!.style as dynamic).updateSource(source);
-      debugPrint('✅ Updated GeoJSON source: $sourceId');
+      debugPrint('âœ… Updated GeoJSON source: $sourceId');
     } catch (e) {
-      debugPrint('❌ Error updating GeoJSON source: $e');
+      debugPrint('âŒ Error updating GeoJSON source: $e');
     }
   }
 
@@ -313,9 +313,9 @@ class MapController {
       );
 
       await _mapboxMap!.setCamera(options);
-      debugPrint('✅ Fitted camera to bounds');
+      debugPrint('âœ… Fitted camera to bounds');
     } catch (e) {
-      debugPrint('❌ Error fitting bounds: $e');
+      debugPrint('âŒ Error fitting bounds: $e');
     }
   }
 
@@ -329,9 +329,9 @@ class MapController {
       );
 
       await _mapboxMap!.setCamera(options);
-      debugPrint('✅ Panned to: $latitude, $longitude');
+      debugPrint('âœ… Panned to: $latitude, $longitude');
     } catch (e) {
-      debugPrint('❌ Error panning: $e');
+      debugPrint('âŒ Error panning: $e');
     }
   }
 
@@ -342,9 +342,9 @@ class MapController {
     try {
       final options = mapbox.CameraOptions(zoom: zoom);
       await _mapboxMap!.setCamera(options);
-      debugPrint('✅ Set zoom to: $zoom');
+      debugPrint('âœ… Set zoom to: $zoom');
     } catch (e) {
-      debugPrint('❌ Error setting zoom: $e');
+      debugPrint('âŒ Error setting zoom: $e');
     }
   }
 
@@ -355,7 +355,7 @@ class MapController {
     try {
       return await _mapboxMap!.getCameraState();
     } catch (e) {
-      debugPrint('❌ Error getting camera position: $e');
+      debugPrint('âŒ Error getting camera position: $e');
       return null;
     }
   }
@@ -373,9 +373,9 @@ class MapController {
         'visibility',
         visibility,
       );
-      debugPrint('✅ Set $layerId visibility to: $visible');
+      debugPrint('âœ… Set $layerId visibility to: $visible');
     } catch (e) {
-      debugPrint('❌ Error setting layer visibility: $e');
+      debugPrint('âŒ Error setting layer visibility: $e');
     }
   }
 

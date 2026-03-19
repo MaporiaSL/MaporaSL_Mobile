@@ -1,3 +1,4 @@
+﻿import 'package:flutter/foundation.dart';
 import 'dart:convert';
 import 'package:flutter/services.dart';
 
@@ -18,11 +19,11 @@ class GeoJsonLoader {
         throw const FormatException('Invalid GeoJSON structure');
       }
 
-      print('✅ Loaded ${geojson['features']?.length ?? 0} district boundaries');
+      debugPrint('âœ… Loaded ${geojson['features']?.length ?? 0} district boundaries');
 
       return geojson;
     } catch (e) {
-      print('❌ Error loading district boundaries: $e');
+      debugPrint('âŒ Error loading district boundaries: $e');
       rethrow;
     }
   }
@@ -51,3 +52,4 @@ class GeoJsonLoader {
         .toList();
   }
 }
+

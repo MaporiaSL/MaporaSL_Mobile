@@ -1,3 +1,4 @@
+﻿import 'package:flutter/foundation.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
@@ -20,7 +21,7 @@ class FreePlacesService {
       }
       return [];
     } catch (e) {
-      print('Free Places Exception: $e');
+      debugPrint('Free Places Exception: $e');
       return [];
     }
   }
@@ -46,3 +47,4 @@ class FreePlaceSuggestion {
     return parts.join(', ');
   }
 }
+

@@ -1,5 +1,4 @@
-import 'package:flutter/material.dart';
-import '../data/models/place_visit.dart';
+﻿import 'package:flutter/material.dart';
 
 /// Predefined achievements for place visits
 class PlaceAchievements {
@@ -9,7 +8,7 @@ class PlaceAchievements {
       id: 'temple_explorer',
       title: 'Temple Explorer',
       description: 'Visit 10 temples',
-      badgeEmoji: '🕉️',
+      badgeEmoji: 'ðŸ•‰ï¸',
       category: 'temples',
       threshold: 10,
       rewards: 100,
@@ -19,7 +18,7 @@ class PlaceAchievements {
       id: 'beach_bum',
       title: 'Beach Bum',
       description: 'Visit 10 beaches',
-      badgeEmoji: '🏖️',
+      badgeEmoji: 'ðŸ–ï¸',
       category: 'beaches',
       threshold: 10,
       rewards: 100,
@@ -29,7 +28,7 @@ class PlaceAchievements {
       id: 'mountain_climber',
       title: 'Mountain Climber',
       description: 'Visit 10 mountains',
-      badgeEmoji: '⛰️',
+      badgeEmoji: 'â›°ï¸',
       category: 'mountains',
       threshold: 10,
       rewards: 100,
@@ -39,7 +38,7 @@ class PlaceAchievements {
       id: 'historic_hunter',
       title: 'Historic Hunter',
       description: 'Visit 10 historical sites',
-      badgeEmoji: '🏛️',
+      badgeEmoji: 'ðŸ›ï¸',
       category: 'historical',
       threshold: 10,
       rewards: 100,
@@ -49,7 +48,7 @@ class PlaceAchievements {
       id: 'wildlife_watcher',
       title: 'Wildlife Watcher',
       description: 'Visit 10 wildlife locations',
-      badgeEmoji: '🦁',
+      badgeEmoji: 'ðŸ¦',
       category: 'wildlife',
       threshold: 10,
       rewards: 100,
@@ -61,7 +60,7 @@ class PlaceAchievements {
       id: 'all_districts',
       title: 'All Districts Explorer',
       description: 'Visit places in all 25 districts',
-      badgeEmoji: '🗺️',
+      badgeEmoji: 'ðŸ—ºï¸',
       category: 'all_districts',
       threshold: 25,
       rewards: 500,
@@ -73,7 +72,7 @@ class PlaceAchievements {
       id: 'prolific_visitor_25',
       title: 'Prolific Visitor',
       description: 'Record 25 visits',
-      badgeEmoji: '🎯',
+      badgeEmoji: 'ðŸŽ¯',
       category: 'visit_count',
       threshold: 25,
       rewards: 150,
@@ -83,7 +82,7 @@ class PlaceAchievements {
       id: 'prolific_visitor_50',
       title: 'Legendary Traveler',
       description: 'Record 50 visits',
-      badgeEmoji: '👑',
+      badgeEmoji: 'ðŸ‘‘',
       category: 'visit_count',
       threshold: 50,
       rewards: 300,
@@ -93,7 +92,7 @@ class PlaceAchievements {
       id: 'prolific_visitor_100',
       title: 'Master of Exploration',
       description: 'Record 100 visits',
-      badgeEmoji: '🌟',
+      badgeEmoji: 'ðŸŒŸ',
       category: 'visit_count',
       threshold: 100,
       rewards: 500,
@@ -105,7 +104,7 @@ class PlaceAchievements {
       id: 'photo_collector_10',
       title: 'Photo Collector',
       description: 'Upload 10 photos with visits',
-      badgeEmoji: '📷',
+      badgeEmoji: 'ðŸ“·',
       category: 'photos',
       threshold: 10,
       rewards: 100,
@@ -117,7 +116,7 @@ class PlaceAchievements {
       id: 'on_a_roll_7',
       title: 'On a Roll',
       description: 'Visit a place every day for 7 days',
-      badgeEmoji: '🔥',
+      badgeEmoji: 'ðŸ”¥',
       category: 'streak',
       threshold: 7,
       rewards: 200,
@@ -212,8 +211,8 @@ class AchievementCard extends StatelessWidget {
       onTap: onTap,
       child: Card(
         color: isUnlocked
-            ? def.color.withOpacity(0.15)
-            : Colors.grey.withOpacity(0.05),
+            ? def.color.withValues(alpha: 0.15)
+            : Colors.grey.withValues(alpha: 0.05),
         child: Padding(
           padding: const EdgeInsets.all(12),
           child: Column(
@@ -232,7 +231,7 @@ class AchievementCard extends StatelessWidget {
                   right: 0,
                   child: Container(
                     padding: const EdgeInsets.all(2),
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       color: Colors.amber,
                       shape: BoxShape.circle,
                     ),
@@ -258,7 +257,7 @@ class AchievementCard extends StatelessWidget {
                   children: [
                     LinearProgressIndicator(
                       value: achievement.progressPercent,
-                      backgroundColor: Colors.grey.withOpacity(0.2),
+                      backgroundColor: Colors.grey.withValues(alpha: 0.2),
                       valueColor: AlwaysStoppedAnimation(
                         isUnlocked ? def.color : Colors.grey,
                       ),
@@ -334,7 +333,7 @@ class _AchievementUnlockAlertState extends State<AchievementUnlockAlert>
     return ScaleTransition(
       scale: _scaleAnimation,
       child: AlertDialog(
-        backgroundColor: widget.achievement.color.withOpacity(0.95),
+        backgroundColor: widget.achievement.color.withValues(alpha: 0.95),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -368,7 +367,7 @@ class _AchievementUnlockAlertState extends State<AchievementUnlockAlert>
               widget.achievement.description,
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: Colors.white.withOpacity(0.9),
+                color: Colors.white.withValues(alpha: 0.9),
                 fontSize: 14,
               ),
             ),
@@ -376,7 +375,7 @@ class _AchievementUnlockAlertState extends State<AchievementUnlockAlert>
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.card_giftcard, color: Colors.white, size: 16),
+                const Icon(Icons.card_giftcard, color: Colors.white, size: 16),
                 const SizedBox(width: 4),
                 Text(
                   '+${widget.achievement.rewards} points',
@@ -394,3 +393,4 @@ class _AchievementUnlockAlertState extends State<AchievementUnlockAlert>
     );
   }
 }
+

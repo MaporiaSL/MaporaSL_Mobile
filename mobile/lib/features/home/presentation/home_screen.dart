@@ -1,5 +1,6 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../map/presentation/map_screen.dart';
 import '../../album/presentation/album_page.dart';
 import '../../trips/presentation/trips_page.dart';
@@ -11,14 +12,14 @@ import '../widgets/bottom_nav_bar.dart';
 import '../../../core/services/auth_api.dart';
 import '../../../core/services/local_prefs.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends ConsumerState<HomeScreen> {
   int _selectedIndex = 0;
   bool _isCheckingProfile = true;
 
@@ -74,6 +75,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDistrictFocused = ref.watch(districtFocusProvider);
+
     return Scaffold(
       body: _isCheckingProfile
           ? const Center(child: CircularProgressIndicator())
@@ -81,66 +84,71 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 _screens[_selectedIndex],
                 if (_selectedIndex == 0)
-                Positioned(
-                  top: 130,
-                  right: 16,
-                  child: FloatingActionButton(
-                    heroTag: 'add_gem_btn',
-                    backgroundColor: Colors.blue.shade700,
-                    foregroundColor: Colors.white,
-                    elevation: 4,
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const AddDestinationPage()),
-                      );
-                    },
-                    child: const Icon(Icons.add_location_alt),
-                  ),
-                ),
-                Positioned(
-                  top: 10, // Moved profile icon down to make room for FAB
-                  right: 16,
-                  child: SafeArea(
-                    child: Material(
-                      color: Colors.transparent,
-                      child: InkWell(
-                        onTap: () {
+                  Positioned(
+                    right: 16,
+                    bottom: 96,
+                    child: SafeArea(
+                      child: FloatingActionButton(
+                        heroTag: 'add_gem_btn',
+                        backgroundColor: Colors.blue.shade700,
+                        foregroundColor: Colors.white,
+                        elevation: 4,
+                        onPressed: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (_) => const ProfileScreen(),
+                              builder: (context) => const AddDestinationPage(),
                             ),
                           );
                         },
-                        borderRadius: BorderRadius.circular(20),
-                        child: Container(
-                          width: 40,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.white.withOpacity(0.9),
-                            border: Border.all(
-                              color: Colors.white.withOpacity(0.7),
-                              width: 1.5,
-                            ),
-                            boxShadow: const [
-                              BoxShadow(
-                                color: Colors.black26,
-                                blurRadius: 6,
-                                offset: Offset(0, 2),
+                        child: const Icon(Icons.add_location_alt),
+                      ),
+                    ),
+                  ),
+                if (!isDistrictFocused)
+                  Positioned(
+                    top: 10, // Moved profile icon down to make room for FAB
+                    right: 16,
+                    child: SafeArea(
+                      child: Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const ProfileScreen(),
                               ),
-                            ],
-                          ),
-                          child: const CircleAvatar(
-                            backgroundColor: Colors.transparent,
-                            child: Icon(Icons.person, color: Colors.black87),
+                            );
+                          },
+                          borderRadius: BorderRadius.circular(20),
+                          child: Container(
+                            width: 40,
+                            height: 40,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.white.withValues(alpha: 0.9),
+                              border: Border.all(
+                                color: Colors.white.withValues(alpha: 0.7),
+                                width: 1.5,
+                              ),
+                              boxShadow: const [
+                                BoxShadow(
+                                  color: Colors.black26,
+                                  blurRadius: 6,
+                                  offset: Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: const CircleAvatar(
+                              backgroundColor: Colors.transparent,
+                              child: Icon(Icons.person, color: Colors.black87),
+                            ),
                           ),
                         ),
                       ),
                     ),
                   ),
-                ),
               ],
             ),
       bottomNavigationBar: BottomNavBar(

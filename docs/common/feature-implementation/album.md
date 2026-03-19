@@ -1,4 +1,4 @@
-# Album Feature Implementation
+﻿# Album Feature Implementation
 
 **Feature**: Travel Photo Album & Memories  
 **Last Updated**: February 1, 2026  
@@ -15,8 +15,8 @@ The Album feature allows users to upload, organize, and share photos from their 
 ## Planned Architecture
 
 ```
-Trip ──> Destinations ──> Photos
-                      └──> Albums (Collections)
+Trip â”€â”€> Destinations â”€â”€> Photos
+                      â””â”€â”€> Albums (Collections)
 ```
 
 ---
@@ -232,3 +232,4 @@ final sortedPhotos = photos..sort((a, b) =>
 - [AWS S3 Documentation](https://docs.aws.amazon.com/s3/)
 - [Cloudinary Documentation](https://cloudinary.com/documentation)
 - [Flutter Image Picker](https://pub.dev/packages/image_picker)
+

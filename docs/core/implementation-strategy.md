@@ -1,17 +1,17 @@
-# MAPORIA Implementation Strategy & Discussion
+﻿# MAPORIA Implementation Strategy & Discussion
 
 > **Date**: January 1, 2026  
 > **Purpose**: Align on implementation approach, architecture decisions, and testing strategy
 
 ---
 
-## 🎯 Executive Summary
+## ðŸŽ¯ Executive Summary
 
 Your approach is **absolutely correct**:
-- ✅ Start with authentication & data isolation
-- ✅ Build all features on top of this foundation
-- ✅ 100% possible to test locally and fully
-- ✅ This is the standard approach for multi-user mobile apps
+- âœ… Start with authentication & data isolation
+- âœ… Build all features on top of this foundation
+- âœ… 100% possible to test locally and fully
+- âœ… This is the standard approach for multi-user mobile apps
 
 ---
 
@@ -22,10 +22,10 @@ Your approach is **absolutely correct**:
 Authentication is the **critical foundation** because:
 
 1. **All data must be scoped to users**
-   - Every place visit → belongs to a user
-   - Every trip → belongs to a user
-   - Every photo → belongs to a user
-   - Every achievement → belongs to a user
+   - Every place visit â†’ belongs to a user
+   - Every trip â†’ belongs to a user
+   - Every photo â†’ belongs to a user
+   - Every achievement â†’ belongs to a user
 
 2. **Security & Privacy**
    - Without auth, there's no data isolation
@@ -42,15 +42,15 @@ Authentication is the **critical foundation** because:
 
 ```
 Phase 1: Authentication & User Management
-         ↓
+         â†“
 Phase 2: User-Scoped Data Models (Visits, Trips, Photos)
-         ↓
+         â†“
 Phase 3: Gamification Features (Achievements, Cloud System)
-         ↓
+         â†“
 Phase 4: Trip Planning & Media
-         ↓
+         â†“
 Phase 5: Social & Sharing
-         ↓
+         â†“
 Phase 6: Admin & Moderation
 ```
 
@@ -65,18 +65,18 @@ You can test everything locally without deploying. Here's how:
 #### Option A: Recommended - Full Local Stack
 
 ```
-┌─────────────────┐
-│  Flutter App    │  (Android Emulator or iOS Simulator)
-└────────┬────────┘
-         │
-         │ (localhost)
-         ↓
-┌──────────────────────┐
-│  Supabase Local      │  (via Docker)
-│  - PostgreSQL        │
-│  - Auth Service      │
-│  - Storage (S3)      │
-└──────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  Flutter App    â”‚  (Android Emulator or iOS Simulator)
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+         â”‚
+         â”‚ (localhost)
+         â†“
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  Supabase Local      â”‚  (via Docker)
+â”‚  - PostgreSQL        â”‚
+â”‚  - Auth Service      â”‚
+â”‚  - Storage (S3)      â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 **Setup Required**:
@@ -191,15 +191,15 @@ flutter run  # Will auto-select device
 
 | Feature | Android Emulator | iOS Simulator | Web | Physical Device |
 |---------|-----------------|---------------|-----|-----------------|
-| Auth Login/Register | ✅ Yes | ✅ Yes | ✅ Yes | ✅ Yes |
-| User Data Isolation | ✅ Yes | ✅ Yes | ✅ Yes | ✅ Yes |
-| Database Operations | ✅ Yes | ✅ Yes | ✅ Yes | ✅ Yes |
-| UI/UX Flow | ✅ Yes | ✅ Yes | ✅ Yes | ✅ Yes |
-| API Communication | ✅ Yes | ✅ Yes | ✅ Yes | ✅ Yes |
-| File Upload/Download | ✅ Yes | ✅ Yes | ✅ Yes | ✅ Yes |
-| GPS/Location* | ⚠️ Mock | ⚠️ Mock | ❌ No | ✅ Yes |
-| Camera/Photos* | ⚠️ Emulator | ⚠️ Simulator | ❌ No | ✅ Yes |
-| Push Notifications* | ⚠️ Limited | ⚠️ Limited | ❌ No | ✅ Yes |
+| Auth Login/Register | âœ… Yes | âœ… Yes | âœ… Yes | âœ… Yes |
+| User Data Isolation | âœ… Yes | âœ… Yes | âœ… Yes | âœ… Yes |
+| Database Operations | âœ… Yes | âœ… Yes | âœ… Yes | âœ… Yes |
+| UI/UX Flow | âœ… Yes | âœ… Yes | âœ… Yes | âœ… Yes |
+| API Communication | âœ… Yes | âœ… Yes | âœ… Yes | âœ… Yes |
+| File Upload/Download | âœ… Yes | âœ… Yes | âœ… Yes | âœ… Yes |
+| GPS/Location* | âš ï¸ Mock | âš ï¸ Mock | âŒ No | âœ… Yes |
+| Camera/Photos* | âš ï¸ Emulator | âš ï¸ Simulator | âŒ No | âœ… Yes |
+| Push Notifications* | âš ï¸ Limited | âš ï¸ Limited | âŒ No | âœ… Yes |
 
 **Note**: * = Platform-specific features can be mocked for initial development
 
@@ -309,7 +309,7 @@ class VisitRepository {
     final response = await _supabase
         .from('visits')
         .select()
-        .eq('user_id', user.id)  // ← Filter by current user
+        .eq('user_id', user.id)  // â† Filter by current user
         .order('visited_at', ascending: false);
 
     return (response as List)
@@ -326,7 +326,7 @@ class VisitRepository {
     final response = await _supabase
         .from('visits')
         .insert({
-          'user_id': user.id,  // ← Automatically scoped
+          'user_id': user.id,  // â† Automatically scoped
           'place_id': placeId,
           'visited_at': DateTime.now().toIso8601String(),
         })
@@ -395,31 +395,31 @@ Before starting implementation, we should align on:
 
 ```
 Day 1-2: Setup & Architecture
-├─ Create project structure
-├─ Setup Supabase locally (Docker)
-├─ Create Flutter app scaffolding
-└─ Define auth state management with Provider
+â”œâ”€ Create project structure
+â”œâ”€ Setup Supabase locally (Docker)
+â”œâ”€ Create Flutter app scaffolding
+â””â”€ Define auth state management with Provider
 
 Day 3-4: Authentication
-├─ Login screen UI
-├─ Register screen UI
-├─ Email validation
-├─ Password strength rules
-├─ Error handling & user feedback
+â”œâ”€ Login screen UI
+â”œâ”€ Register screen UI
+â”œâ”€ Email validation
+â”œâ”€ Password strength rules
+â”œâ”€ Error handling & user feedback
 
 Day 5: Data Isolation Testing
-├─ Create 2 test users
-├─ Create user-scoped data models
-├─ Test: User A sees only User A's data
-├─ Test: User B sees only User B's data
-└─ Test: Logout → No access to data
+â”œâ”€ Create 2 test users
+â”œâ”€ Create user-scoped data models
+â”œâ”€ Test: User A sees only User A's data
+â”œâ”€ Test: User B sees only User B's data
+â””â”€ Test: Logout â†’ No access to data
 
 Day 6-7: Polish & Documentation
-├─ Add loading states
-├─ Add error screens
-├─ Add password reset flow (optional)
-├─ Update documentation
-└─ Code review & refactoring
+â”œâ”€ Add loading states
+â”œâ”€ Add error screens
+â”œâ”€ Add password reset flow (optional)
+â”œâ”€ Update documentation
+â””â”€ Code review & refactoring
 ```
 
 ---
@@ -443,35 +443,35 @@ flutter test  # Unit & widget tests
 
 ```
 mobile/lib/
-├── main.dart
-├── core/
-│   ├── providers/
-│   │   └── auth_provider.dart
-│   ├── services/
-│   │   └── supabase_service.dart
-│   └── utils/
-│       └── validators.dart
-├── data/
-│   ├── repositories/
-│   │   └── auth_repository.dart
-│   └── models/
-│       └── user.dart
-└── presentation/
-    ├── screens/
-    │   ├── auth/
-    │   │   ├── login_screen.dart
-    │   │   └── register_screen.dart
-    │   └── home/
-    │       └── home_screen.dart
-    └── widgets/
-        └── custom_widgets.dart
+â”œâ”€â”€ main.dart
+â”œâ”€â”€ core/
+â”‚   â”œâ”€â”€ providers/
+â”‚   â”‚   â””â”€â”€ auth_provider.dart
+â”‚   â”œâ”€â”€ services/
+â”‚   â”‚   â””â”€â”€ supabase_service.dart
+â”‚   â””â”€â”€ utils/
+â”‚       â””â”€â”€ validators.dart
+â”œâ”€â”€ data/
+â”‚   â”œâ”€â”€ repositories/
+â”‚   â”‚   â””â”€â”€ auth_repository.dart
+â”‚   â””â”€â”€ models/
+â”‚       â””â”€â”€ user.dart
+â””â”€â”€ presentation/
+    â”œâ”€â”€ screens/
+    â”‚   â”œâ”€â”€ auth/
+    â”‚   â”‚   â”œâ”€â”€ login_screen.dart
+    â”‚   â”‚   â””â”€â”€ register_screen.dart
+    â”‚   â””â”€â”€ home/
+    â”‚       â””â”€â”€ home_screen.dart
+    â””â”€â”€ widgets/
+        â””â”€â”€ custom_widgets.dart
 ```
 
 ---
 
 ## Part 8: Success Criteria for Phase 1
 
-✅ **Authentication Phase Complete When**:
+âœ… **Authentication Phase Complete When**:
 - [ ] User can register with email/password
 - [ ] User can login with email/password
 - [ ] User can logout
@@ -494,4 +494,5 @@ mobile/lib/
 
 ---
 
-**Ready to start implementation? Let's align on the discussion points first! 🚀**
+**Ready to start implementation? Let's align on the discussion points first! ðŸš€**
+

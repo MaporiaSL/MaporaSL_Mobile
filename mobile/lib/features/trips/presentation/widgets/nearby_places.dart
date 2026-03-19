@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 
 class NearbyPlaces extends StatelessWidget {
   const NearbyPlaces({super.key});
@@ -17,7 +17,7 @@ class NearbyPlaces extends StatelessWidget {
               color: Colors.white,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.grey.withOpacity(0.1),
+                  color: Colors.grey.withValues(alpha: 0.1),
                   blurRadius: 10,
                   spreadRadius: 2,
                 ),
@@ -71,3 +71,4 @@ class NearbyPlaces extends StatelessWidget {
     );
   }
 }
+

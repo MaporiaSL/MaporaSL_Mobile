@@ -1,17 +1,17 @@
-# Firebase Authentication Setup Guide
+﻿# Firebase Authentication Setup Guide
 **Last Updated**: February 5, 2026
 
 ---
 
 ## Overview
-This project is migrating from Auth0 to **Firebase Authentication** to enable a **native in‑app login flow** (no external browser redirects) and simpler Flutter integration.
+This project is migrating from Auth0 to **Firebase Authentication** to enable a **native inâ€‘app login flow** (no external browser redirects) and simpler Flutter integration.
 
 ---
 
 ## 1) Create Firebase Project
 1. Go to https://console.firebase.google.com/
 2. Create a new project (or use an existing one)
-3. Enable **Authentication** → **Sign‑in method** → **Email/Password** (and any other providers you want)
+3. Enable **Authentication** â†’ **Signâ€‘in method** â†’ **Email/Password** (and any other providers you want)
 
 ---
 
@@ -30,7 +30,7 @@ This project is migrating from Auth0 to **Firebase Authentication** to enable a 
 ---
 
 ## 3) Backend: Service Account
-1. Firebase console → **Project Settings** → **Service Accounts**
+1. Firebase console â†’ **Project Settings** â†’ **Service Accounts**
 2. Generate a new private key (JSON)
 3. Copy these fields into `backend/.env`:
 

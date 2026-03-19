@@ -1,4 +1,4 @@
-# Trips Feature Implementation
+﻿# Trips Feature Implementation
 
 **Feature**: Trip Planning & Management  
 **Last Updated**: February 1, 2026
@@ -14,12 +14,12 @@ The Trips feature allows users to create, manage, and track their travel plans a
 ## Architecture
 
 ```
-User ──┬──> Travel (Trip)──┬──> Destination 1
-       │                   ├──> Destination 2
-       │                   └──> Destination N
-       │
-       └──> Travel (Trip)──┬──> Destination 1
-                           └──> Destination 2
+User â”€â”€â”¬â”€â”€> Travel (Trip)â”€â”€â”¬â”€â”€> Destination 1
+       â”‚                   â”œâ”€â”€> Destination 2
+       â”‚                   â””â”€â”€> Destination N
+       â”‚
+       â””â”€â”€> Travel (Trip)â”€â”€â”¬â”€â”€> Destination 1
+                           â””â”€â”€> Destination 2
 ```
 
 ---
@@ -458,3 +458,4 @@ test('Create trip', () async {
 - [Destinations](./places.md)
 - [Maps Feature](./maps.md)
 - [PrePlanned Trips](../../backend/api-endpoints/preplanned-trips-endpoints.md)
+

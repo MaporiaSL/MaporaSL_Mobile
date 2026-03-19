@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 
 class LocationCard extends StatelessWidget {
   const LocationCard({super.key});
@@ -7,7 +7,7 @@ class LocationCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       elevation: 4,
-      shadowColor: Colors.blue.withOpacity(0.2),
+      shadowColor: Colors.blue.withValues(alpha: 0.2),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -17,7 +17,7 @@ class LocationCard extends StatelessWidget {
               height: 60,
               width: 60,
               decoration: BoxDecoration(
-                color: Colors.blue.withOpacity(0.1),
+                color: Colors.blue.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(16),
               ),
               child: const Icon(Icons.location_on, color: Colors.blue, size: 30),
@@ -50,3 +50,4 @@ class LocationCard extends StatelessWidget {
     );
   }
 }
+

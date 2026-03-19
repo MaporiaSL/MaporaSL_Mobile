@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/preplanned_trips_provider.dart';
 import 'preplanned_trip_detail_sheet.dart';
@@ -42,7 +42,7 @@ class RecommendedPlaces extends ConsumerWidget {
                     color: Colors.white,
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.grey.withOpacity(0.1),
+                        color: Colors.grey.withValues(alpha: 0.1),
                         blurRadius: 10,
                         spreadRadius: 2,
                       )
@@ -122,3 +122,4 @@ class RecommendedPlaces extends ConsumerWidget {
     );
   }
 }
+

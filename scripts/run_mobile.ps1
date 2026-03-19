@@ -37,6 +37,9 @@ if ($envMap.ContainsKey("API_BASE_URL")) {
 if ($envMap.ContainsKey("AUTH_BYPASS")) {
   $defines += "--dart-define=AUTH_BYPASS=$($envMap["AUTH_BYPASS"])"
 }
+if ($envMap.ContainsKey("PROFILE_FALLBACK_USER_ID")) {
+  $defines += "--dart-define=PROFILE_FALLBACK_USER_ID=$($envMap["PROFILE_FALLBACK_USER_ID"])"
+}
 
 Set-Location (Join-Path $root "mobile")
 

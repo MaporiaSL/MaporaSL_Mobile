@@ -1,4 +1,4 @@
-# Authentication Feature Implementation
+﻿# Authentication Feature Implementation
 
 **Feature**: User Authentication & Authorization  
 **Last Updated**: February 5, 2026
@@ -89,34 +89,34 @@ Notes:
 ## Architecture
 
 ```
-┌─────────────────┐
-│  Flutter App    │
-│  (Frontend)     │
-└────────┬────────┘
-         │ 1. Login with Firebase Auth
-         ▼
-┌─────────────────┐
-│   Firebase      │  ← External Identity Provider
-│ (firebase.google.com)
-└────────┬────────┘
-         │ 2. Returns ID Token
-         ▼
-┌─────────────────┐
-│  Flutter App    │
-│  Stores ID token│
-└────────┬────────┘
-         │ 3. API calls with ID token in header
-         ▼
-┌─────────────────┐
-│  Backend API    │
-│  (Express.js)   │
-└────────┬────────┘
-         │ 4. Validates ID token
-         ▼
-┌─────────────────┐
-│    MongoDB      │  ← Stores user profile & gamification data
-│   User Model    │
-└─────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  Flutter App    â”‚
+â”‚  (Frontend)     â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+         â”‚ 1. Login with Firebase Auth
+         â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚   Firebase      â”‚  â† External Identity Provider
+â”‚ (firebase.google.com)
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+         â”‚ 2. Returns ID Token
+         â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  Flutter App    â”‚
+â”‚  Stores ID tokenâ”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+         â”‚ 3. API calls with ID token in header
+         â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  Backend API    â”‚
+â”‚  (Express.js)   â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+         â”‚ 4. Validates ID token
+         â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚    MongoDB      â”‚  â† Stores user profile & gamification data
+â”‚   User Model    â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ---
@@ -496,3 +496,4 @@ await apiClient.post('/api/auth/register', data: {
 - [Auth API Endpoints](../../backend/api-endpoints/auth-endpoints.md)
 - [Frontend API Integration](../../frontend/api-integration/README.md)
 - [User Model Documentation](../../backend/database/models.md#user-model)
+

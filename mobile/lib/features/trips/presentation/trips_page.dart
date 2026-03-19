@@ -5,7 +5,6 @@ import 'widgets/custom_icon_button.dart';
 import 'widgets/location_card.dart';
 import 'widgets/nearby_places.dart';
 import 'widgets/recommended_places.dart';
-import 'widgets/tourist_places.dart';
 
 class TripsPage extends StatelessWidget {
   const TripsPage({super.key});
@@ -28,14 +27,10 @@ class TripsPage extends StatelessWidget {
           ],
         ),
         actions: const [
-          CustomIconButton(
-            icon: Icon(Ionicons.search_outline),
-          ),
+          CustomIconButton(icon: Icon(Ionicons.search_outline)),
           Padding(
             padding: EdgeInsets.only(left: 8.0, right: 12),
-            child: CustomIconButton(
-              icon: Icon(Ionicons.notifications_outline),
-            ),
+            child: CustomIconButton(icon: Icon(Ionicons.notifications_outline)),
           ),
         ],
       ),
@@ -47,11 +42,11 @@ class TripsPage extends StatelessWidget {
           // LOCATION CARD
           const LocationCard(),
           const SizedBox(height: 15),
-          
+
           // CATEGORIES (Mountain, Beach, etc.)
           //const TouristPlaces(),
           //const SizedBox(height: 10),
-          
+
           // RECOMMENDATIONS LIST
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -60,13 +55,13 @@ class TripsPage extends StatelessWidget {
                 "Recommendation",
                 style: Theme.of(context).textTheme.titleLarge,
               ),
-              TextButton(onPressed: () {}, child: const Text("View All"))
+              TextButton(onPressed: () {}, child: const Text("View All")),
             ],
           ),
           const SizedBox(height: 10),
           const RecommendedPlaces(),
           const SizedBox(height: 10),
-          
+
           // NEARBY FROM YOU LIST
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -75,14 +70,14 @@ class TripsPage extends StatelessWidget {
                 "Nearby From You",
                 style: Theme.of(context).textTheme.titleLarge,
               ),
-              TextButton(onPressed: () {}, child: const Text("View All"))
+              TextButton(onPressed: () {}, child: const Text("View All")),
             ],
           ),
           const SizedBox(height: 10),
           const NearbyPlaces(),
         ],
       ),
-      // Notice: No bottomNavigationBar here! 
+      // Notice: No bottomNavigationBar here!
       // This allows your main CurvedNavigationBar to handle the menu.
     );
   }

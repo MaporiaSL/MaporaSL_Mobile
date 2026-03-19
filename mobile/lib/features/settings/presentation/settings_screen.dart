@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'edit_profile_screen.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../profile/presentation/edit_profile_screen.dart' as profile_edit;
+import '../../profile/presentation/providers/profile_providers.dart';
 import 'change_email_password_screen.dart';
 import 'linked_accounts_screen.dart';
 import 'privacy_location_screen.dart';
@@ -9,13 +11,13 @@ import 'display_settings_screen.dart';
 import 'security_settings_screen.dart';
 import 'about_screens.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:url_launcher/url_launcher.dart';
 
-class SettingsScreen extends StatelessWidget {
+class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final profileAsync = ref.watch(userProfileProvider);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Settings'),
@@ -47,12 +49,22 @@ class SettingsScreen extends StatelessWidget {
                   subtitle: const Text('Name, avatar'),
                   trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const EditProfileScreen(),
-                      ),
-                    );
+                    profileAsync.whenData((profile) {
+                      if (profile != null) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => profile_edit.EditProfileScreen(
+                              initialProfile: profile,
+                            ),
+                          ),
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Profile not loaded yet')),
+                        );
+                      }
+                    });
                   },
                 ),
                 const Divider(height: 1),
@@ -154,10 +166,6 @@ class SettingsScreen extends StatelessWidget {
             ),
           ),
           
-          const SizedBox(height: 24),
-
-          const SizedBox(height: 24),
-
           const SizedBox(height: 24),
           
           // Privacy & Security Section
@@ -318,29 +326,12 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
-  void _sendFeedback(BuildContext context) async {
-    final Uri emailLaunchUri = Uri(
-      scheme: 'mailto',
-      path: 'feedback@maporia.com',
-      query: encodeQueryParameters({
-        'subject': 'Maporia App Feedback',
-      }),
+  void _sendFeedback(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const SendFeedbackScreen(),
+      ),
     );
-
-    if (await canLaunchUrl(emailLaunchUri)) {
-      await launchUrl(emailLaunchUri);
-    } else {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Could not launch email app')),
-        );
-      }
-    }
-  }
-
-  String encodeQueryParameters(Map<String, String> params) {
-    return params.entries
-        .map((e) => '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
-        .join('&');
   }
 }

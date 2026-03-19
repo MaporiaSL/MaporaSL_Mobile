@@ -1,4 +1,4 @@
-# Database Relationships
+﻿# Database Relationships
 
 This document describes how the Mongoose models in MAPORIA relate to each other, including ownership patterns, reference types, and cascade behaviors.
 
@@ -18,7 +18,7 @@ This document describes how the Mongoose models in MAPORIA relate to each other,
 
 MAPORIA uses a hybrid referencing approach:
 - **String-based foreign keys** for User references (Firebase UID)
-- **ObjectId references** for document relationships (Travel ↔ Destination)
+- **ObjectId references** for document relationships (Travel â†” Destination)
 - **No embedded documents** - all relationships are via references
 
 ### Summary Table
@@ -35,61 +35,61 @@ MAPORIA uses a hybrid referencing approach:
 ## Entity Relationship Diagram
 
 ```
-┌─────────────────────┐
-│       User          │
-│  (Auth Provider)    │
-├─────────────────────┤
-│ firebaseUid (PK)    │◄──────────────┐
-│ email               │               │
-│ name                │               │
-│ profilePicture      │               │
-│ unlockedDistricts[] │               │
-│ unlockedProvinces[] │               │
-│ achievements[]      │               │
-│ totalPlacesVisited  │               │
-└─────────────────────┘               │
-                                      │
-                                      │ userId (String)
-                                      │
-          ┌───────────────────────────┼─────────────────────────┐
-          │                           │                         │
-          │                           │                         │
-┌─────────▼───────────┐     ┌─────────▼──────────┐            │
-│      Travel         │     │    Destination     │            │
-├─────────────────────┤     ├────────────────────┤            │
-│ _id (PK)            │◄────┤ travelId (FK)      │            │
-│ userId (FK)         │     │ userId (FK)        │────────────┘
-│ title               │     │ name               │
-│ description         │     │ latitude           │
-│ startDate           │     │ longitude          │
-│ endDate             │     │ location (GeoJSON) │
-│ locations[]         │     │ districtId         │
-│                     │     │ visited            │
-│                     │     │ visitedAt          │
-└─────────────────────┘     └────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚       User          â”‚
+â”‚  (Auth Provider)    â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ firebaseUid (PK)    â”‚â—„â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚ email               â”‚               â”‚
+â”‚ name                â”‚               â”‚
+â”‚ profilePicture      â”‚               â”‚
+â”‚ unlockedDistricts[] â”‚               â”‚
+â”‚ unlockedProvinces[] â”‚               â”‚
+â”‚ achievements[]      â”‚               â”‚
+â”‚ totalPlacesVisited  â”‚               â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜               â”‚
+                                      â”‚
+                                      â”‚ userId (String)
+                                      â”‚
+          â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+          â”‚                           â”‚                         â”‚
+          â”‚                           â”‚                         â”‚
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â–¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”     â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â–¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”            â”‚
+â”‚      Travel         â”‚     â”‚    Destination     â”‚            â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤     â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤            â”‚
+â”‚ _id (PK)            â”‚â—„â”€â”€â”€â”€â”¤ travelId (FK)      â”‚            â”‚
+â”‚ userId (FK)         â”‚     â”‚ userId (FK)        â”‚â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+â”‚ title               â”‚     â”‚ name               â”‚
+â”‚ description         â”‚     â”‚ latitude           â”‚
+â”‚ startDate           â”‚     â”‚ longitude          â”‚
+â”‚ endDate             â”‚     â”‚ location (GeoJSON) â”‚
+â”‚ locations[]         â”‚     â”‚ districtId         â”‚
+â”‚                     â”‚     â”‚ visited            â”‚
+â”‚                     â”‚     â”‚ visitedAt          â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜     â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 
 
-┌─────────────────────┐
-│   PrePlannedTrip    │
-│   (Standalone)      │
-├─────────────────────┤
-│ _id (PK)            │
-│ title               │
-│ description         │
-│ difficulty          │
-│ durationDays        │
-│ xpReward            │
-│ placeIds[]          │
-│ tags[]              │
-│ startingPoint       │
-└─────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚   PrePlannedTrip    â”‚
+â”‚   (Standalone)      â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ _id (PK)            â”‚
+â”‚ title               â”‚
+â”‚ description         â”‚
+â”‚ difficulty          â”‚
+â”‚ durationDays        â”‚
+â”‚ xpReward            â”‚
+â”‚ placeIds[]          â”‚
+â”‚ tags[]              â”‚
+â”‚ startingPoint       â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ---
 
 ## Detailed Relationships
 
-### 1. User → Travel (One-to-Many)
+### 1. User â†’ Travel (One-to-Many)
 
 **Relationship**: One user can create multiple trips.
 
@@ -121,12 +121,12 @@ const upcoming = await Travel.find({
 ```
 
 **Navigation**:
-- Forward: `User.firebaseUid` → `Travel.userId` (requires manual join)
-- Backward: `Travel.userId` → `User.firebaseUid` (string match)
+- Forward: `User.firebaseUid` â†’ `Travel.userId` (requires manual join)
+- Backward: `Travel.userId` â†’ `User.firebaseUid` (string match)
 
 ---
 
-### 2. User → Destination (One-to-Many)
+### 2. User â†’ Destination (One-to-Many)
 
 **Relationship**: One user can have multiple destinations across all their trips.
 
@@ -166,7 +166,7 @@ const colomboVisits = await Destination.countDocuments({
 
 ---
 
-### 3. Travel → Destination (One-to-Many)
+### 3. Travel â†’ Destination (One-to-Many)
 
 **Relationship**: One trip contains multiple destinations.
 
@@ -433,3 +433,4 @@ const user = await User.findOne({ firebaseUid: userId })
 - [models.md](./models.md) - Detailed schema documentation
 - [indexes-optimization.md](./indexes-optimization.md) - Index performance analysis
 - [API Endpoints](../api-endpoints/) - How relationships are exposed via REST API
+

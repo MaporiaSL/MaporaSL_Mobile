@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gemified_travel_portfolio/features/onboarding/widgets/brush_highlight.dart';
 import '../../../core/constants/app_colors.dart';
@@ -53,7 +53,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 ),
                 onboardPage(
                   image: images[1],
-                  title: "It’s a big world out there go ",
+                  title: "Itâ€™s a big world out there go ",
                   highlight: "explore",
                   description:
                       "To get the best of your adventure you just need to leave and go where you like. we are waiting for you",
@@ -90,7 +90,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                     ignoring: currentIndex >= 2,
                     child: Container(
                       decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.3),
+                        color: Colors.black.withValues(alpha: 0.3),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: TextButton(
@@ -168,7 +168,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   color: AppColors.textDark,
                 ),
                 children: [
-                  TextSpan(text: title + " "), // normal text
+                  TextSpan(text: "$title "), // normal text
                   WidgetSpan(
                     alignment: PlaceholderAlignment.baseline,
                     baseline: TextBaseline.alphabetic,
@@ -212,7 +212,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 decoration: BoxDecoration(
                   color: currentIndex == index
                       ? AppColors.primary
-                      : AppColors.primary.withOpacity(0.3),
+                      : AppColors.primary.withValues(alpha: 0.3),
                   borderRadius: BorderRadius.circular(10),
                 ),
               );
@@ -271,3 +271,4 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     );
   }
 }
+

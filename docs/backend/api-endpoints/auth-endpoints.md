@@ -1,4 +1,4 @@
-# Authentication API Endpoints
+﻿# Authentication API Endpoints
 
 **Base URL**: `http://localhost:5000` (Dev) / `http://10.0.2.2:5000` (Android Emulator)  
 **Version**: 1.0.1
@@ -252,3 +252,4 @@ print(user['totalPlacesVisited']);
 - [Authentication Feature Implementation](../../common/feature-implementation/authentication.md)
 - [Firebase Auth Setup Guide](../../common/setup-guides/firebase-auth-setup.md)
 - [User Model Documentation](../database/models.md#user-model)
+

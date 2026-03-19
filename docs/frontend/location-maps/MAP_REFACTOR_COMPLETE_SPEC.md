@@ -1,4 +1,4 @@
-# MAP PAGE COMPLETE REFACTOR SPECIFICATION
+﻿# MAP PAGE COMPLETE REFACTOR SPECIFICATION
 
 **Version**: 1.0  
 **Date**: February 16, 2026  
@@ -7,7 +7,7 @@
 
 ---
 
-## 📋 Table of Contents
+## ðŸ“‹ Table of Contents
 
 1. [Map Page Architecture](#map-page-architecture)
 2. [Core Functionalities](#core-functionalities)
@@ -23,14 +23,14 @@
 ## Map Page Architecture
 
 ### Current State (Pre-Refactor)
-- ✅ Cartoonish local GeoJSON-based map rendering
-- ✅ District/province selection with tap detection
-- ✅ Exploration assignments (discovery map progression)
-- ✅ Material3 theme integration
-- ⚠️ Outdated UI (pre-2026 aesthetic)
-- ⚠️ Hard-coded color scheme & typography
-- ⚠️ Limited feedback & state visualization
-- ⚠️ No real-time location verification UI
+- âœ… Cartoonish local GeoJSON-based map rendering
+- âœ… District/province selection with tap detection
+- âœ… Exploration assignments (discovery map progression)
+- âœ… Material3 theme integration
+- âš ï¸ Outdated UI (pre-2026 aesthetic)
+- âš ï¸ Hard-coded color scheme & typography
+- âš ï¸ Limited feedback & state visualization
+- âš ï¸ No real-time location verification UI
 
 ### Post-Refactor Vision
 The map page becomes the **central hub** for user exploration across Sri Lanka:
@@ -53,19 +53,19 @@ The map page becomes the **central hub** for user exploration across Sri Lanka:
 - Renders district visuals based on unlock state (locked/unlocked/visited)
 
 #### User Interactions
-- **Tap District** → Updates bottom panel with district details
-- **Pinch Zoom** → Scale map (if enabled; consider UX trade-off)
-- **Pan/Drag** → Parallax or shift map slightly (optional, premium touch)
-- **Double Tap** → Center on province or reset view
-- **Long Press** → Show context menu or quick info
+- **Tap District** â†’ Updates bottom panel with district details
+- **Pinch Zoom** â†’ Scale map (if enabled; consider UX trade-off)
+- **Pan/Drag** â†’ Parallax or shift map slightly (optional, premium touch)
+- **Double Tap** â†’ Center on province or reset view
+- **Long Press** â†’ Show context menu or quick info
 
 #### Visual States per District
 | State | Visual Indication | Color/Effect | Interaction |
 |-------|-------------------|-------------|-------------|
-| **Locked** | Fogged/blurred, lock icon | Desaturated, dim overlay | Tap → Show required locations |
-| **In Progress** | Partial reveal, progress ring | Semi-transparent tint | Tap → Show assignments & progress |
-| **Unlocked** | Fully revealed, distinct color | Bright, electric teal accent | Tap → Show achievements & stats |
-| **Province Complete** | Glow/halo effect | Gold/copper highlight | Tap → Show milestone reward |
+| **Locked** | Fogged/blurred, lock icon | Desaturated, dim overlay | Tap â†’ Show required locations |
+| **In Progress** | Partial reveal, progress ring | Semi-transparent tint | Tap â†’ Show assignments & progress |
+| **Unlocked** | Fully revealed, distinct color | Bright, electric teal accent | Tap â†’ Show achievements & stats |
+| **Province Complete** | Glow/halo effect | Gold/copper highlight | Tap â†’ Show milestone reward |
 
 #### Technical Implementation
 - **Canvas Rendering**: CustomPainter (cartoon_map_painter.dart) with GeoJSON boundaries
@@ -99,7 +99,7 @@ When a district is selected, a rich bottom sheet displays:
   - Verification status: checkmark (visited), clock (assigned), lock (future)
   - Last visited date (if applicable)
 - **Swipe-able** for quick dismiss or secondary action
-- **Tap to View** → Navigate to place detail or open location in Maps
+- **Tap to View** â†’ Navigate to place detail or open location in Maps
 
 **Achievement Section** (if district is unlocked)
 - Display badge(s) earned for unlocking
@@ -113,10 +113,10 @@ When a district is selected, a rich bottom sheet displays:
 - Dismiss/Collapse: Swipe down or top indicator
 
 #### Interaction Patterns
-- **Swipe up** → Expand to full-screen detail
-- **Swipe down** → Collapse to peek state
-- **Tap location** → Navigate to verification or detail
-- **Tap share** → Generate shareable card with MAPORIA branding
+- **Swipe up** â†’ Expand to full-screen detail
+- **Swipe down** â†’ Collapse to peek state
+- **Tap location** â†’ Navigate to verification or detail
+- **Tap share** â†’ Generate shareable card with MAPORIA branding
 
 ---
 
@@ -132,25 +132,25 @@ When a district is selected, a rich bottom sheet displays:
 #### Verification Flow
 ```
 User approaches location
-  ↓
+  â†“
 Map detects proximity (50-100m radius, configurable)
-  ↓
+  â†“
 [Option A] Auto-trigger verification UI
-  ↓
+  â†“
 [Option B] User taps "Verify Location" button
-  ↓
+  â†“
 Location verified (GPS coords within tolerance)
-  ↓
-✅ Location marked visited
-  ↓
+  â†“
+âœ… Location marked visited
+  â†“
 Animate location card (checkmark, green highlight)
-  ↓
+  â†“
 Show mini-celebration (toast, haptic, sound)
-  ↓
+  â†“
 Update progress bar
-  ↓
+  â†“
 Check if district unlocked
-  ↓
+  â†“
 [If unlocked] Show unlock modal + share prompt
 ```
 
@@ -179,9 +179,9 @@ Check if district unlocked
 
 #### Interaction
 - Scroll to reveal all content
-- Tap landmark card → Navigate to place detail
-- Tap trip → Go to trip screen
-- Tap location on mini-map → Auto-scroll location card
+- Tap landmark card â†’ Navigate to place detail
+- Tap trip â†’ Go to trip screen
+- Tap location on mini-map â†’ Auto-scroll location card
 
 ---
 
@@ -202,9 +202,9 @@ Check if district unlocked
 
 #### Milestone Notifications
 ```
-District Unlocked → Modal (confetti, big text, share CTA)
-Province Unlocked → Full-screen reward screen with shareability
-Landmark Collection → Toast with sticker/badge
+District Unlocked â†’ Modal (confetti, big text, share CTA)
+Province Unlocked â†’ Full-screen reward screen with shareability
+Landmark Collection â†’ Toast with sticker/badge
 ```
 
 ---
@@ -213,9 +213,9 @@ Landmark Collection → Toast with sticker/badge
 
 #### What Can Be Shared
 
-1. **Unlocked Location**: "I just unlocked 🔓 West Province! Help me explore Sri Lanka in MAPORIA 🗺️"
-2. **District Unlock**: "🎉 Achieved 'Western Explorer'! Visited 5 locations in West. #MAPORIA #Travel"
-3. **Province Unlock**: "✨ I unlocked Western Province! Only 8/9 to go. Join me in MAPORIA!"
+1. **Unlocked Location**: "I just unlocked ðŸ”“ West Province! Help me explore Sri Lanka in MAPORIA ðŸ—ºï¸"
+2. **District Unlock**: "ðŸŽ‰ Achieved 'Western Explorer'! Visited 5 locations in West. #MAPORIA #Travel"
+3. **Province Unlock**: "âœ¨ I unlocked Western Province! Only 8/9 to go. Join me in MAPORIA!"
 4. **Map Snapshot**: Unlocked areas + user name + timestamp
 
 #### Share Card Design
@@ -268,7 +268,7 @@ Landmark Collection → Toast with sticker/badge
 #### Top-Left Corner (Persistent Widget)
 ```
 Level 5
-███████░ 120/200 XP
+â–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–‘ 120/200 XP
 Districts: 8/25 | Provinces: 1/9
 ```
 - Tap to view full achievements screen
@@ -408,43 +408,43 @@ final achievementToastProvider = StateProvider<AchievementEvent?>((ref) => null)
 ### 1. **District Selection Flow**
 ```
 MapCanvas
-  ├─ User taps district
-  ├─ MapNotifier updates selectedDistrict state
-  ├─ Bottom sheet animates in (200ms slide)
-  ├─ Bottom sheet fetches assignments via API
-  ├─ Progress bar animates (1000ms ease)
-  └─ Location list appears (staggered 50ms offset)
+  â”œâ”€ User taps district
+  â”œâ”€ MapNotifier updates selectedDistrict state
+  â”œâ”€ Bottom sheet animates in (200ms slide)
+  â”œâ”€ Bottom sheet fetches assignments via API
+  â”œâ”€ Progress bar animates (1000ms ease)
+  â””â”€ Location list appears (staggered 50ms offset)
 ```
 
 ### 2. **Verification Success Flow**
 ```
 LocationCard
-  ├─ User taps "Verify Location"
-  ├─ Permission check (location/camera)
-  ├─ GPS detection runs
-  ├─ If accurate:
-  │  ├─ Location card highlights (green)
-  │  ├─ Checkmark icon scales in
-  │  ├─ Progress bar increments (animated)
-  │  └─ Success toast appears
-  └─ If inaccurate:
-     ├─ Error message shown
-     ├─ Card shakes (feedback)
-     └─ Retry CTA offered
+  â”œâ”€ User taps "Verify Location"
+  â”œâ”€ Permission check (location/camera)
+  â”œâ”€ GPS detection runs
+  â”œâ”€ If accurate:
+  â”‚  â”œâ”€ Location card highlights (green)
+  â”‚  â”œâ”€ Checkmark icon scales in
+  â”‚  â”œâ”€ Progress bar increments (animated)
+  â”‚  â””â”€ Success toast appears
+  â””â”€ If inaccurate:
+     â”œâ”€ Error message shown
+     â”œâ”€ Card shakes (feedback)
+     â””â”€ Retry CTA offered
 ```
 
 ### 3. **Unlock Flow**
 ```
 LocationVerified
-  ├─ Check if all locations for district verified
-  ├─ If yes:
-  │  ├─ District state → "unlocked"
-  │  ├─ Full-screen modal appears (confetti optional)
-  │  ├─ Achievement badge shown
-  │  ├─ XP earned display
-  │  └─ Share CTA prominently shown
-  └─ Map visual updates (glow, color change)
-     └─ Splash haptic feedback
+  â”œâ”€ Check if all locations for district verified
+  â”œâ”€ If yes:
+  â”‚  â”œâ”€ District state â†’ "unlocked"
+  â”‚  â”œâ”€ Full-screen modal appears (confetti optional)
+  â”‚  â”œâ”€ Achievement badge shown
+  â”‚  â”œâ”€ XP earned display
+  â”‚  â””â”€ Share CTA prominently shown
+  â””â”€ Map visual updates (glow, color change)
+     â””â”€ Splash haptic feedback
 ```
 
 ### 4. **Tablet/Responsive**
@@ -474,61 +474,61 @@ class MapState {
 ```
 
 ### MapNotifier Actions
-- `selectDistrict(districtId)` → Updates state, fetches data
-- `collapseBottomSheet()` → Toggles expanded state
-- `clearSelection()` → Resets to neutral
-- `refreshAssignments()` → Re-fetches API
+- `selectDistrict(districtId)` â†’ Updates state, fetches data
+- `collapseBottomSheet()` â†’ Toggles expanded state
+- `clearSelection()` â†’ Resets to neutral
+- `refreshAssignments()` â†’ Re-fetches API
 
 ### Side Effects (via ref.listen)
-- Achievement unlock → Show modal
-- Location verified → Real-time progress update
-- Error → Show snackbar
-- Reroll success → Navigate & reset map
+- Achievement unlock â†’ Show modal
+- Location verified â†’ Real-time progress update
+- Error â†’ Show snackbar
+- Reroll success â†’ Navigate & reset map
 
 ---
 
 ## Implementation Roadmap
 
-### Phase 1: Foundation (3–4 days)
+### Phase 1: Foundation (3â€“4 days)
 - [ ] Update app_theme.dart (if not already done)
 - [ ] Refactor app_colors.dart with new palette
 - [ ] Create map_state_provider.dart + MapStateNotifier
 - [ ] Rebuild map_screen.dart layout and structure
 - [ ] Connect to explorationProvider
 
-### Phase 2: Enhanced Canvas (2–3 days)
+### Phase 2: Enhanced Canvas (2â€“3 days)
 - [ ] Update cartoon_map_painter.dart with premium colors
 - [ ] Integrate district state visualization (locked/unlocked/visited)
 - [ ] Add animation for selection feedback
 - [ ] Optimize performance (caching, layer batching)
 
-### Phase 3: Bottom Sheet & Components (3–4 days)
+### Phase 3: Bottom Sheet & Components (3â€“4 days)
 - [ ] Rebuild _DistrictActionPanel into modern bottom sheet
 - [ ] Create LocationListItem widget with new design
 - [ ] Build ProgressCard component
 - [ ] Create AchievementBadge widget
 - [ ] Wire to explorationProvider data
 
-### Phase 4: Verification & GPS (2–3 days)
+### Phase 4: Verification & GPS (2â€“3 days)
 - [ ] Integrate location_verification_provider.dart
 - [ ] Build VerificationModal component
 - [ ] Real-time proximity detection UI
 - [ ] Toast/notification system for unlocks
 
-### Phase 5: Onboarding & Modals (2–3 days)
+### Phase 5: Onboarding & Modals (2â€“3 days)
 - [ ] Create ExplorationOnboardingScreen
 - [ ] Build DistrictDetailsModal
 - [ ] Build AchievementUnlockModal
 - [ ] Build RerollScreen
 
-### Phase 6: Social Sharing & Polish (2–3 days)
+### Phase 6: Social Sharing & Polish (2â€“3 days)
 - [ ] Create ShareCardWidget
 - [ ] Wire to share_feature API
 - [ ] Test animations and transitions
 - [ ] Accessibility audit
 - [ ] Dark mode testing
 
-**Total Estimate**: 14–20 days (depends on parallelization and scope adjustments)
+**Total Estimate**: 14â€“20 days (depends on parallelization and scope adjustments)
 
 ---
 
@@ -547,25 +547,27 @@ class MapState {
 
 ## Success Criteria
 
-- ✅ All 25 districts rendered and tapable
-- ✅ Performance: <100ms tap-to-sheet response
-- ✅ Bottom sheet smooth scroll with >60fps
-- ✅ Location verification works end-to-end (GPS + API)
-- ✅ Achievement unlocks trigger notifications & modals
-- ✅ Share functionality generates branded cards
-- ✅ Dark mode fully supported
-- ✅ Accessibility: WCAG AA compliance
-- ✅ No Mapbox dependency (GeoJSON-based)
-- ✅ Premium minimal design system applied consistently
+- âœ… All 25 districts rendered and tapable
+- âœ… Performance: <100ms tap-to-sheet response
+- âœ… Bottom sheet smooth scroll with >60fps
+- âœ… Location verification works end-to-end (GPS + API)
+- âœ… Achievement unlocks trigger notifications & modals
+- âœ… Share functionality generates branded cards
+- âœ… Dark mode fully supported
+- âœ… Accessibility: WCAG AA compliance
+- âœ… No Mapbox dependency (GeoJSON-based)
+- âœ… Premium minimal design system applied consistently
 
 ---
 
 ## References
 
-- [Discovery Map Progression](discovery-map-progression.md)
-- [Achievements & Gamification](../common/feature-implementation/achievements.md)
-- [Sharing Feature](../common/features/sharing.md)
+- [Discovery Map Progression](../../common/features/discovery-map-progression.md)
+- [Achievements & Gamification](../../common/feature-implementation/achievements.md)
+- [Sharing Feature](../../common/features/sharing.md)
 - [Phase 1 Implementation Plan](phase1-implementation-plan.md)
-- [App Theme (Updated)](../../mobile/lib/core/theme/app_theme.dart)
-- [App Colors (Updated)](../../mobile/lib/core/constants/app_colors.dart)
+- [App Theme (Updated)](../../../mobile/lib/core/theme/app_theme.dart)
+- [App Colors (Updated)](../../../mobile/lib/core/constants/app_colors.dart)
+
+
 
