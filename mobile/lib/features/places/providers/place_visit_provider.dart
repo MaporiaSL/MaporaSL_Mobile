@@ -38,7 +38,6 @@ final placeVisitRepositoryProvider = Provider.family((ref, String? token) {
   return PlaceVisitRepository(dio, token);
 });
 
-
 /// Place visit state notifier
 final placeVisitProvider =
     StateNotifierProvider.family<PlaceVisitNotifier, PlaceVisitState, String>(
@@ -170,10 +169,17 @@ class PlaceVisitNotifier extends StateNotifier<PlaceVisitState> {
         photoUrl: photoUrl,
         onProgress: (step, progress) {
           int? stepIndex;
-          if (step.contains('Permission') || step.contains('signal') || step.contains('GPS')) stepIndex = 1; // Maps to Boundary Check since permissions are fast
-          if (step.contains('device') || step.contains('security')) stepIndex = 2;
+          if (step.contains('Permission') ||
+              step.contains('signal') ||
+              step.contains('GPS'))
+            stepIndex = 1; // Maps to Boundary Check since permissions are fast
+          if (step.contains('device') || step.contains('security'))
+            stepIndex = 2;
           if (step.contains('environmental')) stepIndex = 3;
-          if (step.contains('Preparing') || step.contains('Sending') || step.contains('server')) stepIndex = 4;
+          if (step.contains('Preparing') ||
+              step.contains('Sending') ||
+              step.contains('server'))
+            stepIndex = 4;
 
           state = state.copyWith(
             verificationProgress: progress,

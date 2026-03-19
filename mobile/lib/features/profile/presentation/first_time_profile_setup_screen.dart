@@ -144,7 +144,9 @@ class _FirstTimeProfileSetupScreenState
 
   Widget _fieldTypeChip({required bool required}) {
     final background = required ? Colors.red.shade50 : Colors.blueGrey.shade50;
-    final foreground = required ? Colors.red.shade700 : Colors.blueGrey.shade700;
+    final foreground = required
+        ? Colors.red.shade700
+        : Colors.blueGrey.shade700;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
@@ -208,7 +210,10 @@ class _FirstTimeProfileSetupScreenState
 
     try {
       final repository = ref.read(profileRepositoryProvider);
-      final avatarUrl = await repository.uploadAvatar(userId, _avatarFile!.path);
+      final avatarUrl = await repository.uploadAvatar(
+        userId,
+        _avatarFile!.path,
+      );
       await repository.updateProfile(userId, avatarUrl: avatarUrl);
 
       if (!mounted) return;
@@ -602,7 +607,9 @@ class _FirstTimeProfileSetupScreenState
                       _fieldTypeChip(required: false),
                       const SizedBox(width: 8),
                       const Expanded(
-                        child: Text('Add an avatar now or skip and update later.'),
+                        child: Text(
+                          'Add an avatar now or skip and update later.',
+                        ),
                       ),
                     ],
                   ),
@@ -639,7 +646,10 @@ class _FirstTimeProfileSetupScreenState
                     const SizedBox(height: 8),
                     Text(
                       _avatarUploadError!,
-                      style: TextStyle(color: Colors.red.shade700, fontSize: 12),
+                      style: TextStyle(
+                        color: Colors.red.shade700,
+                        fontSize: 12,
+                      ),
                     ),
                   ],
                   const SizedBox(height: 16),
