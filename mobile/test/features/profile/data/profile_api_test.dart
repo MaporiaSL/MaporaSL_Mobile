@@ -25,8 +25,17 @@ void main() {
           requestOptions: RequestOptions(path: '/api/profile/u1'),
           statusCode: 200,
           data: {
-            'user': {'id': 'u1', 'name': 'Test', 'email': 'test@example.com', 'avatarUrl': ''},
-            'stats': {'totalSubmitted': 0, 'approvedCount': 0, 'approvalRate': 0},
+            'user': {
+              'id': 'u1',
+              'name': 'Test',
+              'email': 'test@example.com',
+              'avatarUrl': '',
+            },
+            'stats': {
+              'totalSubmitted': 0,
+              'approvedCount': 0,
+              'approvalRate': 0,
+            },
             'badges': [],
             'leaderboardRank': 0,
             'impactCount': 0,
@@ -41,12 +50,19 @@ void main() {
     });
 
     test('updateProfile sends expected payload', () async {
-      when(() => dio.post('/api/profile/u1', data: any(named: 'data'))).thenAnswer(
+      when(
+        () => dio.post('/api/profile/u1', data: any(named: 'data')),
+      ).thenAnswer(
         (_) async => Response(
           requestOptions: RequestOptions(path: '/api/profile/u1'),
           statusCode: 200,
           data: {
-            'user': {'id': 'u1', 'name': 'Updated Name', 'email': 'test@example.com', 'avatarUrl': ''},
+            'user': {
+              'id': 'u1',
+              'name': 'Updated Name',
+              'email': 'test@example.com',
+              'avatarUrl': '',
+            },
           },
         ),
       );
@@ -54,62 +70,71 @@ void main() {
       final result = await api.updateProfile('u1', name: 'Updated Name');
 
       expect(result['user']['name'], 'Updated Name');
-      verify(() => dio.post('/api/profile/u1', data: {'name': 'Updated Name'})).called(1);
-    });
-
-    test('submitPlaceContribution posts multipart payload to places submit endpoint', () async {
-      when(
-        () => dio.post(
-          '/api/places/submit',
-          data: any(named: 'data'),
-          options: any(named: 'options'),
-        ),
-      ).thenAnswer(
-        (_) async => Response(
-          requestOptions: RequestOptions(path: '/api/places/submit'),
-          statusCode: 201,
-          data: {'message': 'ok'},
-        ),
-      );
-
-      final tempDir = await Directory.systemTemp.createTemp('profile_api_test');
-      final photo1 = File('${tempDir.path}/photo1.jpg')..writeAsBytesSync([1, 2, 3, 4]);
-      final photo2 = File('${tempDir.path}/photo2.jpg')..writeAsBytesSync([5, 6, 7, 8]);
-
-      await api.submitPlaceContribution(
-        placeName: 'Sample Place',
-        description: 'This is a valid description with more than fifty characters for submission.',
-        category: 'other',
-        province: 'Western',
-        district: 'Colombo',
-        latitude: 6.9271,
-        longitude: 79.8612,
-        photoPaths: [
-          photo1.path,
-          photo2.path,
-        ],
-      );
-
       verify(
-        () => dio.post(
-          '/api/places/submit',
-          data: any(named: 'data'),
-          options: any(named: 'options'),
-        ),
+        () => dio.post('/api/profile/u1', data: {'name': 'Updated Name'}),
       ).called(1);
-
-      await tempDir.delete(recursive: true);
     });
+
+    test(
+      'submitPlaceContribution posts multipart payload to places submit endpoint',
+      () async {
+        when(
+          () => dio.post(
+            '/api/places/submit',
+            data: any(named: 'data'),
+            options: any(named: 'options'),
+          ),
+        ).thenAnswer(
+          (_) async => Response(
+            requestOptions: RequestOptions(path: '/api/places/submit'),
+            statusCode: 201,
+            data: {'message': 'ok'},
+          ),
+        );
+
+        final tempDir = await Directory.systemTemp.createTemp(
+          'profile_api_test',
+        );
+        final photo1 = File('${tempDir.path}/photo1.jpg')
+          ..writeAsBytesSync([1, 2, 3, 4]);
+        final photo2 = File('${tempDir.path}/photo2.jpg')
+          ..writeAsBytesSync([5, 6, 7, 8]);
+
+        await api.submitPlaceContribution(
+          placeName: 'Sample Place',
+          description:
+              'This is a valid description with more than fifty characters for submission.',
+          category: 'other',
+          province: 'Western',
+          district: 'Colombo',
+          latitude: 6.9271,
+          longitude: 79.8612,
+          photoPaths: [photo1.path, photo2.path],
+        );
+
+        verify(
+          () => dio.post(
+            '/api/places/submit',
+            data: any(named: 'data'),
+            options: any(named: 'options'),
+          ),
+        ).called(1);
+
+        await tempDir.delete(recursive: true);
+      },
+    );
 
     test('getPendingSubmissions reads moderation queue payload', () async {
       when(() => dio.get('/api/places/submissions/pending')).thenAnswer(
         (_) async => Response(
-          requestOptions: RequestOptions(path: '/api/places/submissions/pending'),
+          requestOptions: RequestOptions(
+            path: '/api/places/submissions/pending',
+          ),
           statusCode: 200,
           data: {
             'submissions': [
-              {'id': 's1', 'placeName': 'P1', 'status': 'pending'}
-            ]
+              {'id': 's1', 'placeName': 'P1', 'status': 'pending'},
+            ],
           },
         ),
       );
@@ -129,16 +154,21 @@ void main() {
         ),
       ).thenAnswer(
         (_) async => Response(
-          requestOptions: RequestOptions(path: '/api/places/submissions/s1/review'),
+          requestOptions: RequestOptions(
+            path: '/api/places/submissions/s1/review',
+          ),
           statusCode: 200,
           data: {
             'message': 'Submission reviewed successfully',
-            'submission': {'id': 's1', 'status': 'approved'}
+            'submission': {'id': 's1', 'status': 'approved'},
           },
         ),
       );
 
-      final result = await api.reviewSubmission(submissionId: 's1', approve: true);
+      final result = await api.reviewSubmission(
+        submissionId: 's1',
+        approve: true,
+      );
 
       expect(result['submission']['status'], 'approved');
       verify(

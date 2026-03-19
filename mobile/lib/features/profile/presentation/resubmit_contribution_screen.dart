@@ -5,18 +5,17 @@ import '../domain/user_profile.dart';
 import 'providers/profile_providers.dart';
 
 class ResubmitContributionScreen extends ConsumerStatefulWidget {
-  const ResubmitContributionScreen({
-    super.key,
-    required this.contribution,
-  });
+  const ResubmitContributionScreen({super.key, required this.contribution});
 
   final ContributedPlace contribution;
 
   @override
-  ConsumerState<ResubmitContributionScreen> createState() => _ResubmitContributionScreenState();
+  ConsumerState<ResubmitContributionScreen> createState() =>
+      _ResubmitContributionScreenState();
 }
 
-class _ResubmitContributionScreenState extends ConsumerState<ResubmitContributionScreen> {
+class _ResubmitContributionScreenState
+    extends ConsumerState<ResubmitContributionScreen> {
   late final TextEditingController _nameController;
   late final TextEditingController _descriptionController;
   late final TextEditingController _categoryController;
@@ -30,12 +29,24 @@ class _ResubmitContributionScreenState extends ConsumerState<ResubmitContributio
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: widget.contribution.name);
-    _descriptionController = TextEditingController(text: widget.contribution.description);
-    _categoryController = TextEditingController(text: widget.contribution.category);
-    _provinceController = TextEditingController(text: widget.contribution.province);
-    _districtController = TextEditingController(text: widget.contribution.district);
-    _latitudeController = TextEditingController(text: (widget.contribution.latitude ?? 0).toString());
-    _longitudeController = TextEditingController(text: (widget.contribution.longitude ?? 0).toString());
+    _descriptionController = TextEditingController(
+      text: widget.contribution.description,
+    );
+    _categoryController = TextEditingController(
+      text: widget.contribution.category,
+    );
+    _provinceController = TextEditingController(
+      text: widget.contribution.province,
+    );
+    _districtController = TextEditingController(
+      text: widget.contribution.district,
+    );
+    _latitudeController = TextEditingController(
+      text: (widget.contribution.latitude ?? 0).toString(),
+    );
+    _longitudeController = TextEditingController(
+      text: (widget.contribution.longitude ?? 0).toString(),
+    );
   }
 
   @override
@@ -63,9 +74,9 @@ class _ResubmitContributionScreenState extends ConsumerState<ResubmitContributio
         Navigator.pop(context, true);
       }
       if ((next.error ?? '').isNotEmpty && next.error != prev?.error) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(next.error!)),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(next.error!)));
       }
     });
 
@@ -84,12 +95,16 @@ class _ResubmitContributionScreenState extends ConsumerState<ResubmitContributio
                   color: Colors.red.shade50,
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Text('Rejection reason: ${widget.contribution.rejectionReason}'),
+                child: Text(
+                  'Rejection reason: ${widget.contribution.rejectionReason}',
+                ),
               ),
             TextFormField(
               controller: _nameController,
               decoration: const InputDecoration(labelText: 'Place name'),
-              validator: (v) => (v == null || v.trim().isEmpty) ? 'Place name is required' : null,
+              validator: (v) => (v == null || v.trim().isEmpty)
+                  ? 'Place name is required'
+                  : null,
             ),
             const SizedBox(height: 10),
             TextFormField(
@@ -97,8 +112,10 @@ class _ResubmitContributionScreenState extends ConsumerState<ResubmitContributio
               maxLines: 4,
               decoration: const InputDecoration(labelText: 'Description'),
               validator: (v) {
-                if (v == null || v.trim().isEmpty) return 'Description is required';
-                if (v.trim().length < 50) return 'Description must be at least 50 characters';
+                if (v == null || v.trim().isEmpty)
+                  return 'Description is required';
+                if (v.trim().length < 50)
+                  return 'Description must be at least 50 characters';
                 return null;
               },
             ),
@@ -106,19 +123,25 @@ class _ResubmitContributionScreenState extends ConsumerState<ResubmitContributio
             TextFormField(
               controller: _categoryController,
               decoration: const InputDecoration(labelText: 'Category'),
-              validator: (v) => (v == null || v.trim().isEmpty) ? 'Category is required' : null,
+              validator: (v) => (v == null || v.trim().isEmpty)
+                  ? 'Category is required'
+                  : null,
             ),
             const SizedBox(height: 10),
             TextFormField(
               controller: _provinceController,
               decoration: const InputDecoration(labelText: 'Province'),
-              validator: (v) => (v == null || v.trim().isEmpty) ? 'Province is required' : null,
+              validator: (v) => (v == null || v.trim().isEmpty)
+                  ? 'Province is required'
+                  : null,
             ),
             const SizedBox(height: 10),
             TextFormField(
               controller: _districtController,
               decoration: const InputDecoration(labelText: 'District'),
-              validator: (v) => (v == null || v.trim().isEmpty) ? 'District is required' : null,
+              validator: (v) => (v == null || v.trim().isEmpty)
+                  ? 'District is required'
+                  : null,
             ),
             const SizedBox(height: 10),
             Row(
@@ -128,7 +151,9 @@ class _ResubmitContributionScreenState extends ConsumerState<ResubmitContributio
                     controller: _latitudeController,
                     keyboardType: TextInputType.number,
                     decoration: const InputDecoration(labelText: 'Latitude'),
-                    validator: (v) => double.tryParse(v ?? '') == null ? 'Invalid latitude' : null,
+                    validator: (v) => double.tryParse(v ?? '') == null
+                        ? 'Invalid latitude'
+                        : null,
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -137,7 +162,9 @@ class _ResubmitContributionScreenState extends ConsumerState<ResubmitContributio
                     controller: _longitudeController,
                     keyboardType: TextInputType.number,
                     decoration: const InputDecoration(labelText: 'Longitude'),
-                    validator: (v) => double.tryParse(v ?? '') == null ? 'Invalid longitude' : null,
+                    validator: (v) => double.tryParse(v ?? '') == null
+                        ? 'Invalid longitude'
+                        : null,
                   ),
                 ),
               ],
@@ -163,7 +190,9 @@ class _ResubmitContributionScreenState extends ConsumerState<ResubmitContributio
   Future<void> _resubmit() async {
     if (!_formKey.currentState!.validate()) return;
 
-    await ref.read(resubmitProvider.notifier).resubmit(
+    await ref
+        .read(resubmitProvider.notifier)
+        .resubmit(
           submissionId: widget.contribution.id,
           placeName: _nameController.text.trim(),
           description: _descriptionController.text.trim(),

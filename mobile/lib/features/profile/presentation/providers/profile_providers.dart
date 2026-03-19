@@ -24,7 +24,10 @@ enum ProfileLoadErrorType {
   unknown,
 }
 
-void logProfileTelemetry(String event, {Map<String, Object?> details = const {}}) {
+void logProfileTelemetry(
+  String event, {
+  Map<String, Object?> details = const {},
+}) {
   if (!kDebugMode) return;
   debugPrint('[PROFILE_TELEMETRY] $event | $details');
 }
@@ -187,7 +190,9 @@ final profileBootstrapProvider = FutureProvider<void>((ref) async {
     await authApi.getMe();
     return;
   } on DioException catch (e) {
-    if (e.response?.statusCode == 401 && !AppConfig.authBypass && currentUser != null) {
+    if (e.response?.statusCode == 401 &&
+        !AppConfig.authBypass &&
+        currentUser != null) {
       try {
         final refreshed = await authService.getIdToken(forceRefresh: true);
         if (refreshed != null && refreshed.isNotEmpty) {
@@ -204,10 +209,7 @@ final profileBootstrapProvider = FutureProvider<void>((ref) async {
 
     logProfileTelemetry(
       'bootstrap_get_me_failed',
-      details: {
-        'statusCode': e.response?.statusCode,
-        'type': e.type.name,
-      },
+      details: {'statusCode': e.response?.statusCode, 'type': e.type.name},
     );
     if (e.response?.statusCode != 404) {
       throw ProfileLoadException.fromDio(e);
@@ -237,10 +239,7 @@ final profileBootstrapProvider = FutureProvider<void>((ref) async {
   } on DioException catch (e) {
     logProfileTelemetry(
       'bootstrap_register_failed',
-      details: {
-        'statusCode': e.response?.statusCode,
-        'type': e.type.name,
-      },
+      details: {'statusCode': e.response?.statusCode, 'type': e.type.name},
     );
     throw ProfileLoadException.fromDio(e);
   } catch (_) {
@@ -283,10 +282,7 @@ final userProfileProvider = FutureProvider<UserProfile?>((ref) async {
     final mapped = ProfileLoadException.fromDio(e);
     logProfileTelemetry(
       'profile_fetch_failed',
-      details: {
-        'statusCode': e.response?.statusCode,
-        'type': mapped.type.name,
-      },
+      details: {'statusCode': e.response?.statusCode, 'type': mapped.type.name},
     );
     if (kDebugMode) {
       debugPrint('[ERROR] Failed to load profile: $mapped');
@@ -307,7 +303,9 @@ final userProfileProvider = FutureProvider<UserProfile?>((ref) async {
 
 /// Provider to fetch user contributions
 /// Usage: ref.watch(userContributionsProvider)
-final userContributionsProvider = FutureProvider<List<ContributedPlace>>((ref) async {
+final userContributionsProvider = FutureProvider<List<ContributedPlace>>((
+  ref,
+) async {
   await ref.watch(profileBootstrapProvider.future);
   final userId = ref.watch(currentUserIdProvider);
 
@@ -365,9 +363,9 @@ class ProfileEditNotifier extends StateNotifier<ProfileEditState> {
   ProfileEditNotifier({
     required ProfileRepository repository,
     required String userId,
-  })  : _repository = repository,
-        _userId = userId,
-        super(ProfileEditState());
+  }) : _repository = repository,
+       _userId = userId,
+       super(ProfileEditState());
 
   /// Upload avatar image file and update profile
   Future<void> uploadAvatar(String filePath) async {
@@ -375,13 +373,21 @@ class ProfileEditNotifier extends StateNotifier<ProfileEditState> {
     try {
       final avatarUrl = await _repository.uploadAvatar(_userId, filePath);
       await _repository.updateProfile(_userId, avatarUrl: avatarUrl);
-      state = state.copyWith(isLoading: false, success: true, avatarUrl: avatarUrl);
+      state = state.copyWith(
+        isLoading: false,
+        success: true,
+        avatarUrl: avatarUrl,
+      );
       Future.delayed(const Duration(seconds: 2), () {
         if (!mounted) return;
         state = state.copyWith(success: false);
       });
     } catch (e) {
-      state = state.copyWith(isLoading: false, error: e.toString(), success: false);
+      state = state.copyWith(
+        isLoading: false,
+        error: e.toString(),
+        success: false,
+      );
     }
   }
 
@@ -437,11 +443,7 @@ class ProfileEditNotifier extends StateNotifier<ProfileEditState> {
         travelInterests: travelInterests,
       );
 
-      state = state.copyWith(
-        isLoading: false,
-        success: true,
-        name: name,
-      );
+      state = state.copyWith(isLoading: false, success: true, name: name);
 
       Future.delayed(const Duration(seconds: 2), () {
         if (!mounted) return;
@@ -468,22 +470,19 @@ class ProfileEditNotifier extends StateNotifier<ProfileEditState> {
 }
 
 /// Provider for profile editing with auto-disposal
-final profileEditProvider = StateNotifierProvider.autoDispose<ProfileEditNotifier, ProfileEditState>((ref) {
-  final userId = ref.watch(currentUserIdProvider);
-  final repository = ref.watch(profileRepositoryProvider);
+final profileEditProvider =
+    StateNotifierProvider.autoDispose<ProfileEditNotifier, ProfileEditState>((
+      ref,
+    ) {
+      final userId = ref.watch(currentUserIdProvider);
+      final repository = ref.watch(profileRepositoryProvider);
 
-  if (userId == null) {
-    return ProfileEditNotifier(
-      repository: repository,
-      userId: '',
-    );
-  }
+      if (userId == null) {
+        return ProfileEditNotifier(repository: repository, userId: '');
+      }
 
-  return ProfileEditNotifier(
-    repository: repository,
-    userId: userId,
-  );
-});
+      return ProfileEditNotifier(repository: repository, userId: userId);
+    });
 
 /// Provider to logout user
 final logoutProvider = FutureProvider<void>((ref) async {
@@ -492,7 +491,9 @@ final logoutProvider = FutureProvider<void>((ref) async {
 });
 
 /// Provider for top contributors (leaderboard)
-final topContributorsProvider = FutureProvider<List<Map<String, dynamic>>>((ref) async {
+final topContributorsProvider = FutureProvider<List<Map<String, dynamic>>>((
+  ref,
+) async {
   final repository = ref.watch(profileRepositoryProvider);
   return repository.getTopContributors(limit: 10);
 });
@@ -523,8 +524,8 @@ class PlaceSubmissionState {
 
 class PlaceSubmissionNotifier extends StateNotifier<PlaceSubmissionState> {
   PlaceSubmissionNotifier({required ProfileRepository repository})
-      : _repository = repository,
-        super(const PlaceSubmissionState());
+    : _repository = repository,
+      super(const PlaceSubmissionState());
 
   final ProfileRepository _repository;
 
@@ -566,12 +567,17 @@ class PlaceSubmissionNotifier extends StateNotifier<PlaceSubmissionState> {
 }
 
 final placeSubmissionProvider =
-    StateNotifierProvider.autoDispose<PlaceSubmissionNotifier, PlaceSubmissionState>((ref) {
-  final repository = ref.watch(profileRepositoryProvider);
-  return PlaceSubmissionNotifier(repository: repository);
-});
+    StateNotifierProvider.autoDispose<
+      PlaceSubmissionNotifier,
+      PlaceSubmissionState
+    >((ref) {
+      final repository = ref.watch(profileRepositoryProvider);
+      return PlaceSubmissionNotifier(repository: repository);
+    });
 
-final pendingSubmissionsProvider = FutureProvider<List<ContributedPlace>>((ref) async {
+final pendingSubmissionsProvider = FutureProvider<List<ContributedPlace>>((
+  ref,
+) async {
   final repository = ref.watch(profileRepositoryProvider);
   return repository.getPendingSubmissions();
 });
@@ -601,7 +607,8 @@ class ModerationActionState {
 }
 
 class ModerationActionNotifier extends StateNotifier<ModerationActionState> {
-  ModerationActionNotifier(this._repository) : super(const ModerationActionState());
+  ModerationActionNotifier(this._repository)
+    : super(const ModerationActionState());
 
   final ProfileRepository _repository;
 
@@ -619,7 +626,11 @@ class ModerationActionNotifier extends StateNotifier<ModerationActionState> {
       );
       state = state.copyWith(isWorking: false, error: null, success: true);
     } catch (e) {
-      state = state.copyWith(isWorking: false, error: e.toString(), success: false);
+      state = state.copyWith(
+        isWorking: false,
+        error: e.toString(),
+        success: false,
+      );
     }
   }
 
@@ -629,10 +640,13 @@ class ModerationActionNotifier extends StateNotifier<ModerationActionState> {
 }
 
 final moderationActionProvider =
-    StateNotifierProvider.autoDispose<ModerationActionNotifier, ModerationActionState>((ref) {
-  final repository = ref.watch(profileRepositoryProvider);
-  return ModerationActionNotifier(repository);
-});
+    StateNotifierProvider.autoDispose<
+      ModerationActionNotifier,
+      ModerationActionState
+    >((ref) {
+      final repository = ref.watch(profileRepositoryProvider);
+      return ModerationActionNotifier(repository);
+    });
 
 class ResubmitState {
   final bool isSubmitting;
@@ -645,11 +659,7 @@ class ResubmitState {
     this.success = false,
   });
 
-  ResubmitState copyWith({
-    bool? isSubmitting,
-    String? error,
-    bool? success,
-  }) {
+  ResubmitState copyWith({bool? isSubmitting, String? error, bool? success}) {
     return ResubmitState(
       isSubmitting: isSubmitting ?? this.isSubmitting,
       error: error,
@@ -689,7 +699,11 @@ class ResubmitNotifier extends StateNotifier<ResubmitState> {
       );
       state = state.copyWith(isSubmitting: false, error: null, success: true);
     } catch (e) {
-      state = state.copyWith(isSubmitting: false, error: e.toString(), success: false);
+      state = state.copyWith(
+        isSubmitting: false,
+        error: e.toString(),
+        success: false,
+      );
     }
   }
 
@@ -700,6 +714,6 @@ class ResubmitNotifier extends StateNotifier<ResubmitState> {
 
 final resubmitProvider =
     StateNotifierProvider.autoDispose<ResubmitNotifier, ResubmitState>((ref) {
-  final repository = ref.watch(profileRepositoryProvider);
-  return ResubmitNotifier(repository);
-});
+      final repository = ref.watch(profileRepositoryProvider);
+      return ResubmitNotifier(repository);
+    });

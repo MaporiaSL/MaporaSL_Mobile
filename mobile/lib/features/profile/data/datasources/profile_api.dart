@@ -20,7 +20,8 @@ class ProfileApi {
   Future<List<dynamic>> getUserContributions(String userId) async {
     try {
       final response = await _dio.get('/api/profile/$userId/contributions');
-      if (response.statusCode == 200) return response.data['contributions'] ?? [];
+      if (response.statusCode == 200)
+        return response.data['contributions'] ?? [];
       throw Exception('Failed to fetch contributions: ${response.statusCode}');
     } on DioException {
       rethrow;
@@ -68,7 +69,8 @@ class ProfileApi {
         data: formData,
         options: Options(contentType: 'multipart/form-data'),
       );
-      if (response.statusCode == 200) return response.data['avatarUrl'] as String;
+      if (response.statusCode == 200)
+        return response.data['avatarUrl'] as String;
       throw Exception('Failed to upload avatar: ${response.statusCode}');
     } on DioException {
       rethrow;
@@ -80,7 +82,8 @@ class ProfileApi {
   Future<void> logout() async {
     try {
       final response = await _dio.post('/api/auth/logout');
-      if (response.statusCode != 200) throw Exception('Failed to logout: ${response.statusCode}');
+      if (response.statusCode != 200)
+        throw Exception('Failed to logout: ${response.statusCode}');
     } on DioException {
       rethrow;
     } catch (e) {
@@ -90,8 +93,12 @@ class ProfileApi {
 
   Future<List<dynamic>> getTopContributors({int limit = 10}) async {
     try {
-      final response = await _dio.get('/api/profile/leaderboard/top', queryParameters: {'limit': limit});
-      if (response.statusCode == 200) return response.data['topContributors'] ?? [];
+      final response = await _dio.get(
+        '/api/profile/leaderboard/top',
+        queryParameters: {'limit': limit},
+      );
+      if (response.statusCode == 200)
+        return response.data['topContributors'] ?? [];
       throw Exception('Failed to fetch leaderboard: ${response.statusCode}');
     } on DioException {
       rethrow;
@@ -147,7 +154,9 @@ class ProfileApi {
     try {
       final response = await _dio.get('/api/places/submissions/pending');
       if (response.statusCode == 200) return response.data['submissions'] ?? [];
-      throw Exception('Failed to fetch pending submissions: ${response.statusCode}');
+      throw Exception(
+        'Failed to fetch pending submissions: ${response.statusCode}',
+      );
     } on DioException {
       rethrow;
     } catch (e) {
@@ -165,7 +174,8 @@ class ProfileApi {
         '/api/places/submissions/$submissionId/review',
         data: {
           'status': approve ? 'approved' : 'rejected',
-          if (!approve && rejectionReason != null) 'rejectionReason': rejectionReason,
+          if (!approve && rejectionReason != null)
+            'rejectionReason': rejectionReason,
         },
       );
       if (response.statusCode == 200) {
@@ -217,7 +227,9 @@ class ProfileApi {
       if (response.statusCode == 200) {
         return Map<String, dynamic>.from(response.data as Map);
       }
-      throw Exception('Failed to resubmit contribution: ${response.statusCode}');
+      throw Exception(
+        'Failed to resubmit contribution: ${response.statusCode}',
+      );
     } on DioException {
       rethrow;
     } catch (e) {

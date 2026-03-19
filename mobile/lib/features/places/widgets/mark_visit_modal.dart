@@ -35,7 +35,7 @@ class _MarkVisitModalState extends ConsumerState<MarkVisitModal> {
   final _notesController = TextEditingController();
   bool _includeNotes = false;
   bool _agreeToVerification = false;
-  
+
   // Checklist State
   List<VerificationStep> _steps = [];
   int _currentStepIndex = 0;
@@ -48,10 +48,22 @@ class _MarkVisitModalState extends ConsumerState<MarkVisitModal> {
 
   void _initSteps() {
     _steps = [
-      VerificationStep(label: 'Satellite Signal Strength', icon: Icons.wifi_tethering),
-      VerificationStep(label: 'Main Geofence Boundary Check', icon: Icons.adjust),
-      VerificationStep(label: 'Multi-Path Reflection Correction', icon: Icons.reorder),
-      VerificationStep(label: 'Atmospheric Data Validation', icon: Icons.cloud_done),
+      VerificationStep(
+        label: 'Satellite Signal Strength',
+        icon: Icons.wifi_tethering,
+      ),
+      VerificationStep(
+        label: 'Main Geofence Boundary Check',
+        icon: Icons.adjust,
+      ),
+      VerificationStep(
+        label: 'Multi-Path Reflection Correction',
+        icon: Icons.reorder,
+      ),
+      VerificationStep(
+        label: 'Atmospheric Data Validation',
+        icon: Icons.cloud_done,
+      ),
       VerificationStep(label: 'Proximity Finalization', icon: Icons.fact_check),
     ];
   }
@@ -154,8 +166,6 @@ class _MarkVisitModalState extends ConsumerState<MarkVisitModal> {
     }
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     final userId = ref.watch(currentUserIdProvider) ?? '';
@@ -166,9 +176,10 @@ class _MarkVisitModalState extends ConsumerState<MarkVisitModal> {
     final int providerStepIndex = visitState.currentStepIndex;
     final String? error = visitState.error;
     final bool isVerifying = visitState.isVerifying;
-    final bool success = !visitState.isVerifying &&
-      visitState.error == null &&
-      visitState.lastVisit?.validation.isValid == true;
+    final bool success =
+        !visitState.isVerifying &&
+        visitState.error == null &&
+        visitState.lastVisit?.validation.isValid == true;
 
     // Sync _steps with provider state
     for (int i = 0; i < _steps.length; i++) {
@@ -379,9 +390,9 @@ class _MarkVisitModalState extends ConsumerState<MarkVisitModal> {
                       Text(
                         'Verifying Visit',
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.textDark,
-                            ),
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.textDark,
+                        ),
                       ),
                       const SizedBox(height: 32),
                       VerificationChecklist(
@@ -393,9 +404,9 @@ class _MarkVisitModalState extends ConsumerState<MarkVisitModal> {
                         'Please stay still while we verify your location',
                         textAlign: TextAlign.center,
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: AppColors.textMuted,
-                              fontStyle: FontStyle.italic,
-                            ),
+                          color: AppColors.textMuted,
+                          fontStyle: FontStyle.italic,
+                        ),
                       ),
                     ],
                   ),

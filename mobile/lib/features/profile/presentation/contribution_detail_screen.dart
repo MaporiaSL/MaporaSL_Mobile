@@ -4,10 +4,7 @@ import 'package:intl/intl.dart';
 import '../domain/user_profile.dart';
 
 class ContributionDetailScreen extends StatelessWidget {
-  const ContributionDetailScreen({
-    super.key,
-    required this.contribution,
-  });
+  const ContributionDetailScreen({super.key, required this.contribution});
 
   final ContributedPlace contribution;
 
@@ -15,7 +12,9 @@ class ContributionDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final photos = contribution.photoUrls.isNotEmpty
         ? contribution.photoUrls
-        : (contribution.photoUrl.isNotEmpty ? [contribution.photoUrl] : <String>[]);
+        : (contribution.photoUrl.isNotEmpty
+              ? [contribution.photoUrl]
+              : <String>[]);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Contribution Details')),
@@ -34,9 +33,12 @@ class ContributionDetailScreen extends StatelessWidget {
             runSpacing: 8,
             children: [
               _statusBadge(contribution.status),
-              if (contribution.category.isNotEmpty) Chip(label: Text(contribution.category)),
-              if (contribution.district.isNotEmpty) Chip(label: Text(contribution.district)),
-              if (contribution.province.isNotEmpty) Chip(label: Text(contribution.province)),
+              if (contribution.category.isNotEmpty)
+                Chip(label: Text(contribution.category)),
+              if (contribution.district.isNotEmpty)
+                Chip(label: Text(contribution.district)),
+              if (contribution.province.isNotEmpty)
+                Chip(label: Text(contribution.province)),
             ],
           ),
           const SizedBox(height: 16),
@@ -79,12 +81,16 @@ class ContributionDetailScreen extends StatelessWidget {
                   if ((contribution.rejectionReason ?? '').isNotEmpty)
                     Padding(
                       padding: const EdgeInsets.only(top: 8),
-                      child: Text('Rejection reason: ${contribution.rejectionReason}'),
+                      child: Text(
+                        'Rejection reason: ${contribution.rejectionReason}',
+                      ),
                     ),
                   if ((contribution.promotedPlaceId ?? '').isNotEmpty)
                     Padding(
                       padding: const EdgeInsets.only(top: 8),
-                      child: Text('Promoted place id: ${contribution.promotedPlaceId}'),
+                      child: Text(
+                        'Promoted place id: ${contribution.promotedPlaceId}',
+                      ),
                     ),
                 ],
               ),
@@ -100,8 +106,8 @@ class ContributionDetailScreen extends StatelessWidget {
     final color = s == 'approved'
         ? Colors.green
         : s == 'rejected'
-            ? Colors.red
-            : Colors.orange;
+        ? Colors.red
+        : Colors.orange;
     return Chip(
       label: Text(status.toUpperCase()),
       backgroundColor: color.withValues(alpha: 0.12),

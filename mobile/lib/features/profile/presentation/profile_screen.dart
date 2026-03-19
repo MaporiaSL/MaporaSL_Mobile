@@ -12,6 +12,7 @@ import 'providers/profile_providers.dart';
 import 'resubmit_contribution_screen.dart';
 
 enum _ContributionFilter { all, pending, approved, rejected }
+
 enum _ContributionSort { newest, oldest, status }
 
 class ProfileScreen extends ConsumerStatefulWidget {
@@ -91,7 +92,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   const SizedBox(height: 16),
                   Text(
                     errorUi.title,
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Colors.red),
+                    style: Theme.of(
+                      context,
+                    ).textTheme.titleLarge?.copyWith(color: Colors.red),
                   ),
                   const SizedBox(height: 8),
                   Text(
@@ -211,7 +214,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (_) => EditProfileScreen(initialProfile: profile),
+                                builder: (_) =>
+                                    EditProfileScreen(initialProfile: profile),
                               ),
                             );
                           },
@@ -269,9 +273,18 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         DropdownButton<_ContributionSort>(
           value: _sort,
           items: const [
-            DropdownMenuItem(value: _ContributionSort.newest, child: Text('Newest')),
-            DropdownMenuItem(value: _ContributionSort.oldest, child: Text('Oldest')),
-            DropdownMenuItem(value: _ContributionSort.status, child: Text('Status')),
+            DropdownMenuItem(
+              value: _ContributionSort.newest,
+              child: Text('Newest'),
+            ),
+            DropdownMenuItem(
+              value: _ContributionSort.oldest,
+              child: Text('Oldest'),
+            ),
+            DropdownMenuItem(
+              value: _ContributionSort.status,
+              child: Text('Status'),
+            ),
           ],
           onChanged: (value) {
             if (value == null) return;
@@ -317,29 +330,20 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               const SizedBox(height: 4),
               Text(
                 profile.email,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey[600],
-                ),
+                style: TextStyle(fontSize: 14, color: Colors.grey[600]),
               ),
               if (profile.hometownDistrict.isNotEmpty) ...[
                 const SizedBox(height: 6),
                 Text(
                   profile.hometownDistrict,
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: Colors.grey[700],
-                  ),
+                  style: TextStyle(fontSize: 13, color: Colors.grey[700]),
                 ),
               ],
               if (profile.preferredLanguage.isNotEmpty) ...[
                 const SizedBox(height: 2),
                 Text(
                   'Language: ${profile.preferredLanguage}',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey[600],
-                  ),
+                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                 ),
               ],
             ],
@@ -389,10 +393,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
-                badge.icon,
-                style: const TextStyle(fontSize: 16),
-              ),
+              Text(badge.icon, style: const TextStyle(fontSize: 16)),
               const SizedBox(width: 8),
               Text(
                 badge.name,
@@ -441,52 +442,72 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
         return Column(
           children: filtered
-              .map((place) => Card(
-                    margin: const EdgeInsets.only(bottom: 10),
-                    child: ListTile(
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                      leading: place.photoUrl.isNotEmpty
-                          ? ClipRRect(
-                              borderRadius: BorderRadius.circular(8),
-                              child: Image.network(
-                                place.photoUrl,
-                                width: 46,
-                                height: 46,
-                                fit: BoxFit.cover,
-                                errorBuilder: (_, __, ___) => const Icon(Icons.image_not_supported),
-                              ),
-                            )
-                          : Icon(Icons.place_outlined, color: _statusColor(place.status)),
-                      title: Text(place.name),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(_statusLabel(place.status), style: TextStyle(color: _statusColor(place.status))),
-                          if (place.submittedAt != null)
-                            Text('Submitted: ${DateFormat.yMMMd().format(place.submittedAt!)}'),
-                          if (place.status == 'rejected' && (place.rejectionReason ?? '').isNotEmpty)
-                            Text('Reason: ${place.rejectionReason}'),
-                        ],
-                      ),
-                      trailing: IconButton(
-                        icon: const Icon(Icons.chevron_right),
-                        tooltip: 'View details',
-                        onPressed: () => _openContributionDetail(place),
-                      ),
+              .map(
+                (place) => Card(
+                  margin: const EdgeInsets.only(bottom: 10),
+                  child: ListTile(
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
                     ),
-                  ))
+                    leading: place.photoUrl.isNotEmpty
+                        ? ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: Image.network(
+                              place.photoUrl,
+                              width: 46,
+                              height: 46,
+                              fit: BoxFit.cover,
+                              errorBuilder: (_, __, ___) =>
+                                  const Icon(Icons.image_not_supported),
+                            ),
+                          )
+                        : Icon(
+                            Icons.place_outlined,
+                            color: _statusColor(place.status),
+                          ),
+                    title: Text(place.name),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          _statusLabel(place.status),
+                          style: TextStyle(color: _statusColor(place.status)),
+                        ),
+                        if (place.submittedAt != null)
+                          Text(
+                            'Submitted: ${DateFormat.yMMMd().format(place.submittedAt!)}',
+                          ),
+                        if (place.status == 'rejected' &&
+                            (place.rejectionReason ?? '').isNotEmpty)
+                          Text('Reason: ${place.rejectionReason}'),
+                      ],
+                    ),
+                    trailing: IconButton(
+                      icon: const Icon(Icons.chevron_right),
+                      tooltip: 'View details',
+                      onPressed: () => _openContributionDetail(place),
+                    ),
+                  ),
+                ),
+              )
               .toList(),
         );
       },
     );
   }
 
-  List<profile_model.ContributedPlace> _filterAndSort(List<profile_model.ContributedPlace> items) {
+  List<profile_model.ContributedPlace> _filterAndSort(
+    List<profile_model.ContributedPlace> items,
+  ) {
     var result = items.where((item) {
       if (_filter == _ContributionFilter.all) return true;
-      if (_filter == _ContributionFilter.pending) return item.status == 'pending';
-      if (_filter == _ContributionFilter.approved) return item.status == 'approved';
-      if (_filter == _ContributionFilter.rejected) return item.status == 'rejected';
+      if (_filter == _ContributionFilter.pending)
+        return item.status == 'pending';
+      if (_filter == _ContributionFilter.approved)
+        return item.status == 'approved';
+      if (_filter == _ContributionFilter.rejected)
+        return item.status == 'rejected';
       return true;
     }).toList();
 
@@ -496,13 +517,17 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       }
       final ad = a.submittedAt ?? DateTime.fromMillisecondsSinceEpoch(0);
       final bd = b.submittedAt ?? DateTime.fromMillisecondsSinceEpoch(0);
-      return _sort == _ContributionSort.newest ? bd.compareTo(ad) : ad.compareTo(bd);
+      return _sort == _ContributionSort.newest
+          ? bd.compareTo(ad)
+          : ad.compareTo(bd);
     });
 
     return result;
   }
 
-  Future<void> _openContributionDetail(profile_model.ContributedPlace place) async {
+  Future<void> _openContributionDetail(
+    profile_model.ContributedPlace place,
+  ) async {
     await Navigator.push(
       context,
       MaterialPageRoute(
@@ -553,24 +578,20 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       children: [
         Text(
           'Global Rank: #${profile.leaderboardRank}',
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
-          ),
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
         ),
         const SizedBox(height: 8),
         Text(
           'Impact: ${profile.impactCount} users visited your places',
-          style: TextStyle(
-            fontSize: 14,
-            color: Colors.grey[600],
-          ),
+          style: TextStyle(fontSize: 14, color: Colors.grey[600]),
         ),
       ],
     );
   }
 
-  Widget _buildTopContributorsSection(AsyncValue<List<Map<String, dynamic>>> asyncValue) {
+  Widget _buildTopContributorsSection(
+    AsyncValue<List<Map<String, dynamic>>> asyncValue,
+  ) {
     return asyncValue.when(
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (error, _) => Column(
@@ -578,7 +599,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         children: [
           const Text('Could not load leaderboard.'),
           const SizedBox(height: 4),
-          Text(_buildErrorUi(error).message, style: const TextStyle(color: Colors.black54)),
+          Text(
+            _buildErrorUi(error).message,
+            style: const TextStyle(color: Colors.black54),
+          ),
           const SizedBox(height: 8),
           OutlinedButton.icon(
             onPressed: _retryAll,
@@ -603,10 +627,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             return ListTile(
               dense: true,
               contentPadding: EdgeInsets.zero,
-              leading: CircleAvatar(
-                radius: 14,
-                child: Text('$rank'),
-              ),
+              leading: CircleAvatar(radius: 14, child: Text('$rank')),
               title: Text(name),
               trailing: Text('$count approved'),
             );
@@ -622,7 +643,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         case ProfileLoadErrorType.authLoading:
           return const _ErrorUiData(
             title: 'Preparing Your Session',
-            message: 'We are still setting up your sign-in token. Please try again.',
+            message:
+                'We are still setting up your sign-in token. Please try again.',
           );
         case ProfileLoadErrorType.missingToken:
           return const _ErrorUiData(
@@ -639,7 +661,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         case ProfileLoadErrorType.userNotRegistered:
           return const _ErrorUiData(
             title: 'Creating Your Profile',
-            message: 'We could not sync your account yet. Tap retry to complete setup.',
+            message:
+                'We could not sync your account yet. Tap retry to complete setup.',
           );
         case ProfileLoadErrorType.offline:
           return const _ErrorUiData(
@@ -649,12 +672,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         case ProfileLoadErrorType.forbidden:
           return const _ErrorUiData(
             title: 'Access Denied',
-            message: 'This profile request is not allowed right now. Try signing in again.',
+            message:
+                'This profile request is not allowed right now. Try signing in again.',
           );
         case ProfileLoadErrorType.server:
           return const _ErrorUiData(
             title: 'Server Error',
-            message: 'The server is currently unavailable. Please try again shortly.',
+            message:
+                'The server is currently unavailable. Please try again shortly.',
           );
         case ProfileLoadErrorType.unknown:
           return const _ErrorUiData(
@@ -766,9 +791,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error: $e')));
     }
   }
 }
@@ -783,15 +808,9 @@ class _StatCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text(
-          value,
-          style: Theme.of(context).textTheme.titleLarge,
-        ),
+        Text(value, style: Theme.of(context).textTheme.titleLarge),
         const SizedBox(height: 4),
-        Text(
-          label,
-          style: Theme.of(context).textTheme.bodySmall,
-        ),
+        Text(label, style: Theme.of(context).textTheme.bodySmall),
       ],
     );
   }

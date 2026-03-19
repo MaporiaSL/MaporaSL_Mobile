@@ -27,10 +27,9 @@ void main() {
     );
     addTearDown(container.dispose);
 
-    await container.read(moderationActionProvider.notifier).review(
-          submissionId: 's1',
-          approve: true,
-        );
+    await container
+        .read(moderationActionProvider.notifier)
+        .review(submissionId: 's1', approve: true);
 
     final state = container.read(moderationActionProvider);
     expect(state.success, isTrue);
@@ -49,7 +48,8 @@ void main() {
       () => repository.resubmitRejectedContribution(
         submissionId: 'sub-1',
         placeName: 'Place',
-        description: 'A valid description that is long enough for backend validation.',
+        description:
+            'A valid description that is long enough for backend validation.',
         category: 'other',
         province: 'Western',
         district: 'Colombo',
@@ -64,10 +64,13 @@ void main() {
     );
     addTearDown(container.dispose);
 
-    await container.read(resubmitProvider.notifier).resubmit(
+    await container
+        .read(resubmitProvider.notifier)
+        .resubmit(
           submissionId: 'sub-1',
           placeName: 'Place',
-          description: 'A valid description that is long enough for backend validation.',
+          description:
+              'A valid description that is long enough for backend validation.',
           category: 'other',
           province: 'Western',
           district: 'Colombo',
@@ -82,7 +85,8 @@ void main() {
       () => repository.resubmitRejectedContribution(
         submissionId: 'sub-1',
         placeName: 'Place',
-        description: 'A valid description that is long enough for backend validation.',
+        description:
+            'A valid description that is long enough for backend validation.',
         category: 'other',
         province: 'Western',
         district: 'Colombo',

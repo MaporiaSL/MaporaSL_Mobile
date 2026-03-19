@@ -24,9 +24,9 @@ class AdminSubmissionModerationScreen extends ConsumerWidget {
         ref.read(moderationActionProvider.notifier).clear();
       }
       if ((next.error ?? '').isNotEmpty && next.error != prev?.error) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(next.error!)),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(next.error!)));
       }
     });
 
@@ -97,7 +97,9 @@ class AdminSubmissionModerationScreen extends ConsumerWidget {
       if (rejectionReason == null || rejectionReason.trim().isEmpty) return;
     }
 
-    await ref.read(moderationActionProvider.notifier).review(
+    await ref
+        .read(moderationActionProvider.notifier)
+        .review(
           submissionId: item.id,
           approve: approve,
           rejectionReason: rejectionReason,
@@ -114,9 +116,7 @@ class AdminSubmissionModerationScreen extends ConsumerWidget {
           controller: controller,
           minLines: 2,
           maxLines: 4,
-          decoration: const InputDecoration(
-            hintText: 'Reason for rejection',
-          ),
+          decoration: const InputDecoration(hintText: 'Reason for rejection'),
         ),
         actions: [
           TextButton(
@@ -159,17 +159,25 @@ class _ModerationCard extends StatelessWidget {
           children: [
             Text(item.name, style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 4),
-            Text(item.description, maxLines: 3, overflow: TextOverflow.ellipsis),
+            Text(
+              item.description,
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
+            ),
             const SizedBox(height: 8),
             Wrap(
               spacing: 8,
               runSpacing: 8,
               children: [
-                if (item.userId != null) Chip(label: Text('User: ${item.userId}')),
+                if (item.userId != null)
+                  Chip(label: Text('User: ${item.userId}')),
                 if (item.currentApprovedCount != null)
-                  Chip(label: Text('Approved count: ${item.currentApprovedCount}')),
-                ...item.approvalBadgePreview
-                    .map((badge) => Chip(label: Text('Badge: ${badge.name}'))),
+                  Chip(
+                    label: Text('Approved count: ${item.currentApprovedCount}'),
+                  ),
+                ...item.approvalBadgePreview.map(
+                  (badge) => Chip(label: Text('Badge: ${badge.name}')),
+                ),
               ],
             ),
             const SizedBox(height: 12),

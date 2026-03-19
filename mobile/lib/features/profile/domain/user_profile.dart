@@ -39,19 +39,22 @@ class UserProfile {
       name: json['user']['name'] ?? '',
       email: json['user']['email'] ?? '',
       avatarUrl: json['user']['avatarUrl'] ?? '',
-        bio: json['user']['bio'] ?? '',
-        hometownDistrict: json['user']['hometownDistrict'] ?? '',
-        preferredLanguage: json['user']['preferredLanguage'] ?? '',
-        travelInterests: (json['user']['travelInterests'] as List?)
-            ?.whereType<String>()
-            .toList() ??
+      bio: json['user']['bio'] ?? '',
+      hometownDistrict: json['user']['hometownDistrict'] ?? '',
+      preferredLanguage: json['user']['preferredLanguage'] ?? '',
+      travelInterests:
+          (json['user']['travelInterests'] as List?)
+              ?.whereType<String>()
+              .toList() ??
           const [],
       totalSubmitted: json['stats']['totalSubmitted'] ?? 0,
       approvedCount: json['stats']['approvedCount'] ?? 0,
       approvalRate: (json['stats']['approvalRate'] ?? 0).toDouble(),
-      badges: (json['badges'] as List?)
-          ?.map((b) => ContributionBadge.fromJson(b))
-          .toList() ?? [],
+      badges:
+          (json['badges'] as List?)
+              ?.map((b) => ContributionBadge.fromJson(b))
+              .toList() ??
+          [],
       contributedPlaces: const [],
       leaderboardRank: json['leaderboardRank'] ?? 0,
       impactCount: json['impactCount'] ?? 0,
@@ -159,18 +162,20 @@ class ContributedPlace {
 
   factory ContributedPlace.fromJson(Map<String, dynamic> json) {
     final rawStatus = (json['status'] ?? '').toString().toLowerCase();
-    final status = rawStatus.isEmpty ? (json['approved'] == true ? 'approved' : 'pending') : rawStatus;
+    final status = rawStatus.isEmpty
+        ? (json['approved'] == true ? 'approved' : 'pending')
+        : rawStatus;
     return ContributedPlace(
       id: json['id'] ?? '',
       name: json['name'] ?? '',
       description: json['description'] ?? '',
       approved: status == 'approved' || json['approved'] == true,
       status: status,
-        category: json['category']?.toString() ?? 'other',
-        province: json['province']?.toString() ?? '',
-        district: json['district']?.toString() ?? '',
-        latitude: (json['latitude'] as num?)?.toDouble(),
-        longitude: (json['longitude'] as num?)?.toDouble(),
+      category: json['category']?.toString() ?? 'other',
+      province: json['province']?.toString() ?? '',
+      district: json['district']?.toString() ?? '',
+      latitude: (json['latitude'] as num?)?.toDouble(),
+      longitude: (json['longitude'] as num?)?.toDouble(),
       submittedAt: json['submittedAt'] != null
           ? DateTime.tryParse(json['submittedAt'].toString())
           : null,
@@ -182,20 +187,22 @@ class ContributedPlace {
           : null,
       rejectionReason: json['rejectionReason']?.toString(),
       photoUrl: json['photoUrl']?.toString() ?? '',
-        photoUrls: (json['photoUrls'] as List?)
-            ?.whereType<String>()
-            .toList() ??
+      photoUrls:
+          (json['photoUrls'] as List?)?.whereType<String>().toList() ??
           ((json['photoUrl']?.toString().isNotEmpty ?? false)
-            ? [json['photoUrl'].toString()]
-            : const []),
-        promotedPlaceId: json['promotedPlaceId']?.toString(),
-        userId: json['userId']?.toString(),
-        approvalBadgePreview: (json['approvalBadgePreview'] as List?)
-            ?.whereType<Map>()
-            .map((e) => ContributionBadge.fromJson(Map<String, dynamic>.from(e)))
-            .toList() ??
+              ? [json['photoUrl'].toString()]
+              : const []),
+      promotedPlaceId: json['promotedPlaceId']?.toString(),
+      userId: json['userId']?.toString(),
+      approvalBadgePreview:
+          (json['approvalBadgePreview'] as List?)
+              ?.whereType<Map>()
+              .map(
+                (e) => ContributionBadge.fromJson(Map<String, dynamic>.from(e)),
+              )
+              .toList() ??
           const [],
-        currentApprovedCount: json['currentApprovedCount'] as int?,
+      currentApprovedCount: json['currentApprovedCount'] as int?,
     );
   }
 
@@ -218,7 +225,9 @@ class ContributedPlace {
     'photoUrls': photoUrls,
     'promotedPlaceId': promotedPlaceId,
     'userId': userId,
-    'approvalBadgePreview': approvalBadgePreview.map((b) => b.toJson()).toList(),
+    'approvalBadgePreview': approvalBadgePreview
+        .map((b) => b.toJson())
+        .toList(),
     'currentApprovedCount': currentApprovedCount,
   };
 }
