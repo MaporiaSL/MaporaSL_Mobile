@@ -555,3 +555,136 @@ final placeSubmissionProvider =
   final repository = ref.watch(profileRepositoryProvider);
   return PlaceSubmissionNotifier(repository: repository);
 });
+
+final pendingSubmissionsProvider = FutureProvider<List<ContributedPlace>>((ref) async {
+  final repository = ref.watch(profileRepositoryProvider);
+  return repository.getPendingSubmissions();
+});
+
+class ModerationActionState {
+  final bool isWorking;
+  final String? error;
+  final bool success;
+
+  const ModerationActionState({
+    this.isWorking = false,
+    this.error,
+    this.success = false,
+  });
+
+  ModerationActionState copyWith({
+    bool? isWorking,
+    String? error,
+    bool? success,
+  }) {
+    return ModerationActionState(
+      isWorking: isWorking ?? this.isWorking,
+      error: error,
+      success: success ?? this.success,
+    );
+  }
+}
+
+class ModerationActionNotifier extends StateNotifier<ModerationActionState> {
+  ModerationActionNotifier(this._repository) : super(const ModerationActionState());
+
+  final ProfileRepository _repository;
+
+  Future<void> review({
+    required String submissionId,
+    required bool approve,
+    String? rejectionReason,
+  }) async {
+    state = state.copyWith(isWorking: true, error: null, success: false);
+    try {
+      await _repository.reviewSubmission(
+        submissionId: submissionId,
+        approve: approve,
+        rejectionReason: rejectionReason,
+      );
+      state = state.copyWith(isWorking: false, error: null, success: true);
+    } catch (e) {
+      state = state.copyWith(isWorking: false, error: e.toString(), success: false);
+    }
+  }
+
+  void clear() {
+    state = const ModerationActionState();
+  }
+}
+
+final moderationActionProvider =
+    StateNotifierProvider.autoDispose<ModerationActionNotifier, ModerationActionState>((ref) {
+  final repository = ref.watch(profileRepositoryProvider);
+  return ModerationActionNotifier(repository);
+});
+
+class ResubmitState {
+  final bool isSubmitting;
+  final String? error;
+  final bool success;
+
+  const ResubmitState({
+    this.isSubmitting = false,
+    this.error,
+    this.success = false,
+  });
+
+  ResubmitState copyWith({
+    bool? isSubmitting,
+    String? error,
+    bool? success,
+  }) {
+    return ResubmitState(
+      isSubmitting: isSubmitting ?? this.isSubmitting,
+      error: error,
+      success: success ?? this.success,
+    );
+  }
+}
+
+class ResubmitNotifier extends StateNotifier<ResubmitState> {
+  ResubmitNotifier(this._repository) : super(const ResubmitState());
+
+  final ProfileRepository _repository;
+
+  Future<void> resubmit({
+    required String submissionId,
+    required String placeName,
+    required String description,
+    required String category,
+    required String province,
+    required String district,
+    required double latitude,
+    required double longitude,
+    required List<String> photoPaths,
+  }) async {
+    state = state.copyWith(isSubmitting: true, error: null, success: false);
+    try {
+      await _repository.resubmitRejectedContribution(
+        submissionId: submissionId,
+        placeName: placeName,
+        description: description,
+        category: category,
+        province: province,
+        district: district,
+        latitude: latitude,
+        longitude: longitude,
+        photoPaths: photoPaths,
+      );
+      state = state.copyWith(isSubmitting: false, error: null, success: true);
+    } catch (e) {
+      state = state.copyWith(isSubmitting: false, error: e.toString(), success: false);
+    }
+  }
+
+  void clear() {
+    state = const ResubmitState();
+  }
+}
+
+final resubmitProvider =
+    StateNotifierProvider.autoDispose<ResubmitNotifier, ResubmitState>((ref) {
+  final repository = ref.watch(profileRepositoryProvider);
+  return ResubmitNotifier(repository);
+});
