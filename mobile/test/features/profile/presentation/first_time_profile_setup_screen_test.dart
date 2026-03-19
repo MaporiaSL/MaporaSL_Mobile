@@ -136,11 +136,11 @@ void main() {
     await tester.pumpAndSettle();
 
     await tester.enterText(
-      find.widgetWithText(TextFormField, 'Name *'),
+      find.widgetWithText(TextFormField, 'Name (Required)'),
       'Alice',
     );
     await tester.enterText(
-      find.widgetWithText(TextFormField, 'Hometown District *'),
+      find.widgetWithText(TextFormField, 'Hometown District (Required)'),
       'Colombo',
     );
 
