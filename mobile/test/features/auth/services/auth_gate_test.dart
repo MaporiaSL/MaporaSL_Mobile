@@ -18,7 +18,7 @@ void main() {
 
   Widget buildAuthGate({
     required Stream<User?> authStream,
-    required AsyncValue<ProfileSetupRequirement> setupState,
+    required AsyncValue<CoreNavigationGuardState> guardState,
   }) {
     when(() => authService.authStateChanges()).thenAnswer((_) => authStream);
     when(() => authService.signOut()).thenAnswer((_) async {});
@@ -26,13 +26,8 @@ void main() {
     return ProviderScope(
       overrides: [
         authServiceProvider.overrideWithValue(authService),
-        profileSetupRequirementProvider.overrideWith((ref) async {
-          return setupState.value ??
-              const ProfileSetupRequirement(
-                requiresSetup: false,
-                requiredFields: [],
-                optionalFields: [],
-              );
+        coreNavigationGuardProvider.overrideWith((ref) async {
+          return guardState.value ?? const CoreNavigationGuardState.allowed();
         }),
       ],
       child: MaterialApp(
@@ -53,13 +48,7 @@ void main() {
     await tester.pumpWidget(
       buildAuthGate(
         authStream: Stream<User?>.value(null),
-        setupState: const AsyncData(
-          ProfileSetupRequirement(
-            requiresSetup: false,
-            requiredFields: [],
-            optionalFields: [],
-          ),
-        ),
+        guardState: const AsyncData(CoreNavigationGuardState.allowed()),
       ),
     );
 
@@ -78,9 +67,8 @@ void main() {
     await tester.pumpWidget(
       buildAuthGate(
         authStream: Stream<User?>.value(user),
-        setupState: const AsyncData(
-          ProfileSetupRequirement(
-            requiresSetup: true,
+        guardState: const AsyncData(
+          CoreNavigationGuardState.needsSetup(
             requiredFields: ['name'],
             optionalFields: ['bio'],
           ),
@@ -103,13 +91,7 @@ void main() {
     await tester.pumpWidget(
       buildAuthGate(
         authStream: Stream<User?>.value(user),
-        setupState: const AsyncData(
-          ProfileSetupRequirement(
-            requiresSetup: false,
-            requiredFields: [],
-            optionalFields: [],
-          ),
-        ),
+        guardState: const AsyncData(CoreNavigationGuardState.allowed()),
       ),
     );
 
