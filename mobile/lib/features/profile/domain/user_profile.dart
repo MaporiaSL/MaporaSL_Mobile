@@ -118,17 +118,11 @@ class ContributedPlace {
   final String description;
   final bool approved;
   final String status;
-  final String? category;
-  final String? province;
-  final String? district;
-  final double? latitude;
-  final double? longitude;
   final DateTime? submittedAt;
   final DateTime? reviewedAt;
   final DateTime? approvedAt;
   final String? rejectionReason;
   final String photoUrl;
-  final List<String> photoUrls;
 
   ContributedPlace({
     required this.id,
@@ -136,17 +130,11 @@ class ContributedPlace {
     required this.description,
     required this.approved,
     required this.status,
-    this.category,
-    this.province,
-    this.district,
-    this.latitude,
-    this.longitude,
     this.submittedAt,
     this.reviewedAt,
     this.approvedAt,
     this.rejectionReason,
     required this.photoUrl,
-    required this.photoUrls,
   });
 
   factory ContributedPlace.fromJson(Map<String, dynamic> json) {
@@ -158,11 +146,6 @@ class ContributedPlace {
       description: json['description'] ?? '',
       approved: status == 'approved' || json['approved'] == true,
       status: status,
-        category: json['category']?.toString(),
-        province: json['province']?.toString(),
-        district: json['district']?.toString(),
-        latitude: (json['latitude'] as num?)?.toDouble(),
-        longitude: (json['longitude'] as num?)?.toDouble(),
       submittedAt: json['submittedAt'] != null
           ? DateTime.tryParse(json['submittedAt'].toString())
           : null,
@@ -174,10 +157,6 @@ class ContributedPlace {
           : null,
       rejectionReason: json['rejectionReason']?.toString(),
       photoUrl: json['photoUrl']?.toString() ?? '',
-      photoUrls: (json['photoUrls'] as List?)
-              ?.whereType<String>()
-              .toList() ??
-          const [],
     );
   }
 
@@ -187,16 +166,10 @@ class ContributedPlace {
     'description': description,
     'approved': approved,
     'status': status,
-    'category': category,
-    'province': province,
-    'district': district,
-    'latitude': latitude,
-    'longitude': longitude,
     'submittedAt': submittedAt?.toIso8601String(),
     'reviewedAt': reviewedAt?.toIso8601String(),
     'approvedAt': approvedAt?.toIso8601String(),
     'rejectionReason': rejectionReason,
     'photoUrl': photoUrl,
-    'photoUrls': photoUrls,
   };
 }

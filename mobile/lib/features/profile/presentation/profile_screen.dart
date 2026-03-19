@@ -1,28 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-
-import '../../../core/config/app_config.dart';
 import '../domain/user_profile.dart' as profile_model;
-import 'admin_submission_moderation_screen.dart';
-import 'contribution_detail_screen.dart';
 import 'edit_profile_screen.dart';
 import 'place_submission_screen.dart';
 import 'providers/profile_providers.dart';
-import 'resubmit_contribution_screen.dart';
 
-class ProfileScreen extends ConsumerStatefulWidget {
+class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
 
-  @override
-  ConsumerState<ProfileScreen> createState() => _ProfileScreenState();
-}
-
-class _ProfileScreenState extends ConsumerState<ProfileScreen> {
-  String _statusFilter = 'all';
-  String _sortBy = 'recent';
-
-  void _retryAll() {
+  void _retryAll(WidgetRef ref) {
     final retries = ref.read(profileRetryCountProvider.notifier);
     retries.state = retries.state + 1;
     logProfileTelemetry(
@@ -35,30 +22,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     ref.invalidate(topContributorsProvider);
   }
 
-  List<profile_model.ContributedPlace> _filteredAndSorted(List<profile_model.ContributedPlace> places) {
-    final filtered = places.where((p) {
-      if (_statusFilter == 'all') return true;
-      return p.status == _statusFilter;
-    }).toList();
-
-    filtered.sort((a, b) {
-      switch (_sortBy) {
-        case 'name':
-          return a.name.toLowerCase().compareTo(b.name.toLowerCase());
-        case 'oldest':
-          return (a.submittedAt ?? DateTime.fromMillisecondsSinceEpoch(0))
-              .compareTo(b.submittedAt ?? DateTime.fromMillisecondsSinceEpoch(0));
-        default:
-          return (b.submittedAt ?? DateTime.fromMillisecondsSinceEpoch(0))
-              .compareTo(a.submittedAt ?? DateTime.fromMillisecondsSinceEpoch(0));
-      }
-    });
-
-    return filtered;
-  }
-
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final profileAsyncValue = ref.watch(userProfileProvider);
     final contributionsAsyncValue = ref.watch(userContributionsProvider);
     final topContributorsAsync = ref.watch(topContributorsProvider);
@@ -67,19 +32,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       appBar: AppBar(
         title: const Text('My Profile'),
         actions: [
-          if (AppConfig.authBypass)
-            IconButton(
-              icon: const Icon(Icons.admin_panel_settings_outlined),
-              tooltip: 'Moderate Submissions',
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const AdminSubmissionModerationScreen(),
-                  ),
-                );
-              },
-            ),
           IconButton(
             icon: const Icon(Icons.logout),
             tooltip: 'Logout',
@@ -111,7 +63,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   ),
                   const SizedBox(height: 16),
                   ElevatedButton(
-                    onPressed: _retryAll,
+                    onPressed: () => _retryAll(ref),
                     child: const Text('Retry'),
                   ),
                   if (errorUi.showSignInAction) ...[
@@ -134,7 +86,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.person_off, size: 64, color: Colors.orange),
+                    const Icon(
+                      Icons.person_off,
+                      size: 64,
+                      color: Colors.orange,
+                    ),
                     const SizedBox(height: 16),
                     Text(
                       'Profile Not Found',
@@ -142,12 +98,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     ),
                     const SizedBox(height: 8),
                     const Text(
-                      'No user profile exists for this account yet.',
+                      'No user profile exists for this account.\n\nThis could mean:\n• User not authenticated\n• User ID not found in database\n• Backend API error',
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 16),
                     ElevatedButton(
-                      onPressed: _retryAll,
+                      onPressed: () => ref.refresh(userProfileProvider),
                       child: const Text('Try Again'),
                     ),
                   ],
@@ -161,6 +117,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Header: Avatar, Name, Email
                 _buildProfileHeader(profile),
                 if (profile.bio.isNotEmpty) ...[
                   const SizedBox(height: 12),
@@ -177,24 +134,44 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   ),
                 ],
                 const SizedBox(height: 24),
+
+                // Contribution Stats
                 _buildStatsSection(profile),
                 const SizedBox(height: 24),
+
+                // Badges
                 if (profile.badges.isNotEmpty) ...[
-                  Text('Badges Earned', style: Theme.of(context).textTheme.titleMedium),
+                  Text(
+                    'Badges Earned',
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
                   const SizedBox(height: 12),
                   _buildBadgesSection(profile.badges),
                   const SizedBox(height: 24),
                 ],
-                Text('Contributed Places', style: Theme.of(context).textTheme.titleMedium),
+
+                // Contributed Places
+                Text(
+                  'Contributed Places',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
                 const SizedBox(height: 12),
                 _buildContributionsSection(contributionsAsyncValue),
                 const SizedBox(height: 24),
+
+                // Leaderboard & Impact
                 _buildLeaderboardAndImpact(profile),
                 const SizedBox(height: 20),
-                Text('Top Contributors', style: Theme.of(context).textTheme.titleMedium),
+
+                Text(
+                  'Top Contributors',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
                 const SizedBox(height: 10),
                 _buildTopContributorsSection(topContributorsAsync),
                 const SizedBox(height: 32),
+
+                // Edit Profile Button
                 Row(
                   children: [
                     Expanded(
@@ -240,182 +217,58 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       children: [
         CircleAvatar(
           radius: 40,
-          backgroundImage: profile.avatarUrl.isNotEmpty ? NetworkImage(profile.avatarUrl) : null,
-          child: profile.avatarUrl.isEmpty ? const Icon(Icons.person, size: 40) : null,
+          backgroundImage: profile.avatarUrl.isNotEmpty
+              ? NetworkImage(profile.avatarUrl)
+              : null,
+          child: profile.avatarUrl.isEmpty
+              ? const Icon(Icons.person, size: 40)
+              : null,
         ),
         const SizedBox(width: 16),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(profile.name, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+              Text(
+                profile.name,
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               const SizedBox(height: 4),
-              Text(profile.email, style: TextStyle(fontSize: 14, color: Colors.grey[600])),
+              Text(
+                profile.email,
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey[600],
+                ),
+              ),
               if (profile.hometownDistrict.isNotEmpty) ...[
                 const SizedBox(height: 6),
-                Text(profile.hometownDistrict, style: TextStyle(fontSize: 13, color: Colors.grey[700])),
+                Text(
+                  profile.hometownDistrict,
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: Colors.grey[700],
+                  ),
+                ),
               ],
               if (profile.preferredLanguage.isNotEmpty) ...[
                 const SizedBox(height: 2),
-                Text('Language: ${profile.preferredLanguage}',
-                    style: TextStyle(fontSize: 12, color: Colors.grey[600])),
+                Text(
+                  'Language: ${profile.preferredLanguage}',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey[600],
+                  ),
+                ),
               ],
             ],
           ),
         ),
       ],
     );
-  }
-
-  Widget _buildContributionsSection(AsyncValue<List<profile_model.ContributedPlace>> asyncValue) {
-    return asyncValue.when(
-      loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, _) => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('Could not load submissions: $error'),
-          const SizedBox(height: 8),
-          OutlinedButton.icon(
-            onPressed: _retryAll,
-            icon: const Icon(Icons.refresh),
-            label: const Text('Retry Contributions'),
-          ),
-        ],
-      ),
-      data: (places) {
-        if (places.isEmpty) {
-          return const Padding(
-            padding: EdgeInsets.all(16),
-            child: Text('No submissions yet. Tap "Submit Place" to contribute your first location.'),
-          );
-        }
-
-        final filtered = _filteredAndSorted(places);
-
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Wrap(
-                    spacing: 6,
-                    children: [
-                      _filterChip('All', 'all'),
-                      _filterChip('Pending', 'pending'),
-                      _filterChip('Approved', 'approved'),
-                      _filterChip('Rejected', 'rejected'),
-                    ],
-                  ),
-                ),
-                DropdownButton<String>(
-                  value: _sortBy,
-                  items: const [
-                    DropdownMenuItem(value: 'recent', child: Text('Recent')),
-                    DropdownMenuItem(value: 'oldest', child: Text('Oldest')),
-                    DropdownMenuItem(value: 'name', child: Text('Name')),
-                  ],
-                  onChanged: (value) {
-                    if (value == null) return;
-                    setState(() => _sortBy = value);
-                  },
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            ...filtered.map((place) {
-              return Card(
-                child: ListTile(
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  leading: place.photoUrl.isNotEmpty
-                      ? ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: Image.network(
-                            place.photoUrl,
-                            width: 48,
-                            height: 48,
-                            fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) => const Icon(Icons.image_not_supported),
-                          ),
-                        )
-                      : Icon(
-                          place.approved ? Icons.verified : Icons.hourglass_empty,
-                          color: place.approved ? Colors.green : Colors.orange,
-                        ),
-                  title: Text(place.name),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(_statusLabel(place.status)),
-                      if (place.submittedAt != null)
-                        Text('Submitted: ${DateFormat.yMMMd().format(place.submittedAt!)}'),
-                      if (place.status == 'rejected' && (place.rejectionReason ?? '').isNotEmpty)
-                        Text('Reason: ${place.rejectionReason}'),
-                    ],
-                  ),
-                  trailing: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.open_in_new, size: 20),
-                        tooltip: 'Details',
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => ContributionDetailScreen(contribution: place),
-                            ),
-                          );
-                        },
-                      ),
-                      if (place.status == 'rejected')
-                        TextButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => ResubmitContributionScreen(contribution: place),
-                              ),
-                            );
-                          },
-                          child: const Text('Resubmit'),
-                        ),
-                    ],
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => ContributionDetailScreen(contribution: place),
-                      ),
-                    );
-                  },
-                ),
-              );
-            }),
-          ],
-        );
-      },
-    );
-  }
-
-  Widget _filterChip(String label, String value) {
-    return ChoiceChip(
-      label: Text(label),
-      selected: _statusFilter == value,
-      onSelected: (_) => setState(() => _statusFilter = value),
-    );
-  }
-
-  String _statusLabel(String status) {
-    switch (status) {
-      case 'approved':
-        return 'Approved';
-      case 'rejected':
-        return 'Rejected';
-      default:
-        return 'Pending Review';
-    }
   }
 
   _ErrorUiData _buildErrorUi(Object error) {
@@ -498,7 +351,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           const SizedBox(height: 24),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: List.generate(3, (_) => Container(height: 64, width: 86, color: placeholder)),
+            children: List.generate(
+              3,
+              (_) => Container(height: 64, width: 86, color: placeholder),
+            ),
           ),
           const SizedBox(height: 24),
           Container(height: 16, width: 170, color: placeholder),
@@ -523,9 +379,18 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            _StatCard(label: 'Submitted', value: profile.totalSubmitted.toString()),
-            _StatCard(label: 'Approved', value: profile.approvedCount.toString()),
-            _StatCard(label: 'Approval Rate', value: '${profile.approvalRate.toStringAsFixed(1)}%'),
+            _StatCard(
+              label: 'Submitted',
+              value: profile.totalSubmitted.toString(),
+            ),
+            _StatCard(
+              label: 'Approved',
+              value: profile.approvedCount.toString(),
+            ),
+            _StatCard(
+              label: 'Approval Rate',
+              value: '${profile.approvalRate.toStringAsFixed(1)}%',
+            ),
           ],
         ),
       ],
@@ -546,11 +411,17 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(badge.icon, style: const TextStyle(fontSize: 16)),
+              Text(
+                badge.icon,
+                style: const TextStyle(fontSize: 16),
+              ),
               const SizedBox(width: 8),
               Text(
                 badge.name,
-                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ],
           ),
@@ -559,18 +430,102 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     );
   }
 
+  Widget _buildContributionsSection(
+    AsyncValue<List<profile_model.ContributedPlace>> asyncValue,
+  ) {
+    return asyncValue.when(
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (error, _) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Could not load submissions: $error'),
+          const SizedBox(height: 8),
+          Consumer(
+            builder: (context, ref, _) => OutlinedButton.icon(
+              onPressed: () => _retryAll(ref),
+              icon: const Icon(Icons.refresh),
+              label: const Text('Retry Contributions'),
+            ),
+          ),
+        ],
+      ),
+      data: (places) {
+        if (places.isEmpty) {
+          return const Padding(
+            padding: EdgeInsets.all(16),
+            child: Text('No submissions yet. Tap "Submit Place" to contribute your first location.'),
+          );
+        }
+
+        return Column(
+          children: places
+              .map((place) => ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    leading: place.photoUrl.isNotEmpty
+                        ? ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: Image.network(
+                              place.photoUrl,
+                              width: 44,
+                              height: 44,
+                              fit: BoxFit.cover,
+                              errorBuilder: (_, __, ___) => const Icon(Icons.image_not_supported),
+                            ),
+                          )
+                        : Icon(
+                            place.approved ? Icons.verified : Icons.hourglass_empty,
+                            color: place.approved ? Colors.green : Colors.orange,
+                          ),
+                    title: Text(place.name),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(_statusLabel(place.status)),
+                        if (place.submittedAt != null)
+                          Text('Submitted: ${DateFormat.yMMMd().format(place.submittedAt!)}'),
+                        if (place.status == 'rejected' && (place.rejectionReason ?? '').isNotEmpty)
+                          Text('Reason: ${place.rejectionReason}'),
+                      ],
+                    ),
+                    trailing: place.reviewedAt != null
+                        ? Text(DateFormat.MMMd().format(place.reviewedAt!))
+                        : null,
+                  ))
+              .toList(),
+        );
+      },
+    );
+  }
+
+  String _statusLabel(String status) {
+    switch (status) {
+      case 'approved':
+        return 'Approved';
+      case 'rejected':
+        return 'Rejected';
+      default:
+        return 'Pending Review';
+    }
+  }
+
   Widget _buildLeaderboardAndImpact(profile_model.UserProfile profile) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           'Global Rank: #${profile.leaderboardRank}',
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+          ),
         ),
         const SizedBox(height: 8),
         Text(
           'Impact: ${profile.impactCount} users visited your places',
-          style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+          style: TextStyle(
+            fontSize: 14,
+            color: Colors.grey[600],
+          ),
         ),
       ],
     );
@@ -584,10 +539,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         children: [
           Text('Could not load leaderboard: $error'),
           const SizedBox(height: 8),
-          OutlinedButton.icon(
-            onPressed: _retryAll,
-            icon: const Icon(Icons.refresh),
-            label: const Text('Retry Leaderboard'),
+          Consumer(
+            builder: (context, ref, _) => OutlinedButton.icon(
+              onPressed: () => _retryAll(ref),
+              icon: const Icon(Icons.refresh),
+              label: const Text('Retry Leaderboard'),
+            ),
           ),
         ],
       ),
@@ -607,7 +564,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             return ListTile(
               dense: true,
               contentPadding: EdgeInsets.zero,
-              leading: CircleAvatar(radius: 14, child: Text('$rank')),
+              leading: CircleAvatar(
+                radius: 14,
+                child: Text('$rank'),
+              ),
               title: Text(name),
               trailing: Text('$count approved'),
             );
@@ -639,7 +599,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         title: const Text('Logout'),
         content: const Text('Are you sure you want to logout?'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
           TextButton(
             onPressed: () {
               Navigator.pop(context);
@@ -652,17 +615,22 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     );
   }
 
-  Future<void> _performLogout(BuildContext context, WidgetRef ref) async {
+  void _performLogout(BuildContext context, WidgetRef ref) async {
     try {
       final authService = ref.read(authServiceProvider);
       await authService.signOut();
 
       if (context.mounted) {
-        Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
+        Navigator.of(context).pushNamedAndRemoveUntil(
+          '/login',
+          (route) => false,
+        );
       }
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $e')),
+        );
       }
     }
   }
@@ -678,9 +646,15 @@ class _StatCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text(value, style: Theme.of(context).textTheme.titleLarge),
+        Text(
+          value,
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
         const SizedBox(height: 4),
-        Text(label, style: Theme.of(context).textTheme.bodySmall),
+        Text(
+          label,
+          style: Theme.of(context).textTheme.bodySmall,
+        ),
       ],
     );
   }

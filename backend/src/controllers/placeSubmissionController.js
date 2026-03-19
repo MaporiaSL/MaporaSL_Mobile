@@ -7,10 +7,10 @@ const User = require('../models/User');
 const { getStorage } = require('../config/firebase');
 
 const BADGE_RULES = [
-  { name: 'Explorer', icon: 'compass', threshold: 1 },
-  { name: 'Local Guide', icon: 'pin', threshold: 5 },
-  { name: 'Place Curator', icon: 'map', threshold: 10 },
-  { name: 'Community Legend', icon: 'trophy', threshold: 20 },
+  { name: 'Explorer', icon: '??', threshold: 1 },
+  { name: 'Local Guide', icon: '??', threshold: 5 },
+  { name: 'Place Curator', icon: '???', threshold: 10 },
+  { name: 'Community Legend', icon: '??', threshold: 20 },
 ];
 
 function normalizeText(value, maxLen) {
