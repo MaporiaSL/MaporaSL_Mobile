@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart' show kDebugMode, debugPrint;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dio/dio.dart';
 import 'package:gemified_travel_portfolio/core/config/app_config.dart';
+import 'package:gemified_travel_portfolio/core/services/auth_interceptor.dart';
 import '../data/models/place_visit.dart';
 import '../data/place_visit_repository.dart';
 
@@ -18,6 +19,7 @@ final placeVisitRepositoryProvider = Provider.family((ref, String? token) {
       receiveTimeout: const Duration(seconds: 20),
     ),
   );
+  dio.interceptors.add(AuthInterceptor());
 
   if (kDebugMode) {
     dio.interceptors.add(
