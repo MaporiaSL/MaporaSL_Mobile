@@ -36,6 +36,58 @@ class ProfileSetupRequirement {
   });
 }
 
+class CoreNavigationGuardState {
+  final bool isAllowed;
+  final bool requiresSetup;
+  final bool requiresSignIn;
+  final List<String> requiredFields;
+  final List<String> optionalFields;
+  final String? message;
+
+  const CoreNavigationGuardState({
+    required this.isAllowed,
+    required this.requiresSetup,
+    required this.requiresSignIn,
+    required this.requiredFields,
+    required this.optionalFields,
+    this.message,
+  });
+
+  const CoreNavigationGuardState.allowed()
+    : isAllowed = true,
+      requiresSetup = false,
+      requiresSignIn = false,
+      requiredFields = const [],
+      optionalFields = const [],
+      message = null;
+
+  const CoreNavigationGuardState.needsSetup({
+    required List<String> requiredFields,
+    required List<String> optionalFields,
+  }) : isAllowed = false,
+       requiresSetup = true,
+       requiresSignIn = false,
+       requiredFields = requiredFields,
+       optionalFields = optionalFields,
+       message = null;
+
+  const CoreNavigationGuardState.needsSignIn({String? message})
+    : isAllowed = false,
+      requiresSetup = false,
+      requiresSignIn = true,
+      requiredFields = const [],
+      optionalFields = const [],
+      message = message;
+
+  const CoreNavigationGuardState.blocked({String? message})
+    : isAllowed = false,
+      requiresSetup = false,
+      requiresSignIn = false,
+      requiredFields = const [],
+      optionalFields = const [],
+      message = message;
+}
+
 void logProfileTelemetry(
   String event, {
   Map<String, Object?> details = const {},
@@ -196,6 +248,50 @@ final profileSetupRequirementProvider = FutureProvider<ProfileSetupRequirement>(
     );
   },
 );
+
+final coreNavigationGuardProvider = FutureProvider<CoreNavigationGuardState>((
+  ref,
+) async {
+  final authService = ref.watch(authServiceProvider);
+  final user = authService.currentUser;
+
+  if (!AppConfig.authBypass && user == null) {
+    return const CoreNavigationGuardState.needsSignIn(
+      message: 'Please sign in to continue.',
+    );
+  }
+
+  try {
+    await ref.watch(profileBootstrapProvider.future);
+    final setup = await ref.watch(profileSetupRequirementProvider.future);
+    if (setup.requiresSetup) {
+      return CoreNavigationGuardState.needsSetup(
+        requiredFields: setup.requiredFields,
+        optionalFields: setup.optionalFields,
+      );
+    }
+    return const CoreNavigationGuardState.allowed();
+  } on ProfileLoadException catch (e) {
+    if (e.type == ProfileLoadErrorType.missingToken ||
+        e.type == ProfileLoadErrorType.expiredToken) {
+      return CoreNavigationGuardState.needsSignIn(message: e.message);
+    }
+    return CoreNavigationGuardState.blocked(message: e.message);
+  } on DioException catch (e) {
+    if (e.response?.statusCode == 401) {
+      return const CoreNavigationGuardState.needsSignIn(
+        message: 'Session expired. Please sign in again.',
+      );
+    }
+    return CoreNavigationGuardState.blocked(
+      message: profileActionErrorMessage(e),
+    );
+  } catch (_) {
+    return const CoreNavigationGuardState.blocked(
+      message: 'Unable to verify profile setup right now.',
+    );
+  }
+});
 
 /// Provider for current user ID with debug logging
 final currentUserIdProvider = Provider<String?>((ref) {
