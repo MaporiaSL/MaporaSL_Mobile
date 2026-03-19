@@ -37,6 +37,8 @@ class _FirstTimeProfileSetupScreenState
   int _step = 0;
   bool _isSaving = false;
   String? _error;
+  String? _avatarUploadError;
+  bool _avatarUploadFailed = false;
   Map<String, String> _fieldErrors = <String, String>{};
 
   static const List<String> _languages = <String>[
@@ -126,14 +128,135 @@ class _FirstTimeProfileSetupScreenState
     if (picked == null) return;
     setState(() {
       _avatarFile = File(picked.path);
+      _avatarUploadFailed = false;
+      _avatarUploadError = null;
+      _fieldErrors.remove('avatarUrl');
     });
     await _persistDraft();
+  }
+
+  void _clearFieldError(String key) {
+    if (!_fieldErrors.containsKey(key)) return;
+    setState(() {
+      _fieldErrors.remove(key);
+    });
+  }
+
+  Widget _fieldTypeChip({required bool required}) {
+    final background = required ? Colors.red.shade50 : Colors.blueGrey.shade50;
+    final foreground = required ? Colors.red.shade700 : Colors.blueGrey.shade700;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(
+        color: background,
+        borderRadius: BorderRadius.circular(999),
+        border: Border.all(color: foreground.withOpacity(0.25)),
+      ),
+      child: Text(
+        required ? 'Required' : 'Optional',
+        style: TextStyle(
+          color: foreground,
+          fontSize: 11,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
+  }
+
+  Widget _inlineServerFieldError(String fieldName) {
+    final message = _fieldErrors[fieldName];
+    if (message == null || message.isEmpty) return const SizedBox.shrink();
+    return Padding(
+      padding: const EdgeInsets.only(top: 8),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(Icons.error_outline, size: 16, color: Colors.red.shade700),
+          const SizedBox(width: 6),
+          Expanded(
+            child: Text(
+              message,
+              style: TextStyle(
+                color: Colors.red.shade700,
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _retryAvatarUpload() async {
+    if (_avatarFile == null || _isSaving) return;
+
+    final userId = ref.read(currentUserIdProvider);
+    if (userId == null || userId.isEmpty) {
+      setState(() {
+        _error = 'Please sign in again to continue setup.';
+      });
+      return;
+    }
+
+    setState(() {
+      _isSaving = true;
+      _error = null;
+      _avatarUploadError = null;
+      _fieldErrors.remove('avatarUrl');
+    });
+
+    try {
+      final repository = ref.read(profileRepositoryProvider);
+      final avatarUrl = await repository.uploadAvatar(userId, _avatarFile!.path);
+      await repository.updateProfile(userId, avatarUrl: avatarUrl);
+
+      if (!mounted) return;
+      setState(() {
+        _avatarUploadFailed = false;
+        _avatarUploadError = null;
+        _avatarFile = null;
+      });
+      await _persistDraft();
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Avatar uploaded successfully.')),
+      );
+    } on DioException catch (e) {
+      final data = e.response?.data;
+      String message = profileActionErrorMessage(e);
+      if (data is Map<String, dynamic>) {
+        message = data['error']?.toString() ?? message;
+      }
+      if (!mounted) return;
+      setState(() {
+        _avatarUploadFailed = true;
+        _avatarUploadError = message;
+        _fieldErrors['avatarUrl'] = message;
+        _error = message;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _avatarUploadFailed = true;
+        _avatarUploadError = profileActionErrorMessage(e);
+        _fieldErrors['avatarUrl'] = _avatarUploadError!;
+        _error = _avatarUploadError;
+      });
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isSaving = false;
+        });
+      }
+    }
   }
 
   Future<void> _saveSetup() async {
     setState(() {
       _fieldErrors = <String, String>{};
       _error = null;
+      _avatarUploadError = null;
     });
 
     if (!_formKey.currentState!.validate()) {
@@ -159,11 +282,36 @@ class _FirstTimeProfileSetupScreenState
       final repository = ref.read(profileRepositoryProvider);
 
       if (_avatarFile != null) {
-        final avatarUrl = await repository.uploadAvatar(
-          userId,
-          _avatarFile!.path,
-        );
-        await repository.updateProfile(userId, avatarUrl: avatarUrl);
+        try {
+          final avatarUrl = await repository.uploadAvatar(
+            userId,
+            _avatarFile!.path,
+          );
+          await repository.updateProfile(userId, avatarUrl: avatarUrl);
+          if (mounted) {
+            setState(() {
+              _avatarUploadFailed = false;
+              _avatarUploadError = null;
+              _fieldErrors.remove('avatarUrl');
+              _avatarFile = null;
+            });
+          }
+          await _persistDraft();
+        } on DioException catch (e) {
+          final data = e.response?.data;
+          String message = profileActionErrorMessage(e);
+          if (data is Map<String, dynamic>) {
+            message = data['error']?.toString() ?? message;
+          }
+          setState(() {
+            _avatarUploadFailed = true;
+            _avatarUploadError = message;
+            _fieldErrors['avatarUrl'] = message;
+            _error = message;
+            _step = 2;
+          });
+          return;
+        }
       }
 
       await repository.updateProfile(
@@ -286,18 +434,30 @@ class _FirstTimeProfileSetupScreenState
               content: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Required: ${widget.requiredFields.join(', ')}',
-                    style: const TextStyle(fontSize: 12, color: Colors.black54),
+                  Row(
+                    children: [
+                      _fieldTypeChip(required: true),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          widget.requiredFields.join(', '),
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: Colors.black54,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 10),
                   TextFormField(
                     controller: _nameController,
                     maxLength: 40,
                     decoration: InputDecoration(
-                      labelText: 'Name *',
+                      labelText: 'Name (Required)',
                       errorText: _fieldErrors['name'],
                     ),
+                    onChanged: (_) => _clearFieldError('name'),
                     validator: (v) {
                       final value = (v ?? '').trim();
                       if (value.isEmpty) return 'Name is required';
@@ -313,9 +473,10 @@ class _FirstTimeProfileSetupScreenState
                     controller: _districtController,
                     maxLength: 60,
                     decoration: InputDecoration(
-                      labelText: 'Hometown District *',
+                      labelText: 'Hometown District (Required)',
                       errorText: _fieldErrors['hometownDistrict'],
                     ),
+                    onChanged: (_) => _clearFieldError('hometownDistrict'),
                     validator: (v) {
                       final value = (v ?? '').trim();
                       if (value.isEmpty) return 'District is required';
@@ -328,7 +489,7 @@ class _FirstTimeProfileSetupScreenState
                   DropdownButtonFormField<String>(
                     initialValue: _language,
                     decoration: InputDecoration(
-                      labelText: 'Preferred Language *',
+                      labelText: 'Preferred Language (Required)',
                       errorText: _fieldErrors['preferredLanguage'],
                     ),
                     items: _languages
@@ -341,7 +502,10 @@ class _FirstTimeProfileSetupScreenState
                         .toList(),
                     onChanged: (value) async {
                       if (value == null) return;
-                      setState(() => _language = value);
+                      setState(() {
+                        _language = value;
+                        _fieldErrors.remove('preferredLanguage');
+                      });
                       await _persistDraft();
                     },
                   ),
@@ -354,43 +518,69 @@ class _FirstTimeProfileSetupScreenState
               content: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Optional: ${widget.optionalFields.join(', ')}',
-                    style: const TextStyle(fontSize: 12, color: Colors.black54),
+                  Row(
+                    children: [
+                      _fieldTypeChip(required: false),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          widget.optionalFields.join(', '),
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: Colors.black54,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 10),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: _interestOptions.map((interest) {
-                      final selected = _interests.contains(interest);
-                      return FilterChip(
-                        selected: selected,
-                        label: Text(interest),
-                        onSelected: (value) async {
-                          setState(() {
-                            if (value) {
-                              if (_interests.length < 10) {
-                                _interests.add(interest);
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: _fieldErrors.containsKey('travelInterests')
+                            ? Colors.red.shade300
+                            : Colors.transparent,
+                      ),
+                    ),
+                    child: Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: _interestOptions.map((interest) {
+                        final selected = _interests.contains(interest);
+                        return FilterChip(
+                          selected: selected,
+                          label: Text(interest),
+                          onSelected: (value) async {
+                            setState(() {
+                              _fieldErrors.remove('travelInterests');
+                              if (value) {
+                                if (_interests.length < 10) {
+                                  _interests.add(interest);
+                                }
+                              } else {
+                                _interests.remove(interest);
                               }
-                            } else {
-                              _interests.remove(interest);
-                            }
-                          });
-                          await _persistDraft();
-                        },
-                      );
-                    }).toList(),
+                            });
+                            await _persistDraft();
+                          },
+                        );
+                      }).toList(),
+                    ),
                   ),
+                  _inlineServerFieldError('travelInterests'),
                   const SizedBox(height: 12),
                   TextFormField(
                     controller: _bioController,
                     maxLength: 200,
                     maxLines: 3,
                     decoration: InputDecoration(
-                      labelText: 'Bio (optional)',
+                      labelText: 'Bio (Optional)',
                       errorText: _fieldErrors['bio'],
                     ),
+                    onChanged: (_) => _clearFieldError('bio'),
                     validator: (v) {
                       final value = (v ?? '').trim();
                       if (value.length > 200)
@@ -407,7 +597,15 @@ class _FirstTimeProfileSetupScreenState
               content: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Add an avatar now or skip and update later.'),
+                  Row(
+                    children: [
+                      _fieldTypeChip(required: false),
+                      const SizedBox(width: 8),
+                      const Expanded(
+                        child: Text('Add an avatar now or skip and update later.'),
+                      ),
+                    ],
+                  ),
                   const SizedBox(height: 12),
                   Row(
                     children: [
@@ -428,6 +626,22 @@ class _FirstTimeProfileSetupScreenState
                       ),
                     ],
                   ),
+                  _inlineServerFieldError('avatarUrl'),
+                  if (_avatarUploadFailed) ...[
+                    const SizedBox(height: 12),
+                    OutlinedButton.icon(
+                      onPressed: _isSaving ? null : _retryAvatarUpload,
+                      icon: const Icon(Icons.refresh),
+                      label: const Text('Retry Avatar Upload'),
+                    ),
+                  ],
+                  if (_avatarUploadError != null) ...[
+                    const SizedBox(height: 8),
+                    Text(
+                      _avatarUploadError!,
+                      style: TextStyle(color: Colors.red.shade700, fontSize: 12),
+                    ),
+                  ],
                   const SizedBox(height: 16),
                   if (_error != null)
                     Container(
