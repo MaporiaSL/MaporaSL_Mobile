@@ -274,6 +274,11 @@ void main() {
 
   testWidgets('shows avatar retry CTA and succeeds on retry', (tester) async {
     final tempDir = await Directory.systemTemp.createTemp('avatar_test');
+    addTearDown(() async {
+      if (await tempDir.exists()) {
+        await tempDir.delete(recursive: true);
+      }
+    });
     final avatarFile = File('${tempDir.path}/avatar.jpg');
     await avatarFile.writeAsString('avatar-bytes');
 
@@ -318,15 +323,17 @@ void main() {
     await tester.tap(
       find.widgetWithText(FilledButton, 'Finish Setup').hitTestable().first,
     );
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
 
     expect(find.text('Avatar upload failed.'), findsWidgets);
     expect(find.text('Retry Avatar Upload'), findsOneWidget);
 
     await tester.tap(
-      find.widgetWithText(OutlinedButton, 'Retry Avatar Upload'),
+      find.widgetWithText(OutlinedButton, 'Retry Avatar Upload').hitTestable(),
     );
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 500));
 
     verify(
       () => repository.updateProfile(
@@ -336,6 +343,5 @@ void main() {
     ).called(1);
 
     expect(find.text('Avatar uploaded successfully.'), findsOneWidget);
-    await tempDir.delete(recursive: true);
   });
 }

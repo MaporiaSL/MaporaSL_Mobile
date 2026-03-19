@@ -29,7 +29,7 @@ void main() {
     when(() => explorationApi.fetchDistricts()).thenAnswer((_) async => []);
     when(
       () => authService.authStateChanges(),
-    ).thenAnswer((_) => Stream<User?>.value(null));
+    ).thenAnswer((_) => const Stream<User?>.empty());
     when(() => authService.currentUser).thenReturn(null);
     when(() => authService.currentUserDisplayName).thenReturn(null);
   });

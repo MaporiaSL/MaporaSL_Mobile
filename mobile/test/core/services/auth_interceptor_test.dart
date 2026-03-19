@@ -41,6 +41,10 @@ void main() {
   late MockUser user;
   late MockDio retryDio;
 
+  setUpAll(() {
+    registerFallbackValue(RequestOptions(path: '/'));
+  });
+
   setUp(() {
     auth = MockFirebaseAuth();
     user = MockUser();
