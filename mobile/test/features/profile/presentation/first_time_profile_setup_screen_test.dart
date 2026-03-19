@@ -92,11 +92,17 @@ void main() {
     await tester.pumpWidget(buildTestWidget());
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Continue').first);
+    await tester.tap(
+      find.widgetWithText(FilledButton, 'Continue').hitTestable().first,
+    );
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Continue').first);
+    await tester.tap(
+      find.widgetWithText(FilledButton, 'Continue').hitTestable().first,
+    );
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Finish Setup'));
+    await tester.tap(
+      find.widgetWithText(FilledButton, 'Finish Setup').hitTestable().first,
+    );
     await tester.pumpAndSettle();
 
     expect(find.text('Name is required'), findsOneWidget);
@@ -138,11 +144,17 @@ void main() {
       'Colombo',
     );
 
-    await tester.tap(find.text('Continue').first);
+    await tester.tap(
+      find.widgetWithText(FilledButton, 'Continue').hitTestable().first,
+    );
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Continue').first);
+    await tester.tap(
+      find.widgetWithText(FilledButton, 'Continue').hitTestable().first,
+    );
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Finish Setup'));
+    await tester.tap(
+      find.widgetWithText(FilledButton, 'Finish Setup').hitTestable().first,
+    );
     await tester.pumpAndSettle();
 
     verify(
