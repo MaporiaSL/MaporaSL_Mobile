@@ -27,7 +27,8 @@ class MapScreen extends ConsumerStatefulWidget {
   ConsumerState<MapScreen> createState() => _MapScreenState();
 }
 
-class _MapScreenState extends ConsumerState<MapScreen> with TickerProviderStateMixin {
+class _MapScreenState extends ConsumerState<MapScreen>
+    with TickerProviderStateMixin {
   String? selectedDistrict;
   String? selectedProvince;
   bool _isDistrictFocused = false;
@@ -36,7 +37,8 @@ class _MapScreenState extends ConsumerState<MapScreen> with TickerProviderStateM
   late AnimationController _selectionAnimationController;
 
   String _normalizeKey(String? value) {
-    return value?.toString().trim().toLowerCase() ?? '';
+    if (value == null) return '';
+    return value.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]'), '');
   }
 
   DistrictAssignment? _assignmentForDistrict(
@@ -45,12 +47,20 @@ class _MapScreenState extends ConsumerState<MapScreen> with TickerProviderStateM
   ) {
     if (district == null || district.isEmpty) return null;
     final districtKey = _normalizeKey(district);
+
+    DistrictAssignment? fuzzyMatch;
     for (final assignment in assignments) {
-      if (_normalizeKey(assignment.district) == districtKey) {
+      final assignmentKey = _normalizeKey(assignment.district);
+      if (assignmentKey == districtKey) {
         return assignment;
       }
+
+      if (assignmentKey.contains(districtKey) ||
+          districtKey.contains(assignmentKey)) {
+        fuzzyMatch ??= assignment;
+      }
     }
-    return null;
+    return fuzzyMatch;
   }
 
   /// Calculate district progress map from assignments (0.0-1.0 for each district)
@@ -79,7 +89,7 @@ class _MapScreenState extends ConsumerState<MapScreen> with TickerProviderStateM
       duration: const Duration(milliseconds: 300),
       vsync: this,
     );
-    
+
     Future.microtask(() {
       if (!mounted) return;
       ref.read(explorationProvider.notifier).loadAssignments();
@@ -96,6 +106,20 @@ class _MapScreenState extends ConsumerState<MapScreen> with TickerProviderStateM
   @override
   Widget build(BuildContext context) {
     ref.listen<ExplorationState>(explorationProvider, (previous, next) {
+      // Auto-focus first district once assignments are available so places
+      // are visible without requiring a manual district tap.
+      if ((previous?.assignments.isEmpty ?? true) &&
+          next.assignments.isNotEmpty &&
+          !_isDistrictFocused &&
+          selectedDistrict == null) {
+        final firstDistrict = next.assignments.first.district;
+        setState(() {
+          selectedDistrict = firstDistrict;
+          _isDistrictFocused = true;
+          _selectedLocation = null;
+        });
+      }
+
       // Show error messages
       if (next.error != null && next.error!.isNotEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -267,7 +291,7 @@ class _MapScreenState extends ConsumerState<MapScreen> with TickerProviderStateM
                             ) {
                               // Trigger smooth animation on district selection
                               _selectionAnimationController.forward(from: 0.0);
-                              
+
                               setState(() {
                                 if (districtName.isEmpty) {
                                   selectedDistrict = null;
@@ -519,6 +543,12 @@ class _DistrictSatelliteMapState extends State<_DistrictSatelliteMap> {
   static const String _districtLineLayerId = 'district-focus-line';
   static const String _outsideMaskSourceId = 'district-outside-mask-source';
   static const String _outsideMaskLayerId = 'district-outside-mask-fill';
+  static const String _visitedLocationsSourceId = 'district-visited-locations';
+  static const String _visitedLocationsLayerId = 'district-visited-circles';
+  static const String _unvisitedLocationsSourceId =
+      'district-unvisited-locations';
+  static const String _unvisitedLocationsLayerId =
+      'district-unvisited-circles';
   static Map<String, dynamic>? _districtGeoJsonCache;
 
   mapbox.MapboxMap? _mapboxMap;
@@ -767,11 +797,77 @@ class _DistrictSatelliteMapState extends State<_DistrictSatelliteMap> {
   }
 
   Future<void> _clearDistrictLayers() async {
+    await _removeStyleLayer(_visitedLocationsLayerId);
+    await _removeStyleLayer(_unvisitedLocationsLayerId);
     await _removeStyleLayer(_districtLineLayerId);
     await _removeStyleLayer(_districtFillLayerId);
     await _removeStyleLayer(_outsideMaskLayerId);
+    await _removeStyleSource(_visitedLocationsSourceId);
+    await _removeStyleSource(_unvisitedLocationsSourceId);
     await _removeStyleSource(_districtSourceId);
     await _removeStyleSource(_outsideMaskSourceId);
+  }
+
+  String _buildLocationsGeoJson({required bool visited}) {
+    final features = widget.assignment.locations
+        .where((location) => location.visited == visited)
+        .map(
+          (location) => {
+            'type': 'Feature',
+            'properties': {
+              'id': location.id,
+              'name': location.name,
+            },
+            'geometry': {
+              'type': 'Point',
+              'coordinates': [location.longitude, location.latitude],
+            },
+          },
+        )
+        .toList(growable: false);
+
+    return jsonEncode({
+      'type': 'FeatureCollection',
+      'features': features,
+    });
+  }
+
+  Future<void> _applyLocationLayers(mapbox.MapboxMap map) async {
+    final visitedSource = mapbox.GeoJsonSource(
+      id: _visitedLocationsSourceId,
+      data: _buildLocationsGeoJson(visited: true),
+    );
+    await map.style.addSource(visitedSource);
+
+    final unvisitedSource = mapbox.GeoJsonSource(
+      id: _unvisitedLocationsSourceId,
+      data: _buildLocationsGeoJson(visited: false),
+    );
+    await map.style.addSource(unvisitedSource);
+
+    await map.style.addLayer(
+      mapbox.CircleLayer(
+        id: _unvisitedLocationsLayerId,
+        sourceId: _unvisitedLocationsSourceId,
+        circleColor: const Color(0xFFDC2626).toARGB32(),
+        circleRadius: 6.5,
+        circleOpacity: 0.92,
+        circleStrokeColor: const Color(0xFFFFFFFF).toARGB32(),
+        circleStrokeWidth: 2.0,
+      ),
+    );
+
+    await map.style.addLayer(
+      mapbox.CircleLayer(
+        id: _visitedLocationsLayerId,
+        sourceId: _visitedLocationsSourceId,
+        circleColor: const Color(0xFF10B981).toARGB32(),
+        circleRadius: 8.0,
+        circleOpacity: 1.0,
+        circleStrokeColor: const Color(0xFFFFFFFF).toARGB32(),
+        circleStrokeWidth: 2.5,
+      ),
+    );
   }
 
   Future<void> _applyDistrictLayers(mapbox.MapboxMap map) async {
@@ -1028,8 +1124,8 @@ class _DistrictSatelliteMapState extends State<_DistrictSatelliteMap> {
 
     await _prepareDistrictGeometry();
     await _applyDistrictLayers(map);
+    await _applyLocationLayers(map);
     await _fitToDistrict(map);
-    await _setupMarkers(map);
   }
 
   void _handleMapTap(mapbox.MapContentGestureContext tapContext) {

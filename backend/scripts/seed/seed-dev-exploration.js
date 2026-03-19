@@ -1,10 +1,10 @@
 const mongoose = require('mongoose');
 const path = require('path');
-require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
-const connectDB = require('./src/config/db');
-const User = require('./src/models/User');
-const Place = require('./src/models/Place');
-const UserDistrictAssignment = require('./src/models/UserDistrictAssignment');
+require('dotenv').config({ path: path.resolve(__dirname, '../../.env') });
+const connectDB = require('../../src/config/db');
+const User = require('../../src/models/User');
+const Place = require('../../src/models/Place');
+const UserDistrictAssignment = require('../../src/models/UserDistrictAssignment');
 
 async function seedDevExploration() {
   try {
@@ -40,12 +40,13 @@ async function seedDevExploration() {
       assignment = await UserDistrictAssignment.create({
         userId: user.auth0Id,
         district: 'Colombo',
+        province: 'Western Province',
         assignedLocationIds: places.map(p => p._id),
         visitedLocationIds: [],
         visitedLocationProofs: [],
         assignedCount: places.length,
         visitedCount: 0,
-        assignedAt: new Date(),
+        unlockedAt: null,
       });
       console.log(`Created assignment with ${places.length} locations`);
     }

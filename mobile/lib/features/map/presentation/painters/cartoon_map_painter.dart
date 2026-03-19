@@ -55,33 +55,33 @@ class CartoonMapPainter extends CustomPainter {
       final islandSilhouette = Path();
       for (final district in districtPaths.values) {
         for (final path in district) {
-        islandSilhouette.addPath(path, Offset.zero);
+          islandSilhouette.addPath(path, Offset.zero);
+        }
       }
-    }
-    canvas.drawPath(
-      islandSilhouette,
-      Paint()..color = theme.lockedColor.withValues(alpha: 0.20),
-    );
+      canvas.drawPath(
+        islandSilhouette,
+        Paint()..color = theme.lockedColor.withValues(alpha: 0.20),
+      );
 
-    // 2. Draw all provinces base (Subtle)
-    for (final region in regions) {
-      _drawProvince(canvas, size, region);
-    }
+      // 2. Draw all provinces base (Subtle)
+      for (final region in regions) {
+        _drawProvince(canvas, size, region);
+      }
 
-    // 3. Draw district fills (Progress colors)
-    _drawDistrictsFilled(canvas);
+      // 3. Draw district fills (Progress colors)
+      _drawDistrictsFilled(canvas);
 
-    // 4. Draw Fog of War Overlay
-    _drawFogOverlay(canvas, size);
+      // 4. Draw Fog of War Overlay
+      _drawFogOverlay(canvas, size);
 
-    // 5. Draw grainy texture for atmosphere
-    _drawGrainOverlay(canvas, size);
+      // 5. Draw grainy texture for atmosphere
+      _drawGrainOverlay(canvas, size);
 
-    // 6. Selected district highlight (Clear of fog)
-    _drawSelectedDistrictHighlight(canvas);
+      // 6. Selected district highlight (Clear of fog)
+      _drawSelectedDistrictHighlight(canvas);
 
-    // 7. Draw outer border
-    _drawBorders(canvas, size);
+      // 7. Draw outer border
+      _drawBorders(canvas, size);
     } catch (e) {
       debugPrint('❌ Map Polish: Critical rendering error: $e');
       // Fallback: Draw a simple error background so app doesn't crash
@@ -135,10 +135,10 @@ class CartoonMapPainter extends CustomPainter {
 
       // District-specific base color with vibrant enhancement
       final districtBaseColor = _districtBaseColor(districtId);
-      final vibranceBoost = HSLColor.fromColor(districtBaseColor)
-          .withSaturation(0.75)
-          .toColor();
-      
+      final vibranceBoost = HSLColor.fromColor(
+        districtBaseColor,
+      ).withSaturation(0.75).toColor();
+
       final targetColor =
           Color.lerp(
             vibranceBoost,
@@ -146,18 +146,18 @@ class CartoonMapPainter extends CustomPainter {
             0.25,
           ) ??
           vibranceBoost;
-      
+
       // Enhanced color blending
       var fillColor =
           Color.lerp(theme.lockedColor, targetColor, 0.18 + (0.82 * reveal)) ??
           theme.lockedColor;
-      
+
       if (isFocusedDistrict && focusMode) {
         fillColor =
             Color.lerp(fillColor, theme.selectedDistrictGlassTint, 0.50) ??
             theme.selectedDistrictGlassTint;
       }
-      
+
       final opacity = shouldDim
           ? 0.10
           : (isFocusedDistrict && focusMode
@@ -248,7 +248,7 @@ class CartoonMapPainter extends CustomPainter {
     final labelBgPaint = Paint()
       ..color = Colors.black.withValues(alpha: labelOpacity * 0.3)
       ..style = PaintingStyle.fill;
-    
+
     canvas.drawRRect(
       RRect.fromRectAndRadius(
         Rect.fromCenter(
@@ -266,12 +266,12 @@ class CartoonMapPainter extends CustomPainter {
     canvas.translate(center.dx, center.dy);
     canvas.scale(labelScale);
     canvas.translate(-center.dx, -center.dy);
-    
+
     textPainter.paint(
       canvas,
       center - Offset(textPainter.width / 2, textPainter.height / 2),
     );
-    
+
     canvas.restore();
   }
 
@@ -281,13 +281,16 @@ class CartoonMapPainter extends CustomPainter {
 
     final paths = districtPaths[focusedDistrictName!];
     if (paths == null || paths.isEmpty) {
-      debugPrint('⚠️ Map Polish: No paths found for focused district: $focusedDistrictName');
+      debugPrint(
+        '⚠️ Map Polish: No paths found for focused district: $focusedDistrictName',
+      );
       return;
     }
 
     try {
       // Animated fog intensity for breathing effect
-      final breathingIntensity = (math.sin(DateTime.now().millisecondsSinceEpoch / 3000.0) + 1) / 2;
+      final breathingIntensity =
+          (math.sin(DateTime.now().millisecondsSinceEpoch / 3000.0) + 1) / 2;
       final baseAlpha = 0.50 + (0.08 * breathingIntensity);
 
       // Create layered fog for depth
@@ -307,10 +310,7 @@ class CartoonMapPainter extends CustomPainter {
       final fogPaint = Paint()
         ..color = fogColor.withValues(alpha: baseAlpha * 0.4)
         ..style = PaintingStyle.fill;
-      canvas.drawRect(
-        Rect.fromLTWH(0, 0, size.width, size.height),
-        fogPaint,
-      );
+      canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), fogPaint);
 
       // Create a mask path for the focused district (what should be revealed)
       final maskPath = Path();
@@ -331,7 +331,7 @@ class CartoonMapPainter extends CustomPainter {
       for (final path in paths) {
         edgePath.addPath(path, Offset.zero);
       }
-      
+
       final edgeHighlightPaint = Paint()
         ..color = Colors.white.withValues(alpha: 0.06)
         ..strokeWidth = 1.5
@@ -345,7 +345,7 @@ class CartoonMapPainter extends CustomPainter {
   /// Add an enhanced grainy/noisy procedural texture with scanlines
   void _drawGrainOverlay(Canvas canvas, Size size) {
     final isDark = theme.backgroundColor.computeLuminance() < 0.5;
-    
+
     // Main grain texture
     final grainPaint = Paint()
       ..color = (isDark ? Colors.white : const Color(0xFF334155)).withValues(
@@ -364,7 +364,7 @@ class CartoonMapPainter extends CustomPainter {
     final scanlinePaint = Paint()
       ..color = Colors.black.withValues(alpha: 0.02)
       ..strokeWidth = 1.0;
-    
+
     for (double y = 0; y < size.height; y += 3) {
       canvas.drawLine(Offset(0, y), Offset(size.width, y), scanlinePaint);
     }
@@ -404,7 +404,9 @@ class CartoonMapPainter extends CustomPainter {
 
     for (final glowLayer in glowLayers) {
       final glowPaint = Paint()
-        ..color = theme.selectedDistrictGlowColor.withValues(alpha: glowLayer.alpha)
+        ..color = theme.selectedDistrictGlowColor.withValues(
+          alpha: glowLayer.alpha,
+        )
         ..strokeWidth = 3.0
         ..maskFilter = MaskFilter.blur(BlurStyle.outer, glowLayer.radius)
         ..style = PaintingStyle.stroke;
@@ -425,9 +427,12 @@ class CartoonMapPainter extends CustomPainter {
     }
 
     // Animated pulse effect (inner semi-transparent fill)
-    final pulseOpacity = (math.sin(DateTime.now().millisecondsSinceEpoch / 500.0) + 1) / 3;
+    final pulseOpacity =
+        (math.sin(DateTime.now().millisecondsSinceEpoch / 500.0) + 1) / 3;
     final pulsePaint = Paint()
-      ..color = theme.selectedDistrictGlassTint.withValues(alpha: 0.15 + (0.10 * pulseOpacity))
+      ..color = theme.selectedDistrictGlassTint.withValues(
+        alpha: 0.15 + (0.10 * pulseOpacity),
+      )
       ..style = PaintingStyle.fill;
 
     for (final path in paths) {

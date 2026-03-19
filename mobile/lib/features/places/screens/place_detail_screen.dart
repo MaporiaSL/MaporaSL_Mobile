@@ -7,10 +7,7 @@ import '../../visits/presentation/widgets/dynamic_visit_sheet.dart';
 class PlaceDetailScreen extends ConsumerStatefulWidget {
   final Place place;
 
-  const PlaceDetailScreen({
-    super.key,
-    required this.place,
-  });
+  const PlaceDetailScreen({super.key, required this.place});
 
   @override
   ConsumerState<PlaceDetailScreen> createState() => _PlaceDetailScreenState();
@@ -41,9 +38,9 @@ class _PlaceDetailScreenState extends ConsumerState<PlaceDetailScreen> {
       await launchUrl(mapsUrl);
     } else {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Could not open maps')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Could not open maps')));
       }
     }
   }
@@ -128,10 +125,7 @@ class _PlaceDetailScreenState extends ConsumerState<PlaceDetailScreen> {
                     )
                   : Container(
                       color: Colors.grey.shade300,
-                      child: const Icon(
-                        Icons.image_not_supported,
-                        size: 100,
-                      ),
+                      child: const Icon(Icons.image_not_supported, size: 100),
                     ),
             ),
           ),
@@ -149,9 +143,8 @@ class _PlaceDetailScreenState extends ConsumerState<PlaceDetailScreen> {
                       Expanded(
                         child: Text(
                           widget.place.name,
-                          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: Theme.of(context).textTheme.headlineSmall
+                              ?.copyWith(fontWeight: FontWeight.bold),
                         ),
                       ),
                       if (widget.place.rating != null)
@@ -166,7 +159,11 @@ class _PlaceDetailScreenState extends ConsumerState<PlaceDetailScreen> {
                           ),
                           child: Row(
                             children: [
-                              const Icon(Icons.star, color: Colors.amber, size: 18),
+                              const Icon(
+                                Icons.star,
+                                color: Colors.amber,
+                                size: 18,
+                              ),
                               const SizedBox(width: 4),
                               Text(
                                 widget.place.rating!.toStringAsFixed(1),
@@ -184,7 +181,11 @@ class _PlaceDetailScreenState extends ConsumerState<PlaceDetailScreen> {
                   // Location
                   Row(
                     children: [
-                      const Icon(Icons.location_on, color: Colors.red, size: 20),
+                      const Icon(
+                        Icons.location_on,
+                        color: Colors.red,
+                        size: 20,
+                      ),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
@@ -235,7 +236,8 @@ class _PlaceDetailScreenState extends ConsumerState<PlaceDetailScreen> {
                     const SizedBox(height: 20),
                   ],
                   // Category and Tags
-                  if (widget.place.category != null || widget.place.tags.isNotEmpty) ...[
+                  if (widget.place.category != null ||
+                      widget.place.tags.isNotEmpty) ...[
                     Text(
                       'Categories',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
@@ -325,9 +327,7 @@ class _PlaceDetailScreenState extends ConsumerState<PlaceDetailScreen> {
       ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
-          border: Border(
-            top: BorderSide(color: Colors.grey.shade200),
-          ),
+          border: Border(top: BorderSide(color: Colors.grey.shade200)),
         ),
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         child: SafeArea(
@@ -386,18 +386,12 @@ class _PlaceDetailScreenState extends ConsumerState<PlaceDetailScreen> {
         const SizedBox(height: 4),
         Text(
           value,
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
-          ),
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
         ),
         const SizedBox(height: 2),
         Text(
           label,
-          style: TextStyle(
-            color: Colors.grey.shade600,
-            fontSize: 12,
-          ),
+          style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
         ),
       ],
     );

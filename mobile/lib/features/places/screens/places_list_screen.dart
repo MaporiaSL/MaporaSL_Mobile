@@ -20,7 +20,14 @@ class _PlacesListScreenState extends State<PlacesListScreen> {
   String? _selectedCategory;
 
   final List<String> _categories = [
-    'historical', 'temple', 'mountain', 'park', 'beach', 'forest', 'waterfall', 'garden'
+    'historical',
+    'temple',
+    'mountain',
+    'park',
+    'beach',
+    'forest',
+    'waterfall',
+    'garden',
   ];
 
   @override
@@ -55,42 +62,38 @@ class _PlacesListScreenState extends State<PlacesListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Sri Lanka Places'),
-        elevation: 0,
-      ),
+      appBar: AppBar(title: const Text('Sri Lanka Places'), elevation: 0),
       body: Column(
         children: [
           _buildSearchBar(),
           _buildCategoryFilter(),
           Expanded(
-            child: _isLoading 
-              ? const Center(child: CircularProgressIndicator())
-              : _error != null
+            child: _isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : _error != null
                 ? _buildErrorWidget()
                 : _places.isEmpty
-                  ? _buildEmptyWidget()
-                  : RefreshIndicator(
-                      onRefresh: _fetchPlaces,
-                      child: ListView.builder(
-                        itemCount: _places.length,
-                        itemBuilder: (context, index) {
-                          return PlaceCard(
-                            place: _places[index],
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => PlaceDetailScreen(
-                                    place: _places[index],
-                                  ),
-                                ),
-                              );
-                            },
-                          );
-                        },
-                      ),
+                ? _buildEmptyWidget()
+                : RefreshIndicator(
+                    onRefresh: _fetchPlaces,
+                    child: ListView.builder(
+                      itemCount: _places.length,
+                      itemBuilder: (context, index) {
+                        return PlaceCard(
+                          place: _places[index],
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    PlaceDetailScreen(place: _places[index]),
+                              ),
+                            );
+                          },
+                        );
+                      },
                     ),
+                  ),
           ),
         ],
       ),
@@ -133,8 +136,8 @@ class _PlacesListScreenState extends State<PlacesListScreen> {
           }
           final cat = _categories[index - 1];
           return _buildCategoryChip(
-            cat[0].toUpperCase() + cat.substring(1), 
-            cat
+            cat[0].toUpperCase() + cat.substring(1),
+            cat,
           );
         },
       ),
@@ -171,18 +174,13 @@ class _PlacesListScreenState extends State<PlacesListScreen> {
           const Icon(Icons.error_outline, size: 60, color: Colors.red),
           const SizedBox(height: 16),
           Text(_error ?? 'An unknown error occurred'),
-          ElevatedButton(
-            onPressed: _fetchPlaces,
-            child: const Text('Retry'),
-          ),
+          ElevatedButton(onPressed: _fetchPlaces, child: const Text('Retry')),
         ],
       ),
     );
   }
 
   Widget _buildEmptyWidget() {
-    return const Center(
-      child: Text('No places found matching your search.'),
-    );
+    return const Center(child: Text('No places found matching your search.'));
   }
 }

@@ -6,7 +6,7 @@ class PlacesRepository {
   final ApiClient _apiClient;
 
   PlacesRepository({ApiClient? apiClient})
-      : _apiClient = apiClient ?? ApiClient();
+    : _apiClient = apiClient ?? ApiClient();
 
   Future<List<Place>> getPlaces({
     int page = 1,
@@ -34,7 +34,9 @@ class PlacesRepository {
       if (response.statusCode == 200) {
         final data = response.data as Map<String, dynamic>;
         final List<dynamic> placesJson = data['places'] ?? [];
-        return placesJson.map((json) => Place.fromJson(json as Map<String, dynamic>)).toList();
+        return placesJson
+            .map((json) => Place.fromJson(json as Map<String, dynamic>))
+            .toList();
       } else {
         throw Exception('Failed to load places: ${response.statusCode}');
       }
@@ -70,15 +72,13 @@ class PlacesRepository {
         if (tags != null) 'tags': tags,
         if (difficulty != null) 'difficulty': difficulty,
         if (entryFee != null) 'entryFee': entryFee,
-        if (wheelchairAccessible != null) 'wheelchairAccessible': wheelchairAccessible,
+        if (wheelchairAccessible != null)
+          'wheelchairAccessible': wheelchairAccessible,
       };
 
       debugPrint('Submitting place: $payload');
 
-      final response = await _apiClient.post(
-        '/places',
-        data: payload,
-      );
+      final response = await _apiClient.post('/places', data: payload);
 
       if (response.statusCode != 201 && response.statusCode != 200) {
         throw Exception('Failed to submit place: ${response.statusCode}');
@@ -91,5 +91,3 @@ class PlacesRepository {
     }
   }
 }
-
-

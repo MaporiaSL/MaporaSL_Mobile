@@ -70,10 +70,12 @@ class _AddDestinationPageState extends State<AddDestinationPage> {
   Future<bool> _requestLocationPermission() async {
     final status = await Geolocator.checkPermission();
     if (status == LocationPermission.denied) {
-      return await Geolocator.requestPermission() == LocationPermission.whileInUse ||
+      return await Geolocator.requestPermission() ==
+              LocationPermission.whileInUse ||
           await Geolocator.requestPermission() == LocationPermission.always;
     }
-    return status == LocationPermission.whileInUse || status == LocationPermission.always;
+    return status == LocationPermission.whileInUse ||
+        status == LocationPermission.always;
   }
 
   Future<void> _pickImage() async {
@@ -92,15 +94,17 @@ class _AddDestinationPageState extends State<AddDestinationPage> {
 
     if (_latitude == null || _longitude == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Could not get location. Please try again.')),
+        const SnackBar(
+          content: Text('Could not get location. Please try again.'),
+        ),
       );
       return;
     }
 
     if (_selectedCategory == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select a category')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Please select a category')));
       return;
     }
 
@@ -131,7 +135,9 @@ class _AddDestinationPageState extends State<AddDestinationPage> {
         latitude: _latitude!,
         longitude: _longitude!,
         address: _addressCtrl.text.isEmpty ? null : _addressCtrl.text.trim(),
-        difficulty: _difficultyCtrl.text.isEmpty ? null : _difficultyCtrl.text.trim(),
+        difficulty: _difficultyCtrl.text.isEmpty
+            ? null
+            : _difficultyCtrl.text.trim(),
         entryFee: _feeCtrl.text.isEmpty ? null : double.tryParse(_feeCtrl.text),
         wheelchairAccessible: _wheelchairAccessible ? 'Yes' : 'No',
       );
@@ -240,7 +246,8 @@ class _AddDestinationPageState extends State<AddDestinationPage> {
                         border: OutlineInputBorder(),
                         prefixIcon: Icon(Icons.landscape),
                       ),
-                      validator: (v) => v!.isEmpty ? 'Enter a place name' : null,
+                      validator: (v) =>
+                          v!.isEmpty ? 'Enter a place name' : null,
                     ),
                     const SizedBox(height: 16),
 
@@ -253,10 +260,10 @@ class _AddDestinationPageState extends State<AddDestinationPage> {
                         prefixIcon: Icon(Icons.category),
                       ),
                       items: _categories
-                          .map((cat) => DropdownMenuItem(
-                                value: cat,
-                                child: Text(cat),
-                              ))
+                          .map(
+                            (cat) =>
+                                DropdownMenuItem(value: cat, child: Text(cat)),
+                          )
                           .toList(),
                       onChanged: (value) {
                         setState(() => _selectedCategory = value);

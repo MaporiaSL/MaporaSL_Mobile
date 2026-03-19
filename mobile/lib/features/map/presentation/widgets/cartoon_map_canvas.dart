@@ -79,13 +79,15 @@ class _CartoonMapCanvasState extends State<CartoonMapCanvas> {
       debugPrint('🗺️ Map Polish: Loading GeoJSON boundaries...');
       final provinces = await GeoJsonParser.loadProvinceBoundaries();
       final districtData = await GeoJsonParser.loadDistrictBoundaryData();
-      
+
       if (provinces.isEmpty || districtData.boundaries.isEmpty) {
         debugPrint('⚠️ Map Polish: Loaded boundaries are empty');
       } else {
-        debugPrint('✅ Map Polish: Successfully loaded ${provinces.length} provinces and ${districtData.boundaries.length} districts');
+        debugPrint(
+          '✅ Map Polish: Successfully loaded ${provinces.length} provinces and ${districtData.boundaries.length} districts',
+        );
       }
-      
+
       setState(() {
         _provinceBoundaries = provinces;
         _districtBoundaries = districtData.boundaries;
@@ -95,7 +97,9 @@ class _CartoonMapCanvasState extends State<CartoonMapCanvas> {
     } catch (e, stackTrace) {
       debugPrint('❌ Map Polish: Error loading boundaries: $e');
       debugPrintStack(stackTrace: stackTrace);
-      setState(() => _boundariesLoaded = true); // Still mark as loaded to prevent infinite spinner
+      setState(
+        () => _boundariesLoaded = true,
+      ); // Still mark as loaded to prevent infinite spinner
     }
   }
 
@@ -161,7 +165,9 @@ class _CartoonMapCanvasState extends State<CartoonMapCanvas> {
       final rect = path.getBounds();
       // Skip invalid/empty rects
       if (rect.isEmpty || !rect.isFinite) {
-        debugPrint('⚠️ Map Polish: Invalid bounds for district $districtId: $rect');
+        debugPrint(
+          '⚠️ Map Polish: Invalid bounds for district $districtId: $rect',
+        );
         continue;
       }
       bounds = bounds == null ? rect : bounds.expandToInclude(rect);
@@ -175,10 +181,12 @@ class _CartoonMapCanvasState extends State<CartoonMapCanvas> {
     const margin = 56.0;
     final width = bounds.width + margin;
     final height = bounds.height + margin;
-    
+
     // Handle edge case: very small districts
     if (width <= 0 || height <= 0) {
-      debugPrint('⚠️ Map Polish: District $districtId too small: ${bounds.size}');
+      debugPrint(
+        '⚠️ Map Polish: District $districtId too small: ${bounds.size}',
+      );
       return DistrictFocusTarget(
         centroidFraction: Offset(
           (bounds.center.dx / size.width).clamp(0.0, 1.0),
