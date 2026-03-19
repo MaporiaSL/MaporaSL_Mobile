@@ -19,10 +19,10 @@ class AuthService {
 
   bool get isEmailVerified => _auth.currentUser?.emailVerified ?? false;
 
-  Future<String?> getIdToken() async {
+  Future<String?> getIdToken({bool forceRefresh = false}) async {
     final user = _auth.currentUser;
     if (user == null) return null;
-    return user.getIdToken();
+    return user.getIdToken(forceRefresh);
   }
 
   Future<UserCredential> signInWithEmail(String email, String password) async {
