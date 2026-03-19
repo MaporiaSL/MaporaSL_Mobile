@@ -1,4 +1,4 @@
-﻿import 'dart:async';
+import 'dart:async';
 import 'dart:convert';
 import 'dart:math' as math;
 import 'dart:ui' show ImageFilter;
@@ -9,6 +9,7 @@ import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart' as mapbox;
 import '../../../core/constants/app_colors.dart';
 import '../data/regions_data.dart';
 import 'widgets/cartoon_map_canvas.dart';
+import 'widgets/map_legend.dart';
 import 'theme/map_visual_theme.dart';
 import '../../exploration/providers/exploration_provider.dart';
 import '../../../core/providers/theme_provider.dart';
@@ -207,12 +208,10 @@ class _MapScreenState extends ConsumerState<MapScreen> {
           ),
         ),
       );
-    }
-
-    return Scaffold(
+    }    return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'ðŸ—ºï¸ Discover Sri Lanka',
+          '🗺️ Discover Sri Lanka',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         elevation: 0,
@@ -222,124 +221,9 @@ class _MapScreenState extends ConsumerState<MapScreen> {
       backgroundColor: AppColors.background,
       body: SafeArea(
         top: false,
-<<<<<<< HEAD
         child: LayoutBuilder(
           builder: (context, constraints) {
             return Stack(
-=======
-        child: Stack(
-          children: [
-            CartoonMapCanvas(
-              regions: sriLankaRegions,
-              selectedRegionId: selectedProvince,
-              selectedDistrictName: selectedDistrict,
-              theme: theme,
-              districtProgress: districtProgress,
-              onDistrictSelected: (districtName, provinceName) {
-                setState(() {
-                  selectedDistrict = districtName;
-                  selectedProvince =
-                      (provinceName != null && provinceName.isNotEmpty)
-                      ? provinceName
-                      : null;
-                });
-              },
-            ),
-            Positioned(
-              bottom: 16,
-              left: 16,
-              right: 16,
-              child: AnimatedCrossFade(
-                duration: const Duration(milliseconds: 200),
-                crossFadeState: _panelExpanded
-                    ? CrossFadeState.showFirst
-                    : CrossFadeState.showSecond,
-                firstChild: _DistrictActionPanel(
-                  district: selectedDistrict,
-                  province: selectedProvince,
-                  locked: districtLocked,
-                  isLoading: explorationState.isLoading,
-                  assignedCount: selectedAssignment.assignedCount,
-                  visitedCount: selectedAssignment.visitedCount,
-                  locations: selectedAssignment.locations,
-                  onVerifyLocation: (location) {
-                    ref
-                        .read(explorationProvider.notifier)
-                        .verifyLocation(location);
-                  },
-                  onToggle: () {
-                    setState(() => _panelExpanded = !_panelExpanded);
-                  },
-                ),
-                secondChild: _CollapsedPanel(
-                  district: selectedDistrict,
-                  locked: districtLocked,
-                  onToggle: () {
-                    setState(() => _panelExpanded = !_panelExpanded);
-                  },
-                ),
-              ),
-            ),
-            if (explorationState.isVerifying) const _VerificationOverlay(),
-            // Map legend
-            Positioned(
-              top: 16,
-              right: 16,
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 200),
-                child: const MapLegend(),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _DistrictActionPanel extends StatelessWidget {
-  final String? district;
-  final String? province;
-  final bool locked;
-  final VoidCallback onToggle;
-  final bool isLoading;
-  final int assignedCount;
-  final int visitedCount;
-  final List<ExplorationLocation> locations;
-  final ValueChanged<ExplorationLocation> onVerifyLocation;
-
-  const _DistrictActionPanel({
-    required this.district,
-    required this.province,
-    required this.locked,
-    required this.onToggle,
-    required this.isLoading,
-    required this.assignedCount,
-    required this.visitedCount,
-    required this.locations,
-    required this.onVerifyLocation,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final title = district ?? 'Select a district';
-    final subtitle = district == null
-        ? 'Tap a district to reveal timeline'
-        : 'Province: ${province ?? 'Unknown'}';
-
-    return Card(
-      margin: EdgeInsets.zero,
-      elevation: 0,
-      color: AppColors.surface,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Row(
->>>>>>> origin/timeline-kaushal
               children: [
                 AnimatedContainer(
                   duration: const Duration(milliseconds: 350),
@@ -356,48 +240,46 @@ class _DistrictActionPanel extends StatelessWidget {
                         focusedDistrictName: selectedDistrict,
                         theme: theme,
                         districtProgress: districtProgress,
-                        onDistrictSelected:
-                            (
-                              districtName,
-                              provinceName,
-                              tapFraction,
-                              focusTarget,
-                            ) {
-                              setState(() {
-                                if (districtName.isEmpty) {
-                                  selectedDistrict = null;
-                                  selectedProvince = null;
-                                  _isDistrictFocused = false;
-                                  _selectedLocation = null;
-                                  return;
-                                }
+                        onDistrictSelected: (
+                          districtName,
+                          provinceName,
+                          tapFraction,
+                          focusTarget,
+                        ) {
+                          setState(() {
+                            if (districtName.isEmpty) {
+                              selectedDistrict = null;
+                              selectedProvince = null;
+                              _isDistrictFocused = false;
+                              _selectedLocation = null;
+                              return;
+                            }
 
-                                final sameDistrict =
-                                    _normalizeKey(selectedDistrict) ==
-                                    _normalizeKey(districtName);
-                                if (sameDistrict && _isDistrictFocused) {
-                                  selectedDistrict = null;
-                                  selectedProvince = null;
-                                  _isDistrictFocused = false;
-                                  _selectedLocation = null;
-                                  return;
-                                }
+                            final sameDistrict =
+                                _normalizeKey(selectedDistrict) ==
+                                _normalizeKey(districtName);
+                            if (sameDistrict && _isDistrictFocused) {
+                              selectedDistrict = null;
+                              selectedProvince = null;
+                              _isDistrictFocused = false;
+                              _selectedLocation = null;
+                              return;
+                            }
 
-                                selectedDistrict = districtName;
-                                selectedProvince =
-                                    (provinceName != null &&
-                                        provinceName.isNotEmpty)
-                                    ? provinceName
-                                    : null;
-                                _isDistrictFocused = true;
-                                _selectedLocation = null;
-                              });
-                            },
+                            selectedDistrict = districtName;
+                            selectedProvince =
+                                (provinceName != null &&
+                                    provinceName.isNotEmpty)
+                                ? provinceName
+                                : null;
+                            _isDistrictFocused = true;
+                            _selectedLocation = null;
+                          });
+                        },
                       ),
                     ],
                   ),
                 ),
-
                 if (_selectedLocation != null)
                   Positioned(
                     left: 16,
@@ -425,6 +307,15 @@ class _DistrictActionPanel extends StatelessWidget {
                       },
                     ),
                   ),
+                // Map legend
+                Positioned(
+                  top: 16,
+                  right: 16,
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 200),
+                    child: MapLegend(),
+                  ),
+                ),
               ],
             );
           },
