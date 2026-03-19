@@ -307,6 +307,30 @@ void main() {
       }
       return 'http://avatar/retry-success';
     });
+    when(
+      () => repository.updateProfile(
+        'u1',
+        avatarUrl: any(named: 'avatarUrl'),
+      ),
+    ).thenAnswer(
+      (_) async => UserProfile(
+        id: 'u1',
+        name: 'Retry User',
+        email: 'retry@example.com',
+        avatarUrl: 'http://avatar/retry-success',
+        bio: '',
+        hometownDistrict: 'Kandy',
+        preferredLanguage: 'English',
+        travelInterests: const [],
+        totalSubmitted: 0,
+        approvedCount: 0,
+        approvalRate: 0,
+        badges: const [],
+        contributedPlaces: const [],
+        leaderboardRank: 0,
+        impactCount: 0,
+      ),
+    );
 
     await tester.pumpWidget(buildTestWidget());
     await tester.pumpAndSettle();
