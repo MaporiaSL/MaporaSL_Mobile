@@ -63,7 +63,9 @@ class AuthGate extends ConsumerWidget {
           loading: () =>
               const Scaffold(body: Center(child: CircularProgressIndicator())),
           error: (_, __) {
-            return const Scaffold(body: Center(child: Text('Preparing your account...')));
+            return const Scaffold(
+              body: Center(child: Text('Preparing your account...')),
+            );
           },
           data: (guard) {
             if (guard.requiresSignIn) {

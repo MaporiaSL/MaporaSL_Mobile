@@ -34,9 +34,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final guardState = ref.watch(coreNavigationGuardProvider);
 
     return guardState.when(
-      loading: () => const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      ),
+      loading: () =>
+          const Scaffold(body: Center(child: CircularProgressIndicator())),
       error: (_, __) => Scaffold(
         body: Center(
           child: Padding(
@@ -75,60 +74,62 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         if (!guard.isAllowed) {
           return Scaffold(
             body: Center(
-              child: Text(guard.message ?? 'Access blocked until setup is complete.'),
+              child: Text(
+                guard.message ?? 'Access blocked until setup is complete.',
+              ),
             ),
           );
         }
 
         return Scaffold(
           body: Stack(
-              children: [
-                _screens[_selectedIndex],
-                Positioned(
-                  top: 12,
-                  right: 12,
-                  child: SafeArea(
-                    child: Material(
-                      color: Colors.transparent,
-                      child: InkWell(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => const ProfileScreen(),
-                            ),
-                          );
-                        },
-                        borderRadius: BorderRadius.circular(20),
-                        child: Container(
-                          width: 40,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.white.withOpacity(0.9),
-                            border: Border.all(
-                              color: Colors.white.withOpacity(0.7),
-                              width: 1.5,
-                            ),
-                            boxShadow: const [
-                              BoxShadow(
-                                color: Colors.black26,
-                                blurRadius: 6,
-                                offset: Offset(0, 2),
-                              ),
-                            ],
+            children: [
+              _screens[_selectedIndex],
+              Positioned(
+                top: 12,
+                right: 12,
+                child: SafeArea(
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const ProfileScreen(),
                           ),
-                          child: const CircleAvatar(
-                            backgroundColor: Colors.transparent,
-                            child: Icon(Icons.person, color: Colors.black87),
+                        );
+                      },
+                      borderRadius: BorderRadius.circular(20),
+                      child: Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white.withOpacity(0.9),
+                          border: Border.all(
+                            color: Colors.white.withOpacity(0.7),
+                            width: 1.5,
                           ),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Colors.black26,
+                              blurRadius: 6,
+                              offset: Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: const CircleAvatar(
+                          backgroundColor: Colors.transparent,
+                          child: Icon(Icons.person, color: Colors.black87),
                         ),
                       ),
                     ),
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
+          ),
           bottomNavigationBar: BottomNavBar(
             currentIndex: _selectedIndex,
             onTap: (index) {
