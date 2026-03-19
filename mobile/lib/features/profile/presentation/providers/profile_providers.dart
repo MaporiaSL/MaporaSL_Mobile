@@ -303,8 +303,14 @@ final profileBootstrapProvider = FutureProvider<void>((ref) async {
           : displayName.trim(),
       hometownDistrict: district,
     );
+    await authApi.getMe();
     await LocalPrefs.clearHometownDistrict();
   } on DioException catch (e) {
+    if (e.response?.statusCode == 409) {
+      // Concurrent/partial bootstrap: profile may already exist, so verify once more.
+      await authApi.getMe();
+      return;
+    }
     logProfileTelemetry(
       'bootstrap_register_failed',
       details: {'statusCode': e.response?.statusCode, 'type': e.type.name},
