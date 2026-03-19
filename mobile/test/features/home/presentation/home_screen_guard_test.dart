@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -9,7 +11,8 @@ void main() {
   Widget buildHomeWithGuard(
     Future<CoreNavigationGuardState> Function(
       FutureProviderRef<CoreNavigationGuardState> ref,
-    ) resolver,
+    )
+    resolver,
   ) {
     return ProviderScope(
       overrides: [coreNavigationGuardProvider.overrideWith(resolver)],
@@ -18,10 +21,10 @@ void main() {
   }
 
   testWidgets('shows loading while guard is resolving', (tester) async {
+    final completer = Completer<CoreNavigationGuardState>();
     await tester.pumpWidget(
       buildHomeWithGuard((_) async {
-        await Future<void>.delayed(const Duration(milliseconds: 10));
-        return const CoreNavigationGuardState.allowed();
+        return completer.future;
       }),
     );
 

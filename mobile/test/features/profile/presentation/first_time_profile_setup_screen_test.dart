@@ -254,18 +254,21 @@ void main() {
       }),
     });
 
-    when(() => repository.uploadAvatar(any(), any()))
-        .thenThrow(
-          DioException(
+    var avatarUploadAttempts = 0;
+    when(() => repository.uploadAvatar(any(), any())).thenAnswer((_) async {
+      avatarUploadAttempts += 1;
+      if (avatarUploadAttempts == 1) {
+        throw DioException(
+          requestOptions: RequestOptions(path: '/api/profile/u1/avatar'),
+          response: Response(
             requestOptions: RequestOptions(path: '/api/profile/u1/avatar'),
-            response: Response(
-              requestOptions: RequestOptions(path: '/api/profile/u1/avatar'),
-              statusCode: 500,
-              data: {'error': 'Avatar upload failed.'},
-            ),
+            statusCode: 500,
+            data: {'error': 'Avatar upload failed.'},
           ),
-        )
-        .thenAnswer((_) async => 'http://avatar/retry-success');
+        );
+      }
+      return 'http://avatar/retry-success';
+    });
 
     await tester.pumpWidget(buildTestWidget());
     await tester.pumpAndSettle();
@@ -296,12 +299,6 @@ void main() {
       () => repository.updateProfile(
         'u1',
         avatarUrl: 'http://avatar/retry-success',
-        name: any(named: 'name'),
-        bio: any(named: 'bio'),
-        hometownDistrict: any(named: 'hometownDistrict'),
-        preferredLanguage: any(named: 'preferredLanguage'),
-        travelInterests: any(named: 'travelInterests'),
-        completeSetup: any(named: 'completeSetup'),
       ),
     ).called(1);
 
