@@ -117,7 +117,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   if (errorUi.showSignInAction) ...[
                     const SizedBox(height: 8),
                     TextButton(
-                      onPressed: () => _performLogout(context),
+                      onPressed: () => _performLogout(context, ref),
                       child: const Text('Sign In Again'),
                     ),
                   ],
