@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../data/places_repository.dart';
 import '../models/place.dart';
 import '../widgets/place_card.dart';
+import 'place_detail_screen.dart';
 
 class PlacesListScreen extends StatefulWidget {
   const PlacesListScreen({super.key});
@@ -77,7 +78,14 @@ class _PlacesListScreenState extends State<PlacesListScreen> {
                           return PlaceCard(
                             place: _places[index],
                             onTap: () {
-                              // Navigate to details (to be implemented)
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => PlaceDetailScreen(
+                                    place: _places[index],
+                                  ),
+                                ),
+                              );
                             },
                           );
                         },
