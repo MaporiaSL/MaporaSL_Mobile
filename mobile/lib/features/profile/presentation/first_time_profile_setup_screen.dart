@@ -83,7 +83,8 @@ class _FirstTimeProfileSetupScreenState
         _districtController.text = (draft['hometownDistrict'] ?? '').toString();
         _bioController.text = (draft['bio'] ?? '').toString();
         _language = (draft['preferredLanguage'] ?? 'English').toString();
-        final interests = (draft['travelInterests'] as List?)
+        final interests =
+            (draft['travelInterests'] as List?)
                 ?.map((e) => e.toString())
                 .toList() ??
             <String>[];
@@ -158,7 +159,10 @@ class _FirstTimeProfileSetupScreenState
       final repository = ref.read(profileRepositoryProvider);
 
       if (_avatarFile != null) {
-        final avatarUrl = await repository.uploadAvatar(userId, _avatarFile!.path);
+        final avatarUrl = await repository.uploadAvatar(
+          userId,
+          _avatarFile!.path,
+        );
         await repository.updateProfile(userId, avatarUrl: avatarUrl);
       }
 
@@ -181,9 +185,9 @@ class _FirstTimeProfileSetupScreenState
       ref.invalidate(userProfileProvider);
 
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Profile setup completed.')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Profile setup completed.')));
     } on DioException catch (e) {
       final data = e.response?.data;
       if (data is Map<String, dynamic>) {
@@ -297,8 +301,10 @@ class _FirstTimeProfileSetupScreenState
                     validator: (v) {
                       final value = (v ?? '').trim();
                       if (value.isEmpty) return 'Name is required';
-                      if (value.length < 2) return 'Name must be at least 2 characters';
-                      if (value.length > 40) return 'Name must be under 40 characters';
+                      if (value.length < 2)
+                        return 'Name must be at least 2 characters';
+                      if (value.length > 40)
+                        return 'Name must be under 40 characters';
                       return null;
                     },
                   ),
@@ -313,7 +319,8 @@ class _FirstTimeProfileSetupScreenState
                     validator: (v) {
                       final value = (v ?? '').trim();
                       if (value.isEmpty) return 'District is required';
-                      if (value.length > 60) return 'District must be under 60 characters';
+                      if (value.length > 60)
+                        return 'District must be under 60 characters';
                       return null;
                     },
                   ),
@@ -325,10 +332,12 @@ class _FirstTimeProfileSetupScreenState
                       errorText: _fieldErrors['preferredLanguage'],
                     ),
                     items: _languages
-                        .map((language) => DropdownMenuItem<String>(
-                              value: language,
-                              child: Text(language),
-                            ))
+                        .map(
+                          (language) => DropdownMenuItem<String>(
+                            value: language,
+                            child: Text(language),
+                          ),
+                        )
                         .toList(),
                     onChanged: (value) async {
                       if (value == null) return;
@@ -384,7 +393,8 @@ class _FirstTimeProfileSetupScreenState
                     ),
                     validator: (v) {
                       final value = (v ?? '').trim();
-                      if (value.length > 200) return 'Bio must be under 200 characters';
+                      if (value.length > 200)
+                        return 'Bio must be under 200 characters';
                       return null;
                     },
                   ),
@@ -403,8 +413,9 @@ class _FirstTimeProfileSetupScreenState
                     children: [
                       CircleAvatar(
                         radius: 38,
-                        backgroundImage:
-                            _avatarFile != null ? FileImage(_avatarFile!) : null,
+                        backgroundImage: _avatarFile != null
+                            ? FileImage(_avatarFile!)
+                            : null,
                         child: _avatarFile == null
                             ? const Icon(Icons.person, size: 38)
                             : null,

@@ -109,7 +109,9 @@ class ProfileApi {
 
   Future<void> logout() async {
     try {
-      final response = await _runWithAuthRetry(() => _dio.post('/api/auth/logout'));
+      final response = await _runWithAuthRetry(
+        () => _dio.post('/api/auth/logout'),
+      );
       if (response.statusCode != 200)
         throw Exception('Failed to logout: ${response.statusCode}');
     } on DioException {

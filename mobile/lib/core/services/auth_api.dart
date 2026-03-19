@@ -11,7 +11,8 @@ class AuthApi {
     try {
       return await operation();
     } on DioException catch (e) {
-      if (e.response?.statusCode == 401 && FirebaseAuth.instance.currentUser != null) {
+      if (e.response?.statusCode == 401 &&
+          FirebaseAuth.instance.currentUser != null) {
         await FirebaseAuth.instance.currentUser!.getIdToken(true);
         return operation();
       }

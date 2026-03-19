@@ -171,29 +171,31 @@ final profileRepositoryProvider = Provider<ProfileRepository>((ref) {
 
 final profileRetryCountProvider = StateProvider<int>((ref) => 0);
 
-final profileSetupRequirementProvider = FutureProvider<ProfileSetupRequirement>((
-  ref,
-) async {
-  final authApi = ref.watch(authApiProvider);
-  final data = await authApi.getMe();
-  final response = data ?? const <String, dynamic>{};
+final profileSetupRequirementProvider = FutureProvider<ProfileSetupRequirement>(
+  (ref) async {
+    final authApi = ref.watch(authApiProvider);
+    final data = await authApi.getMe();
+    final response = data ?? const <String, dynamic>{};
 
-  final required = (response['requiredFields'] as List?)
-          ?.map((e) => e.toString())
-          .toList() ??
-      const ['name', 'hometownDistrict', 'preferredLanguage'];
-  final optional = (response['optionalFields'] as List?)
-          ?.map((e) => e.toString())
-          .toList() ??
-      const ['travelInterests', 'avatarUrl', 'bio'];
-  final requiresSetup = response['profileSetupRequired'] == true;
+    final required =
+        (response['requiredFields'] as List?)
+            ?.map((e) => e.toString())
+            .toList() ??
+        const ['name', 'hometownDistrict', 'preferredLanguage'];
+    final optional =
+        (response['optionalFields'] as List?)
+            ?.map((e) => e.toString())
+            .toList() ??
+        const ['travelInterests', 'avatarUrl', 'bio'];
+    final requiresSetup = response['profileSetupRequired'] == true;
 
-  return ProfileSetupRequirement(
-    requiresSetup: requiresSetup,
-    requiredFields: required,
-    optionalFields: optional,
-  );
-});
+    return ProfileSetupRequirement(
+      requiresSetup: requiresSetup,
+      requiredFields: required,
+      optionalFields: optional,
+    );
+  },
+);
 
 /// Provider for current user ID with debug logging
 final currentUserIdProvider = Provider<String?>((ref) {

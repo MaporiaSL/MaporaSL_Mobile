@@ -47,18 +47,15 @@ class AuthGate extends ConsumerWidget {
 
         final setupState = ref.watch(profileSetupRequirementProvider);
         return setupState.when(
-          loading: () => const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
-          ),
+          loading: () =>
+              const Scaffold(body: Center(child: CircularProgressIndicator())),
           error: (error, stack) {
             if (error is DioException && error.response?.statusCode == 401) {
               FirebaseAuth.instance.signOut();
               return const LoginScreen();
             }
             return const Scaffold(
-              body: Center(
-                child: Text('Preparing your account...'),
-              ),
+              body: Center(child: Text('Preparing your account...')),
             );
           },
           data: (requirement) {
