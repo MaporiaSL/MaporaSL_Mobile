@@ -111,25 +111,26 @@ void main() {
     expect(find.text('District is required'), findsOneWidget);
   });
 
-  testWidgets('shows required and optional labels with expected field markers', (
-    tester,
-  ) async {
-    await tester.pumpWidget(buildTestWidget());
-    await tester.pumpAndSettle();
+  testWidgets(
+    'shows required and optional labels with expected field markers',
+    (tester) async {
+      await tester.pumpWidget(buildTestWidget());
+      await tester.pumpAndSettle();
 
-    expect(find.text('Required'), findsOneWidget);
-    expect(find.text('Name (Required)'), findsOneWidget);
-    expect(find.text('Hometown District (Required)'), findsOneWidget);
-    expect(find.text('Preferred Language (Required)'), findsOneWidget);
+      expect(find.text('Required'), findsOneWidget);
+      expect(find.text('Name (Required)'), findsOneWidget);
+      expect(find.text('Hometown District (Required)'), findsOneWidget);
+      expect(find.text('Preferred Language (Required)'), findsOneWidget);
 
-    await tester.tap(
-      find.widgetWithText(FilledButton, 'Continue').hitTestable().first,
-    );
-    await tester.pumpAndSettle();
+      await tester.tap(
+        find.widgetWithText(FilledButton, 'Continue').hitTestable().first,
+      );
+      await tester.pumpAndSettle();
 
-    expect(find.text('Optional'), findsOneWidget);
-    expect(find.text('Bio (Optional)'), findsOneWidget);
-  });
+      expect(find.text('Optional'), findsOneWidget);
+      expect(find.text('Bio (Optional)'), findsOneWidget);
+    },
+  );
 
   testWidgets('restores setup draft values from local prefs', (tester) async {
     SharedPreferences.setMockInitialValues({

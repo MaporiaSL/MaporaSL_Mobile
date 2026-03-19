@@ -43,7 +43,9 @@ void main() {
     user = MockUser();
     when(() => auth.currentUser).thenReturn(user);
     when(() => user.getIdToken()).thenAnswer((_) async => 'access-token');
-    when(() => user.getIdToken(true)).thenAnswer((_) async => 'refreshed-token');
+    when(
+      () => user.getIdToken(true),
+    ).thenAnswer((_) async => 'refreshed-token');
   });
 
   test('adds auth header in onRequest', () async {
