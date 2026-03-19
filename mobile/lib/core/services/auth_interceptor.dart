@@ -2,10 +2,12 @@ import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthInterceptor extends Interceptor {
-  AuthInterceptor({FirebaseAuth? auth}) : _auth = auth ?? FirebaseAuth.instance;
+  AuthInterceptor({FirebaseAuth? auth, Dio? retryDio})
+    : _auth = auth ?? FirebaseAuth.instance,
+      _retryDio = retryDio ?? Dio();
 
   final FirebaseAuth _auth;
-  final Dio _retryDio = Dio();
+  final Dio _retryDio;
 
   static const String _retryFlag = 'authRetryAttempted';
 
