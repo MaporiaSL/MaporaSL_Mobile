@@ -19,7 +19,10 @@ class AuthGate extends ConsumerWidget {
 
   final Widget Function()? loginBuilder;
   final Widget Function()? homeBuilder;
-  final Widget Function(List<String> requiredFields, List<String> optionalFields)?
+  final Widget Function(
+    List<String> requiredFields,
+    List<String> optionalFields,
+  )?
   setupBuilder;
 
   @override

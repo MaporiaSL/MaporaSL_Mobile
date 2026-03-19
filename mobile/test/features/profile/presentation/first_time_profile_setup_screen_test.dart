@@ -65,7 +65,9 @@ void main() {
       ),
     );
 
-    when(() => repository.uploadAvatar(any(), any())).thenAnswer((_) async => 'http://avatar');
+    when(
+      () => repository.uploadAvatar(any(), any()),
+    ).thenAnswer((_) async => 'http://avatar');
   });
 
   Widget buildTestWidget() {
@@ -84,7 +86,9 @@ void main() {
     );
   }
 
-  testWidgets('shows required field validation when setup is submitted empty', (tester) async {
+  testWidgets('shows required field validation when setup is submitted empty', (
+    tester,
+  ) async {
     await tester.pumpWidget(buildTestWidget());
     await tester.pumpAndSettle();
 
@@ -119,11 +123,16 @@ void main() {
     expect(find.text('Tamil'), findsOneWidget);
   });
 
-  testWidgets('submits setup successfully and marks completion', (tester) async {
+  testWidgets('submits setup successfully and marks completion', (
+    tester,
+  ) async {
     await tester.pumpWidget(buildTestWidget());
     await tester.pumpAndSettle();
 
-    await tester.enterText(find.widgetWithText(TextFormField, 'Name *'), 'Alice');
+    await tester.enterText(
+      find.widgetWithText(TextFormField, 'Name *'),
+      'Alice',
+    );
     await tester.enterText(
       find.widgetWithText(TextFormField, 'Hometown District *'),
       'Colombo',
