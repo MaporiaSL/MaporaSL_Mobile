@@ -1,57 +1,77 @@
 const fs = require('fs');
 const path = require('path');
-require('dotenv').config({ path: path.resolve(__dirname, './.env') });
+require('dotenv').config({ path: path.resolve(__dirname, '../../.env') });
 const mongoose = require('mongoose');
-const PrePlannedTrip = require('./src/models/PrePlannedTrip');
+const PrePlannedTrip = require('../../src/models/PrePlannedTrip');
+
+function buildTags(district, itineraryValues) {
+    const text = `${district} ${itineraryValues.join(' ')}`.toLowerCase();
+    const tags = new Set([district, 'Preplanned']);
+
+    if (text.includes('beach') || text.includes('coast') || text.includes('whale')) {
+        tags.add('Beach');
+    }
+    if (text.includes('temple') || text.includes('fort') || text.includes('museum')) {
+        tags.add('Culture');
+    }
+    if (text.includes('hike') || text.includes('safari') || text.includes('climb') || text.includes('trek')) {
+        tags.add('Adventure');
+    }
+
+    return Array.from(tags);
+}
 
 async function seedPreplannedTripsFromJson() {
     try {
-        // Connect to MongoDB
         if (!process.env.MONGODB_URI) {
-            throw new Error('MONGODB_URI is not defined in .env file');
+            throw new Error('MONGODB_URI is not defined in backend/.env');
         }
-        await mongoose.connect(process.env.MONGODB_URI);
-        console.log('MongoDB Connected');
 
-        // Read JSON file
-        const jsonPath = path.resolve(__dirname, '../project_resorces/preplannestrip.json');
+        await mongoose.connect(process.env.MONGODB_URI);
+        console.log('MongoDB connected');
+
+        const jsonPath = path.resolve(__dirname, '../../../project_resources/preplannestrip.json');
         if (!fs.existsSync(jsonPath)) {
             throw new Error(`JSON file not found at ${jsonPath}`);
         }
+
         const rawData = fs.readFileSync(jsonPath, 'utf8');
         const data = JSON.parse(rawData);
 
-        if (!data.trips || !Array.isArray(data.trips)) {
-            throw new Error('Invalid JSON structure: "trips" array not found');
+        if (!Array.isArray(data.trips) || data.trips.length === 0) {
+            throw new Error('Invalid JSON: expected non-empty "trips" array');
         }
 
-        // Clear existing pre-planned trips
         await PrePlannedTrip.deleteMany({});
         console.log('Cleared existing pre-planned trips');
 
-        // Map JSON data to Model
-        const tripsToInsert = data.trips.map(trip => ({
-            title: trip.trip_name,
-            district: trip.district,
-            durationDays: trip.duration_days,
-            itinerary: trip.itinerary,
-            startingPoint: trip.district, // Using district as starting point by default
-            description: `Explore the highlights of ${trip.district} with this curated "${trip.trip_name}" 4-day journey.`,
-            difficulty: 'Moderate',
-            xpReward: 300,
-            tags: [trip.district, 'Culture', 'Adventure'],
-            placeIds: Object.values(trip.itinerary) // Storing the text as placeIds for now as placeholders
-        }));
+        const tripsToInsert = data.trips.map((trip) => {
+            const itineraryMap =
+                trip.itinerary && typeof trip.itinerary === 'object' ? trip.itinerary : {};
+            const itineraryValues = Object.values(itineraryMap).map((v) => String(v));
 
-        // Insert into database
+            return {
+                title: trip.trip_name,
+                district: trip.district,
+                durationDays: Number(trip.duration_days) || 4,
+                itinerary: itineraryMap,
+                startingPoint: trip.district,
+                description: `Explore ${trip.district} with the ${trip.trip_name} quest.`,
+                difficulty: 'Moderate',
+                xpReward: 300,
+                tags: buildTags(trip.district, itineraryValues),
+                placeIds: itineraryValues,
+            };
+        });
+
         const inserted = await PrePlannedTrip.insertMany(tripsToInsert);
-        console.log(`Successfully inserted ${inserted.length} pre-planned trips from JSON.`);
-
-        await mongoose.disconnect();
-        console.log('Done!');
+        console.log(`Inserted ${inserted.length} pre-planned trips from JSON`);
     } catch (err) {
         console.error('Seed error:', err);
-        process.exit(1);
+        process.exitCode = 1;
+    } finally {
+        await mongoose.disconnect();
+        console.log('MongoDB disconnected');
     }
 }
 
