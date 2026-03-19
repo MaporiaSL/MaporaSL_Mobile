@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/config/app_config.dart';
 import '../../home/presentation/home_screen.dart';
@@ -59,30 +58,38 @@ class AuthGate extends ConsumerWidget {
           );
         }
 
-        final setupState = ref.watch(profileSetupRequirementProvider);
-        return setupState.when(
+        final guardState = ref.watch(coreNavigationGuardProvider);
+        return guardState.when(
           loading: () =>
               const Scaffold(body: Center(child: CircularProgressIndicator())),
-          error: (error, stack) {
-            if (error is DioException && error.response?.statusCode == 401) {
+          error: (_, __) {
+            return const Scaffold(body: Center(child: Text('Preparing your account...')));
+          },
+          data: (guard) {
+            if (guard.requiresSignIn) {
               authService.signOut();
               return loginBuilder?.call() ?? const LoginScreen();
             }
-            return const Scaffold(
-              body: Center(child: Text('Preparing your account...')),
-            );
-          },
-          data: (requirement) {
-            if (requirement.requiresSetup) {
+
+            if (guard.requiresSetup) {
               return setupBuilder?.call(
-                    requirement.requiredFields,
-                    requirement.optionalFields,
+                    guard.requiredFields,
+                    guard.optionalFields,
                   ) ??
                   FirstTimeProfileSetupScreen(
-                    requiredFields: requirement.requiredFields,
-                    optionalFields: requirement.optionalFields,
+                    requiredFields: guard.requiredFields,
+                    optionalFields: guard.optionalFields,
                   );
             }
+
+            if (!guard.isAllowed) {
+              return Scaffold(
+                body: Center(
+                  child: Text(guard.message ?? 'Preparing your account...'),
+                ),
+              );
+            }
+
             return homeBuilder?.call() ?? const HomeScreen();
           },
         );
