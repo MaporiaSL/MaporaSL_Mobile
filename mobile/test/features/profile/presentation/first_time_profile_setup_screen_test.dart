@@ -308,10 +308,7 @@ void main() {
       return 'http://avatar/retry-success';
     });
     when(
-      () => repository.updateProfile(
-        'u1',
-        avatarUrl: any(named: 'avatarUrl'),
-      ),
+      () => repository.updateProfile('u1', avatarUrl: any(named: 'avatarUrl')),
     ).thenAnswer(
       (_) async => UserProfile(
         id: 'u1',
