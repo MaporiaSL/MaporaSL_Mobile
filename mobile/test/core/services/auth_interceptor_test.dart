@@ -10,6 +10,8 @@ class MockFirebaseAuth extends Mock implements FirebaseAuth {}
 
 class MockUser extends Mock implements User {}
 
+class MockDio extends Mock implements Dio {}
+
 class CaptureRequestHandler extends RequestInterceptorHandler {
   RequestOptions? captured;
 
@@ -37,10 +39,12 @@ class CaptureErrorHandler extends ErrorInterceptorHandler {
 void main() {
   late MockFirebaseAuth auth;
   late MockUser user;
+  late MockDio retryDio;
 
   setUp(() {
     auth = MockFirebaseAuth();
     user = MockUser();
+    retryDio = MockDio();
     when(() => auth.currentUser).thenReturn(user);
     when(() => user.getIdToken()).thenAnswer((_) async => 'access-token');
     when(
@@ -61,23 +65,18 @@ void main() {
   });
 
   test('retries once and resolves response for 401', () async {
-    final retryDio = Dio()
-      ..interceptors.add(
-        InterceptorsWrapper(
-          onRequest: (options, handler) {
-            handler.resolve(
-              Response<dynamic>(
-                requestOptions: options,
-                statusCode: 200,
-                data: {'ok': true},
-              ),
-            );
-          },
-        ),
-      );
-
     final interceptor = AuthInterceptor(auth: auth, retryDio: retryDio);
     final requestOptions = RequestOptions(path: '/api/profile/me');
+    when(
+      () => retryDio.fetch<dynamic>(any()),
+    ).thenAnswer(
+      (_) async => Response<dynamic>(
+        requestOptions: requestOptions,
+        statusCode: 200,
+        data: {'ok': true},
+      ),
+    );
+
     final error = DioException(
       requestOptions: requestOptions,
       response: Response<dynamic>(
@@ -145,26 +144,21 @@ void main() {
   });
 
   test('avoids retry loop when retry request also fails with 401', () async {
-    final retryDio = Dio()
-      ..interceptors.add(
-        InterceptorsWrapper(
-          onRequest: (options, handler) {
-            handler.reject(
-              DioException(
-                requestOptions: options,
-                response: Response<dynamic>(
-                  requestOptions: options,
-                  statusCode: 401,
-                ),
-                type: DioExceptionType.badResponse,
-              ),
-            );
-          },
-        ),
-      );
-
     final interceptor = AuthInterceptor(auth: auth, retryDio: retryDio);
     final requestOptions = RequestOptions(path: '/api/profile/me');
+    when(
+      () => retryDio.fetch<dynamic>(any()),
+    ).thenThrow(
+      DioException(
+        requestOptions: requestOptions,
+        response: Response<dynamic>(
+          requestOptions: requestOptions,
+          statusCode: 401,
+        ),
+        type: DioExceptionType.badResponse,
+      ),
+    );
+
     final error = DioException(
       requestOptions: requestOptions,
       response: Response<dynamic>(
