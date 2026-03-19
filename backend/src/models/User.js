@@ -38,6 +38,15 @@ const userSchema = new mongoose.Schema({
     type: [String],
     default: []
   },
+  profileSetupCompleted: {
+    type: Boolean,
+    default: false,
+    index: true,
+  },
+  profileSetupCompletedAt: {
+    type: Date,
+    default: null,
+  },
   explorationUnlockedDistricts: {
     type: [String],
     default: []

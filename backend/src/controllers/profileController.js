@@ -48,6 +48,13 @@ function sanitizeTravelInterests(rawInterests) {
   return Array.from(dedup.values());
 }
 
+function isUserMinimumProfileComplete(user) {
+  const hasName = String(user?.name || '').trim().length >= 2;
+  const hasDistrict = String(user?.hometownDistrict || '').trim().length > 0;
+  const hasLanguage = String(user?.preferredLanguage || '').trim().length > 0;
+  return hasName && hasDistrict && hasLanguage;
+}
+
 function sanitizeProfileUpdateInput(payload) {
   const {
     name,
@@ -56,36 +63,46 @@ function sanitizeProfileUpdateInput(payload) {
     hometownDistrict,
     preferredLanguage,
     travelInterests,
+    completeSetup,
   } = payload;
+
+  const fieldErrors = {};
 
   if (name != null) {
     const trimmedName = String(name).trim();
     if (trimmedName.length < 2) {
-      return { error: 'Name must be at least 2 characters' };
+      fieldErrors.name = 'Name must be at least 2 characters';
     }
     if (trimmedName.length > MAX_NAME_LENGTH) {
-      return { error: `Name must be under ${MAX_NAME_LENGTH} characters` };
+      fieldErrors.name = `Name must be under ${MAX_NAME_LENGTH} characters`;
     }
   }
 
   if (bio != null && String(bio).trim().length > MAX_BIO_LENGTH) {
-    return { error: `Bio must be under ${MAX_BIO_LENGTH} characters` };
+    fieldErrors.bio = `Bio must be under ${MAX_BIO_LENGTH} characters`;
   }
 
   if (hometownDistrict != null && String(hometownDistrict).trim().length > MAX_DISTRICT_LENGTH) {
-    return { error: `District must be under ${MAX_DISTRICT_LENGTH} characters` };
+    fieldErrors.hometownDistrict = `District must be under ${MAX_DISTRICT_LENGTH} characters`;
   }
 
   if (preferredLanguage != null && String(preferredLanguage).trim().length > MAX_LANGUAGE_LENGTH) {
-    return { error: `Preferred language must be under ${MAX_LANGUAGE_LENGTH} characters` };
+    fieldErrors.preferredLanguage = `Preferred language must be under ${MAX_LANGUAGE_LENGTH} characters`;
   }
 
   if (travelInterests != null && !Array.isArray(travelInterests)) {
-    return { error: 'travelInterests must be a list of strings' };
+    fieldErrors.travelInterests = 'travelInterests must be a list of strings';
   }
 
   if (Array.isArray(travelInterests) && travelInterests.length > MAX_INTERESTS * 3) {
-    return { error: `Too many interests provided. Limit request size before save.` };
+    fieldErrors.travelInterests = 'Too many interests provided. Limit request size before save.';
+  }
+
+  if (Object.keys(fieldErrors).length > 0) {
+    return {
+      error: 'Invalid profile payload',
+      fieldErrors,
+    };
   }
 
   const updateDoc = {
@@ -102,6 +119,11 @@ function sanitizeProfileUpdateInput(payload) {
       travelInterests: sanitizeTravelInterests(travelInterests),
     }),
   };
+
+  if (completeSetup != null) {
+    updateDoc.profileSetupCompleted = Boolean(completeSetup);
+    updateDoc.profileSetupCompletedAt = Boolean(completeSetup) ? new Date() : null;
+  }
 
   return { updateDoc };
 }
@@ -266,9 +288,12 @@ async function updateUserProfile(req, res) {
       return res.status(403).json({ error: 'Forbidden: Cannot update another user\'s profile' });
     }
 
-    const { error: validationError, updateDoc } = sanitizeProfileUpdateInput(payload);
+    const { error: validationError, fieldErrors, updateDoc } = sanitizeProfileUpdateInput(payload);
     if (validationError) {
-      return res.status(400).json({ error: validationError });
+      return res.status(400).json({
+        error: validationError,
+        ...(fieldErrors ? { fieldErrors } : {}),
+      });
     }
 
     // Update user
@@ -282,6 +307,38 @@ async function updateUserProfile(req, res) {
       return res.status(404).json({ error: 'User not found' });
     }
 
+    if (payload.completeSetup === true) {
+      const merged = {
+        ...updatedUser.toObject(),
+        ...updateDoc,
+      };
+      const missing = {};
+      if (String(merged.name || '').trim().length < 2) {
+        missing.name = 'Name is required';
+      }
+      if (String(merged.hometownDistrict || '').trim() === '') {
+        missing.hometownDistrict = 'District is required';
+      }
+      if (String(merged.preferredLanguage || '').trim() === '') {
+        missing.preferredLanguage = 'Preferred language is required';
+      }
+
+      if (Object.keys(missing).length > 0) {
+        return res.status(400).json({
+          error: 'Profile setup is incomplete',
+          fieldErrors: missing,
+          requiredFields: ['name', 'hometownDistrict', 'preferredLanguage'],
+          optionalFields: ['travelInterests', 'avatarUrl', 'bio'],
+        });
+      }
+
+      if (!updatedUser.profileSetupCompleted || !isUserMinimumProfileComplete(updatedUser)) {
+        updatedUser.profileSetupCompleted = true;
+        updatedUser.profileSetupCompletedAt = new Date();
+        await updatedUser.save();
+      }
+    }
+
     const responseBody = await buildProfileResponse(userId, updatedUser);
     if (!responseBody) {
       return res.status(404).json({ error: 'User not found' });
@@ -290,6 +347,8 @@ async function updateUserProfile(req, res) {
     res.status(200).json({
       message: 'Profile updated successfully',
       ...responseBody,
+      requiredFields: ['name', 'hometownDistrict', 'preferredLanguage'],
+      optionalFields: ['travelInterests', 'avatarUrl', 'bio'],
     });
   } catch (error) {
     console.error('Update user profile error:', error);

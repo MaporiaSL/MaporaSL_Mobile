@@ -24,6 +24,18 @@ enum ProfileLoadErrorType {
   unknown,
 }
 
+class ProfileSetupRequirement {
+  final bool requiresSetup;
+  final List<String> requiredFields;
+  final List<String> optionalFields;
+
+  const ProfileSetupRequirement({
+    required this.requiresSetup,
+    required this.requiredFields,
+    required this.optionalFields,
+  });
+}
+
 void logProfileTelemetry(
   String event, {
   Map<String, Object?> details = const {},
@@ -92,6 +104,36 @@ class ProfileLoadException implements Exception {
   String toString() => message;
 }
 
+String profileActionErrorMessage(Object error) {
+  if (error is ProfileLoadException) {
+    return error.message;
+  }
+  if (error is DioException) {
+    final status = error.response?.statusCode;
+    final data = error.response?.data;
+    if (data is Map<String, dynamic>) {
+      final fieldErrors = data['fieldErrors'];
+      if (fieldErrors is Map && fieldErrors.isNotEmpty) {
+        return fieldErrors.values.first.toString();
+      }
+      if (data['error'] != null) {
+        return data['error'].toString();
+      }
+    }
+
+    if (status == 401) {
+      return 'Session expired. Please sign in again.';
+    }
+    if (status == 403) {
+      return 'You do not have permission to perform this action.';
+    }
+    if (status == 400) {
+      return 'Please check your details and try again.';
+    }
+  }
+  return 'Something went wrong. Please try again.';
+}
+
 // Provider for Auth Service
 final authServiceProvider = Provider<AuthService>((ref) {
   return AuthService();
@@ -128,6 +170,30 @@ final profileRepositoryProvider = Provider<ProfileRepository>((ref) {
 });
 
 final profileRetryCountProvider = StateProvider<int>((ref) => 0);
+
+final profileSetupRequirementProvider = FutureProvider<ProfileSetupRequirement>((
+  ref,
+) async {
+  final authApi = ref.watch(authApiProvider);
+  final data = await authApi.getMe();
+  final response = data ?? const <String, dynamic>{};
+
+  final required = (response['requiredFields'] as List?)
+          ?.map((e) => e.toString())
+          .toList() ??
+      const ['name', 'hometownDistrict', 'preferredLanguage'];
+  final optional = (response['optionalFields'] as List?)
+          ?.map((e) => e.toString())
+          .toList() ??
+      const ['travelInterests', 'avatarUrl', 'bio'];
+  final requiresSetup = response['profileSetupRequired'] == true;
+
+  return ProfileSetupRequirement(
+    requiresSetup: requiresSetup,
+    requiredFields: required,
+    optionalFields: optional,
+  );
+});
 
 /// Provider for current user ID with debug logging
 final currentUserIdProvider = Provider<String?>((ref) {
@@ -279,6 +345,15 @@ final userProfileProvider = FutureProvider<UserProfile?>((ref) async {
     }
     return profile;
   } on DioException catch (e) {
+    if (e.response?.statusCode == 404 || e.response?.statusCode == 409) {
+      // Partial bootstrap edge-case: retry account sync once, then fetch again.
+      ref.invalidate(profileBootstrapProvider);
+      await ref.read(profileBootstrapProvider.future);
+      final repository = ref.watch(profileRepositoryProvider);
+      final profile = await repository.getUserProfile(userId);
+      return profile;
+    }
+
     final mapped = ProfileLoadException.fromDio(e);
     logProfileTelemetry(
       'profile_fetch_failed',
@@ -385,7 +460,7 @@ class ProfileEditNotifier extends StateNotifier<ProfileEditState> {
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
-        error: e.toString(),
+        error: profileActionErrorMessage(e),
         success: false,
       );
     }
@@ -417,7 +492,7 @@ class ProfileEditNotifier extends StateNotifier<ProfileEditState> {
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
-        error: e.toString(),
+        error: profileActionErrorMessage(e),
         success: false,
       );
     }
@@ -452,7 +527,7 @@ class ProfileEditNotifier extends StateNotifier<ProfileEditState> {
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
-        error: e.toString(),
+        error: profileActionErrorMessage(e),
         success: false,
       );
     }
@@ -555,7 +630,7 @@ class PlaceSubmissionNotifier extends StateNotifier<PlaceSubmissionState> {
     } catch (e) {
       state = state.copyWith(
         isSubmitting: false,
-        error: e.toString(),
+        error: profileActionErrorMessage(e),
         success: false,
       );
     }
@@ -628,7 +703,7 @@ class ModerationActionNotifier extends StateNotifier<ModerationActionState> {
     } catch (e) {
       state = state.copyWith(
         isWorking: false,
-        error: e.toString(),
+        error: profileActionErrorMessage(e),
         success: false,
       );
     }
@@ -701,7 +776,7 @@ class ResubmitNotifier extends StateNotifier<ResubmitState> {
     } catch (e) {
       state = state.copyWith(
         isSubmitting: false,
-        error: e.toString(),
+        error: profileActionErrorMessage(e),
         success: false,
       );
     }

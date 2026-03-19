@@ -35,6 +35,7 @@ class ProfileRepository {
     String? hometownDistrict,
     String? preferredLanguage,
     List<String>? travelInterests,
+    bool? completeSetup,
   }) async {
     try {
       final data = await api.updateProfile(
@@ -45,6 +46,7 @@ class ProfileRepository {
         hometownDistrict: hometownDistrict,
         preferredLanguage: preferredLanguage,
         travelInterests: travelInterests,
+        completeSetup: completeSetup,
       );
       return UserProfile.fromJson(data);
     } catch (e) {
