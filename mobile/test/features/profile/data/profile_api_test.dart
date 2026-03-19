@@ -100,5 +100,53 @@ void main() {
 
       await tempDir.delete(recursive: true);
     });
+
+    test('getPendingSubmissions reads moderation queue payload', () async {
+      when(() => dio.get('/api/places/submissions/pending')).thenAnswer(
+        (_) async => Response(
+          requestOptions: RequestOptions(path: '/api/places/submissions/pending'),
+          statusCode: 200,
+          data: {
+            'submissions': [
+              {'id': 's1', 'placeName': 'P1', 'status': 'pending'}
+            ]
+          },
+        ),
+      );
+
+      final pending = await api.getPendingSubmissions();
+
+      expect(pending, hasLength(1));
+      expect(pending.first['id'], 's1');
+      verify(() => dio.get('/api/places/submissions/pending')).called(1);
+    });
+
+    test('reviewSubmission sends approval payload', () async {
+      when(
+        () => dio.patch(
+          '/api/places/submissions/s1/review',
+          data: any(named: 'data'),
+        ),
+      ).thenAnswer(
+        (_) async => Response(
+          requestOptions: RequestOptions(path: '/api/places/submissions/s1/review'),
+          statusCode: 200,
+          data: {
+            'message': 'Submission reviewed successfully',
+            'submission': {'id': 's1', 'status': 'approved'}
+          },
+        ),
+      );
+
+      final result = await api.reviewSubmission(submissionId: 's1', approve: true);
+
+      expect(result['submission']['status'], 'approved');
+      verify(
+        () => dio.patch(
+          '/api/places/submissions/s1/review',
+          data: {'status': 'approved'},
+        ),
+      ).called(1);
+    });
   });
 }
