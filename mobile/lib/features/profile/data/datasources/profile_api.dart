@@ -1,33 +1,13 @@
 ﻿import 'package:dio/dio.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 class ProfileApi {
   final Dio _dio;
 
   ProfileApi({required Dio dio}) : _dio = dio;
 
-  Future<T> _runWithAuthRetry<T>(Future<T> Function() operation) async {
-    try {
-      return await operation();
-    } on DioException catch (e) {
-      final status = e.response?.statusCode;
-      if (status == 401 && FirebaseAuth.instance.currentUser != null) {
-        try {
-          await FirebaseAuth.instance.currentUser!.getIdToken(true);
-          return await operation();
-        } on DioException {
-          rethrow;
-        }
-      }
-      rethrow;
-    }
-  }
-
   Future<Map<String, dynamic>> getUserProfile(String userId) async {
     try {
-      final response = await _runWithAuthRetry(
-        () => _dio.get('/api/profile/$userId'),
-      );
+      final response = await _dio.get('/api/profile/$userId');
       if (response.statusCode == 200) return response.data;
       throw Exception('Failed to fetch profile: ${response.statusCode}');
     } on DioException {
@@ -39,9 +19,7 @@ class ProfileApi {
 
   Future<List<dynamic>> getUserContributions(String userId) async {
     try {
-      final response = await _runWithAuthRetry(
-        () => _dio.get('/api/profile/$userId/contributions'),
-      );
+      final response = await _dio.get('/api/profile/$userId/contributions');
       if (response.statusCode == 200)
         return response.data['contributions'] ?? [];
       throw Exception('Failed to fetch contributions: ${response.statusCode}');
@@ -72,9 +50,7 @@ class ProfileApi {
         if (travelInterests != null) 'travelInterests': travelInterests,
         if (completeSetup != null) 'completeSetup': completeSetup,
       };
-      final response = await _runWithAuthRetry(
-        () => _dio.post('/api/profile/$userId', data: payload),
-      );
+      final response = await _dio.post('/api/profile/$userId', data: payload);
       if (response.statusCode == 200) return response.data;
       throw Exception('Failed to update profile: ${response.statusCode}');
     } on DioException {
@@ -90,12 +66,10 @@ class ProfileApi {
       final formData = FormData.fromMap({
         'avatar': await MultipartFile.fromFile(filePath, filename: filename),
       });
-      final response = await _runWithAuthRetry(
-        () => _dio.post(
-          '/api/profile/$userId/avatar',
-          data: formData,
-          options: Options(contentType: 'multipart/form-data'),
-        ),
+      final response = await _dio.post(
+        '/api/profile/$userId/avatar',
+        data: formData,
+        options: Options(contentType: 'multipart/form-data'),
       );
       if (response.statusCode == 200)
         return response.data['avatarUrl'] as String;
@@ -109,9 +83,7 @@ class ProfileApi {
 
   Future<void> logout() async {
     try {
-      final response = await _runWithAuthRetry(
-        () => _dio.post('/api/auth/logout'),
-      );
+      final response = await _dio.post('/api/auth/logout');
       if (response.statusCode != 200)
         throw Exception('Failed to logout: ${response.statusCode}');
     } on DioException {
@@ -123,11 +95,9 @@ class ProfileApi {
 
   Future<List<dynamic>> getTopContributors({int limit = 10}) async {
     try {
-      final response = await _runWithAuthRetry(
-        () => _dio.get(
-          '/api/profile/leaderboard/top',
-          queryParameters: {'limit': limit},
-        ),
+      final response = await _dio.get(
+        '/api/profile/leaderboard/top',
+        queryParameters: {'limit': limit},
       );
       if (response.statusCode == 200)
         return response.data['topContributors'] ?? [];
@@ -167,12 +137,10 @@ class ProfileApi {
         'photos': photos,
       });
 
-      final response = await _runWithAuthRetry(
-        () => _dio.post(
-          '/api/places/submit',
-          data: formData,
-          options: Options(contentType: 'multipart/form-data'),
-        ),
+      final response = await _dio.post(
+        '/api/places/submit',
+        data: formData,
+        options: Options(contentType: 'multipart/form-data'),
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) return;
@@ -186,9 +154,7 @@ class ProfileApi {
 
   Future<List<dynamic>> getPendingSubmissions() async {
     try {
-      final response = await _runWithAuthRetry(
-        () => _dio.get('/api/places/submissions/pending'),
-      );
+      final response = await _dio.get('/api/places/submissions/pending');
       if (response.statusCode == 200) return response.data['submissions'] ?? [];
       throw Exception(
         'Failed to fetch pending submissions: ${response.statusCode}',
@@ -206,15 +172,13 @@ class ProfileApi {
     String? rejectionReason,
   }) async {
     try {
-      final response = await _runWithAuthRetry(
-        () => _dio.patch(
-          '/api/places/submissions/$submissionId/review',
-          data: {
-            'status': approve ? 'approved' : 'rejected',
-            if (!approve && rejectionReason != null)
-              'rejectionReason': rejectionReason,
-          },
-        ),
+      final response = await _dio.patch(
+        '/api/places/submissions/$submissionId/review',
+        data: {
+          'status': approve ? 'approved' : 'rejected',
+          if (!approve && rejectionReason != null)
+            'rejectionReason': rejectionReason,
+        },
       );
       if (response.statusCode == 200) {
         return Map<String, dynamic>.from(response.data as Map);
@@ -256,12 +220,10 @@ class ProfileApi {
         if (photos.isNotEmpty) 'photos': photos,
       });
 
-      final response = await _runWithAuthRetry(
-        () => _dio.patch(
-          '/api/places/submissions/$submissionId/resubmit',
-          data: formData,
-          options: Options(contentType: 'multipart/form-data'),
-        ),
+      final response = await _dio.patch(
+        '/api/places/submissions/$submissionId/resubmit',
+        data: formData,
+        options: Options(contentType: 'multipart/form-data'),
       );
 
       if (response.statusCode == 200) {
