@@ -7,8 +7,9 @@ import 'package:gemified_travel_portfolio/features/profile/presentation/provider
 
 void main() {
   Widget buildHomeWithGuard(
-    Future<CoreNavigationGuardState> Function(ProviderRef<Object?> ref)
-    resolver,
+    Future<CoreNavigationGuardState> Function(
+      FutureProviderRef<CoreNavigationGuardState> ref,
+    ) resolver,
   ) {
     return ProviderScope(
       overrides: [coreNavigationGuardProvider.overrideWith(resolver)],
