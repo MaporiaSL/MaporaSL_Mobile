@@ -4,6 +4,7 @@ import '../domain/user_profile.dart' as profile_model;
 import 'edit_profile_screen.dart';
 import '../../settings/presentation/settings_screen.dart';
 import 'providers/profile_providers.dart';
+import '../../../providers/progress_provider.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
@@ -13,6 +14,7 @@ class ProfileScreen extends ConsumerWidget {
     final profileAsyncValue = ref.watch(userProfileProvider);
     final contributionsAsyncValue = ref.watch(userContributionsProvider);
     final topContributorsAsync = ref.watch(topContributorsProvider);
+    final progress = ref.watch(progressProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -117,6 +119,10 @@ class ProfileScreen extends ConsumerWidget {
 
                 // Contribution Stats
                 _buildStatsSection(profile),
+                const SizedBox(height: 24),
+
+                // Gamification Progress
+                _buildExplorerProgressSection(progress),
                 const SizedBox(height: 24),
 
                 // Badges
@@ -243,32 +249,119 @@ class ProfileScreen extends ConsumerWidget {
     return Wrap(
       spacing: 12,
       runSpacing: 12,
-      children: badges.map((badge) {
-        return Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          decoration: BoxDecoration(
-            color: _getBadgeColor(badge.name),
-            borderRadius: BorderRadius.circular(20),
+      children: badges.asMap().entries.map((entry) {
+        final index = entry.key;
+        final badge = entry.value;
+        return TweenAnimationBuilder<double>(
+          duration: Duration(milliseconds: 260 + (index * 70)),
+          tween: Tween(begin: 0.88, end: 1.0),
+          curve: Curves.easeOutBack,
+          builder: (context, scale, child) {
+            return Transform.scale(scale: scale, child: child);
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              color: _getBadgeColor(badge.name),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  badge.icon,
+                  style: const TextStyle(fontSize: 16),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  badge.name,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
           ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _buildExplorerProgressSection(UserProgress progress) {
+    final percentage = (progress.progressPercentage / 100).clamp(0.0, 1.0);
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Colors.blueGrey.shade50,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: Colors.blueGrey.shade100),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
             children: [
-              Text(
-                badge.icon,
-                style: const TextStyle(fontSize: 16),
-              ),
+              const Icon(Icons.workspace_premium, color: Colors.indigo),
               const SizedBox(width: 8),
               Text(
-                badge.name,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w500,
+                'Explorer Level ${progress.currentLevel}',
+                style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
+              ),
+              const Spacer(),
+              Text(
+                '${progress.totalXP} XP',
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  color: Colors.blueGrey.shade700,
                 ),
               ),
             ],
           ),
-        );
-      }).toList(),
+          const SizedBox(height: 10),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: LinearProgressIndicator(
+              minHeight: 10,
+              value: percentage,
+              backgroundColor: Colors.blueGrey.shade100,
+              valueColor: const AlwaysStoppedAnimation<Color>(Colors.indigo),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            '${progress.xpToNextLevel} XP to next level',
+            style: TextStyle(color: Colors.blueGrey.shade700),
+          ),
+          const SizedBox(height: 10),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              _progressChip('Achievements', progress.completedAchievements.length.toString()),
+              _progressChip('Districts', progress.unlockedDistricts.length.toString()),
+              _progressChip('Provinces', progress.unlockedProvinces.length.toString()),
+              _progressChip('Visits', progress.totalVisits.toString()),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _progressChip(String label, String value) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.blueGrey.shade100),
+      ),
+      child: Text(
+        '$label: $value',
+        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+      ),
     );
   }
 
@@ -335,26 +428,88 @@ class ProfileScreen extends ConsumerWidget {
         }
 
         final top = contributors.take(5).toList();
-        return Column(
-          children: top.asMap().entries.map((entry) {
-            final rank = entry.key + 1;
-            final item = entry.value;
-            final name = (item['userName'] ?? 'Unknown').toString();
-            final count = (item['approvedCount'] ?? 0).toString();
+        final podium = top.take(3).toList();
+        final others = top.skip(3).toList();
 
-            return ListTile(
-              dense: true,
-              contentPadding: EdgeInsets.zero,
-              leading: CircleAvatar(
-                radius: 14,
-                child: Text('$rank'),
-              ),
-              title: Text(name),
-              trailing: Text('$count approved'),
-            );
-          }).toList(),
+        return Column(
+          children: [
+            if (podium.isNotEmpty) _buildLeaderboardPodium(podium),
+            if (others.isNotEmpty) const SizedBox(height: 8),
+            ...others.asMap().entries.map((entry) {
+              final rank = entry.key + 4;
+              final item = entry.value;
+              final name = (item['userName'] ?? 'Unknown').toString();
+              final count = (item['approvedCount'] ?? 0).toString();
+
+              return ListTile(
+                dense: true,
+                contentPadding: EdgeInsets.zero,
+                leading: CircleAvatar(
+                  radius: 14,
+                  backgroundColor: Colors.blueGrey.shade100,
+                  child: Text('$rank'),
+                ),
+                title: Text(name),
+                trailing: Text('$count approved'),
+              );
+            }),
+          ],
         );
       },
+    );
+  }
+
+  Widget _buildLeaderboardPodium(List<Map<String, dynamic>> topThree) {
+    final medalColors = <Color>[
+      const Color(0xFFFFD700),
+      const Color(0xFFC0C0C0),
+      const Color(0xFFCD7F32),
+    ];
+
+    return Column(
+      children: topThree.asMap().entries.map((entry) {
+        final rank = entry.key + 1;
+        final item = entry.value;
+        final name = (item['userName'] ?? 'Unknown').toString();
+        final count = (item['approvedCount'] ?? 0).toString();
+
+        return Container(
+          margin: const EdgeInsets.only(bottom: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          decoration: BoxDecoration(
+            color: medalColors[entry.key].withValues(alpha: 0.15),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: medalColors[entry.key].withValues(alpha: 0.45)),
+          ),
+          child: Row(
+            children: [
+              CircleAvatar(
+                radius: 14,
+                backgroundColor: medalColors[entry.key],
+                child: Text(
+                  '$rank',
+                  style: const TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  name,
+                  style: const TextStyle(fontWeight: FontWeight.w600),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              Text(
+                '$count approved',
+                style: const TextStyle(fontWeight: FontWeight.w600),
+              ),
+            ],
+          ),
+        );
+      }).toList(),
     );
   }
 
