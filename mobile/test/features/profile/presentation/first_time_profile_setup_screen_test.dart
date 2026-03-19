@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -174,5 +176,136 @@ void main() {
 
     final prefs = await SharedPreferences.getInstance();
     expect(prefs.getBool('profile_setup_completed'), isTrue);
+  });
+
+  testWidgets('shows server field errors inline when setup submit fails', (
+    tester,
+  ) async {
+    when(
+      () => repository.updateProfile(
+        any(),
+        name: any(named: 'name'),
+        avatarUrl: any(named: 'avatarUrl'),
+        bio: any(named: 'bio'),
+        hometownDistrict: any(named: 'hometownDistrict'),
+        preferredLanguage: any(named: 'preferredLanguage'),
+        travelInterests: any(named: 'travelInterests'),
+        completeSetup: any(named: 'completeSetup'),
+      ),
+    ).thenThrow(
+      DioException(
+        requestOptions: RequestOptions(path: '/api/profile/u1'),
+        response: Response(
+          requestOptions: RequestOptions(path: '/api/profile/u1'),
+          statusCode: 400,
+          data: {
+            'error': 'Please fix the highlighted fields.',
+            'fieldErrors': {
+              'name': 'Name contains invalid characters.',
+              'hometownDistrict': 'District is not recognized.',
+            },
+          },
+        ),
+      ),
+    );
+
+    await tester.pumpWidget(buildTestWidget());
+    await tester.pumpAndSettle();
+
+    await tester.enterText(
+      find.widgetWithText(TextFormField, 'Name (Required)'),
+      'Alice',
+    );
+    await tester.enterText(
+      find.widgetWithText(TextFormField, 'Hometown District (Required)'),
+      'Colombo',
+    );
+
+    await tester.tap(
+      find.widgetWithText(FilledButton, 'Continue').hitTestable().first,
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(
+      find.widgetWithText(FilledButton, 'Continue').hitTestable().first,
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(
+      find.widgetWithText(FilledButton, 'Finish Setup').hitTestable().first,
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Please fix the highlighted fields.'), findsOneWidget);
+    expect(find.text('Name contains invalid characters.'), findsOneWidget);
+    expect(find.text('District is not recognized.'), findsOneWidget);
+  });
+
+  testWidgets('shows avatar retry CTA and succeeds on retry', (tester) async {
+    final tempDir = await Directory.systemTemp.createTemp('avatar_test');
+    final avatarFile = File('${tempDir.path}/avatar.jpg');
+    await avatarFile.writeAsString('avatar-bytes');
+
+    SharedPreferences.setMockInitialValues({
+      'profile_setup_draft': jsonEncode({
+        'name': 'Retry User',
+        'hometownDistrict': 'Kandy',
+        'preferredLanguage': 'English',
+        'travelInterests': const <String>[],
+        'avatarPath': avatarFile.path,
+      }),
+    });
+
+    when(() => repository.uploadAvatar(any(), any()))
+        .thenThrow(
+          DioException(
+            requestOptions: RequestOptions(path: '/api/profile/u1/avatar'),
+            response: Response(
+              requestOptions: RequestOptions(path: '/api/profile/u1/avatar'),
+              statusCode: 500,
+              data: {'error': 'Avatar upload failed.'},
+            ),
+          ),
+        )
+        .thenAnswer((_) async => 'http://avatar/retry-success');
+
+    await tester.pumpWidget(buildTestWidget());
+    await tester.pumpAndSettle();
+
+    await tester.tap(
+      find.widgetWithText(FilledButton, 'Continue').hitTestable().first,
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(
+      find.widgetWithText(FilledButton, 'Continue').hitTestable().first,
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(
+      find.widgetWithText(FilledButton, 'Finish Setup').hitTestable().first,
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Avatar upload failed.'), findsWidgets);
+    expect(find.text('Retry Avatar Upload'), findsOneWidget);
+
+    await tester.tap(
+      find.widgetWithText(OutlinedButton, 'Retry Avatar Upload'),
+    );
+    await tester.pumpAndSettle();
+
+    verify(
+      () => repository.updateProfile(
+        'u1',
+        avatarUrl: 'http://avatar/retry-success',
+        name: any(named: 'name'),
+        bio: any(named: 'bio'),
+        hometownDistrict: any(named: 'hometownDistrict'),
+        preferredLanguage: any(named: 'preferredLanguage'),
+        travelInterests: any(named: 'travelInterests'),
+        completeSetup: any(named: 'completeSetup'),
+      ),
+    ).called(1);
+
+    expect(find.text('Avatar uploaded successfully.'), findsOneWidget);
+    await tempDir.delete(recursive: true);
   });
 }
