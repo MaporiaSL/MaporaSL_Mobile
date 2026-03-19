@@ -216,7 +216,17 @@ async function getUserContributions(req, res) {
     // Fetch all contribution statuses for full profile history
     const contributedPlaces = await PlaceSubmission.find(
       { userId },
-      { placeName: 1, description: 1, approvedAt: 1, submittedAt: 1, reviewedAt: 1, status: 1, rejectionReason: 1, photos: 1 }
+      {
+        placeName: 1,
+        description: 1,
+        approvedAt: 1,
+        submittedAt: 1,
+        reviewedAt: 1,
+        status: 1,
+        rejectionReason: 1,
+        photos: 1,
+        promotedPlaceId: 1,
+      }
     ).sort({ submittedAt: -1 });
 
     const contributions = contributedPlaces.map((place) => ({
@@ -230,6 +240,8 @@ async function getUserContributions(req, res) {
       approvedAt: place.approvedAt,
       rejectionReason: place.rejectionReason,
       photoUrl: Array.isArray(place.photos) && place.photos.length > 0 ? place.photos[0] : '',
+      photoUrls: Array.isArray(place.photos) ? place.photos : [],
+      promotedPlaceId: place.promotedPlaceId || null,
     }));
 
     res.status(200).json({ contributions });

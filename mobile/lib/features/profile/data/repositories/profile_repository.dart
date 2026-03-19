@@ -107,4 +107,57 @@ class ProfileRepository {
       rethrow;
     }
   }
+
+  Future<List<ContributedPlace>> getPendingSubmissions() async {
+    try {
+      final data = await api.getPendingSubmissions();
+      return data.map((item) => ContributedPlace.fromJson(item)).toList();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Map<String, dynamic>> reviewSubmission({
+    required String submissionId,
+    required bool approve,
+    String? rejectionReason,
+  }) async {
+    try {
+      return await api.reviewSubmission(
+        submissionId: submissionId,
+        approve: approve,
+        rejectionReason: rejectionReason,
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> resubmitRejectedContribution({
+    required String submissionId,
+    required String placeName,
+    required String description,
+    required String category,
+    required String province,
+    required String district,
+    required double latitude,
+    required double longitude,
+    required List<String> photoPaths,
+  }) async {
+    try {
+      await api.resubmitRejectedContribution(
+        submissionId: submissionId,
+        placeName: placeName,
+        description: description,
+        category: category,
+        province: province,
+        district: district,
+        latitude: latitude,
+        longitude: longitude,
+        photoPaths: photoPaths,
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

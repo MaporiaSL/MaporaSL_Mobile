@@ -12,6 +12,8 @@ const {
 const {
   submitPlace,
   getMySubmissions,
+  getPendingSubmissions,
+  resubmitSubmission,
   reviewSubmission,
 } = require('../controllers/placeSubmissionController');
 
@@ -50,6 +52,18 @@ router.post('/submit', checkJwt, extractUserId, submissionUpload.array('photos',
 
 // GET /api/places/submissions/me - Get current user's submission history (auth required)
 router.get('/submissions/me', checkJwt, extractUserId, getMySubmissions);
+
+// GET /api/places/submissions/pending - Admin queue of pending submissions
+router.get('/submissions/pending', checkJwt, extractUserId, requireAdmin, getPendingSubmissions);
+
+// PATCH /api/places/submissions/:id/resubmit - Resubmit a rejected submission (owner only)
+router.patch(
+  '/submissions/:id/resubmit',
+  checkJwt,
+  extractUserId,
+  submissionUpload.array('photos', 6),
+  resubmitSubmission,
+);
 
 // PATCH /api/places/submissions/:id/review - Admin review submission
 router.patch('/submissions/:id/review', checkJwt, extractUserId, requireAdmin, reviewSubmission);
