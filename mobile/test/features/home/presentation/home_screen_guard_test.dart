@@ -3,7 +3,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:gemified_travel_portfolio/features/auth/services/auth_gate.dart';
 import 'package:gemified_travel_portfolio/features/home/presentation/home_screen.dart';
+import 'package:gemified_travel_portfolio/features/home/widgets/bottom_nav_bar.dart';
 import 'package:gemified_travel_portfolio/features/profile/presentation/first_time_profile_setup_screen.dart';
 import 'package:gemified_travel_portfolio/features/profile/presentation/providers/profile_providers.dart';
 
@@ -63,6 +65,19 @@ void main() {
     expect(find.text('Complete Your Profile'), findsOneWidget);
   });
 
+  testWidgets('routes to auth gate when sign-in is required', (tester) async {
+    await tester.pumpWidget(
+      buildHomeWithGuard(
+        (_) async => const CoreNavigationGuardState.needsSignIn(
+          message: 'Please sign in to continue.',
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byType(AuthGate), findsOneWidget);
+  });
+
   testWidgets('shows blocked state message when access is denied', (
     tester,
   ) async {
@@ -79,5 +94,19 @@ void main() {
       find.text('Access blocked until setup is complete.'),
       findsOneWidget,
     );
+  });
+
+  testWidgets('shows core app tabs when guard allows access', (tester) async {
+    await tester.pumpWidget(
+      buildHomeWithGuard((_) async => const CoreNavigationGuardState.allowed()),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byType(BottomNavBar), findsOneWidget);
+    expect(find.byIcon(Icons.map), findsOneWidget);
+    expect(find.byIcon(Icons.photo_album), findsOneWidget);
+    expect(find.byIcon(Icons.travel_explore), findsOneWidget);
+    expect(find.byIcon(Icons.history), findsOneWidget);
+    expect(find.byIcon(Icons.store), findsOneWidget);
   });
 }
