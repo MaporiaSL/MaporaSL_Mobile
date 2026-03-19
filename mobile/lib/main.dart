@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
 
@@ -11,6 +11,7 @@ import 'core/providers/accessibility_provider.dart';
 import 'core/providers/security_provider.dart';
 import 'splash/presentation/splash_screen.dart';
 import 'features/auth/presentation/app_lock_screen.dart';
+import 'features/home/presentation/home_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -57,7 +58,7 @@ class MaporiaApp extends ConsumerWidget {
           ),
         );
       },
-      home: const SplashScreen(),
+      home: const HomeScreen(),
     );
   }
 }
