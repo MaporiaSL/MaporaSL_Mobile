@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../profile/presentation/providers/profile_providers.dart';
 import '../data/models/place_visit.dart';
 import '../providers/place_visit_provider.dart';
 import './visit_verification_error_screen.dart';
@@ -69,7 +70,13 @@ class _MarkVisitModalState extends ConsumerState<MarkVisitModal> {
       return;
     }
 
-    final userId = ref.read(userIdProvider);
+    final userId = ref.read(currentUserIdProvider) ?? '';
+    if (userId.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please sign in to record visits')),
+      );
+      return;
+    }
     try {
       await ref
           .read(placeVisitProvider(userId).notifier)
@@ -151,12 +158,17 @@ class _MarkVisitModalState extends ConsumerState<MarkVisitModal> {
 
   @override
   Widget build(BuildContext context) {
-    final userId = ref.watch(userIdProvider);
+    final userId = ref.watch(currentUserIdProvider) ?? '';
+    if (userId.isEmpty) {
+      return const SizedBox.shrink();
+    }
     final visitState = ref.watch(placeVisitProvider(userId));
     final int providerStepIndex = visitState.currentStepIndex;
     final String? error = visitState.error;
     final bool isVerifying = visitState.isVerifying;
-    final bool success = visitState.success;
+    final bool success = !visitState.isVerifying &&
+      visitState.error == null &&
+      visitState.lastVisit?.validation.isValid == true;
 
     // Sync _steps with provider state
     for (int i = 0; i < _steps.length; i++) {
