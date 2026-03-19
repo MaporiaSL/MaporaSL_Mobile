@@ -111,6 +111,26 @@ void main() {
     expect(find.text('District is required'), findsOneWidget);
   });
 
+  testWidgets('shows required and optional labels with expected field markers', (
+    tester,
+  ) async {
+    await tester.pumpWidget(buildTestWidget());
+    await tester.pumpAndSettle();
+
+    expect(find.text('Required'), findsOneWidget);
+    expect(find.text('Name (Required)'), findsOneWidget);
+    expect(find.text('Hometown District (Required)'), findsOneWidget);
+    expect(find.text('Preferred Language (Required)'), findsOneWidget);
+
+    await tester.tap(
+      find.widgetWithText(FilledButton, 'Continue').hitTestable().first,
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Optional'), findsOneWidget);
+    expect(find.text('Bio (Optional)'), findsOneWidget);
+  });
+
   testWidgets('restores setup draft values from local prefs', (tester) async {
     SharedPreferences.setMockInitialValues({
       'profile_setup_draft': jsonEncode({
@@ -203,6 +223,9 @@ void main() {
             'fieldErrors': {
               'name': 'Name contains invalid characters.',
               'hometownDistrict': 'District is not recognized.',
+              'preferredLanguage': 'Preferred language is required.',
+              'travelInterests': 'Choose up to 10 interests only.',
+              'bio': 'Bio contains unsupported characters.',
             },
           },
         ),
@@ -237,6 +260,15 @@ void main() {
     expect(find.text('Please fix the highlighted fields.'), findsOneWidget);
     expect(find.text('Name contains invalid characters.'), findsOneWidget);
     expect(find.text('District is not recognized.'), findsOneWidget);
+    expect(find.text('Preferred language is required.'), findsOneWidget);
+
+    await tester.tap(
+      find.widgetWithText(FilledButton, 'Continue').hitTestable().first,
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Choose up to 10 interests only.'), findsOneWidget);
+    expect(find.text('Bio contains unsupported characters.'), findsOneWidget);
   });
 
   testWidgets('shows avatar retry CTA and succeeds on retry', (tester) async {
