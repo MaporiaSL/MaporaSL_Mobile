@@ -27,11 +27,13 @@ class MapScreen extends ConsumerStatefulWidget {
   ConsumerState<MapScreen> createState() => _MapScreenState();
 }
 
-class _MapScreenState extends ConsumerState<MapScreen> {
+class _MapScreenState extends ConsumerState<MapScreen> with TickerProviderStateMixin {
   String? selectedDistrict;
   String? selectedProvince;
   bool _isDistrictFocused = false;
   ExplorationLocation? _selectedLocation;
+  late AnimationController _focusAnimationController;
+  late AnimationController _selectionAnimationController;
 
   String _normalizeKey(String? value) {
     return value?.toString().trim().toLowerCase() ?? '';
@@ -68,6 +70,16 @@ class _MapScreenState extends ConsumerState<MapScreen> {
   @override
   void initState() {
     super.initState();
+    // Initialize animation controllers for smooth transitions
+    _focusAnimationController = AnimationController(
+      duration: const Duration(milliseconds: 400),
+      vsync: this,
+    );
+    _selectionAnimationController = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+    
     Future.microtask(() {
       if (!mounted) return;
       ref.read(explorationProvider.notifier).loadAssignments();
@@ -76,6 +88,8 @@ class _MapScreenState extends ConsumerState<MapScreen> {
 
   @override
   void dispose() {
+    _focusAnimationController.dispose();
+    _selectionAnimationController.dispose();
     super.dispose();
   }
 
@@ -141,11 +155,14 @@ class _MapScreenState extends ConsumerState<MapScreen> {
         // Close button as FAB - guaranteed to be on top and responsive
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            setState(() {
-              selectedDistrict = null;
-              selectedProvince = null;
-              _isDistrictFocused = false;
-              _selectedLocation = null;
+            // Animate focus exit smoothly
+            _focusAnimationController.reverse().then((_) {
+              setState(() {
+                selectedDistrict = null;
+                selectedProvince = null;
+                _isDistrictFocused = false;
+                _selectedLocation = null;
+              });
             });
           },
           backgroundColor: Colors.white.withValues(alpha: 0.25),
@@ -248,6 +265,9 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                               tapFraction,
                               focusTarget,
                             ) {
+                              // Trigger smooth animation on district selection
+                              _selectionAnimationController.forward(from: 0.0);
+                              
                               setState(() {
                                 if (districtName.isEmpty) {
                                   selectedDistrict = null;

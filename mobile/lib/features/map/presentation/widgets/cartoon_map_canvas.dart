@@ -73,20 +73,29 @@ class _CartoonMapCanvasState extends State<CartoonMapCanvas> {
     _loadBoundaries();
   }
 
-  /// Load GeoJSON boundaries
+  /// Load GeoJSON boundaries with improved error handling
   Future<void> _loadBoundaries() async {
     try {
+      debugPrint('🗺️ Map Polish: Loading GeoJSON boundaries...');
       final provinces = await GeoJsonParser.loadProvinceBoundaries();
       final districtData = await GeoJsonParser.loadDistrictBoundaryData();
+      
+      if (provinces.isEmpty || districtData.boundaries.isEmpty) {
+        debugPrint('⚠️ Map Polish: Loaded boundaries are empty');
+      } else {
+        debugPrint('✅ Map Polish: Successfully loaded ${provinces.length} provinces and ${districtData.boundaries.length} districts');
+      }
+      
       setState(() {
         _provinceBoundaries = provinces;
         _districtBoundaries = districtData.boundaries;
         _districtToProvince = districtData.districtToProvince;
         _boundariesLoaded = true;
       });
-    } catch (e) {
-      debugPrint('Error loading boundaries: $e');
-      setState(() => _boundariesLoaded = true);
+    } catch (e, stackTrace) {
+      debugPrint('❌ Map Polish: Error loading boundaries: $e');
+      debugPrintStack(stackTrace: stackTrace);
+      setState(() => _boundariesLoaded = true); // Still mark as loaded to prevent infinite spinner
     }
   }
 
@@ -142,19 +151,45 @@ class _CartoonMapCanvasState extends State<CartoonMapCanvas> {
 
   DistrictFocusTarget? _buildFocusTarget(String districtId, Size size) {
     final paths = _districtPaths[districtId];
-    if (paths == null || paths.isEmpty) return null;
+    if (paths == null || paths.isEmpty) {
+      debugPrint('⚠️ Map Polish: No paths found for district: $districtId');
+      return null;
+    }
 
     Rect? bounds;
     for (final path in paths) {
       final rect = path.getBounds();
+      // Skip invalid/empty rects
+      if (rect.isEmpty || !rect.isFinite) {
+        debugPrint('⚠️ Map Polish: Invalid bounds for district $districtId: $rect');
+        continue;
+      }
       bounds = bounds == null ? rect : bounds.expandToInclude(rect);
     }
 
-    if (bounds == null || bounds.isEmpty) return null;
+    if (bounds == null || bounds.isEmpty || !bounds.isFinite) {
+      debugPrint('❌ Map Polish: Cannot calculate valid bounds for $districtId');
+      return null;
+    }
 
     const margin = 56.0;
-    final fitX = size.width / (bounds.width + margin);
-    final fitY = size.height / (bounds.height + margin);
+    final width = bounds.width + margin;
+    final height = bounds.height + margin;
+    
+    // Handle edge case: very small districts
+    if (width <= 0 || height <= 0) {
+      debugPrint('⚠️ Map Polish: District $districtId too small: ${bounds.size}');
+      return DistrictFocusTarget(
+        centroidFraction: Offset(
+          (bounds.center.dx / size.width).clamp(0.0, 1.0),
+          (bounds.center.dy / size.height).clamp(0.0, 1.0),
+        ),
+        suggestedScale: 2.0, // Default zoom level
+      );
+    }
+
+    final fitX = size.width / width;
+    final fitY = size.height / height;
     final suggestedScale = (fitX < fitY ? fitX : fitY).clamp(1.25, 3.3);
 
     return DistrictFocusTarget(
