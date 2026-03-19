@@ -6,7 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../core/services/local_prefs.dart';
-import '../presentation/providers/profile_providers.dart';
+import 'providers/profile_providers.dart';
 
 class FirstTimeProfileSetupScreen extends ConsumerStatefulWidget {
   const FirstTimeProfileSetupScreen({
