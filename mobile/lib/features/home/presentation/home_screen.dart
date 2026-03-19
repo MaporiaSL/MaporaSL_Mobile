@@ -1,25 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../map/presentation/map_screen.dart';
 import '../../album/presentation/album_page.dart';
 import '../../trips/presentation/trips_page.dart';
 import '../../trips/presentation/memory_lane_page.dart';
 import '../../shop/presentation/shop_page.dart';
 import '../../profile/presentation/profile_screen.dart';
+import '../../profile/presentation/first_time_profile_setup_screen.dart';
+import '../../profile/presentation/providers/profile_providers.dart';
+import '../../auth/services/auth_gate.dart';
 import '../widgets/bottom_nav_bar.dart';
-import '../../../core/services/auth_api.dart';
-import '../../../core/services/local_prefs.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends ConsumerState<HomeScreen> {
   int _selectedIndex = 0;
-  bool _isCheckingProfile = true;
 
   final List<Widget> _screens = const [
     MapScreen(travelId: 'default'), // 0 Map
@@ -30,53 +30,58 @@ class _HomeScreenState extends State<HomeScreen> {
   ];
 
   @override
-  void initState() {
-    super.initState();
-    _checkProfile();
-  }
-
-  Future<void> _checkProfile() async {
-    try {
-      await AuthApi().getMe();
-      if (!mounted) return;
-      setState(() {
-        _isCheckingProfile = false;
-      });
-    } catch (_) {
-      final user = FirebaseAuth.instance.currentUser;
-      if (user == null) {
-        if (!mounted) return;
-        setState(() => _isCheckingProfile = false);
-        return;
-      }
-      final email = user.email ?? 'unknown@local.test';
-      final name = user.displayName ?? email.split('@').first;
-      final district = await LocalPrefs.getHometownDistrict();
-      try {
-        if (district != null) {
-          await AuthApi().registerUser(
-            email: email,
-            name: name,
-            hometownDistrict: district,
-          );
-          await LocalPrefs.clearHometownDistrict();
-        }
-      } catch (_) {
-        // Swallow registration errors during dev flow.
-      }
-      if (!mounted) return;
-      setState(() {
-        _isCheckingProfile = false;
-      });
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: _isCheckingProfile
-          ? const Center(child: CircularProgressIndicator())
-          : Stack(
+    final guardState = ref.watch(coreNavigationGuardProvider);
+
+    return guardState.when(
+      loading: () => const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      ),
+      error: (_, __) => Scaffold(
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text('Unable to verify profile setup right now.'),
+                const SizedBox(height: 12),
+                OutlinedButton.icon(
+                  onPressed: () {
+                    ref.invalidate(coreNavigationGuardProvider);
+                    ref.invalidate(profileBootstrapProvider);
+                    ref.invalidate(profileSetupRequirementProvider);
+                  },
+                  icon: const Icon(Icons.refresh),
+                  label: const Text('Retry'),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+      data: (guard) {
+        if (guard.requiresSignIn) {
+          return const AuthGate();
+        }
+
+        if (guard.requiresSetup) {
+          return FirstTimeProfileSetupScreen(
+            requiredFields: guard.requiredFields,
+            optionalFields: guard.optionalFields,
+          );
+        }
+
+        if (!guard.isAllowed) {
+          return Scaffold(
+            body: Center(
+              child: Text(guard.message ?? 'Access blocked until setup is complete.'),
+            ),
+          );
+        }
+
+        return Scaffold(
+          body: Stack(
               children: [
                 _screens[_selectedIndex],
                 Positioned(
@@ -124,12 +129,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ],
             ),
-      bottomNavigationBar: BottomNavBar(
-        currentIndex: _selectedIndex,
-        onTap: (index) {
-          setState(() => _selectedIndex = index);
-        },
-      ),
+          bottomNavigationBar: BottomNavBar(
+            currentIndex: _selectedIndex,
+            onTap: (index) {
+              setState(() => _selectedIndex = index);
+            },
+          ),
+        );
+      },
     );
   }
 }
