@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
-    "migrate:profile-backfill": "node scripts/backfill-profile-fields.js"
+    "migrate:profile-backfill": "node scripts/backfill-profile-fields.js",
+    "test:contracts": "node --test tests/contracts/*.test.js"
   },
   "dependencies": {
     "@turf/turf": "^7.3.2",
