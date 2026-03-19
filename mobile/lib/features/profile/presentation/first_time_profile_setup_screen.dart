@@ -25,6 +25,16 @@ class FirstTimeProfileSetupScreen extends ConsumerStatefulWidget {
 
 class _FirstTimeProfileSetupScreenState
     extends ConsumerState<FirstTimeProfileSetupScreen> {
+  static const String _screenTitle = 'Complete Your Profile';
+  static const String _requiredTag = 'Required';
+  static const String _optionalTag = 'Optional';
+  static const String _retryAvatarUploadCta = 'Retry Avatar Upload';
+  static const String _avatarUploadSuccessMessage =
+      'Avatar uploaded successfully.';
+  static const String _setupCompletedMessage = 'Profile setup completed.';
+  static const String _sessionExpiredSetupMessage =
+      'Please sign in again to continue setup.';
+
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _districtController = TextEditingController();
@@ -63,6 +73,7 @@ class _FirstTimeProfileSetupScreenState
   @override
   void initState() {
     super.initState();
+    logProfileTelemetry('setup_started');
     _bootstrapDraft();
     _nameController.addListener(_persistDraft);
     _districtController.addListener(_persistDraft);
@@ -155,7 +166,7 @@ class _FirstTimeProfileSetupScreenState
         border: Border.all(color: foreground.withOpacity(0.25)),
       ),
       child: Text(
-        required ? 'Required' : 'Optional',
+        required ? _requiredTag : _optionalTag,
         style: TextStyle(
           color: foreground,
           fontSize: 11,
@@ -193,10 +204,15 @@ class _FirstTimeProfileSetupScreenState
   Future<void> _retryAvatarUpload() async {
     if (_avatarFile == null || _isSaving) return;
 
+    logProfileTelemetry(
+      'avatar_upload_retried',
+      details: {'hasLocalAvatar': _avatarFile != null},
+    );
+
     final userId = ref.read(currentUserIdProvider);
     if (userId == null || userId.isEmpty) {
       setState(() {
-        _error = 'Please sign in again to continue setup.';
+        _error = _sessionExpiredSetupMessage;
       });
       return;
     }
@@ -225,8 +241,9 @@ class _FirstTimeProfileSetupScreenState
       await _persistDraft();
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Avatar uploaded successfully.')),
+        const SnackBar(content: Text(_avatarUploadSuccessMessage)),
       );
+      logProfileTelemetry('avatar_upload_retry_succeeded');
     } on DioException catch (e) {
       final data = e.response?.data;
       String message = profileActionErrorMessage(e);
@@ -240,6 +257,10 @@ class _FirstTimeProfileSetupScreenState
         _fieldErrors['avatarUrl'] = message;
         _error = message;
       });
+      logProfileTelemetry(
+        'avatar_upload_retry_failed',
+        details: {'statusCode': e.response?.statusCode},
+      );
     } catch (e) {
       if (!mounted) return;
       setState(() {
@@ -248,6 +269,7 @@ class _FirstTimeProfileSetupScreenState
         _fieldErrors['avatarUrl'] = _avatarUploadError!;
         _error = _avatarUploadError;
       });
+      logProfileTelemetry('avatar_upload_retry_failed_unknown');
     } finally {
       if (mounted) {
         setState(() {
@@ -274,7 +296,7 @@ class _FirstTimeProfileSetupScreenState
     final userId = ref.read(currentUserIdProvider);
     if (userId == null || userId.isEmpty) {
       setState(() {
-        _error = 'Please sign in again to continue setup.';
+        _error = _sessionExpiredSetupMessage;
       });
       return;
     }
@@ -315,6 +337,10 @@ class _FirstTimeProfileSetupScreenState
             _error = message;
             _step = 2;
           });
+          logProfileTelemetry(
+            'avatar_upload_failed',
+            details: {'statusCode': e.response?.statusCode},
+          );
           return;
         }
       }
@@ -340,7 +366,11 @@ class _FirstTimeProfileSetupScreenState
       if (!mounted) return;
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('Profile setup completed.')));
+      ).showSnackBar(const SnackBar(content: Text(_setupCompletedMessage)));
+      logProfileTelemetry(
+        'setup_completed',
+        details: {'selectedInterestsCount': _interests.length},
+      );
     } on DioException catch (e) {
       final data = e.response?.data;
       if (data is Map<String, dynamic>) {
@@ -378,7 +408,7 @@ class _FirstTimeProfileSetupScreenState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Complete Your Profile'),
+        title: const Text(_screenTitle),
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
@@ -636,10 +666,14 @@ class _FirstTimeProfileSetupScreenState
                   _inlineServerFieldError('avatarUrl'),
                   if (_avatarUploadFailed) ...[
                     const SizedBox(height: 12),
-                    OutlinedButton.icon(
-                      onPressed: _isSaving ? null : _retryAvatarUpload,
-                      icon: const Icon(Icons.refresh),
-                      label: const Text('Retry Avatar Upload'),
+                    Semantics(
+                      button: true,
+                      label: 'Retry failed avatar upload',
+                      child: OutlinedButton.icon(
+                        onPressed: _isSaving ? null : _retryAvatarUpload,
+                        icon: const Icon(Icons.refresh),
+                        label: const Text(_retryAvatarUploadCta),
+                      ),
                     ),
                   ],
                   if (_avatarUploadError != null) ...[
