@@ -657,7 +657,7 @@ class ResubmitNotifier extends StateNotifier<ResubmitState> {
     required String district,
     required double latitude,
     required double longitude,
-    required List<String> photoPaths,
+    List<String> photoPaths = const [],
   }) async {
     state = state.copyWith(isSubmitting: true, error: null, success: false);
     try {

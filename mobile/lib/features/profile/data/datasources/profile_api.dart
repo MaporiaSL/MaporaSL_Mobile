@@ -188,7 +188,7 @@ class ProfileApi {
     required String district,
     required double latitude,
     required double longitude,
-    required List<String> photoPaths,
+    List<String> photoPaths = const [],
   }) async {
     try {
       final photos = <MultipartFile>[];
@@ -205,7 +205,7 @@ class ProfileApi {
         'district': district,
         'latitude': latitude.toString(),
         'longitude': longitude.toString(),
-        'photos': photos,
+        if (photos.isNotEmpty) 'photos': photos,
       });
 
       final response = await _dio.patch(

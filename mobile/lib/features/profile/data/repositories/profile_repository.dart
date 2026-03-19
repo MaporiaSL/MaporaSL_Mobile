@@ -142,7 +142,7 @@ class ProfileRepository {
     required String district,
     required double latitude,
     required double longitude,
-    required List<String> photoPaths,
+    List<String> photoPaths = const [],
   }) async {
     try {
       await api.resubmitRejectedContribution(
