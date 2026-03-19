@@ -67,9 +67,7 @@ void main() {
   test('retries once and resolves response for 401', () async {
     final interceptor = AuthInterceptor(auth: auth, retryDio: retryDio);
     final requestOptions = RequestOptions(path: '/api/profile/me');
-    when(
-      () => retryDio.fetch<dynamic>(any()),
-    ).thenAnswer(
+    when(() => retryDio.fetch<dynamic>(any())).thenAnswer(
       (_) async => Response<dynamic>(
         requestOptions: requestOptions,
         statusCode: 200,
@@ -146,9 +144,7 @@ void main() {
   test('avoids retry loop when retry request also fails with 401', () async {
     final interceptor = AuthInterceptor(auth: auth, retryDio: retryDio);
     final requestOptions = RequestOptions(path: '/api/profile/me');
-    when(
-      () => retryDio.fetch<dynamic>(any()),
-    ).thenThrow(
+    when(() => retryDio.fetch<dynamic>(any())).thenThrow(
       DioException(
         requestOptions: requestOptions,
         response: Response<dynamic>(

@@ -1,8 +1,10 @@
 import 'dart:async';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:gemified_travel_portfolio/core/services/auth_service.dart';
 import 'package:gemified_travel_portfolio/features/auth/services/auth_gate.dart';
 import 'package:gemified_travel_portfolio/features/exploration/data/exploration_api.dart';
 import 'package:gemified_travel_portfolio/features/exploration/providers/exploration_provider.dart';
@@ -14,13 +16,22 @@ import 'package:mocktail/mocktail.dart';
 
 class MockExplorationApi extends Mock implements ExplorationApi {}
 
+class MockAuthService extends Mock implements AuthService {}
+
 void main() {
   late MockExplorationApi explorationApi;
+  late MockAuthService authService;
 
   setUp(() {
     explorationApi = MockExplorationApi();
+    authService = MockAuthService();
     when(() => explorationApi.fetchAssignments()).thenAnswer((_) async => []);
     when(() => explorationApi.fetchDistricts()).thenAnswer((_) async => []);
+    when(
+      () => authService.authStateChanges(),
+    ).thenAnswer((_) => Stream<User?>.value(null));
+    when(() => authService.currentUser).thenReturn(null);
+    when(() => authService.currentUserDisplayName).thenReturn(null);
   });
 
   Widget buildHomeWithGuard(
@@ -33,6 +44,7 @@ void main() {
       overrides: [
         coreNavigationGuardProvider.overrideWith(resolver),
         explorationApiProvider.overrideWithValue(explorationApi),
+        authServiceProvider.overrideWithValue(authService),
       ],
       child: const MaterialApp(home: HomeScreen()),
     );
@@ -116,13 +128,14 @@ void main() {
     await tester.pumpWidget(
       buildHomeWithGuard((_) async => const CoreNavigationGuardState.allowed()),
     );
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 200));
 
     expect(find.byType(BottomNavBar), findsOneWidget);
-    expect(find.byIcon(Icons.map), findsOneWidget);
-    expect(find.byIcon(Icons.photo_album), findsOneWidget);
-    expect(find.byIcon(Icons.travel_explore), findsOneWidget);
-    expect(find.byIcon(Icons.history), findsOneWidget);
-    expect(find.byIcon(Icons.store), findsOneWidget);
+    expect(find.text('Map'), findsOneWidget);
+    expect(find.text('Album'), findsOneWidget);
+    expect(find.text('Trips'), findsOneWidget);
+    expect(find.text('Quests'), findsOneWidget);
+    expect(find.text('Shop'), findsOneWidget);
   });
 }
