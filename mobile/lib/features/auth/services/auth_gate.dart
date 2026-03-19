@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/config/app_config.dart';
@@ -11,13 +10,24 @@ import '../../profile/presentation/first_time_profile_setup_screen.dart';
 import '../../profile/presentation/providers/profile_providers.dart';
 
 class AuthGate extends ConsumerWidget {
-  const AuthGate({super.key});
+  const AuthGate({
+    super.key,
+    this.loginBuilder,
+    this.homeBuilder,
+    this.setupBuilder,
+  });
+
+  final Widget Function()? loginBuilder;
+  final Widget Function()? homeBuilder;
+  final Widget Function(List<String> requiredFields, List<String> optionalFields)?
+  setupBuilder;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final authService = ref.watch(authServiceProvider);
+
     return StreamBuilder<User?>(
-      // userChanges() fires on emailVerified, displayName, token refreshes etc.
-      stream: FirebaseAuth.instance.userChanges(),
+      stream: authService.authStateChanges(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Scaffold(
@@ -29,9 +39,9 @@ class AuthGate extends ConsumerWidget {
 
         if (user == null) {
           if (kDebugMode && AppConfig.authBypass) {
-            return const HomeScreen();
+            return homeBuilder?.call() ?? const HomeScreen();
           }
-          return const LoginScreen();
+          return loginBuilder?.call() ?? const LoginScreen();
         }
 
         // If user signed up via email/password and hasn't verified yet
@@ -51,8 +61,8 @@ class AuthGate extends ConsumerWidget {
               const Scaffold(body: Center(child: CircularProgressIndicator())),
           error: (error, stack) {
             if (error is DioException && error.response?.statusCode == 401) {
-              FirebaseAuth.instance.signOut();
-              return const LoginScreen();
+              authService.signOut();
+              return loginBuilder?.call() ?? const LoginScreen();
             }
             return const Scaffold(
               body: Center(child: Text('Preparing your account...')),
@@ -60,12 +70,16 @@ class AuthGate extends ConsumerWidget {
           },
           data: (requirement) {
             if (requirement.requiresSetup) {
-              return FirstTimeProfileSetupScreen(
-                requiredFields: requirement.requiredFields,
-                optionalFields: requirement.optionalFields,
-              );
+              return setupBuilder?.call(
+                    requirement.requiredFields,
+                    requirement.optionalFields,
+                  ) ??
+                  FirstTimeProfileSetupScreen(
+                    requiredFields: requirement.requiredFields,
+                    optionalFields: requirement.optionalFields,
+                  );
             }
-            return const HomeScreen();
+            return homeBuilder?.call() ?? const HomeScreen();
           },
         );
       },
