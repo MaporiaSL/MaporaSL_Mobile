@@ -4,12 +4,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gemified_travel_portfolio/features/auth/services/auth_gate.dart';
+import 'package:gemified_travel_portfolio/features/exploration/data/exploration_api.dart';
+import 'package:gemified_travel_portfolio/features/exploration/providers/exploration_provider.dart';
 import 'package:gemified_travel_portfolio/features/home/presentation/home_screen.dart';
 import 'package:gemified_travel_portfolio/features/home/widgets/bottom_nav_bar.dart';
 import 'package:gemified_travel_portfolio/features/profile/presentation/first_time_profile_setup_screen.dart';
 import 'package:gemified_travel_portfolio/features/profile/presentation/providers/profile_providers.dart';
+import 'package:mocktail/mocktail.dart';
+
+class MockExplorationApi extends Mock implements ExplorationApi {}
 
 void main() {
+  late MockExplorationApi explorationApi;
+
+  setUp(() {
+    explorationApi = MockExplorationApi();
+    when(() => explorationApi.fetchAssignments()).thenAnswer((_) async => []);
+    when(() => explorationApi.fetchDistricts()).thenAnswer((_) async => []);
+  });
+
   Widget buildHomeWithGuard(
     Future<CoreNavigationGuardState> Function(
       FutureProviderRef<CoreNavigationGuardState> ref,
@@ -17,7 +30,10 @@ void main() {
     resolver,
   ) {
     return ProviderScope(
-      overrides: [coreNavigationGuardProvider.overrideWith(resolver)],
+      overrides: [
+        coreNavigationGuardProvider.overrideWith(resolver),
+        explorationApiProvider.overrideWithValue(explorationApi),
+      ],
       child: const MaterialApp(home: HomeScreen()),
     );
   }
