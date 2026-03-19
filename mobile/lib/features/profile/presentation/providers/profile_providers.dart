@@ -187,6 +187,21 @@ final profileBootstrapProvider = FutureProvider<void>((ref) async {
     await authApi.getMe();
     return;
   } on DioException catch (e) {
+    if (e.response?.statusCode == 401 && !AppConfig.authBypass && currentUser != null) {
+      try {
+        final refreshed = await authService.getIdToken(forceRefresh: true);
+        if (refreshed != null && refreshed.isNotEmpty) {
+          await authApi.getMe();
+          logProfileTelemetry('bootstrap_get_me_recovered_after_refresh');
+          return;
+        }
+      } on DioException {
+        // Continue to standard mapping below.
+      } on FirebaseAuthException {
+        // Continue to standard mapping below.
+      }
+    }
+
     logProfileTelemetry(
       'bootstrap_get_me_failed',
       details: {
