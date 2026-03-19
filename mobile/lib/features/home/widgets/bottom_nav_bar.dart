@@ -30,7 +30,7 @@ class BottomNavBar extends StatelessWidget {
           'Album',
           1,
         ),
-<<<<<<< HEAD
+
         _buildNavItem(Icons.card_travel, Icons.card_travel, 'Trips', 2),
         _buildNavItem(Icons.timeline, Icons.timeline_outlined, 'Timeline', 3),
         _buildNavItem(
@@ -38,27 +38,6 @@ class BottomNavBar extends StatelessWidget {
           Icons.shopping_bag_outlined,
           'Shop',
           4,
-=======
-        BottomNavigationBarItem(
-          icon: Icon(Icons.photo_album_outlined),
-          activeIcon: Icon(Icons.photo_album),
-          label: 'Album',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.card_travel),
-          activeIcon: Icon(Icons.card_travel),
-          label: 'Trips',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.stars_outlined),
-          activeIcon: Icon(Icons.stars),
-          label: 'Timeline',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.shopping_bag_outlined),
-          activeIcon: Icon(Icons.shopping_bag),
-          label: 'Shop',
->>>>>>> origin/timeline-kaushal
         ),
       ],
     );
