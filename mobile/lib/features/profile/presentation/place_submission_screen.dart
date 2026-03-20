@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:geocoding/geocoding.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
@@ -8,7 +9,18 @@ import 'package:image_picker/image_picker.dart';
 import 'providers/profile_providers.dart';
 
 class PlaceSubmissionScreen extends ConsumerStatefulWidget {
-  const PlaceSubmissionScreen({super.key});
+  const PlaceSubmissionScreen({
+    super.key,
+    this.initialPhotoPathsForTesting,
+    this.coordinateResolverForTesting,
+  });
+
+  @visibleForTesting
+  final List<String>? initialPhotoPathsForTesting;
+
+  @visibleForTesting
+  final Future<({double latitude, double longitude})?> Function(String query)?
+  coordinateResolverForTesting;
 
   @override
   ConsumerState<PlaceSubmissionScreen> createState() =>
@@ -43,6 +55,15 @@ class _PlaceSubmissionScreenState extends ConsumerState<PlaceSubmissionScreen> {
   ];
 
   bool get _canSubmit => _photos.length >= 2;
+
+  @override
+  void initState() {
+    super.initState();
+    final initial = widget.initialPhotoPathsForTesting;
+    if (initial != null && initial.isNotEmpty) {
+      _photos = initial.map((p) => XFile(p)).take(6).toList();
+    }
+  }
 
   @override
   void dispose() {
@@ -94,7 +115,16 @@ class _PlaceSubmissionScreenState extends ConsumerState<PlaceSubmissionScreen> {
       return;
     }
 
-    final coordinates = await _resolveCoordinates();
+    final coordinates = widget.coordinateResolverForTesting != null
+        ? await widget.coordinateResolverForTesting!(
+            [
+              _placeNameController.text.trim(),
+              _districtController.text.trim(),
+              _provinceController.text.trim(),
+              'Sri Lanka',
+            ].where((p) => p.isNotEmpty).join(', '),
+          )
+        : await _resolveCoordinates();
     if (coordinates == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
