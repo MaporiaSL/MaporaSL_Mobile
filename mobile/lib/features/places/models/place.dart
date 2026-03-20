@@ -38,23 +38,34 @@ class Place {
   });
 
   factory Place.fromJson(Map<String, dynamic> json) {
+    final ratingData = json['rating'];
+    final statsData = json['stats'];
+
     return Place(
       id: json['_id'] ?? '',
       name: json['name'] ?? '',
       description: json['description'],
       category: json['category'],
       province: json['province'],
-      district: json['districtId'], // Mapped from backend Schema
+      district: (json['district'] ?? json['districtId'])?.toString(),
       latitude: (json['latitude'] ?? 0.0).toDouble(),
       longitude: (json['longitude'] ?? 0.0).toDouble(),
       googleMapsUrl: json['googleMapsUrl'],
       address: json['address'],
-      rating: json['rating'] != null ? (json['rating']['average'] ?? 0.0).toDouble() : null,
-      reviewCount: json['rating'] != null ? (json['rating']['reviewCount'] ?? 0) : null,
+      rating: ratingData is Map<String, dynamic>
+          ? (ratingData['average'] as num?)?.toDouble()
+          : (ratingData as num?)?.toDouble(),
+      reviewCount: ratingData is Map<String, dynamic>
+          ? (ratingData['reviewCount'] as num?)?.toInt()
+          : null,
       photos: List<String>.from(json['photos'] ?? []),
       accessibility: json['accessibility'],
       tags: List<String>.from(json['tags'] ?? []),
-      visitCount: json['visitCount'] ?? 0,
+      visitCount:
+          (json['visitCount'] as num?)?.toInt() ??
+          (statsData is Map<String, dynamic>
+              ? (statsData['visitCount'] as num?)?.toInt() ?? 0
+              : 0),
       isSystemPlace: json['isSystemPlace'] ?? false,
     );
   }

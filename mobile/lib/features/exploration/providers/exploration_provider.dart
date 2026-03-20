@@ -67,21 +67,31 @@ class ExplorationNotifier extends StateNotifier<ExplorationState> {
   final ExplorationApi _api;
 
   Future<void> loadAssignments() async {
+    state = state.copyWith(isLoading: true, error: null);
+
+    String? errorMessage;
+    List<DistrictAssignment> assignments = state.assignments;
+    List<DistrictSummary> districts = state.districts;
+
     try {
-      state = state.copyWith(isLoading: true, error: null);
-      final assignments = await _api.fetchAssignments();
-      final districts = await _api.fetchDistricts();
-      state = state.copyWith(
-        isLoading: false,
-        assignments: assignments,
-        districts: districts,
-      );
+      assignments = await _api.fetchAssignments();
     } catch (error) {
-      state = state.copyWith(
-        isLoading: false,
-        error: 'Failed to load exploration data: $error',
-      );
+      errorMessage = 'Failed to load assignments: $error';
     }
+
+    try {
+      districts = await _api.fetchDistricts();
+    } catch (error) {
+      errorMessage =
+          errorMessage ?? 'Failed to load district summaries: $error';
+    }
+
+    state = state.copyWith(
+      isLoading: false,
+      assignments: assignments,
+      districts: districts,
+      error: errorMessage,
+    );
   }
 
   Future<void> verifyLocation(ExplorationLocation location) async {

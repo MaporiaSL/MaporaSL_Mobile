@@ -35,46 +35,61 @@ class CartoonMapPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    // 1. Draw base background (Water/Empty space)
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromLTWH(0, 0, size.width, size.height),
-        const Radius.circular(16),
-      ),
-      Paint()..color = theme.backgroundColor,
-    );
-
-    // Draw a subtle island silhouette so focused edge districts don't look like ocean-only views.
-    final islandSilhouette = Path();
-    for (final district in districtPaths.values) {
-      for (final path in district) {
-        islandSilhouette.addPath(path, Offset.zero);
+    try {
+      // Safety: Validate size
+      if (size.width <= 0 || size.height <= 0) {
+        debugPrint('❌ Map Polish: Invalid canvas size: $size');
+        return;
       }
+
+      // 1. Draw base background (Water/Empty space)
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(
+          Rect.fromLTWH(0, 0, size.width, size.height),
+          const Radius.circular(16),
+        ),
+        Paint()..color = theme.backgroundColor,
+      );
+
+      // Draw a subtle island silhouette so focused edge districts don't look like ocean-only views.
+      final islandSilhouette = Path();
+      for (final district in districtPaths.values) {
+        for (final path in district) {
+          islandSilhouette.addPath(path, Offset.zero);
+        }
+      }
+      canvas.drawPath(
+        islandSilhouette,
+        Paint()..color = theme.lockedColor.withValues(alpha: 0.20),
+      );
+
+      // 2. Draw all provinces base (Subtle)
+      for (final region in regions) {
+        _drawProvince(canvas, size, region);
+      }
+
+      // 3. Draw district fills (Progress colors)
+      _drawDistrictsFilled(canvas);
+
+      // 4. Draw Fog of War Overlay
+      _drawFogOverlay(canvas, size);
+
+      // 5. Draw grainy texture for atmosphere
+      _drawGrainOverlay(canvas, size);
+
+      // 6. Selected district highlight (Clear of fog)
+      _drawSelectedDistrictHighlight(canvas);
+
+      // 7. Draw outer border
+      _drawBorders(canvas, size);
+    } catch (e) {
+      debugPrint('❌ Map Polish: Critical rendering error: $e');
+      // Fallback: Draw a simple error background so app doesn't crash
+      canvas.drawRect(
+        Rect.fromLTWH(0, 0, size.width, size.height),
+        Paint()..color = theme.backgroundColor,
+      );
     }
-    canvas.drawPath(
-      islandSilhouette,
-      Paint()..color = theme.lockedColor.withValues(alpha: 0.20),
-    );
-
-    // 2. Draw all provinces base (Subtle)
-    for (final region in regions) {
-      _drawProvince(canvas, size, region);
-    }
-
-    // 3. Draw district fills (Progress colors)
-    _drawDistrictsFilled(canvas);
-
-    // 4. Draw Fog of War Overlay
-    _drawFogOverlay(canvas, size);
-
-    // 5. Draw grainy texture for atmosphere
-    _drawGrainOverlay(canvas, size);
-
-    // 6. Selected district highlight (Clear of fog)
-    _drawSelectedDistrictHighlight(canvas);
-
-    // 7. Draw outer border
-    _drawBorders(canvas, size);
   }
 
   /// Draw a province with its color
@@ -104,7 +119,7 @@ class CartoonMapPainter extends CustomPainter {
     }
   }
 
-  /// Draw all districts with progressive unlock colors
+  /// Draw all districts with progressive unlock colors and enhanced visual effects
   void _drawDistrictsFilled(Canvas canvas) {
     for (final entry in districtPaths.entries) {
       final districtId = entry.key;
@@ -118,28 +133,36 @@ class CartoonMapPainter extends CustomPainter {
       final progress = districtProgress[districtId] ?? 0.0;
       final reveal = progress.clamp(0.0, 1.0);
 
-      // District-specific colors + progressive reveal through fog.
+      // District-specific base color with vibrant enhancement
       final districtBaseColor = _districtBaseColor(districtId);
+      final vibranceBoost = HSLColor.fromColor(
+        districtBaseColor,
+      ).withSaturation(0.75).toColor();
+
       final targetColor =
           Color.lerp(
-            districtBaseColor,
+            vibranceBoost,
             theme.getDistrictProgressColor(progress),
-            0.3,
+            0.25,
           ) ??
-          districtBaseColor;
+          vibranceBoost;
+
+      // Enhanced color blending
       var fillColor =
-          Color.lerp(theme.lockedColor, targetColor, 0.15 + (0.85 * reveal)) ??
+          Color.lerp(theme.lockedColor, targetColor, 0.18 + (0.82 * reveal)) ??
           theme.lockedColor;
+
       if (isFocusedDistrict && focusMode) {
         fillColor =
-            Color.lerp(fillColor, theme.selectedDistrictGlassTint, 0.45) ??
+            Color.lerp(fillColor, theme.selectedDistrictGlassTint, 0.50) ??
             theme.selectedDistrictGlassTint;
       }
+
       final opacity = shouldDim
-          ? 0.12
+          ? 0.10
           : (isFocusedDistrict && focusMode
-                ? 0.92
-                : (progress == 0 ? 0.44 : (0.58 + (0.30 * reveal))));
+                ? 0.94
+                : (progress == 0 ? 0.48 : (0.60 + (0.32 * reveal))));
 
       final fillPaint = Paint()
         ..color = fillColor.withValues(alpha: opacity)
@@ -152,17 +175,26 @@ class CartoonMapPainter extends CustomPainter {
                     : theme.borderColor)
                 .withValues(
                   alpha: shouldDim
-                      ? 0.06
+                      ? 0.05
                       : (isFocusedDistrict && focusMode
-                            ? 0.45
-                            : 0.1 + (0.1 * progress)),
+                            ? 0.50
+                            : 0.12 + (0.12 * progress)),
                 )
-        ..strokeWidth = 0.5
+        ..strokeWidth = 0.6
         ..style = PaintingStyle.stroke;
 
       for (final path in districtPathList) {
         canvas.drawPath(path, fillPaint);
         canvas.drawPath(path, borderPaint);
+
+        // Add subtle inner shadow for depth on revealed districts
+        if (reveal > 0.3 && !shouldDim) {
+          final shadowPaint = Paint()
+            ..color = Colors.black.withValues(alpha: 0.08 * reveal)
+            ..style = PaintingStyle.stroke
+            ..strokeWidth = 0.8;
+          canvas.drawPath(path, shadowPaint);
+        }
       }
 
       // Draw labels for all districts, but opacity depends on progress
@@ -181,7 +213,7 @@ class CartoonMapPainter extends CustomPainter {
     return HSLColor.fromAHSL(1.0, hue, 0.62, 0.54).toColor();
   }
 
-  /// Calculate centroid and draw district label
+  /// Calculate centroid and draw district label with enhanced visual style
   void _drawDistrictLabelFor(
     Canvas canvas,
     String districtId,
@@ -195,8 +227,10 @@ class CartoonMapPainter extends CustomPainter {
     final center = bounds.center;
 
     // Label becomes clearer as fog clears
-    final labelOpacity = (0.2 + (0.6 * progress)).clamp(0.0, 1.0);
+    final labelOpacity = (0.3 + (0.65 * progress)).clamp(0.0, 1.0);
+    final labelScale = 0.9 + (0.15 * progress); // Grow as revealed
 
+    // Draw subtle background for better readability
     final textPainter = TextPainter(
       text: TextSpan(
         text: districtId,
@@ -209,81 +243,224 @@ class CartoonMapPainter extends CustomPainter {
       textDirection: TextDirection.ltr,
     );
     textPainter.layout();
+
+    // Draw semi-transparent background for text
+    final labelBgPaint = Paint()
+      ..color = Colors.black.withValues(alpha: labelOpacity * 0.3)
+      ..style = PaintingStyle.fill;
+
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromCenter(
+          center: center,
+          width: textPainter.width + 4,
+          height: textPainter.height + 2,
+        ),
+        const Radius.circular(2),
+      ),
+      labelBgPaint,
+    );
+
+    // Draw the text with scale
+    canvas.save();
+    canvas.translate(center.dx, center.dy);
+    canvas.scale(labelScale);
+    canvas.translate(-center.dx, -center.dy);
+
     textPainter.paint(
       canvas,
       center - Offset(textPainter.width / 2, textPainter.height / 2),
     );
-  }
-
-  /// Draw the fog overlay that covers unexplored areas
-  void _drawFogOverlay(Canvas canvas, Size size) {
-    if (!focusMode || focusedDistrictName == null) return;
-
-    final paths = districtPaths[focusedDistrictName!];
-    if (paths == null || paths.isEmpty) return;
-
-    final layerRect = Rect.fromLTWH(0, 0, size.width, size.height);
-    canvas.saveLayer(layerRect, Paint());
-
-    final fogPaint = Paint()
-      ..color = Colors.black.withValues(alpha: 0.5)
-      ..style = PaintingStyle.fill;
-    canvas.drawRect(layerRect, fogPaint);
-
-    final clearPaint = Paint()..blendMode = BlendMode.clear;
-    for (final path in paths) {
-      canvas.drawPath(path, clearPaint);
-    }
 
     canvas.restore();
   }
 
-  /// Add a grainy/noisy procedural texture
+  /// Draw the fog overlay with enhanced visual quality
+  void _drawFogOverlay(Canvas canvas, Size size) {
+    if (!focusMode || focusedDistrictName == null) return;
+
+    final paths = districtPaths[focusedDistrictName!];
+    if (paths == null || paths.isEmpty) {
+      debugPrint(
+        '⚠️ Map Polish: No paths found for focused district: $focusedDistrictName',
+      );
+      return;
+    }
+
+    try {
+      // Animated fog intensity for breathing effect
+      final breathingIntensity =
+          (math.sin(DateTime.now().millisecondsSinceEpoch / 3000.0) + 1) / 2;
+      final baseAlpha = 0.50 + (0.08 * breathingIntensity);
+
+      // Create layered fog for depth
+      // Layer 1: Deep shadow layer
+      final shadowPaint = Paint()
+        ..color = Colors.black.withValues(alpha: baseAlpha * 0.6)
+        ..style = PaintingStyle.fill;
+      canvas.drawRect(
+        Rect.fromLTWH(0, 0, size.width, size.height),
+        shadowPaint,
+      );
+
+      // Layer 2: Semi-transparent colored fog (theme-aware)
+      final fogColor = theme.backgroundColor.computeLuminance() > 0.5
+          ? Colors.grey.shade900
+          : Colors.grey.shade800;
+      final fogPaint = Paint()
+        ..color = fogColor.withValues(alpha: baseAlpha * 0.4)
+        ..style = PaintingStyle.fill;
+      canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), fogPaint);
+
+      // Create a mask path for the focused district (what should be revealed)
+      final maskPath = Path();
+      for (final path in paths) {
+        maskPath.addPath(path, Offset.zero);
+      }
+
+      // Use XOR blend mode to "cut out" the focused district from fog
+      final revealPaint = Paint()
+        ..color = Colors.transparent
+        ..blendMode = BlendMode.dstOut
+        ..style = PaintingStyle.fill;
+
+      canvas.drawPath(maskPath, revealPaint);
+
+      // Add a subtle gradient edge for smooth transition
+      final edgePath = Path();
+      for (final path in paths) {
+        edgePath.addPath(path, Offset.zero);
+      }
+
+      final edgeHighlightPaint = Paint()
+        ..color = Colors.white.withValues(alpha: 0.06)
+        ..strokeWidth = 1.5
+        ..style = PaintingStyle.stroke;
+      canvas.drawPath(edgePath, edgeHighlightPaint);
+    } catch (e) {
+      debugPrint('❌ Map Polish: Error rendering fog overlay: $e');
+    }
+  }
+
+  /// Add an enhanced grainy/noisy procedural texture with scanlines
   void _drawGrainOverlay(Canvas canvas, Size size) {
     final isDark = theme.backgroundColor.computeLuminance() < 0.5;
-    final paint = Paint()
+
+    // Main grain texture
+    final grainPaint = Paint()
       ..color = (isDark ? Colors.white : const Color(0xFF334155)).withValues(
-        alpha: 0.04,
+        alpha: 0.05,
       )
       ..strokeWidth = 1.0;
 
     final random = math.Random(42); // Seed for stability
-    for (int i = 0; i < 1000; i++) {
+    for (int i = 0; i < 1500; i++) {
       final x = random.nextDouble() * size.width;
       final y = random.nextDouble() * size.height;
-      canvas.drawPoints(ui.PointMode.points, [Offset(x, y)], paint);
+      canvas.drawPoints(ui.PointMode.points, [Offset(x, y)], grainPaint);
     }
+
+    // Subtle horizontal scanlines for film effect
+    final scanlinePaint = Paint()
+      ..color = Colors.black.withValues(alpha: 0.02)
+      ..strokeWidth = 1.0;
+
+    for (double y = 0; y < size.height; y += 3) {
+      canvas.drawLine(Offset(0, y), Offset(size.width, y), scanlinePaint);
+    }
+
+    // Vignette effect (darker edges)
+    final vignetteGradient = RadialGradient(
+      radius: 1.2,
+      colors: [
+        Colors.transparent,
+        (isDark ? Colors.black : Colors.grey.shade900).withValues(alpha: 0.15),
+      ],
+    );
+
+    final vignettePaint = Paint()
+      ..shader = vignetteGradient.createShader(
+        Rect.fromLTWH(0, 0, size.width, size.height),
+      );
+    canvas.drawRect(
+      Rect.fromLTWH(0, 0, size.width, size.height),
+      vignettePaint,
+    );
   }
 
-  /// Highlight the selected district
+  /// Highlight the selected district with enhanced visual effects
   void _drawSelectedDistrictHighlight(Canvas canvas) {
     if (selectedDistrictName == null) return;
 
     final paths = districtPaths[selectedDistrictName!];
     if (paths == null || paths.isEmpty) return;
 
+    // Multi-layer glow effect for better visual feedback
+    final glowLayers = [
+      (radius: 8.0, alpha: 0.15),
+      (radius: 5.0, alpha: 0.25),
+      (radius: 2.0, alpha: 0.35),
+    ];
+
+    for (final glowLayer in glowLayers) {
+      final glowPaint = Paint()
+        ..color = theme.selectedDistrictGlowColor.withValues(
+          alpha: glowLayer.alpha,
+        )
+        ..strokeWidth = 3.0
+        ..maskFilter = MaskFilter.blur(BlurStyle.outer, glowLayer.radius)
+        ..style = PaintingStyle.stroke;
+
+      for (final path in paths) {
+        canvas.drawPath(path, glowPaint);
+      }
+    }
+
+    // Bright border highlight
     final highlightPaint = Paint()
       ..color = theme.selectedDistrictBorderColor
-      ..strokeWidth = 2.0
-      ..style = PaintingStyle.stroke;
-
-    final outerGlowPaint = Paint()
-      ..color = theme.selectedDistrictGlowColor.withValues(alpha: 0.38)
-      ..strokeWidth = 4.0
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2)
+      ..strokeWidth = 2.5
       ..style = PaintingStyle.stroke;
 
     for (final path in paths) {
-      canvas.drawPath(path, outerGlowPaint);
       canvas.drawPath(path, highlightPaint);
+    }
+
+    // Animated pulse effect (inner semi-transparent fill)
+    final pulseOpacity =
+        (math.sin(DateTime.now().millisecondsSinceEpoch / 500.0) + 1) / 3;
+    final pulsePaint = Paint()
+      ..color = theme.selectedDistrictGlassTint.withValues(
+        alpha: 0.15 + (0.10 * pulseOpacity),
+      )
+      ..style = PaintingStyle.fill;
+
+    for (final path in paths) {
+      canvas.drawPath(path, pulsePaint);
     }
   }
 
-  /// Draw simple outer border
+  /// Draw enhanced outer border with glow effect
   void _drawBorders(Canvas canvas, Size size) {
+    // Outer glow
+    final outerGlowPaint = Paint()
+      ..color = theme.borderColor.withValues(alpha: 0.15)
+      ..strokeWidth = 3.0
+      ..maskFilter = const MaskFilter.blur(BlurStyle.outer, 2.0)
+      ..style = PaintingStyle.stroke;
+
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(0, 0, size.width, size.height),
+        const Radius.circular(12),
+      ),
+      outerGlowPaint,
+    );
+
+    // Main border
     final borderPaint = Paint()
       ..color = theme.borderColor
-      ..strokeWidth = 2.0
+      ..strokeWidth = 2.2
       ..style = PaintingStyle.stroke;
 
     canvas.drawRRect(
@@ -292,6 +469,20 @@ class CartoonMapPainter extends CustomPainter {
         const Radius.circular(12),
       ),
       borderPaint,
+    );
+
+    // Inner highlight for depth
+    final innerHighlightPaint = Paint()
+      ..color = Colors.white.withValues(alpha: 0.08)
+      ..strokeWidth = 1.0
+      ..style = PaintingStyle.stroke;
+
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(0.8, 0.8, size.width - 1.6, size.height - 1.6),
+        const Radius.circular(11),
+      ),
+      innerHighlightPaint,
     );
   }
 

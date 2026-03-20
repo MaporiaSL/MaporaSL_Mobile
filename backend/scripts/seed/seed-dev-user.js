@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 const path = require('path');
-require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
-const connectDB = require('./src/config/db');
-const User = require('./src/models/User');
+require('dotenv').config({ path: path.resolve(__dirname, '../../.env') });
+const connectDB = require('../../src/config/db');
+const User = require('../../src/models/User');
 
 async function seedDevUser() {
   try {

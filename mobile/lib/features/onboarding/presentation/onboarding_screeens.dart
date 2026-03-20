@@ -195,7 +195,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             ),
           ),
 
-          const Spacer(),
+          Expanded(child: Center(child: SizedBox.shrink())),
 
           /// Dots Indicator
           Row(
@@ -271,4 +271,3 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     );
   }
 }
-

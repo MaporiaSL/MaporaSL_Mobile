@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import '../data/places_repository.dart';
 import '../models/place.dart';
 import '../widgets/place_card.dart';
+import 'place_detail_screen.dart';
 
 class PlacesListScreen extends StatefulWidget {
   const PlacesListScreen({super.key});
@@ -12,77 +15,162 @@ class PlacesListScreen extends StatefulWidget {
 
 class _PlacesListScreenState extends State<PlacesListScreen> {
   final PlacesRepository _repository = PlacesRepository();
+  final ScrollController _scrollController = ScrollController();
+  final TextEditingController _searchController = TextEditingController();
+
+  static const int _pageSize = 20;
+
   List<Place> _places = [];
   bool _isLoading = true;
+  bool _isLoadingMore = false;
+  bool _hasMore = true;
   String? _error;
   String _searchQuery = '';
+  String _districtQuery = '';
   String? _selectedCategory;
+  int _currentPage = 1;
+  Timer? _searchDebounce;
 
   final List<String> _categories = [
-    'historical', 'temple', 'mountain', 'park', 'beach', 'forest', 'waterfall', 'garden'
+    'historical',
+    'temple',
+    'mountain',
+    'park',
+    'beach',
+    'forest',
+    'waterfall',
+    'garden',
   ];
 
   @override
   void initState() {
     super.initState();
-    _fetchPlaces();
+    _scrollController.addListener(_onScroll);
+    _fetchPlaces(reset: true);
   }
 
-  Future<void> _fetchPlaces() async {
-    setState(() {
-      _isLoading = true;
-      _error = null;
-    });
+  @override
+  void dispose() {
+    _searchDebounce?.cancel();
+    _searchController.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (!_scrollController.hasClients || _isLoadingMore || !_hasMore) return;
+
+    final threshold = _scrollController.position.maxScrollExtent - 280;
+    if (_scrollController.position.pixels >= threshold) {
+      _fetchPlaces();
+    }
+  }
+
+  Future<void> _fetchPlaces({bool reset = false}) async {
+    if (reset) {
+      setState(() {
+        _isLoading = true;
+        _error = null;
+        _currentPage = 1;
+        _hasMore = true;
+      });
+    } else {
+      if (_isLoadingMore || !_hasMore) return;
+      setState(() => _isLoadingMore = true);
+    }
 
     try {
-      final places = await _repository.getPlaces(
+      final pageData = await _repository.getPlacesPage(
+        page: _currentPage,
+        limit: _pageSize,
         search: _searchQuery.isEmpty ? null : _searchQuery,
         category: _selectedCategory,
+        district: _districtQuery.isEmpty ? null : _districtQuery,
       );
+
       setState(() {
-        _places = places;
+        if (reset) {
+          _places = pageData.places;
+        } else {
+          _places = [..._places, ...pageData.places];
+        }
+
+        _hasMore = pageData.hasMore;
+        _currentPage += 1;
         _isLoading = false;
+        _isLoadingMore = false;
       });
     } catch (e) {
       setState(() {
         _error = e.toString();
         _isLoading = false;
+        _isLoadingMore = false;
       });
     }
+  }
+
+  void _onSearchChanged(String value) {
+    _searchDebounce?.cancel();
+    _searchDebounce = Timer(const Duration(milliseconds: 400), () {
+      if (!mounted) return;
+      setState(() => _searchQuery = value.trim());
+      _fetchPlaces(reset: true);
+    });
+  }
+
+  void _onDistrictChanged(String value) {
+    _searchDebounce?.cancel();
+    _searchDebounce = Timer(const Duration(milliseconds: 400), () {
+      if (!mounted) return;
+      setState(() => _districtQuery = value.trim());
+      _fetchPlaces(reset: true);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Sri Lanka Places'),
-        elevation: 0,
-      ),
+      appBar: AppBar(title: const Text('Sri Lanka Places'), elevation: 0),
       body: Column(
         children: [
           _buildSearchBar(),
+          _buildDistrictField(),
           _buildCategoryFilter(),
           Expanded(
-            child: _isLoading 
-              ? const Center(child: CircularProgressIndicator())
-              : _error != null
+            child: _isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : _error != null
                 ? _buildErrorWidget()
                 : _places.isEmpty
-                  ? _buildEmptyWidget()
-                  : RefreshIndicator(
-                      onRefresh: _fetchPlaces,
-                      child: ListView.builder(
-                        itemCount: _places.length,
-                        itemBuilder: (context, index) {
-                          return PlaceCard(
-                            place: _places[index],
-                            onTap: () {
-                              // Navigate to details (to be implemented)
-                            },
+                ? _buildEmptyWidget()
+                : RefreshIndicator(
+                    onRefresh: () => _fetchPlaces(reset: true),
+                    child: ListView.builder(
+                      controller: _scrollController,
+                      itemCount: _places.length + (_isLoadingMore ? 1 : 0),
+                      itemBuilder: (context, index) {
+                        if (index == _places.length) {
+                          return const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 20),
+                            child: Center(child: CircularProgressIndicator()),
                           );
-                        },
-                      ),
+                        }
+
+                        return PlaceCard(
+                          place: _places[index],
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    PlaceDetailScreen(place: _places[index]),
+                              ),
+                            );
+                          },
+                        );
+                      },
                     ),
+                  ),
           ),
         ],
       ),
@@ -91,12 +179,10 @@ class _PlacesListScreenState extends State<PlacesListScreen> {
 
   Widget _buildSearchBar() {
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
       child: TextField(
-        onChanged: (value) {
-          setState(() => _searchQuery = value);
-          _fetchPlaces();
-        },
+        controller: _searchController,
+        onChanged: _onSearchChanged,
         decoration: InputDecoration(
           hintText: 'Search attractions...',
           prefixIcon: const Icon(Icons.search),
@@ -107,6 +193,21 @@ class _PlacesListScreenState extends State<PlacesListScreen> {
           filled: true,
           fillColor: Colors.grey.shade200,
           contentPadding: const EdgeInsets.symmetric(vertical: 0),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDistrictField() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
+      child: TextField(
+        onChanged: _onDistrictChanged,
+        decoration: InputDecoration(
+          hintText: 'Filter by district (e.g. Kandy)',
+          prefixIcon: const Icon(Icons.location_city),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+          isDense: true,
         ),
       ),
     );
@@ -125,8 +226,8 @@ class _PlacesListScreenState extends State<PlacesListScreen> {
           }
           final cat = _categories[index - 1];
           return _buildCategoryChip(
-            cat[0].toUpperCase() + cat.substring(1), 
-            cat
+            cat[0].toUpperCase() + cat.substring(1),
+            cat,
           );
         },
       ),
@@ -144,7 +245,7 @@ class _PlacesListScreenState extends State<PlacesListScreen> {
           setState(() {
             _selectedCategory = selected ? value : null;
           });
-          _fetchPlaces();
+          _fetchPlaces(reset: true);
         },
         selectedColor: Colors.blue.shade100,
         labelStyle: TextStyle(
@@ -163,18 +264,13 @@ class _PlacesListScreenState extends State<PlacesListScreen> {
           const Icon(Icons.error_outline, size: 60, color: Colors.red),
           const SizedBox(height: 16),
           Text(_error ?? 'An unknown error occurred'),
-          ElevatedButton(
-            onPressed: _fetchPlaces,
-            child: const Text('Retry'),
-          ),
+          ElevatedButton(onPressed: _fetchPlaces, child: const Text('Retry')),
         ],
       ),
     );
   }
 
   Widget _buildEmptyWidget() {
-    return const Center(
-      child: Text('No places found matching your search.'),
-    );
+    return const Center(child: Text('No places found matching your search.'));
   }
 }
