@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../features/exploration/data/models/exploration_models.dart';
 import '../../../../features/exploration/providers/exploration_provider.dart';
+import '../../../../features/exploration/presentation/widgets/shareable_card.dart';
 import '../../../../core/providers/accessibility_provider.dart';
 import '../../providers/visit_provider.dart';
 import './verification_checklist.dart';
@@ -59,6 +60,8 @@ class _DynamicVisitSheetState extends ConsumerState<DynamicVisitSheet>
   List<VerificationStep> _steps = [];
   int _currentStepIndex = 0;
   late AnimationController _radarController;
+  bool _wasDistrictUnlocked = false;
+  bool _certificateShown = false;
 
   @override
   void initState() {
@@ -72,9 +75,38 @@ class _DynamicVisitSheetState extends ConsumerState<DynamicVisitSheet>
     }
     
     _initSteps();
+    if (widget.isExploration && widget.explorationLocation != null) {
+      final assignment = _findAssignmentForLocation(ref.read(explorationProvider));
+      _wasDistrictUnlocked = assignment?.isUnlocked == true;
+    }
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _triggerVerification();
     });
+  }
+
+  DistrictAssignment? _findAssignmentForLocation(ExplorationState state) {
+    final target = widget.explorationLocation?.id;
+    if (target == null || target.isEmpty) return null;
+
+    for (final assignment in state.assignments) {
+      final hasLocation = assignment.locations.any((location) => location.id == target);
+      if (hasLocation) return assignment;
+    }
+    return null;
+  }
+
+  Future<void> _openCertificateOverlay(DistrictAssignment assignment) async {
+    await Navigator.of(context).push(
+      PageRouteBuilder<void>(
+        opaque: false,
+        pageBuilder: (_, __, ___) {
+          return DiscoveryCertificateOverlay(
+            assignment: assignment,
+            unlockLocationName: widget.placeName,
+          );
+        },
+      ),
+    );
   }
 
   void _initSteps() {
@@ -118,6 +150,22 @@ class _DynamicVisitSheetState extends ConsumerState<DynamicVisitSheet>
     final String? error = widget.isExploration ? explorationState.error : visitState.error;
     final int providerStepIndex = widget.isExploration ? explorationState.currentStepIndex : visitState.currentStepIndex;
     final String? verificationStepDesc = widget.isExploration ? explorationState.verificationStep : visitState.verificationStep;
+    final currentAssignment =
+        widget.isExploration ? _findAssignmentForLocation(explorationState) : null;
+    final districtJustUnlocked =
+        widget.isExploration &&
+        currentAssignment != null &&
+        currentAssignment.isUnlocked &&
+        !_wasDistrictUnlocked &&
+        success &&
+        error == null;
+
+    if (districtJustUnlocked && !_certificateShown) {
+      _certificateShown = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _openCertificateOverlay(currentAssignment);
+      });
+    }
 
     // Sync _steps with provider state
     for (int i = 0; i < _steps.length; i++) {
@@ -176,10 +224,24 @@ class _DynamicVisitSheetState extends ConsumerState<DynamicVisitSheet>
   }
 
   Widget _buildContent(bool isVerifying, bool success, String? error, String? stepDesc) {
+    final explorationState = ref.watch(explorationProvider);
+    final currentAssignment =
+        widget.isExploration ? _findAssignmentForLocation(explorationState) : null;
+    final districtJustUnlocked =
+        widget.isExploration &&
+        currentAssignment != null &&
+        currentAssignment.isUnlocked &&
+        !_wasDistrictUnlocked &&
+        success &&
+        error == null;
+
     if (isVerifying || (error == null && _currentStepIndex < _steps.length && _currentStepIndex >= 0)) {
       return _buildVerifyingUI(stepDesc);
     } else if (success && error == null) {
-      return _buildSuccessUI();
+      return _buildSuccessUI(
+        districtJustUnlocked: districtJustUnlocked,
+        currentAssignment: currentAssignment,
+      );
     } else if (error != null) {
       return _buildErrorUI(error);
     }
@@ -248,7 +310,10 @@ class _DynamicVisitSheetState extends ConsumerState<DynamicVisitSheet>
     );
   }
 
-  Widget _buildSuccessUI() {
+  Widget _buildSuccessUI({
+    required bool districtJustUnlocked,
+    required DistrictAssignment? currentAssignment,
+  }) {
     return SingleChildScrollView(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -275,16 +340,29 @@ class _DynamicVisitSheetState extends ConsumerState<DynamicVisitSheet>
             },
           ),
           const SizedBox(height: 24),
-          const Text(
-            'Visit Confirmed!',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          Text(
+            districtJustUnlocked ? 'District Unlocked!' : 'Visit Confirmed!',
+            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
           Text(
-            'You have successfully visited ${widget.placeName}',
+            districtJustUnlocked
+                ? '${currentAssignment?.visitedCount ?? 0}/${currentAssignment?.assignedCount ?? 0} Places Visited in ${currentAssignment?.district ?? ''}'
+                : 'You have successfully visited ${widget.placeName}',
             style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
             textAlign: TextAlign.center,
           ),
+          if (districtJustUnlocked) ...[
+            const SizedBox(height: 20),
+            OutlinedButton.icon(
+              onPressed: () {
+                if (currentAssignment == null) return;
+                _openCertificateOverlay(currentAssignment);
+              },
+              icon: const Icon(Icons.card_membership),
+              label: const Text('View Certificate'),
+            ),
+          ],
           const SizedBox(height: 32),
           ElevatedButton(
             onPressed: () => Navigator.of(context).pop(),

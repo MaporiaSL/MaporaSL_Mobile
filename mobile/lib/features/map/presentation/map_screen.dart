@@ -5,6 +5,7 @@ import 'dart:ui' show ImageFilter;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/services.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart' as mapbox;
 import '../../../core/constants/app_colors.dart';
 import '../data/regions_data.dart';
@@ -121,13 +122,7 @@ class _MapScreenState extends ConsumerState<MapScreen>
       if (previous?.isVerifying == true &&
           !next.isVerifying &&
           next.error == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('âœ… Location verified successfully!'),
-            backgroundColor: Colors.green,
-            duration: Duration(seconds: 3),
-          ),
-        );
+        // Success visuals are handled in DynamicVisitSheet to avoid duplicate UX.
       }
     });
 
@@ -538,6 +533,9 @@ class _DistrictSatelliteMapState extends State<_DistrictSatelliteMap> {
 
   mapbox.MapboxMap? _mapboxMap;
   mapbox.PointAnnotationManager? _pointManager;
+  mapbox.PointAnnotationManager? _userPointManager;
+  mapbox.PointAnnotation? _userLocationAnnotation;
+  StreamSubscription<Position>? _positionSubscription;
   mapbox.Cancelable? _tapCancelable;
   String? _selectedDistrictGeoJson;
   String? _outsideMaskGeoJson;
@@ -558,8 +556,12 @@ class _DistrictSatelliteMapState extends State<_DistrictSatelliteMap> {
   void dispose() {
     _tapCancelable?.cancel();
     _tapCancelable = null;
+    _positionSubscription?.cancel();
+    _positionSubscription = null;
     _clearDistrictLayers();
     _pointManager = null;
+    _userPointManager = null;
+    _userLocationAnnotation = null;
     _mapboxMap = null;
     super.dispose();
   }
@@ -1097,6 +1099,68 @@ class _DistrictSatelliteMapState extends State<_DistrictSatelliteMap> {
     );
   }
 
+  Future<void> _startUserLocationTracking(mapbox.MapboxMap map) async {
+    try {
+      final serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) return;
+
+      var permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+      }
+      if (permission == LocationPermission.denied ||
+          permission == LocationPermission.deniedForever) {
+        return;
+      }
+
+      _userPointManager ??=
+          await map.annotations.createPointAnnotationManager();
+
+      final current = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+      await _updateUserLocationMarker(current);
+
+      _positionSubscription?.cancel();
+      _positionSubscription = Geolocator.getPositionStream(
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.high,
+          distanceFilter: 25,
+        ),
+      ).listen((position) {
+        _updateUserLocationMarker(position);
+      });
+    } catch (_) {
+      // Location display is best-effort and should not block map usage.
+    }
+  }
+
+  Future<void> _updateUserLocationMarker(Position position) async {
+    final manager = _userPointManager;
+    if (manager == null) return;
+
+    final geometry = mapbox.Point(
+      coordinates: mapbox.Position(position.longitude, position.latitude),
+    );
+
+    if (_userLocationAnnotation == null) {
+      _userLocationAnnotation = await manager.create(
+        mapbox.PointAnnotationOptions(
+          geometry: geometry,
+          iconImage: 'marker-15',
+          iconColor: const Color(0xFF2563EB).toARGB32(),
+          iconSize: 2.4,
+          iconOpacity: 1.0,
+        ),
+      );
+      return;
+    }
+
+    final annotation = _userLocationAnnotation!;
+    annotation.geometry = geometry;
+    await manager.update(annotation);
+  }
+
   Future<void> _reloadDistrictData() async {
     final map = _mapboxMap;
     if (map == null) return;
@@ -1104,6 +1168,7 @@ class _DistrictSatelliteMapState extends State<_DistrictSatelliteMap> {
     await _prepareDistrictGeometry();
     await _applyDistrictLayers(map);
     await _applyLocationLayers(map);
+    await _setupMarkers(map);
     await _fitToDistrict(map);
   }
 
@@ -1194,6 +1259,7 @@ class _DistrictSatelliteMapState extends State<_DistrictSatelliteMap> {
         // Interactive zoom and pan are enabled by default in mapbox_maps_flutter
         // Users can pinch-to-zoom and pan within bounds (set by setBounds in _fitToDistrict)
         await _reloadDistrictData();
+        await _startUserLocationTracking(map);
       },
       // Handle taps on map for location marker selection
       onTapListener: _handleMapTap,
