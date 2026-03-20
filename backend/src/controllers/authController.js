@@ -2,6 +2,7 @@ const User = require('../models/User');
 const Session = require('../models/Session');
 const UserDistrictAssignment = require('../models/UserDistrictAssignment');
 const { assignExplorationForUser } = require('./explorationController');
+const { admin } = require('../config/firebase');
 
 // Register or sync user (called after Firebase login)
 async function registerUser(req, res) {
@@ -129,7 +130,20 @@ async function deleteAccount(req, res) {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    // Delete all user-related data
+    // Delete from Firebase Auth first
+    try {
+      await admin.auth().deleteUser(userId);
+      console.log(`✅ Deleted Firebase Auth user: ${userId}`);
+    } catch (firebaseError) {
+      if (firebaseError.code === 'auth/user-not-found') {
+        console.warn(`⚠️ Firebase user already deleted or doesn't exist: ${userId}`);
+      } else {
+        console.error('Firebase deletion error:', firebaseError);
+        throw firebaseError;
+      }
+    }
+
+    // Delete all user-related data from MongoDB
     // 1. Delete user's exploration assignments
     await UserDistrictAssignment.deleteMany({ userId });
 
@@ -139,10 +153,14 @@ async function deleteAccount(req, res) {
     // 3. Delete the user account
     await User.findOneAndDelete({ auth0Id: userId });
 
+    console.log(`✅ Deleted MongoDB user and related data: ${userId}`);
     res.status(200).json({ message: 'Account deleted successfully' });
   } catch (error) {
     console.error('Delete account error:', error);
-    res.status(500).json({ error: 'Failed to delete account' });
+    res.status(500).json({ 
+      error: 'Failed to delete account',
+      details: error.message 
+    });
   }
 }
 

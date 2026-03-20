@@ -622,7 +622,11 @@ class ProfileScreen extends ConsumerWidget {
       builder: (context) => AlertDialog(
         title: const Text('Delete Account'),
         content: const Text(
-          'Are you sure you want to delete your account? This action cannot be undone. All your data will be permanently removed.',
+          'Are you sure you want to delete your account? This action is PERMANENT and cannot be undone.\n\n'
+          '• All your data will be permanently removed from our servers\n'
+          '• Your account will be deleted from Firebase Auth\n'
+          '• You will NOT be able to log back in with these credentials\n'
+          '• This action happens immediately',
         ),
         actions: [
           TextButton(
@@ -635,7 +639,7 @@ class ProfileScreen extends ConsumerWidget {
               _performDelete(context, ref);
             },
             style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: const Text('Delete'),
+            child: const Text('Delete Permanently'),
           ),
         ],
       ),
@@ -644,9 +648,12 @@ class ProfileScreen extends ConsumerWidget {
 
   void _performDelete(BuildContext context, WidgetRef ref) async {
     try {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Deleting account...')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Deleting account permanently...'),
+          duration: Duration(seconds: 2),
+        ),
+      );
 
       final authService = ref.read(authServiceProvider);
       final userId = authService.currentUser?.uid;
@@ -669,6 +676,14 @@ class ProfileScreen extends ConsumerWidget {
       await authService.signOut();
 
       if (context.mounted) {
+        // Show final confirmation
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Account deleted successfully. You cannot log back in with these credentials.'),
+            duration: Duration(seconds: 3),
+          ),
+        );
+
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (_) => const SplashScreen()),
           (route) => false,
@@ -676,9 +691,12 @@ class ProfileScreen extends ConsumerWidget {
       }
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Error deleting account: $e')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error deleting account: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
       }
     }
   }
