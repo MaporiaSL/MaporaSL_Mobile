@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 
+import 'custom_trip_builder_page.dart';
 import 'widgets/custom_icon_button.dart';
 import 'widgets/location_card.dart';
 import 'widgets/nearby_places.dart';
@@ -230,9 +231,10 @@ class TripsPage extends StatelessWidget {
             return InkWell(
               borderRadius: BorderRadius.circular(18),
               onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Create custom trip flow coming soon.'),
+                Navigator.push(
+                  context,
+                  MaterialPageRoute<void>(
+                    builder: (context) => const CustomTripBuilderPage(),
                   ),
                 );
               },
