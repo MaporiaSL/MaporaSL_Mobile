@@ -150,8 +150,6 @@ class _MemoryLanePageState extends ConsumerState<MemoryLanePage>
       );
     }
 
-    // Always build the hardcoded trips FIRST so they show even if API has no trips
-    final hardcodedCompleted = _hardcodedCompletedTrips();
     final apiTrips = tripsState.trips;
 
     // Group API trips by status
@@ -163,7 +161,6 @@ class _MemoryLanePageState extends ConsumerState<MemoryLanePage>
     final scheduled = byStatus('scheduled');
     final planned = byStatus('planned') + byStatus('active');
     final apiCompleted = byStatus('completed');
-    final allCompleted = [...hardcodedCompleted, ...apiCompleted];
 
     return RefreshIndicator(
       onRefresh: () async =>
@@ -189,15 +186,17 @@ class _MemoryLanePageState extends ConsumerState<MemoryLanePage>
               canEdit: true,
             ),
           if (planned.isNotEmpty) const SizedBox(height: 24),
-          // Always show the completed section with hardcoded trips
-          _StatusSection(
-            label: 'Completed',
-            color: Colors.purple,
-            icon: Icons.check_circle,
-            trips: allCompleted,
-            canEdit: false,
-          ),
-          const SizedBox(height: 24),
+          // Only show completed section if there are actually completed trips
+          if (apiCompleted.isNotEmpty) ...[
+            _StatusSection(
+              label: 'Completed',
+              color: Colors.purple,
+              icon: Icons.check_circle,
+              trips: apiCompleted,
+              canEdit: false,
+            ),
+            const SizedBox(height: 24),
+          ],
           // Show create button at the bottom if no API trips yet
           if (apiTrips.isEmpty)
             Center(
@@ -221,111 +220,6 @@ class _MemoryLanePageState extends ConsumerState<MemoryLanePage>
         ],
       ),
     );
-  }
-
-  /// Returns 5 hardcoded completed Sri Lanka trips for the timeline
-  List<TripModel> _hardcodedCompletedTrips() {
-    return [
-      TripModel(
-        id: 'hc_trip_1',
-        userId: 'local',
-        title: 'Sigiriya',
-        description:
-            'A full day at the iconic Sigiriya Rock Fortress — climb the ancient citadel, explore the water gardens, and marvel at the stunning views from the top.',
-        startDate: DateTime(2025, 12, 14),
-        endDate: DateTime(2025, 12, 14),
-        status: 'completed',
-        createdAt: DateTime(2025, 12, 14),
-        updatedAt: DateTime(2025, 12, 14),
-        completionPercentageCached: 100,
-        destinationCount: 3,
-        visitedCount: 3,
-        locations: [
-          const TripLocation(name: 'Sigiriya Rock', day: 1),
-          const TripLocation(name: 'Water Gardens', day: 1),
-          const TripLocation(name: 'Pidurangala', day: 1),
-        ],
-      ),
-      TripModel(
-        id: 'hc_trip_2',
-        userId: 'local',
-        title: 'Mirissa',
-        description:
-            'Two relaxing days on the stunning Mirissa coast — whale watching at sunrise, surfing at Parrot Rock, and fresh seafood by the beach at sunset.',
-        startDate: DateTime(2025, 11, 22),
-        endDate: DateTime(2025, 11, 23),
-        status: 'completed',
-        createdAt: DateTime(2025, 11, 22),
-        updatedAt: DateTime(2025, 11, 23),
-        completionPercentageCached: 100,
-        destinationCount: 3,
-        visitedCount: 3,
-        locations: [
-          const TripLocation(name: 'Mirissa Beach', day: 1),
-          const TripLocation(name: 'Whale Watch Point', day: 1),
-          const TripLocation(name: 'Parrot Rock', day: 2),
-        ],
-      ),
-      TripModel(
-        id: 'hc_trip_3',
-        userId: 'local',
-        title: 'Nuwara Eliya',
-        description:
-            'Two days in the misty hill country — visit Gregory Lake, tour a tea factory in the highlands, and stroll through the famous Hakgala Botanical Gardens.',
-        startDate: DateTime(2025, 9, 6),
-        endDate: DateTime(2025, 9, 7),
-        status: 'completed',
-        createdAt: DateTime(2025, 9, 6),
-        updatedAt: DateTime(2025, 9, 7),
-        completionPercentageCached: 100,
-        destinationCount: 3,
-        visitedCount: 3,
-        locations: [
-          const TripLocation(name: 'Gregory Lake', day: 1),
-          const TripLocation(name: 'Tea Factory', day: 1),
-          const TripLocation(name: 'Hakgala Gardens', day: 2),
-        ],
-      ),
-      TripModel(
-        id: 'hc_trip_4',
-        userId: 'local',
-        title: 'Ella',
-        description:
-            'An exhilarating day hike to the summit of Ella Rock with sweeping views of the valley, followed by a stroll across the iconic Nine Arches Bridge.',
-        startDate: DateTime(2025, 7, 19),
-        endDate: DateTime(2025, 7, 19),
-        status: 'completed',
-        createdAt: DateTime(2025, 7, 19),
-        updatedAt: DateTime(2025, 7, 19),
-        completionPercentageCached: 100,
-        destinationCount: 2,
-        visitedCount: 2,
-        locations: [
-          const TripLocation(name: 'Ella Rock', day: 1),
-          const TripLocation(name: 'Nine Arches Bridge', day: 1),
-        ],
-      ),
-      TripModel(
-        id: 'hc_trip_5',
-        userId: 'local',
-        title: 'Galle Fort',
-        description:
-            'Three days exploring historic Galle Fort — wander the cobblestone streets, visit the lighthouse, discover boutique cafes inside the old Dutch ramparts.',
-        startDate: DateTime(2025, 4, 18),
-        endDate: DateTime(2025, 4, 20),
-        status: 'completed',
-        createdAt: DateTime(2025, 4, 18),
-        updatedAt: DateTime(2025, 4, 20),
-        completionPercentageCached: 67,
-        destinationCount: 3,
-        visitedCount: 2,
-        locations: [
-          const TripLocation(name: 'Galle Fort', day: 1),
-          const TripLocation(name: 'Lighthouse', day: 2),
-          const TripLocation(name: 'Unawatuna Beach', day: 3),
-        ],
-      ),
-    ];
   }
 
   String _statusKey(TripModel trip) {

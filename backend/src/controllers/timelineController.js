@@ -1,6 +1,4 @@
-const User = require('../models/User');
-const Destination = require('../models/Destination');
-const Album = require('../models/Album');
+const Travel = require('../models/Travel');
 
 /**
  * Get unified timeline events for a user
@@ -18,103 +16,40 @@ async function getTimeline(req, res) {
     // Initialize an array to hold all timeline events
     let timelineEvents = [];
 
-    // 1. Fetch Visited Destinations
-    const visitedDestinations = await Destination.find({
-      userId,
-      visited: true,
-      visitedAt: { $ne: null }
-    }).lean();
+    // 1. Fetch User's Real Trips (Planned/Completed)
+    const userTrips = await Travel.find({ userId }).lean();
+    const now = new Date();
 
-    const visitEvents = visitedDestinations.map(dest => ({
-      id: `visit_${dest._id.toString()}`,
-      type: 'VISIT',
-      timestamp: dest.visitedAt,
-      title: 'Discovered a new place',
-      description: dest.name,
-      metadata: {
-        placeId: dest._id.toString(),
-        latitude: dest.latitude,
-        longitude: dest.longitude,
-        districtId: dest.districtId
-      }
-    }));
-    timelineEvents.push(...visitEvents);
-
-    // 2. Fetch Photos and Albums
-    const albums = await Album.find({ userId }).lean();
-    
-    // Flatten photos from all albums
-    albums.forEach(album => {
-      if (album.photos && album.photos.length > 0) {
-        const photoEvents = album.photos.map(photo => {
-          let title = 'Captured a memory';
-          if (album.name && album.name.toLowerCase() !== 'default album') {
-            title += ` in ${album.name}`;
-          }
-
-          return {
-            id: `photo_${photo._id.toString()}`,
-            type: 'PHOTO',
-            timestamp: photo.createdAt,
-            title,
-            description: photo.caption || 'A beautiful moment from your journey.',
-            metadata: {
-              imageUrl: photo.url,
-              albumId: album._id.toString(),
-              placeName: photo.location?.placeName
-            }
-          };
-        });
-        timelineEvents.push(...photoEvents);
-      }
-    });
-
-    // 3. Fetch Achievements (Gamified progression)
-    const user = await User.findOne({ auth0Id: userId }).lean();
-    
-    if (user && user.achievements && user.achievements.length > 0) {
-      const unlockedAchievements = user.achievements.filter(ach => ach.unlockedAt != null);
+    const tripEvents = userTrips.map(trip => {
+      const isUpcoming = new Date(trip.startDate) > now;
       
-      const achievementEvents = unlockedAchievements.map((ach, index) => ({
-        id: `achievement_${userId}_${ach.districtId}_${index}`,
-        type: 'ACHIEVEMENT',
-        timestamp: ach.unlockedAt,
-        title: 'Achievement Unlocked',
-        description: `Unlocked the ${ach.districtId.charAt(0).toUpperCase() + ach.districtId.slice(1)} Explorer badge!`,
-        metadata: {
-          districtId: ach.districtId,
-          badgeIcon: 'star' 
-        }
-      }));
-      timelineEvents.push(...achievementEvents);
-    }
-
-    // 4. Inject Upcoming Planned Trips
-    const upcomingEvents = [
-      {
-        id: `upcoming_trip_1`,
-        type: 'UPCOMING',
-        timestamp: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000),
-        title: 'Galle Fort Heritage Walk',
-        description: 'A weekend getaway walking the cobbled streets of the Dutch Fort. Architecture, cafes, and sunsets.',
-        metadata: {
-          daysRemaining: 10,
-          location: 'Galle Fort'
-        }
-      },
-      {
-        id: `upcoming_trip_2`,
-        type: 'UPCOMING',
-        timestamp: new Date(Date.now() + 18 * 24 * 60 * 60 * 1000),
-        title: 'Hikkaduwa Snorkeling Escape',
-        description: 'A quick dive into vibrant coral reefs and relaxing on the beach.',
-        metadata: {
-          daysRemaining: 18,
-          location: 'Hikkaduwa'
-        }
+      // Construct a short location summary
+      let locationSummary = '';
+      if (trip.locations && trip.locations.length > 0) {
+        locationSummary = trip.locations.slice(0, 2).join(', ');
+        if (trip.locations.length > 2) locationSummary += '...';
       }
-    ];
-    timelineEvents.push(...upcomingEvents);
+
+      return {
+        id: `trip_${trip._id.toString()}`,
+        // Map to standard frontend enum types
+        type: isUpcoming ? 'UPCOMING' : 'COMPLETED_TRIP',
+        timestamp: trip.startDate,
+        title: trip.title,
+        description: trip.description || `Exploring ${locationSummary || 'Sri Lanka'}`,
+        tripId: trip._id.toString(),
+        // Metadata for frontend cards
+        destinationCount: trip.locations ? trip.locations.length : 0,
+        visitedCount: isUpcoming ? 0 : (trip.locations ? trip.locations.length : 0),
+        completionPercentage: isUpcoming ? 0 : 100,
+        metadata: {
+          locations: trip.locations,
+          startDate: trip.startDate,
+          endDate: trip.endDate
+        }
+      };
+    });
+    timelineEvents.push(...tripEvents);
 
     // Sort all events chronologically (newest first)
     timelineEvents.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
