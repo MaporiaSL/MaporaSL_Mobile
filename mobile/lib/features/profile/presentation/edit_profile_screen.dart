@@ -237,6 +237,9 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(_l10n.emailChangeVerificationSent(newEmail))),
       );
+    } on AuthRecentLoginRequiredException {
+      if (!mounted) return;
+      setState(() => _inlineError = _l10n.recentLoginRequired);
     } catch (e) {
       if (!mounted) return;
       setState(() => _inlineError = _l10n.accountActionFailed(e.toString()));
@@ -267,16 +270,31 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     if (shouldDelete != true || !mounted) return;
 
     final authService = ref.read(authServiceProvider);
+    final repository = ref.read(profileRepositoryProvider);
+    final userId = ref.read(currentUserIdProvider);
+    if (userId == null) {
+      setState(() => _inlineError = _l10n.deleteAccountFailed);
+      return;
+    }
+
     setState(() {
       _isAccountActionBusy = true;
       _inlineError = null;
     });
+
     try {
+      await repository.deleteAccount(userId);
       await authService.deleteCurrentUser();
       if (!mounted) return;
       await authService.signOut();
       if (!mounted) return;
       Navigator.of(context).pushNamedAndRemoveUntil('/login', (_) => false);
+    } on AuthRecentLoginRequiredException {
+      if (!mounted) return;
+      setState(() => _inlineError = _l10n.recentLoginRequired);
+    } on Exception {
+      if (!mounted) return;
+      setState(() => _inlineError = _l10n.backendAccountDeleteFailed);
     } catch (e) {
       if (!mounted) return;
       setState(() => _inlineError = _l10n.deleteAccountFailed);

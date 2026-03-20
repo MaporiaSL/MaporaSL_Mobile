@@ -1,6 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
+class AuthRecentLoginRequiredException implements Exception {
+  const AuthRecentLoginRequiredException();
+}
+
 class AuthService {
   AuthService({FirebaseAuth? auth, GoogleSignIn? googleSignIn})
     : _auth = auth ?? FirebaseAuth.instance,
@@ -58,7 +62,14 @@ class AuthService {
         message: 'No authenticated user is currently signed in.',
       );
     }
-    await user.verifyBeforeUpdateEmail(newEmail.trim());
+    try {
+      await user.verifyBeforeUpdateEmail(newEmail.trim());
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'requires-recent-login') {
+        throw const AuthRecentLoginRequiredException();
+      }
+      rethrow;
+    }
   }
 
   Future<void> deleteCurrentUser() async {
@@ -69,7 +80,14 @@ class AuthService {
         message: 'No authenticated user is currently signed in.',
       );
     }
-    await user.delete();
+    try {
+      await user.delete();
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'requires-recent-login') {
+        throw const AuthRecentLoginRequiredException();
+      }
+      rethrow;
+    }
   }
 
   Future<UserCredential> signInWithGoogle() async {

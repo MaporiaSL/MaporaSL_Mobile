@@ -119,6 +119,20 @@ class ProfileApi {
     }
   }
 
+  Future<Map<String, dynamic>> deleteAccount(String userId) async {
+    try {
+      final response = await _dio.delete('/api/profile/$userId/account');
+      if (response.statusCode == 200) {
+        return Map<String, dynamic>.from(response.data as Map);
+      }
+      throw Exception('Failed to delete account: ${response.statusCode}');
+    } on DioException {
+      rethrow;
+    } catch (e) {
+      throw Exception('Error deleting account: $e');
+    }
+  }
+
   Future<List<dynamic>> getTopContributors({int limit = 10}) async {
     try {
       final response = await _dio.get(

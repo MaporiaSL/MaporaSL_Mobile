@@ -193,6 +193,10 @@ class ProfileSetupLocalizations {
           'Could not delete account right now. Please re-authenticate and retry.',
       'noEmailForPasswordReset':
           'No email address is available for password reset.',
+      'recentLoginRequired':
+          'For security, please sign in again and retry this action.',
+      'backendAccountDeleteFailed':
+          'Account cleanup failed on server. Please try again shortly.',
     },
     'si': {
       'screenTitle': 'Complete Your Profile',
@@ -366,6 +370,10 @@ class ProfileSetupLocalizations {
           'දැනට ගිණුම මකා දැමිය නොහැක. නැවත සත්‍යාපනය කර යළි උත්සාහ කරන්න.',
       'noEmailForPasswordReset':
           'මුරපදය යළි පිහිටුවීමට විද්‍යුත් තැපෑලක් නොමැත.',
+      'recentLoginRequired':
+          'ආරක්ෂාව සඳහා, කරුණාකර නැවත පිවිසී මෙම ක්‍රියාව නැවත උත්සාහ කරන්න.',
+      'backendAccountDeleteFailed':
+          'සේවාදායකයේ ගිණුම් පිරිසිදු කිරීම අසාර්ථක විය. ටික වේලාවකින් නැවත උත්සාහ කරන්න.',
     },
     'ta': {
       'screenTitle': 'Complete Your Profile',
@@ -540,6 +548,10 @@ class ProfileSetupLocalizations {
           'இப்போது கணக்கை நீக்க முடியவில்லை. மீண்டும் அங்கீகரித்து முயற்சிக்கவும்.',
       'noEmailForPasswordReset':
           'கடவுச்சொல் மீட்டமைக்க மின்னஞ்சல் முகவரி இல்லை.',
+      'recentLoginRequired':
+          'பாதுகாப்பிற்காக, மீண்டும் உள்நுழைந்து இந்த செயலை மறுபடியும் முயற்சிக்கவும்.',
+      'backendAccountDeleteFailed':
+          'சேவையகத்தில் கணக்கு சுத்திகரிப்பு தோல்வியடைந்தது. சிறிது நேரம் கழித்து முயற்சிக்கவும்.',
     },
   };
 
@@ -702,6 +714,8 @@ class ProfileSetupLocalizations {
   String get deleteAccountWarning => _value('deleteAccountWarning');
   String get deleteAccountFailed => _value('deleteAccountFailed');
   String get noEmailForPasswordReset => _value('noEmailForPasswordReset');
+    String get recentLoginRequired => _value('recentLoginRequired');
+    String get backendAccountDeleteFailed => _value('backendAccountDeleteFailed');
 
   String passwordResetSent(String email) {
     return 'Password reset link sent to $email.';
