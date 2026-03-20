@@ -321,7 +321,7 @@ void main() {
     await tester.tap(find.text('Remove avatar'));
     await tester.pump();
 
-    expect(find.text('Updating avatar...'), findsOneWidget);
+    expect(find.text('Saving...'), findsOneWidget);
 
     completer.complete(initialProfile);
     await tester.pump(const Duration(seconds: 3));
