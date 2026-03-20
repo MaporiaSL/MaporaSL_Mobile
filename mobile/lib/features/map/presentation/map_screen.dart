@@ -1,7 +1,6 @@
 ﻿import 'dart:async';
 import 'dart:convert';
 import 'dart:math' as math;
-import 'dart:ui' show ImageFilter;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/services.dart';
@@ -163,24 +162,6 @@ class _MapScreenState extends ConsumerState<MapScreen>
           automaticallyImplyLeading: false,
           actions: const [],
         ),
-        // Close button as FAB - guaranteed to be on top and responsive
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            // Animate focus exit smoothly
-            _focusAnimationController.reverse().then((_) {
-              setState(() {
-                selectedDistrict = null;
-                selectedProvince = null;
-                _isDistrictFocused = false;
-                _selectedLocation = null;
-              });
-            });
-          },
-          backgroundColor: Colors.white.withValues(alpha: 0.25),
-          elevation: 0,
-          child: const Icon(Icons.close, color: Colors.white, size: 28),
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
         body: SafeArea(
           top: false,
           child: Stack(
@@ -197,11 +178,22 @@ class _MapScreenState extends ConsumerState<MapScreen>
                 },
               ),
               Positioned(
-                top: 12,
+                top: 20,
                 left: 16,
-                right: 0,
+                right: 16,
                 child: _DistrictHeaderBar(
                   district: selectedDistrict ?? 'District',
+                  theme: theme,
+                  onClose: () {
+                    _focusAnimationController.reverse().then((_) {
+                      setState(() {
+                        selectedDistrict = null;
+                        selectedProvince = null;
+                        _isDistrictFocused = false;
+                        _selectedLocation = null;
+                      });
+                    });
+                  },
                 ),
               ),
               if (_selectedLocation != null)
@@ -353,59 +345,54 @@ class _MapScreenState extends ConsumerState<MapScreen>
 
 class _DistrictHeaderBar extends StatelessWidget {
   final String district;
+  final MapVisualTheme theme;
+  final VoidCallback onClose;
 
-  const _DistrictHeaderBar({required this.district});
+  const _DistrictHeaderBar({
+    required this.district,
+    required this.theme,
+    required this.onClose,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(16),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 12.0, sigmaY: 12.0),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                Colors.white.withValues(alpha: 0.18),
-                Colors.white.withValues(alpha: 0.08),
-              ],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: Colors.white.withValues(alpha: 0.25),
-              width: 1.5,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.1),
-                blurRadius: 20,
-                spreadRadius: 0,
-              ),
-            ],
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+      decoration: BoxDecoration(
+        color: AppColors.secondary.withValues(alpha: 0.9),
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.25),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
           ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Expanded(
-                child: Text(
-                  district,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 20,
-                    letterSpacing: 0.5,
-                  ),
-                ),
+        ],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          Expanded(
+            child: Text(
+              district,
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w700,
+                fontSize: 22,
+                letterSpacing: 0.5,
               ),
-              // Close button now handled by FAB above
-              const SizedBox(width: 8),
-            ],
+            ),
           ),
-        ),
+          IconButton(
+            onPressed: onClose,
+            icon: const Icon(Icons.close, color: Colors.white, size: 26),
+            tooltip: 'Close',
+            splashRadius: 24,
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+          ),
+        ],
       ),
     );
   }
