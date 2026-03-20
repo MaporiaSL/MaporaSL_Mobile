@@ -492,7 +492,12 @@ final userContributionsProvider = FutureProvider<List<ContributedPlace>>((
 
   try {
     final repository = ref.watch(profileRepositoryProvider);
-    return repository.getUserContributions(userId);
+    final page = await repository.getUserContributionsPage(
+      userId,
+      page: 1,
+      limit: 20,
+    );
+    return page.items;
   } catch (e) {
     if (kDebugMode) {
       debugPrint('[ERROR] Failed to load contributions: $e');
@@ -674,7 +679,8 @@ final topContributorsProvider = FutureProvider<List<Map<String, dynamic>>>((
   ref,
 ) async {
   final repository = ref.watch(profileRepositoryProvider);
-  return repository.getTopContributors(limit: 10);
+  final page = await repository.getTopContributorsPage(page: 1, limit: 10);
+  return page.items;
 });
 
 class PlaceSubmissionState {

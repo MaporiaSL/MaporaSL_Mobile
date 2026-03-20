@@ -1,6 +1,38 @@
 import '../datasources/profile_api.dart';
 import '../../domain/user_profile.dart';
 
+class PagedContributions {
+  final List<ContributedPlace> items;
+  final bool hasMore;
+  final int page;
+  final int limit;
+  final int total;
+
+  const PagedContributions({
+    required this.items,
+    required this.hasMore,
+    required this.page,
+    required this.limit,
+    required this.total,
+  });
+}
+
+class PagedTopContributors {
+  final List<Map<String, dynamic>> items;
+  final bool hasMore;
+  final int page;
+  final int limit;
+  final int total;
+
+  const PagedTopContributors({
+    required this.items,
+    required this.hasMore,
+    required this.page,
+    required this.limit,
+    required this.total,
+  });
+}
+
 class ProfileRepository {
   final ProfileApi api;
 
@@ -21,6 +53,32 @@ class ProfileRepository {
     try {
       final data = await api.getUserContributions(userId);
       return data.map((place) => ContributedPlace.fromJson(place)).toList();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<PagedContributions> getUserContributionsPage(
+    String userId, {
+    int page = 1,
+    int limit = 20,
+  }) async {
+    try {
+      final data = await api.getUserContributionsPage(
+        userId,
+        page: page,
+        limit: limit,
+      );
+      final items = (data['contributions'] as List? ?? const [])
+          .map((place) => ContributedPlace.fromJson(place))
+          .toList();
+      return PagedContributions(
+        items: items,
+        hasMore: data['hasMore'] == true,
+        page: data['page'] is int ? data['page'] as int : page,
+        limit: data['limit'] is int ? data['limit'] as int : limit,
+        total: data['total'] is int ? data['total'] as int : items.length,
+      );
     } catch (e) {
       rethrow;
     }
@@ -79,6 +137,27 @@ class ProfileRepository {
     try {
       final data = await api.getTopContributors(limit: limit);
       return List<Map<String, dynamic>>.from(data);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<PagedTopContributors> getTopContributorsPage({
+    int page = 1,
+    int limit = 10,
+  }) async {
+    try {
+      final data = await api.getTopContributorsPage(page: page, limit: limit);
+      final items = List<Map<String, dynamic>>.from(
+        data['topContributors'] as List? ?? const [],
+      );
+      return PagedTopContributors(
+        items: items,
+        hasMore: data['hasMore'] == true,
+        page: data['page'] is int ? data['page'] as int : page,
+        limit: data['limit'] is int ? data['limit'] as int : limit,
+        total: data['total'] is int ? data['total'] as int : items.length,
+      );
     } catch (e) {
       rethrow;
     }

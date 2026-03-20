@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../../core/localization/profile_setup_localizations.dart';
 import '../domain/user_profile.dart';
 import 'providers/profile_providers.dart';
 
@@ -52,6 +53,8 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   String? _lastFailedUploadPath;
   int _avatarCacheBuster = 0;
 
+  ProfileSetupLocalizations get _l10n => ProfileSetupLocalizations.of(context);
+
   @override
   void initState() {
     super.initState();
@@ -92,12 +95,12 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
       uiSettings: [
         AndroidUiSettings(
-          toolbarTitle: 'Crop Avatar',
+          toolbarTitle: _l10n.cropAvatarTitle,
           lockAspectRatio: true,
           hideBottomControls: false,
         ),
         IOSUiSettings(
-          title: 'Crop Avatar',
+          title: _l10n.cropAvatarTitle,
           aspectRatioLockEnabled: true,
         ),
       ],
@@ -129,7 +132,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     setState(() {
       _isUploadingAvatar = false;
       _inlineError = uploadState.error != null
-          ? 'Avatar upload failed. Check your connection and try again.'
+          ? _l10n.avatarUploadConnectionFailed
           : null;
       if (uploadState.error == null) {
         _lastFailedUploadPath = null;
@@ -160,7 +163,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
             const SizedBox(height: 12),
             ListTile(
               leading: const Icon(Icons.camera_alt),
-              title: const Text('Take a photo'),
+              title: Text(_l10n.takePhoto),
               onTap: () {
                 Navigator.pop(context);
                 _pickImage(ImageSource.camera);
@@ -168,7 +171,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
             ),
             ListTile(
               leading: const Icon(Icons.photo_library),
-              title: const Text('Choose from gallery'),
+              title: Text(_l10n.chooseFromGallery),
               onTap: () {
                 Navigator.pop(context);
                 _pickImage(ImageSource.gallery);
@@ -186,7 +189,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) {
       setState(() {
-        _inlineError = 'Please correct the highlighted fields.';
+        _inlineError = _l10n.fieldsInvalid;
       });
       return;
     }
@@ -218,7 +221,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       if (uploadState.error != null) {
         setState(() {
           _isOptimisticallySaving = false;
-          _inlineError = 'Avatar upload failed. Tap retry to try again.';
+          _inlineError = _l10n.avatarUploadRetryFailed;
           _lastFailedUploadPath = _pickedImage!.path;
         });
         editNotifier.clearError();
@@ -233,7 +236,8 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     final newBio = _bioController.text.trim();
     final newDistrict = _districtController.text.trim();
     final newInterests = _selectedInterests.toList()..sort();
-    final currentInterests = widget.initialProfile.travelInterests.toList()..sort();
+    final currentInterests = widget.initialProfile.travelInterests.toList()
+      ..sort();
 
     final hasProfileChanges =
         newName != widget.initialProfile.name ||
@@ -263,7 +267,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
         _districtController.text = previousStateSnapshot.district;
         _selectedLanguage = previousStateSnapshot.language;
         _selectedInterests = previousStateSnapshot.interests;
-        _inlineError = 'Save failed. Please try again.';
+        _inlineError = _l10n.saveFailed;
       });
       editNotifier.clearError();
       return;
@@ -277,8 +281,8 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     ref.invalidate(userProfileProvider);
 
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Profile updated!'),
+      SnackBar(
+        content: Text(_l10n.profileUpdated),
         backgroundColor: Colors.green,
       ),
     );
@@ -290,7 +294,8 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final editState = ref.watch(profileEditProvider);
-    final isBusy = editState.isLoading || _isUploadingAvatar || _isOptimisticallySaving;
+    final isBusy =
+        editState.isLoading || _isUploadingAvatar || _isOptimisticallySaving;
 
     // Determine which avatar to display (priority: newly picked > existing URL > initials)
     Widget avatarWidget;
@@ -302,7 +307,9 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     } else if (widget.initialProfile.avatarUrl.isNotEmpty) {
       avatarWidget = CircleAvatar(
         radius: 52,
-        backgroundImage: NetworkImage('${widget.initialProfile.avatarUrl}?v=$_avatarCacheBuster'),
+        backgroundImage: NetworkImage(
+          '${widget.initialProfile.avatarUrl}?v=$_avatarCacheBuster',
+        ),
       );
     } else {
       avatarWidget = CircleAvatar(
@@ -333,253 +340,270 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
         }
       },
       child: Scaffold(
-      appBar: AppBar(
-        title: const Text('Edit Profile'),
-        actions: [
-          if (!isBusy)
-            TextButton(
-              onPressed: _save,
-              child: const Text('Save', style: TextStyle(fontWeight: FontWeight.bold)),
-            ),
-        ],
-      ),
-      body: isBusy
-          ? const Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CircularProgressIndicator(),
-                  SizedBox(height: 16),
-                  Text('Saving…'),
-                ],
+        appBar: AppBar(
+          title: Text(_l10n.editProfileTitle),
+          actions: [
+            if (!isBusy)
+              TextButton(
+                onPressed: _save,
+                child: Text(
+                  _l10n.save,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
               ),
-            )
-          : SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
-              child: Form(
-                key: _formKey,
+          ],
+        ),
+        body: isBusy
+            ? Center(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // Avatar section
-                    Stack(
-                      alignment: Alignment.bottomRight,
-                      children: [
-                        avatarWidget,
-                        GestureDetector(
-                          onTap: _showAvatarSourceSheet,
-                          child: Container(
-                            padding: const EdgeInsets.all(6),
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).colorScheme.primary,
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: Theme.of(context).scaffoldBackgroundColor,
-                                width: 2,
+                    const CircularProgressIndicator(),
+                    const SizedBox(height: 16),
+                    Text(_l10n.saving),
+                  ],
+                ),
+              )
+            : SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 32,
+                ),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      // Avatar section
+                      Stack(
+                        alignment: Alignment.bottomRight,
+                        children: [
+                          avatarWidget,
+                          GestureDetector(
+                            onTap: _showAvatarSourceSheet,
+                            child: Container(
+                              padding: const EdgeInsets.all(6),
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).colorScheme.primary,
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: Theme.of(
+                                    context,
+                                  ).scaffoldBackgroundColor,
+                                  width: 2,
+                                ),
+                              ),
+                              child: Icon(
+                                Icons.camera_alt,
+                                size: 18,
+                                color: Theme.of(context).colorScheme.onPrimary,
                               ),
                             ),
-                            child: Icon(
-                              Icons.camera_alt,
-                              size: 18,
-                              color: Theme.of(context).colorScheme.onPrimary,
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      TextButton(
+                        onPressed: _showAvatarSourceSheet,
+                        child: Text(_l10n.changePhoto),
+                      ),
+                      const SizedBox(height: 32),
+
+                      if (_inlineError != null)
+                        Container(
+                          width: double.infinity,
+                          margin: const EdgeInsets.only(bottom: 12),
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Colors.red.shade50,
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: Colors.red.shade200),
+                          ),
+                          child: Text(
+                            _inlineError!,
+                            style: TextStyle(color: Colors.red.shade700),
+                          ),
+                        ),
+
+                      // Name field
+                      TextFormField(
+                        controller: _nameController,
+                        maxLength: 40,
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        decoration: InputDecoration(
+                          labelText: _l10n.displayName,
+                          hintText: _l10n.displayNameHint,
+                          border: const OutlineInputBorder(),
+                          prefixIcon: const Icon(Icons.person_outline),
+                          helperText: _l10n.displayNameHelper,
+                        ),
+                        textCapitalization: TextCapitalization.words,
+                        validator: (value) {
+                          if (value == null || value.trim().isEmpty) {
+                            return _l10n.nameCannotBeEmpty;
+                          }
+                          if (value.trim().length < 2) {
+                            return _l10n.nameMin;
+                          }
+                          if (value.trim().length > 40) {
+                            return _l10n.nameMax;
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 16),
+
+                      TextFormField(
+                        controller: _bioController,
+                        maxLines: 3,
+                        maxLength: 200,
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        decoration: InputDecoration(
+                          labelText: _l10n.description,
+                          hintText: _l10n.bioHint,
+                          border: const OutlineInputBorder(),
+                          prefixIcon: const Icon(Icons.short_text),
+                        ),
+                        validator: (value) {
+                          final text = value?.trim() ?? '';
+                          if (text.length > 200) {
+                            return _l10n.bioMax;
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 16),
+
+                      TextFormField(
+                        controller: _districtController,
+                        maxLength: 60,
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        decoration: InputDecoration(
+                          labelText: _l10n.hometownDistrict,
+                          hintText: _l10n.hometownDistrictHint,
+                          border: const OutlineInputBorder(),
+                          prefixIcon: const Icon(Icons.location_city_outlined),
+                          helperText: _l10n.hometownDistrictHelper,
+                        ),
+                        validator: (value) {
+                          final text = value?.trim() ?? '';
+                          if (text.isEmpty) {
+                            return _l10n.districtCannotBeEmpty;
+                          }
+                          if (text.length > 60) {
+                            return _l10n.districtMax;
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 16),
+
+                      DropdownButtonFormField<String>(
+                        initialValue:
+                            _languageOptions.contains(_selectedLanguage)
+                            ? _selectedLanguage
+                            : _languageOptions.first,
+                        decoration: InputDecoration(
+                          labelText: _l10n.preferredLanguage,
+                          border: const OutlineInputBorder(),
+                          prefixIcon: const Icon(Icons.language),
+                        ),
+                        items: _languageOptions
+                            .map(
+                              (language) => DropdownMenuItem<String>(
+                                value: language,
+                                child: Text(language),
+                              ),
+                            )
+                            .toList(),
+                        onChanged: (value) {
+                          if (value == null) return;
+                          setState(() => _selectedLanguage = value);
+                        },
+                      ),
+                      const SizedBox(height: 16),
+
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          _l10n.travelInterestsCount(
+                            _selectedInterests.length,
+                            10,
+                          ),
+                          style: Theme.of(context).textTheme.titleSmall,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: _interestOptions.map((interest) {
+                          final selected = _selectedInterests.contains(
+                            interest,
+                          );
+                          return FilterChip(
+                            label: Text(interest),
+                            selected: selected,
+                            onSelected: (value) {
+                              setState(() {
+                                if (value) {
+                                  if (_selectedInterests.length < 10) {
+                                    _selectedInterests.add(interest);
+                                  }
+                                } else {
+                                  _selectedInterests.remove(interest);
+                                }
+                              });
+                            },
+                          );
+                        }).toList(),
+                      ),
+                      const SizedBox(height: 16),
+
+                      // Email (read-only)
+                      TextFormField(
+                        initialValue: widget.initialProfile.email,
+                        readOnly: true,
+                        decoration: InputDecoration(
+                          labelText: _l10n.email,
+                          border: const OutlineInputBorder(),
+                          prefixIcon: const Icon(Icons.email_outlined),
+                          helperText: _l10n.emailReadOnlyHelper,
+                        ),
+                        style: TextStyle(color: Colors.grey[600]),
+                      ),
+                      const SizedBox(height: 40),
+
+                      // Save button
+                      SizedBox(
+                        width: double.infinity,
+                        child: FilledButton(
+                          onPressed: _save,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 4),
+                            child: Text(
+                              _l10n.saveChanges,
+                              style: const TextStyle(fontSize: 16),
                             ),
                           ),
                         ),
+                      ),
+
+                      if (_lastFailedUploadPath != null) ...[
+                        const SizedBox(height: 12),
+                        SizedBox(
+                          width: double.infinity,
+                          child: OutlinedButton.icon(
+                            onPressed: _retryAvatarUpload,
+                            icon: const Icon(Icons.refresh),
+                            label: Text(_l10n.retryAvatarUpload),
+                          ),
+                        ),
                       ],
-                    ),
-                    const SizedBox(height: 8),
-                    TextButton(
-                      onPressed: _showAvatarSourceSheet,
-                      child: const Text('Change photo'),
-                    ),
-                    const SizedBox(height: 32),
-
-                    if (_inlineError != null)
-                      Container(
-                        width: double.infinity,
-                        margin: const EdgeInsets.only(bottom: 12),
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: Colors.red.shade50,
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: Colors.red.shade200),
-                        ),
-                        child: Text(
-                          _inlineError!,
-                          style: TextStyle(color: Colors.red.shade700),
-                        ),
-                      ),
-
-                    // Name field
-                    TextFormField(
-                      controller: _nameController,
-                      maxLength: 40,
-                      autovalidateMode: AutovalidateMode.onUserInteraction,
-                      decoration: const InputDecoration(
-                        labelText: 'Display name',
-                        hintText: 'Enter your name',
-                        border: OutlineInputBorder(),
-                        prefixIcon: Icon(Icons.person_outline),
-                        helperText: 'This is visible on leaderboards and profile',
-                      ),
-                      textCapitalization: TextCapitalization.words,
-                      validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return 'Name cannot be empty';
-                        }
-                        if (value.trim().length < 2) {
-                          return 'Name must be at least 2 characters';
-                        }
-                        if (value.trim().length > 40) {
-                          return 'Name must be under 40 characters';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 16),
-
-                    TextFormField(
-                      controller: _bioController,
-                      maxLines: 3,
-                      maxLength: 200,
-                      autovalidateMode: AutovalidateMode.onUserInteraction,
-                      decoration: const InputDecoration(
-                        labelText: 'Bio',
-                        hintText: 'Tell others what kind of traveler you are',
-                        border: OutlineInputBorder(),
-                        prefixIcon: Icon(Icons.short_text),
-                      ),
-                      validator: (value) {
-                        final text = value?.trim() ?? '';
-                        if (text.length > 200) {
-                          return 'Bio must be under 200 characters';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 16),
-
-                    TextFormField(
-                      controller: _districtController,
-                      maxLength: 60,
-                      autovalidateMode: AutovalidateMode.onUserInteraction,
-                      decoration: const InputDecoration(
-                        labelText: 'Hometown district',
-                        hintText: 'e.g. Colombo',
-                        border: OutlineInputBorder(),
-                        prefixIcon: Icon(Icons.location_city_outlined),
-                        helperText: 'Used to personalize local suggestions',
-                      ),
-                      validator: (value) {
-                        final text = value?.trim() ?? '';
-                        if (text.isEmpty) {
-                          return 'District cannot be empty';
-                        }
-                        if (text.length > 60) {
-                          return 'District must be under 60 characters';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 16),
-
-                    DropdownButtonFormField<String>(
-                      initialValue: _languageOptions.contains(_selectedLanguage)
-                          ? _selectedLanguage
-                          : _languageOptions.first,
-                      decoration: const InputDecoration(
-                        labelText: 'Preferred language',
-                        border: OutlineInputBorder(),
-                        prefixIcon: Icon(Icons.language),
-                      ),
-                      items: _languageOptions
-                          .map(
-                            (language) => DropdownMenuItem<String>(
-                              value: language,
-                              child: Text(language),
-                            ),
-                          )
-                          .toList(),
-                      onChanged: (value) {
-                        if (value == null) return;
-                        setState(() => _selectedLanguage = value);
-                      },
-                    ),
-                    const SizedBox(height: 16),
-
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        'Travel interests (${_selectedInterests.length}/10)',
-                        style: Theme.of(context).textTheme.titleSmall,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: _interestOptions.map((interest) {
-                        final selected = _selectedInterests.contains(interest);
-                        return FilterChip(
-                          label: Text(interest),
-                          selected: selected,
-                          onSelected: (value) {
-                            setState(() {
-                              if (value) {
-                                if (_selectedInterests.length < 10) {
-                                  _selectedInterests.add(interest);
-                                }
-                              } else {
-                                _selectedInterests.remove(interest);
-                              }
-                            });
-                          },
-                        );
-                      }).toList(),
-                    ),
-                    const SizedBox(height: 16),
-
-                    // Email (read-only)
-                    TextFormField(
-                      initialValue: widget.initialProfile.email,
-                      readOnly: true,
-                      decoration: const InputDecoration(
-                        labelText: 'Email',
-                        border: OutlineInputBorder(),
-                        prefixIcon: Icon(Icons.email_outlined),
-                        helperText: 'Email cannot be changed here',
-                      ),
-                      style: TextStyle(color: Colors.grey[600]),
-                    ),
-                    const SizedBox(height: 40),
-
-                    // Save button
-                    SizedBox(
-                      width: double.infinity,
-                      child: FilledButton(
-                        onPressed: _save,
-                        child: const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 4),
-                          child: Text('Save Changes', style: TextStyle(fontSize: 16)),
-                        ),
-                      ),
-                    ),
-
-                    if (_lastFailedUploadPath != null) ...[
-                      const SizedBox(height: 12),
-                      SizedBox(
-                        width: double.infinity,
-                        child: OutlinedButton.icon(
-                          onPressed: _retryAvatarUpload,
-                          icon: const Icon(Icons.refresh),
-                          label: const Text('Retry Avatar Upload'),
-                        ),
-                      ),
                     ],
-                  ],
+                  ),
                 ),
               ),
-            ),
       ),
     );
   }
@@ -589,7 +613,8 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     final newBio = _bioController.text.trim();
     final newDistrict = _districtController.text.trim();
     final newInterests = _selectedInterests.toList()..sort();
-    final currentInterests = widget.initialProfile.travelInterests.toList()..sort();
+    final currentInterests = widget.initialProfile.travelInterests.toList()
+      ..sort();
 
     return _pickedImage != null ||
         newName != widget.initialProfile.name ||
@@ -605,16 +630,16 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     final result = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Discard changes?'),
-        content: const Text('You have unsaved profile changes. Leave without saving?'),
+        title: Text(_l10n.discardChangesTitle),
+        content: Text(_l10n.discardChangesMessage),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Keep Editing'),
+            child: Text(_l10n.keepEditing),
           ),
           FilledButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Discard'),
+            child: Text(_l10n.discard),
           ),
         ],
       ),

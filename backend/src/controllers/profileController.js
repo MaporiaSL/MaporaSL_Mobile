@@ -248,13 +248,19 @@ async function getUserProfile(req, res) {
 async function getUserContributions(req, res) {
   try {
     const { userId } = req.params;
+    const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
+    const requestedLimit = parseInt(req.query.limit, 10) || 20;
+    const limit = Math.min(Math.max(requestedLimit, 1), 50);
+    const skip = (page - 1) * limit;
 
     // Verify requesting user matches userId
     if (req.userId !== userId) {
       return res.status(403).json({ error: 'Forbidden: Cannot access another user\'s contributions' });
     }
 
-    // Fetch all contribution statuses for full profile history
+    const total = await PlaceSubmission.countDocuments({ userId });
+
+    // Fetch paginated contribution history ordered by most recent submission.
     const contributedPlaces = await PlaceSubmission.find(
       { userId },
       {
@@ -268,7 +274,10 @@ async function getUserContributions(req, res) {
         photos: 1,
         promotedPlaceId: 1,
       }
-    ).sort({ submittedAt: -1 });
+    )
+      .sort({ submittedAt: -1 })
+      .skip(skip)
+      .limit(limit);
 
     const contributions = contributedPlaces.map((place) => ({
       id: place._id,
@@ -285,7 +294,13 @@ async function getUserContributions(req, res) {
       promotedPlaceId: place.promotedPlaceId || null,
     }));
 
-    res.status(200).json({ contributions });
+    res.status(200).json({
+      contributions,
+      page,
+      limit,
+      total,
+      hasMore: skip + contributions.length < total,
+    });
   } catch (error) {
     console.error('Get user contributions error:', error);
     res.status(500).json({ error: 'Failed to retrieve user contributions' });
@@ -397,12 +412,23 @@ async function logoutUser(req, res) {
  */
 async function getTopContributors(req, res) {
   try {
-    const limit = parseInt(req.query.limit) || 10;
+    const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
+    const requestedLimit = parseInt(req.query.limit, 10) || 10;
+    const limit = Math.min(Math.max(requestedLimit, 1), 50);
+    const skip = (page - 1) * limit;
+
+    const totalResults = await PlaceSubmission.aggregate([
+      { $match: { status: 'approved' } },
+      { $group: { _id: '$userId' } },
+      { $count: 'total' },
+    ]);
+    const total = totalResults[0]?.total || 0;
 
     const topContributors = await PlaceSubmission.aggregate([
       { $match: { status: 'approved' } },
       { $group: { _id: '$userId', approvedCount: { $sum: 1 } } },
       { $sort: { approvedCount: -1 } },
+      { $skip: skip },
       { $limit: limit },
       {
         $lookup: {
@@ -426,7 +452,13 @@ async function getTopContributors(req, res) {
       },
     ]);
 
-    res.status(200).json({ topContributors });
+    res.status(200).json({
+      topContributors,
+      page,
+      limit,
+      total,
+      hasMore: skip + topContributors.length < total,
+    });
   } catch (error) {
     console.error('Get top contributors error:', error);
     res.status(500).json({ error: 'Failed to retrieve leaderboard' });

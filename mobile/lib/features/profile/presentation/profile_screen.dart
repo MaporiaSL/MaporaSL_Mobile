@@ -27,9 +27,27 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   _ContributionFilter _filter = _ContributionFilter.all;
   _ContributionSort _sort = _ContributionSort.newest;
 
+  static const int _contributionsPageSize = 20;
+  static const int _leaderboardPageSize = 10;
+
+  int _contributionsPage = 1;
+  int _leaderboardPage = 1;
+
+  bool _didInitContributions = false;
+  bool _didInitLeaderboard = false;
+  bool _hasMoreContributions = true;
+  bool _hasMoreLeaderboard = true;
+  bool _loadingMoreContributions = false;
+  bool _loadingMoreLeaderboard = false;
+
+  List<profile_model.ContributedPlace> _contributions =
+      <profile_model.ContributedPlace>[];
+  List<Map<String, dynamic>> _topContributors = <Map<String, dynamic>>[];
+
   ProfileSetupLocalizations get _l10n => ProfileSetupLocalizations.of(context);
 
   void _retryAll() {
+    _resetPaginationState();
     final retries = ref.read(profileRetryCountProvider.notifier);
     retries.state = retries.state + 1;
     logProfileTelemetry(
@@ -44,9 +62,104 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   }
 
   void _refreshContributionViews() {
+    _resetPaginationState();
     ref.invalidate(userContributionsProvider);
     ref.invalidate(userProfileProvider);
     ref.invalidate(pendingSubmissionsProvider);
+  }
+
+  void _resetPaginationState() {
+    _contributionsPage = 1;
+    _leaderboardPage = 1;
+    _didInitContributions = false;
+    _didInitLeaderboard = false;
+    _hasMoreContributions = true;
+    _hasMoreLeaderboard = true;
+    _loadingMoreContributions = false;
+    _loadingMoreLeaderboard = false;
+    _contributions = <profile_model.ContributedPlace>[];
+    _topContributors = <Map<String, dynamic>>[];
+  }
+
+  void _syncInitialContributions(List<profile_model.ContributedPlace> items) {
+    if (_didInitContributions) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || _didInitContributions) return;
+      setState(() {
+        _didInitContributions = true;
+        _contributionsPage = 1;
+        _contributions = List<profile_model.ContributedPlace>.from(items);
+        _hasMoreContributions = items.length >= _contributionsPageSize;
+      });
+    });
+  }
+
+  void _syncInitialLeaderboard(List<Map<String, dynamic>> items) {
+    if (_didInitLeaderboard) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || _didInitLeaderboard) return;
+      setState(() {
+        _didInitLeaderboard = true;
+        _leaderboardPage = 1;
+        _topContributors = List<Map<String, dynamic>>.from(items);
+        _hasMoreLeaderboard = items.length >= _leaderboardPageSize;
+      });
+    });
+  }
+
+  Future<void> _loadMoreContributions() async {
+    if (_loadingMoreContributions || !_hasMoreContributions) return;
+    final userId = ref.read(currentUserIdProvider);
+    if (userId == null) return;
+
+    setState(() => _loadingMoreContributions = true);
+    try {
+      final repository = ref.read(profileRepositoryProvider);
+      final nextPage = _contributionsPage + 1;
+      final page = await repository.getUserContributionsPage(
+        userId,
+        page: nextPage,
+        limit: _contributionsPageSize,
+      );
+      if (!mounted) return;
+      setState(() {
+        _contributionsPage = page.page;
+        _hasMoreContributions = page.hasMore;
+        _contributions = [..._contributions, ...page.items];
+      });
+    } catch (_) {
+      // Keep current data and allow retry from the same button.
+    } finally {
+      if (mounted) {
+        setState(() => _loadingMoreContributions = false);
+      }
+    }
+  }
+
+  Future<void> _loadMoreLeaderboard() async {
+    if (_loadingMoreLeaderboard || !_hasMoreLeaderboard) return;
+
+    setState(() => _loadingMoreLeaderboard = true);
+    try {
+      final repository = ref.read(profileRepositoryProvider);
+      final nextPage = _leaderboardPage + 1;
+      final page = await repository.getTopContributorsPage(
+        page: nextPage,
+        limit: _leaderboardPageSize,
+      );
+      if (!mounted) return;
+      setState(() {
+        _leaderboardPage = page.page;
+        _hasMoreLeaderboard = page.hasMore;
+        _topContributors = [..._topContributors, ...page.items];
+      });
+    } catch (_) {
+      // Keep current data and allow retry from the same button.
+    } finally {
+      if (mounted) {
+        setState(() => _loadingMoreLeaderboard = false);
+      }
+    }
   }
 
   @override
@@ -453,7 +566,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         ],
       ),
       data: (places) {
-        final filtered = _filterAndSort(places);
+        _syncInitialContributions(places);
+        final source = _didInitContributions ? _contributions : places;
+        final filtered = _filterAndSort(source);
         if (filtered.isEmpty) {
           return Padding(
             padding: const EdgeInsets.all(16),
@@ -462,59 +577,74 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         }
 
         return Column(
-          children: filtered
-              .map(
-                (place) => Card(
-                  margin: const EdgeInsets.only(bottom: 10),
-                  child: ListTile(
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 8,
-                    ),
-                    leading: place.photoUrl.isNotEmpty
-                        ? ClipRRect(
-                            borderRadius: BorderRadius.circular(8),
-                            child: Image.network(
-                              place.photoUrl,
-                              width: 46,
-                              height: 46,
-                              fit: BoxFit.cover,
-                              errorBuilder: (_, __, ___) =>
-                                  const Icon(Icons.image_not_supported),
-                            ),
-                          )
-                        : Icon(
-                            Icons.place_outlined,
-                            color: _statusColor(place.status),
+          children: [
+            ...filtered.map(
+              (place) => Card(
+                margin: const EdgeInsets.only(bottom: 10),
+                child: ListTile(
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
+                  leading: place.photoUrl.isNotEmpty
+                      ? ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: Image.network(
+                            place.photoUrl,
+                            width: 46,
+                            height: 46,
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, __, ___) =>
+                                const Icon(Icons.image_not_supported),
                           ),
-                    title: Text(place.name),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          _statusLabel(place.status),
-                          style: TextStyle(color: _statusColor(place.status)),
+                        )
+                      : Icon(
+                          Icons.place_outlined,
+                          color: _statusColor(place.status),
                         ),
-                        if (place.submittedAt != null)
-                          Text(
-                            '${_l10n.submittedPrefix} ${DateFormat.yMMMd().format(place.submittedAt!)}',
-                          ),
-                        if (place.status == 'rejected' &&
-                            (place.rejectionReason ?? '').isNotEmpty)
-                          Text(
-                            '${_l10n.reasonPrefix} ${place.rejectionReason}',
-                          ),
-                      ],
-                    ),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.chevron_right),
-                      tooltip: _l10n.viewDetails,
-                      onPressed: () => _openContributionDetail(place),
-                    ),
+                  title: Text(place.name),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        _statusLabel(place.status),
+                        style: TextStyle(color: _statusColor(place.status)),
+                      ),
+                      if (place.submittedAt != null)
+                        Text(
+                          '${_l10n.submittedPrefix} ${DateFormat.yMMMd().format(place.submittedAt!)}',
+                        ),
+                      if (place.status == 'rejected' &&
+                          (place.rejectionReason ?? '').isNotEmpty)
+                        Text('${_l10n.reasonPrefix} ${place.rejectionReason}'),
+                    ],
+                  ),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.chevron_right),
+                    tooltip: _l10n.viewDetails,
+                    onPressed: () => _openContributionDetail(place),
                   ),
                 ),
-              )
-              .toList(),
+              ),
+            ),
+            if (_hasMoreContributions)
+              Padding(
+                padding: const EdgeInsets.only(top: 4),
+                child: OutlinedButton.icon(
+                  onPressed: _loadingMoreContributions
+                      ? null
+                      : _loadMoreContributions,
+                  icon: _loadingMoreContributions
+                      ? const SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Icon(Icons.expand_more),
+                  label: Text(_l10n.loadMoreContributions),
+                ),
+              ),
+          ],
         );
       },
     );
@@ -635,26 +765,47 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         ],
       ),
       data: (contributors) {
-        if (contributors.isEmpty) {
+        _syncInitialLeaderboard(contributors);
+        final source = _didInitLeaderboard ? _topContributors : contributors;
+        if (source.isEmpty) {
           return Text(_l10n.noLeaderboardDataYet);
         }
 
-        final top = contributors.take(5).toList();
+        final top = source;
         return Column(
-          children: top.asMap().entries.map((entry) {
-            final rank = entry.key + 1;
-            final item = entry.value;
-            final name = (item['userName'] ?? _l10n.unknown).toString();
-            final count = (item['approvedCount'] ?? 0).toString();
+          children: [
+            ...top.asMap().entries.map((entry) {
+              final rank = entry.key + 1;
+              final item = entry.value;
+              final name = (item['userName'] ?? _l10n.unknown).toString();
+              final count = (item['approvedCount'] ?? 0).toString();
 
-            return ListTile(
-              dense: true,
-              contentPadding: EdgeInsets.zero,
-              leading: CircleAvatar(radius: 14, child: Text('$rank')),
-              title: Text(name),
-              trailing: Text('$count ${_l10n.approvedSuffix}'),
-            );
-          }).toList(),
+              return ListTile(
+                dense: true,
+                contentPadding: EdgeInsets.zero,
+                leading: CircleAvatar(radius: 14, child: Text('$rank')),
+                title: Text(name),
+                trailing: Text('$count ${_l10n.approvedSuffix}'),
+              );
+            }),
+            if (_hasMoreLeaderboard)
+              Align(
+                alignment: Alignment.centerLeft,
+                child: OutlinedButton.icon(
+                  onPressed: _loadingMoreLeaderboard
+                      ? null
+                      : _loadMoreLeaderboard,
+                  icon: _loadingMoreLeaderboard
+                      ? const SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Icon(Icons.expand_more),
+                  label: Text(_l10n.loadMoreLeaderboard),
+                ),
+              ),
+          ],
         );
       },
     );

@@ -19,7 +19,10 @@ class ProfileApi {
 
   Future<List<dynamic>> getUserContributions(String userId) async {
     try {
-      final response = await _dio.get('/api/profile/$userId/contributions');
+      final response = await _dio.get(
+        '/api/profile/$userId/contributions',
+        queryParameters: {'page': 1, 'limit': 20},
+      );
       if (response.statusCode == 200)
         return response.data['contributions'] ?? [];
       throw Exception('Failed to fetch contributions: ${response.statusCode}');
@@ -27,6 +30,29 @@ class ProfileApi {
       rethrow;
     } catch (e) {
       throw Exception('Error fetching contributions: $e');
+    }
+  }
+
+  Future<Map<String, dynamic>> getUserContributionsPage(
+    String userId, {
+    int page = 1,
+    int limit = 20,
+  }) async {
+    try {
+      final response = await _dio.get(
+        '/api/profile/$userId/contributions',
+        queryParameters: {'page': page, 'limit': limit},
+      );
+      if (response.statusCode == 200) {
+        return Map<String, dynamic>.from(response.data as Map);
+      }
+      throw Exception(
+        'Failed to fetch contributions page: ${response.statusCode}',
+      );
+    } on DioException {
+      rethrow;
+    } catch (e) {
+      throw Exception('Error fetching contributions page: $e');
     }
   }
 
@@ -97,7 +123,7 @@ class ProfileApi {
     try {
       final response = await _dio.get(
         '/api/profile/leaderboard/top',
-        queryParameters: {'limit': limit},
+        queryParameters: {'page': 1, 'limit': limit},
       );
       if (response.statusCode == 200)
         return response.data['topContributors'] ?? [];
@@ -106,6 +132,28 @@ class ProfileApi {
       rethrow;
     } catch (e) {
       throw Exception('Error fetching leaderboard: $e');
+    }
+  }
+
+  Future<Map<String, dynamic>> getTopContributorsPage({
+    int page = 1,
+    int limit = 10,
+  }) async {
+    try {
+      final response = await _dio.get(
+        '/api/profile/leaderboard/top',
+        queryParameters: {'page': page, 'limit': limit},
+      );
+      if (response.statusCode == 200) {
+        return Map<String, dynamic>.from(response.data as Map);
+      }
+      throw Exception(
+        'Failed to fetch leaderboard page: ${response.statusCode}',
+      );
+    } on DioException {
+      rethrow;
+    } catch (e) {
+      throw Exception('Error fetching leaderboard page: $e');
     }
   }
 
