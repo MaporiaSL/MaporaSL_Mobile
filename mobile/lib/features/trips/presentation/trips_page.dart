@@ -12,37 +12,37 @@ class TripsPage extends StatelessWidget {
 
   static const List<_QuestCardData> _completedQuests = [
     _QuestCardData(
-      title: 'Ancient Kingdom Run',
-      subtitle: 'Polonnaruwa and Sigiriya circuit',
-      days: 4,
+      title: 'Sigiriya',
+      subtitle: 'Sigiriya Rock, Water Gardens & Pidurangala',
+      days: 1,
     ),
     _QuestCardData(
-      title: 'Southern Shore Sprint',
-      subtitle: 'Galle, Mirissa and Hikkaduwa',
-      days: 3,
+      title: 'Mirissa',
+      subtitle: 'Whale watching, Parrot Rock & seafood',
+      days: 2,
     ),
     _QuestCardData(
-      title: 'Highland Heritage',
-      subtitle: 'Nuwara Eliya and Horton Plains',
-      days: 4,
+      title: 'Nuwara Eliya',
+      subtitle: 'Gregory Lake, Tea Factory & Hakgala Gardens',
+      days: 2,
     ),
   ];
 
   static const List<_QuestCardData> _customQuests = [
     _QuestCardData(
-      title: 'Tea Trails Escape',
-      subtitle: 'Nuwara Eliya to Ella with train rides',
-      days: 5,
+      title: 'Ella',
+      subtitle: 'Summit hike and Nine Arches Bridge stroll',
+      days: 1,
     ),
     _QuestCardData(
-      title: 'Northern Stories',
-      subtitle: 'Jaffna food, forts and island hops',
-      days: 4,
+      title: 'Galle Fort',
+      subtitle: 'Dutch ramparts, lighthouse & coastal cafes',
+      days: 3,
     ),
     _QuestCardData(
-      title: 'Wild & Coastal Mix',
-      subtitle: 'Yala safari plus south beach sunsets',
-      days: 4,
+      title: 'Kandy',
+      subtitle: 'Temple of the Tooth, Royal Botanical Gardens',
+      days: 1,
     ),
   ];
 
