@@ -52,6 +52,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   
   // Re-auth state for sensitive operations
   String? _pendingSensitiveAction;
+  String? _pendingEmailForRetry;
   bool _isReauthRequired = false;
 
   ProfileSetupLocalizations get _l10n => ProfileSetupLocalizations.of(context);
@@ -178,37 +179,50 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   }
 
   Future<void> _handleReauthentication() async {
-    // Trigger Firebase re-authentication (user signs in again)
     final authService = ref.read(authServiceProvider);
     try {
       setState(() {
         _isAccountActionBusy = true;
         _inlineError = null;
       });
-      
-      // In production, this would show Firebase sign-in UI or redirect to auth screen.
-      // For now, we signal that re-auth is needed at the auth service level.
-      // Client implementation: after successful re-auth, retry the pending action.
+
       await authService.reauthenticateUser();
-      
+
       if (!mounted) return;
+
+      final action = _pendingSensitiveAction;
+      final pendingEmail = _pendingEmailForRetry;
+
       setState(() {
+        _pendingSensitiveAction = null;
+        _pendingEmailForRetry = null;
         _isReauthRequired = false;
         _inlineError = null;
       });
-      
-      // Retry the pending sensitive action if one exists
-      if (_pendingSensitiveAction == 'changeEmail') {
-        // Re-show the email dialog flow implicitly (user triggered retry)
+
+      if (action == 'changeEmail' && pendingEmail != null) {
+        await authService.requestEmailChange(pendingEmail);
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(_l10n.recentlyReauthed)),
+          SnackBar(
+            content: Text(_l10n.emailChangeVerificationSent(pendingEmail)),
+          ),
         );
-      } else if (_pendingSensitiveAction == 'deleteAccount') {
-        // Proceed directly to delete (assuming re-auth succeeded)
+      } else if (action == 'deleteAccount') {
+        final userId = ref.read(currentUserIdProvider);
+        if (userId == null) {
+          setState(() => _inlineError = _l10n.deleteAccountFailed);
+          return;
+        }
+        await _performDeleteAccount(userId);
+      } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(_l10n.recentlyReauthed)),
         );
       }
+    } on AuthRecentLoginRequiredException {
+      if (!mounted) return;
+      setState(() => _inlineError = _l10n.recentLoginRequired);
     } catch (e) {
       if (!mounted) return;
       setState(() {
@@ -292,6 +306,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       if (!mounted) return;
       setState(() {
         _pendingSensitiveAction = 'changeEmail';
+        _pendingEmailForRetry = newEmail;
         _isReauthRequired = true;
         _inlineError = _l10n.recentLoginRequired;
       });
@@ -325,12 +340,18 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     if (shouldDelete != true || !mounted) return;
 
     final authService = ref.read(authServiceProvider);
-    final repository = ref.read(profileRepositoryProvider);
     final userId = ref.read(currentUserIdProvider);
     if (userId == null) {
       setState(() => _inlineError = _l10n.deleteAccountFailed);
       return;
     }
+
+    await _performDeleteAccount(userId);
+  }
+
+  Future<void> _performDeleteAccount(String userId) async {
+    final authService = ref.read(authServiceProvider);
+    final repository = ref.read(profileRepositoryProvider);
 
     setState(() {
       _isAccountActionBusy = true;
@@ -348,6 +369,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       if (!mounted) return;
       setState(() {
         _pendingSensitiveAction = 'deleteAccount';
+        _pendingEmailForRetry = null;
         _isReauthRequired = true;
         _inlineError = _l10n.recentLoginRequired;
       });
@@ -695,6 +717,20 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                           child: Text(
                             _inlineError!,
                             style: TextStyle(color: Colors.red.shade700),
+                          ),
+                        ),
+                      if (_isReauthRequired)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 12),
+                          child: SizedBox(
+                            width: double.infinity,
+                            child: OutlinedButton.icon(
+                              onPressed: _isAccountActionBusy
+                                  ? null
+                                  : _handleReauthentication,
+                              icon: const Icon(Icons.login),
+                              label: Text(_l10n.signInAgain),
+                            ),
                           ),
                         ),
 

@@ -114,8 +114,9 @@ class AuthService {
   }
 
   /// Re-authenticate the current user (requires recent sign-in).
-  /// Triggers Google Sign-In again to satisfy Firebase's re-auth requirement.
-  /// Throws AuthRecentLoginRequiredException if re-auth is required.
+  /// For Google providers, this re-opens Google sign-in and reauthenticates.
+  /// For email/password providers, the caller should route the user through
+  /// sign-out/sign-in or a dedicated credentials prompt flow.
   Future<void> reauthenticateUser() async {
     final user = _auth.currentUser;
     if (user == null) {
@@ -126,9 +127,40 @@ class AuthService {
     }
 
     try {
-      // For Google sign-in users, re-sign in with Google to refresh the auth session
-      final credentials = await signInWithGoogle();
-      // The new credential will refresh the current user's session
+      final providerIds = user.providerData
+          .map((item) => item.providerId)
+          .toSet();
+
+      if (providerIds.contains(GoogleAuthProvider.PROVIDER_ID)) {
+        final googleUser = await _googleSignIn.signIn();
+        if (googleUser == null) {
+          throw FirebaseAuthException(
+            code: 'google-sign-in-cancelled',
+            message: 'Google sign-in cancelled',
+          );
+        }
+
+        final googleAuth = await googleUser.authentication;
+        final credential = GoogleAuthProvider.credential(
+          accessToken: googleAuth.accessToken,
+          idToken: googleAuth.idToken,
+        );
+        await user.reauthenticateWithCredential(credential);
+        return;
+      }
+
+      if (providerIds.contains('password')) {
+        throw FirebaseAuthException(
+          code: 'reauth-interactive-required',
+          message:
+              'Please sign out and sign in again to complete this secure action.',
+        );
+      }
+
+      throw FirebaseAuthException(
+        code: 'reauth-unsupported-provider',
+        message: 'This sign-in provider does not support in-app re-auth here.',
+      );
     } on FirebaseAuthException catch (e) {
       if (e.code == 'requires-recent-login') {
         throw const AuthRecentLoginRequiredException();

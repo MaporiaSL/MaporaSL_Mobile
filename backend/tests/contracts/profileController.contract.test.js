@@ -20,16 +20,23 @@ function createMockRes() {
     },
     json(payload) {
       this.body = payload;
-    function createMockSession() {
-      return {
-        startTransaction: async () => {},
-        commitTransaction: async () => {},
-        abortTransaction: async () => {},
-        endSession: async () => {},
-      };
-    }
       return this;
     },
+  };
+}
+
+function createMockSession() {
+  return {
+    startTransaction() {},
+    commitTransaction: async () => {},
+    abortTransaction: async () => {},
+    endSession() {},
+  };
+}
+
+function sessionResult(value) {
+  return {
+    session: async () => value,
   };
 }
 
@@ -179,22 +186,29 @@ test('updateUserProfile response includes new profile stats fields', async () =>
 });
 
 test('deleteUserAccount returns 403 when deleting another user account', async () => {
-  const req = {
-    userId: 'u-1',
-    params: { userId: 'u-2' },
-  };
-  const res = createMockRes();
+  const originalStartSession = User.startSession;
+  User.startSession = async () => createMockSession();
 
-  await deleteUserAccount(req, res);
+  try {
+    const req = {
+      userId: 'u-1',
+      params: { userId: 'u-2' },
+    };
+    const res = createMockRes();
 
-  assert.equal(res.statusCode, 403);
-  assert.match(res.body.error, /Forbidden/);
+    await deleteUserAccount(req, res);
+
+    assert.equal(res.statusCode, 403);
+    assert.match(res.body.error, /Forbidden/);
+  } finally {
+    User.startSession = originalStartSession;
+  }
 });
 
 test('deleteUserAccount cascades cleanup and returns audit contract', async () => {
   const originalUserFindOne = User.findOne;
   const originalUserDeleteOne = User.deleteOne;
-  const originalUserStartSession = User.startSession;
+  const originalStartSession = User.startSession;
   const originalSubmissionFind = PlaceSubmission.find;
   const originalSubmissionDeleteMany = PlaceSubmission.deleteMany;
   const originalBadgeDeleteMany = UserBadge.deleteMany;
@@ -202,12 +216,13 @@ test('deleteUserAccount cascades cleanup and returns audit contract', async () =
   const originalUsageUpdateMany = PlaceUsageTracking.updateMany;
 
   User.startSession = async () => createMockSession();
-  User.findOne = async () => ({
-    auth0Id: 'u-1',
-    profilePicture: '',
-  });
+  User.findOne = () =>
+    sessionResult({
+      auth0Id: 'u-1',
+      profilePicture: '',
+    });
   User.deleteOne = async () => ({ deletedCount: 1 });
-  PlaceSubmission.find = async () => [{ _id: 's1' }, { _id: 's2' }];
+  PlaceSubmission.find = () => sessionResult([{ _id: 's1' }, { _id: 's2' }]);
   PlaceSubmission.deleteMany = async () => ({ deletedCount: 2 });
   UserBadge.deleteMany = async () => ({ deletedCount: 1 });
   PlaceUsageTracking.deleteMany = async () => ({ deletedCount: 2 });
@@ -232,8 +247,8 @@ test('deleteUserAccount cascades cleanup and returns audit contract', async () =
     assert.ok(res.body.audit.timestamp);
   } finally {
     User.findOne = originalUserFindOne;
-      User.startSession = originalUserStartSession;
     User.deleteOne = originalUserDeleteOne;
+    User.startSession = originalStartSession;
     PlaceSubmission.find = originalSubmissionFind;
     PlaceSubmission.deleteMany = originalSubmissionDeleteMany;
     UserBadge.deleteMany = originalBadgeDeleteMany;
@@ -244,10 +259,10 @@ test('deleteUserAccount cascades cleanup and returns audit contract', async () =
 
 test('deleteUserAccount returns 404 when user not found', async () => {
   const originalUserFindOne = User.findOne;
-  const originalUserStartSession = User.startSession;
+  const originalStartSession = User.startSession;
 
   User.startSession = async () => createMockSession();
-  User.findOne = async () => null;
+  User.findOne = () => sessionResult(null);
 
   try {
     const req = {
@@ -262,16 +277,16 @@ test('deleteUserAccount returns 404 when user not found', async () => {
     assert.match(res.body.error, /not found/i);
   } finally {
     User.findOne = originalUserFindOne;
-    User.startSession = originalUserStartSession;
+    User.startSession = originalStartSession;
   }
 });
 
 test('deleteUserAccount returns 500 on database operation failure', async () => {
   const originalUserFindOne = User.findOne;
-  const originalUserStartSession = User.startSession;
+  const originalStartSession = User.startSession;
 
   User.startSession = async () => createMockSession();
-  User.findOne = async () => {
+  User.findOne = () => {
     throw new Error('Database connection failed');
   };
 
@@ -288,27 +303,29 @@ test('deleteUserAccount returns 500 on database operation failure', async () => 
     assert.match(res.body.error, /Failed to delete/);
   } finally {
     User.findOne = originalUserFindOne;
-    User.startSession = originalUserStartSession;
+    User.startSession = originalStartSession;
   }
 });
 
 test('deleteUserAccount succeeds even if storage cleanup fails (best-effort)', async () => {
   const originalUserFindOne = User.findOne;
   const originalUserDeleteOne = User.deleteOne;
+  const originalStartSession = User.startSession;
   const originalSubmissionFind = PlaceSubmission.find;
   const originalSubmissionDeleteMany = PlaceSubmission.deleteMany;
   const originalBadgeDeleteMany = UserBadge.deleteMany;
   const originalUsageDeleteMany = PlaceUsageTracking.deleteMany;
   const originalUsageUpdateMany = PlaceUsageTracking.updateMany;
-  const originalUserStartSession = User.startSession;
 
   User.startSession = async () => createMockSession();
-  User.findOne = async () => ({
-    auth0Id: 'u-1',
-    profilePicture: 'https://storage.googleapis.com/bucket/users/u1/avatars/a.jpg',
-  });
+  User.findOne = () =>
+    sessionResult({
+      auth0Id: 'u-1',
+      profilePicture:
+        'https://storage.googleapis.com/bucket/users/u1/avatars/a.jpg',
+    });
   User.deleteOne = async () => ({ deletedCount: 1 });
-  PlaceSubmission.find = async () => [{ _id: 's1' }];
+  PlaceSubmission.find = () => sessionResult([{ _id: 's1' }]);
   PlaceSubmission.deleteMany = async () => ({ deletedCount: 1 });
   UserBadge.deleteMany = async () => ({ deletedCount: 0 });
   PlaceUsageTracking.deleteMany = async () => ({ deletedCount: 0 });
@@ -321,7 +338,6 @@ test('deleteUserAccount succeeds even if storage cleanup fails (best-effort)', a
     };
     const res = createMockRes();
 
-    // Even if storage fails, response should succeed
     await deleteUserAccount(req, res);
 
     assert.equal(res.statusCode, 200);
@@ -331,7 +347,7 @@ test('deleteUserAccount succeeds even if storage cleanup fails (best-effort)', a
   } finally {
     User.findOne = originalUserFindOne;
     User.deleteOne = originalUserDeleteOne;
-    User.startSession = originalUserStartSession;
+    User.startSession = originalStartSession;
     PlaceSubmission.find = originalSubmissionFind;
     PlaceSubmission.deleteMany = originalSubmissionDeleteMany;
     UserBadge.deleteMany = originalBadgeDeleteMany;
