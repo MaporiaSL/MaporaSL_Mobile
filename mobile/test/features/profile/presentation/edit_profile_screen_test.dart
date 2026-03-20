@@ -265,6 +265,11 @@ void main() {
       () => authService.requestEmailChange('new@mail.com'),
     ).thenAnswer((_) async {});
 
+    await tester.scrollUntilVisible(
+      find.text('Sign In Again'),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
     await tester.tap(find.text('Sign In Again'));
     await tester.pumpAndSettle();
 
@@ -289,6 +294,11 @@ void main() {
     await tester.tap(find.text('Delete Account').last);
     await tester.pumpAndSettle();
 
+    await tester.scrollUntilVisible(
+      find.text('Sign In Again'),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
     await tester.tap(find.text('Sign In Again'));
     await tester.pumpAndSettle();
 
