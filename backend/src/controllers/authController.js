@@ -54,9 +54,11 @@ async function registerUser(req, res) {
     try {
       await assignExplorationForUser(authProviderId, hometownDistrict);
     } catch (assignmentError) {
+      console.error('Assignment error for new user:', assignmentError.message);
       await User.deleteOne({ auth0Id: authProviderId });
       return res.status(500).json({
-        error: 'Failed to create exploration assignments'
+        error: 'Failed to create exploration assignments',
+        details: assignmentError.message
       });
     }
 
@@ -86,7 +88,7 @@ async function registerUser(req, res) {
       return res.status(409).json({ error: 'User with this email or auth0Id already exists' });
     }
     
-    res.status(500).json({ error: 'Failed to register user' });
+    res.status(500).json({ error: 'Failed to register user', details: error.message });
   }
 }
 

@@ -288,7 +288,16 @@ async function assignExplorationForUser(userId, hometownDistrict, options = {}) 
   }
   
   if (!hometownEntry) {
-    throw new Error('Hometown district not found in places catalog');
+    // If hometown district not found, pick a fallback that has places
+    const fallbackDistrict = await pickFallbackHometownDistrict();
+    if (!fallbackDistrict) {
+      throw new Error('No districts with places found - cannot create assignments');
+    }
+    const fallbackKey = normalizeKey(fallbackDistrict);
+    hometownEntry = placesByDistrict.get(fallbackKey);
+    if (!hometownEntry) {
+      throw new Error(`Fallback district "${fallbackDistrict}" has no places in catalog`);
+    }
   }
 
   const hometownProvinceKey = normalizeKey(hometownEntry.province);
