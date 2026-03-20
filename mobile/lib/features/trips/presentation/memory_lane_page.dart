@@ -197,26 +197,7 @@ class _MemoryLanePageState extends ConsumerState<MemoryLanePage>
             ),
             const SizedBox(height: 24),
           ],
-          // Show create button at the bottom if no API trips yet
-          if (apiTrips.isEmpty)
-            Center(
-              child: OutlinedButton.icon(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const CreateTripPage()),
-                  );
-                },
-                icon: const Icon(Icons.add),
-                label: const Text('Plan a New Trip'),
-                style: OutlinedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 24, vertical: 12),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
-                ),
-              ),
-            ),
+          // Show create button removed as requested
         ],
       ),
     );
