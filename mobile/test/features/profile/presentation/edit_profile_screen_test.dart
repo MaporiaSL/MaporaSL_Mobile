@@ -241,7 +241,9 @@ void main() {
     );
   });
 
-  testWidgets('re-auth retry button retries change email action', (tester) async {
+  testWidgets('re-auth retry button retries change email action', (
+    tester,
+  ) async {
     when(
       () => authService.requestEmailChange('new@mail.com'),
     ).thenThrow(const AuthRecentLoginRequiredException());
@@ -259,7 +261,9 @@ void main() {
     await tester.tap(find.text('Continue'));
     await tester.pumpAndSettle();
 
-    when(() => authService.requestEmailChange('new@mail.com')).thenAnswer((_) async {});
+    when(
+      () => authService.requestEmailChange('new@mail.com'),
+    ).thenAnswer((_) async {});
 
     await tester.tap(find.text('Sign In Again'));
     await tester.pumpAndSettle();
@@ -268,7 +272,9 @@ void main() {
     verify(() => authService.requestEmailChange('new@mail.com')).called(2);
   });
 
-  testWidgets('re-auth retry button retries delete account action', (tester) async {
+  testWidgets('re-auth retry button retries delete account action', (
+    tester,
+  ) async {
     var deleteAttempts = 0;
     when(() => authService.deleteCurrentUser()).thenAnswer((_) async {
       deleteAttempts += 1;
