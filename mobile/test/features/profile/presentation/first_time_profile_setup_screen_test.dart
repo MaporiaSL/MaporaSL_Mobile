@@ -101,16 +101,19 @@ void main() {
     tester,
   ) async {
     await tester.pumpWidget(buildTestWidget());
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
 
     await tester.tap(
       find.widgetWithText(FilledButton, 'Continue').hitTestable().first,
     );
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 200));
     await tester.tap(
       find.widgetWithText(FilledButton, 'Continue').hitTestable().first,
     );
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 200));
     await tester.tap(
       find.widgetWithText(FilledButton, 'Finish Setup').hitTestable().first,
     );
