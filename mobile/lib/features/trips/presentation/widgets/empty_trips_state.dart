@@ -17,7 +17,7 @@ class EmptyTripsState extends StatelessWidget {
             // Large icon
             Icon(
               Icons.card_travel_outlined,
-              size: 120,
+              size: 112,
               color: Colors.grey.shade300,
             ),
             const SizedBox(height: 32),
