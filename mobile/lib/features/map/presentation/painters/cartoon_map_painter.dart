@@ -3,6 +3,7 @@ import 'dart:ui' as ui;
 import 'dart:math' as math;
 import '../../data/regions_data.dart';
 import '../theme/map_visual_theme.dart';
+import '../../providers/user_location_provider.dart';
 
 /// Cartoonish painter for rendering stylized Sri Lanka map with GeoJSON boundaries
 /// Renders actual province and district outlines with progressive unlock colors
@@ -19,6 +20,9 @@ class CartoonMapPainter extends CustomPainter {
 
   /// Map of district ID to completion percentage (0.0 - 1.0)
   final Map<String, double> districtProgress;
+  
+  /// User's current location to display on map
+  final UserLocation? userLocation;
 
   CartoonMapPainter({
     required this.regions,
@@ -31,6 +35,7 @@ class CartoonMapPainter extends CustomPainter {
     this.focusedDistrictName,
     required this.theme,
     this.districtProgress = const <String, double>{},
+    this.userLocation,
   });
 
   @override
@@ -497,6 +502,8 @@ class CartoonMapPainter extends CustomPainter {
         oldDelegate.focusMode != focusMode ||
         oldDelegate.focusedDistrictName != focusedDistrictName ||
         oldDelegate.theme != theme ||
-        oldDelegate.districtProgress != districtProgress;
+        oldDelegate.districtProgress != districtProgress ||
+        oldDelegate.userLocation?.latitude != userLocation?.latitude ||
+        oldDelegate.userLocation?.longitude != userLocation?.longitude;
   }
 }

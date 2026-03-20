@@ -15,6 +15,7 @@ import '../../exploration/providers/exploration_provider.dart';
 import '../../../core/providers/theme_provider.dart';
 import '../../exploration/data/models/exploration_models.dart';
 import '../../visits/presentation/widgets/dynamic_visit_sheet.dart';
+import '../providers/user_location_provider.dart';
 
 final districtFocusProvider = StateProvider<bool>((ref) => false);
 
@@ -94,6 +95,8 @@ class _MapScreenState extends ConsumerState<MapScreen>
     Future.microtask(() {
       if (!mounted) return;
       ref.read(explorationProvider.notifier).loadAssignments();
+      // Start user location tracking
+      ref.read(userLocationProvider.notifier).startTracking();
     });
   }
 
@@ -132,6 +135,9 @@ class _MapScreenState extends ConsumerState<MapScreen>
       assignments,
       selectedDistrict,
     );
+    
+    final userLocationState = ref.watch(userLocationProvider);
+    final userLocation = userLocationState.location;
 
     // Calculate district progress (0.0-1.0 for each district)
     final districtProgress = _calculateDistrictProgress(assignments);
@@ -263,6 +269,7 @@ class _MapScreenState extends ConsumerState<MapScreen>
                         focusedDistrictName: selectedDistrict,
                         theme: theme,
                         districtProgress: districtProgress,
+                        userLocation: userLocation,
                         onDistrictSelected:
                             (
                               districtName,
