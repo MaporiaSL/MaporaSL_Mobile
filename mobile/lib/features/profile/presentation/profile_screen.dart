@@ -6,6 +6,7 @@ import '../../settings/presentation/settings_screen.dart';
 import 'providers/profile_providers.dart';
 import '../../../providers/progress_provider.dart';
 import '../../achievements/presentation/achievements_screen.dart';
+import '../../../splash/presentation/splash_screen.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
@@ -582,15 +583,16 @@ class ProfileScreen extends ConsumerWidget {
       await authService.signOut();
 
       if (context.mounted) {
-        Navigator.of(
-          context,
-        ).pushNamedAndRemoveUntil('/login', (route) => false);
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (_) => const SplashScreen()),
+          (route) => false,
+        );
       }
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Error: $e')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $e')),
+        );
       }
     }
   }
