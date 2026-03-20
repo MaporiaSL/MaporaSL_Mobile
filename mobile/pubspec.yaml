@@ -75,6 +75,7 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
+    - assets/config/profile_validation_constraints.json
     - assets/geojson/boundaries/LK-provinces.geojson
     - assets/geojson/boundaries/LK-districts.geojson
     - assets/data/
