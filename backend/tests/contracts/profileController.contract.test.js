@@ -311,6 +311,7 @@ test('deleteUserAccount succeeds even if storage cleanup fails (best-effort)', a
   const originalUserFindOne = User.findOne;
   const originalUserDeleteOne = User.deleteOne;
   const originalStartSession = User.startSession;
+  const originalConsoleWarn = console.warn;
   const originalSubmissionFind = PlaceSubmission.find;
   const originalSubmissionDeleteMany = PlaceSubmission.deleteMany;
   const originalBadgeDeleteMany = UserBadge.deleteMany;
@@ -330,6 +331,7 @@ test('deleteUserAccount succeeds even if storage cleanup fails (best-effort)', a
   UserBadge.deleteMany = async () => ({ deletedCount: 0 });
   PlaceUsageTracking.deleteMany = async () => ({ deletedCount: 0 });
   PlaceUsageTracking.updateMany = async () => ({ modifiedCount: 0 });
+  console.warn = () => {};
 
   try {
     const req = {
@@ -348,6 +350,7 @@ test('deleteUserAccount succeeds even if storage cleanup fails (best-effort)', a
     User.findOne = originalUserFindOne;
     User.deleteOne = originalUserDeleteOne;
     User.startSession = originalStartSession;
+    console.warn = originalConsoleWarn;
     PlaceSubmission.find = originalSubmissionFind;
     PlaceSubmission.deleteMany = originalSubmissionDeleteMany;
     UserBadge.deleteMany = originalBadgeDeleteMany;
