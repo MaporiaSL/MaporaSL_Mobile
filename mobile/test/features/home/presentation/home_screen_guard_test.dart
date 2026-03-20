@@ -94,6 +94,10 @@ void main() {
   });
 
   testWidgets('routes to auth gate when sign-in is required', (tester) async {
+    when(
+      () => authService.authStateChanges(),
+    ).thenAnswer((_) => Stream<User?>.multi((_) {}));
+
     await tester.pumpWidget(
       buildHomeWithGuard(
         (_) async => const CoreNavigationGuardState.needsSignIn(
@@ -101,7 +105,8 @@ void main() {
         ),
       ),
     );
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump();
 
     expect(find.byType(AuthGate), findsOneWidget);
   });
