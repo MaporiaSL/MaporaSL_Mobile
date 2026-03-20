@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
+    "rundev": "npm run dev",
     "migrate:profile-backfill": "node scripts/backfill-profile-fields.js",
     "migrate:profile-setup-backfill": "node scripts/backfill-profile-setup-completion.js",
     "migrate:profile-setup-backfill:dry": "node scripts/backfill-profile-setup-completion.js --dry-run",
