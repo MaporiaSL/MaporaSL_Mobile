@@ -198,6 +198,12 @@ class ProfileSetupLocalizations {
       'backendAccountDeleteFailed':
           'Account cleanup failed on server. Please try again shortly.',
       'recentlyReauthed': 'Successfully signed in again. Proceeding with your action.',
+      'reauthInteractiveRequired':
+          'Please sign out and sign in again to complete this secure action.',
+      'reauthUnsupportedProvider':
+          'Your sign-in method does not support in-app re-authentication here.',
+      'reauthCancelled':
+          'Re-authentication was cancelled. Please try again to continue.',
     },
     'si': {
       'screenTitle': 'Complete Your Profile',
@@ -376,6 +382,12 @@ class ProfileSetupLocalizations {
       'backendAccountDeleteFailed':
           'සේවාදායකයේ ගිණුම් පිරිසිදු කිරීම අසාර්ථක විය. ටික වේලාවකින් නැවත උත්සාහ කරන්න.',
       'recentlyReauthed': 'සফලව නැවත පිවිසුණු ප්‍රතිෙ. ඔබේ ක්‍රියාව ඉදිරියට ගෙන යමින්.',
+      'reauthInteractiveRequired':
+          'මෙම ආරක්ෂිත ක්‍රියාව සම්පූර්ණ කිරීමට පිටවී නැවත පිවිසෙන්න.',
+      'reauthUnsupportedProvider':
+          'ඔබ භාවිතා කරන පිවිසුම් ක්‍රමය මෙහි යෙදුම තුළ නැවත සත්‍යාපනයට සහය නොදක්වයි.',
+      'reauthCancelled':
+          'නැවත සත්‍යාපනය අවලංගු කරන ලදී. කරුණාකර ඉදිරියට යාමට නැවත උත්සාහ කරන්න.',
     },
     'ta': {
       'screenTitle': 'Complete Your Profile',
@@ -555,6 +567,12 @@ class ProfileSetupLocalizations {
       'backendAccountDeleteFailed':
           'சேவையகத்தில் கணக்கு சுத்திகரிப்பு தோல்வியடைந்தது. சிறிது நேரம் கழித்து முயற்சிக்கவும்.',
       'recentlyReauthed': 'வெற்றிகரமாக மீண்டும் உள்நுழைந்துவிட்டீர்கள். உங்கள் செயலைத் தொடர்கிறோம்.',
+      'reauthInteractiveRequired':
+          'இந்த பாதுகாப்பு செயல்பாட்டை முடிக்க வெளியேறி மீண்டும் உள்நுழைக.',
+      'reauthUnsupportedProvider':
+          'நீங்கள் பயன்படுத்தும் உள்நுழைவு முறை இங்கே பயன்பாட்டிற்குள் மீள் அங்கீகாரத்தை ஆதரிக்காது.',
+      'reauthCancelled':
+          'மீள் அங்கீகாரம் ரத்து செய்யப்பட்டது. தொடர மீண்டும் முயற்சிக்கவும்.',
     },
   };
 
@@ -720,6 +738,9 @@ class ProfileSetupLocalizations {
   String get recentLoginRequired => _value('recentLoginRequired');
   String get backendAccountDeleteFailed => _value('backendAccountDeleteFailed');
   String get recentlyReauthed => _value('recentlyReauthed');
+    String get reauthInteractiveRequired => _value('reauthInteractiveRequired');
+    String get reauthUnsupportedProvider => _value('reauthUnsupportedProvider');
+    String get reauthCancelled => _value('reauthCancelled');
 
   String passwordResetSent(String email) {
     return 'Password reset link sent to $email.';
