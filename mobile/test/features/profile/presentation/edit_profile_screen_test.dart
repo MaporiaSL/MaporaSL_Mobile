@@ -71,7 +71,10 @@ void main() {
         ],
         child: MaterialApp(
           routes: {'/login': (_) => const Scaffold(body: Text('login'))},
-          home: EditProfileScreen(initialProfile: profile ?? initialProfile),
+          home: EditProfileScreen(
+            initialProfile: profile ?? initialProfile,
+            disableAvatarNetworkImageForTesting: true,
+          ),
         ),
       ),
     );
