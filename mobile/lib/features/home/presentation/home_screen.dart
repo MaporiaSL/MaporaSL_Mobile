@@ -74,8 +74,27 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         if (!guard.isAllowed) {
           return Scaffold(
             body: Center(
-              child: Text(
-                guard.message ?? 'Access blocked until setup is complete.',
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      guard.message ?? 'Access blocked until setup is complete.',
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 12),
+                    OutlinedButton.icon(
+                      onPressed: () {
+                        ref.invalidate(coreNavigationGuardProvider);
+                        ref.invalidate(profileBootstrapProvider);
+                        ref.invalidate(profileSetupRequirementProvider);
+                      },
+                      icon: const Icon(Icons.refresh),
+                      label: const Text('Retry'),
+                    ),
+                  ],
+                ),
               ),
             ),
           );
