@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:geocoding/geocoding.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
@@ -19,8 +20,6 @@ class _PlaceSubmissionScreenState extends ConsumerState<PlaceSubmissionScreen> {
   final _descriptionController = TextEditingController();
   final _provinceController = TextEditingController(text: 'Western');
   final _districtController = TextEditingController(text: 'Colombo');
-  final _latitudeController = TextEditingController();
-  final _longitudeController = TextEditingController();
 
   final ImagePicker _picker = ImagePicker();
 
@@ -50,9 +49,28 @@ class _PlaceSubmissionScreenState extends ConsumerState<PlaceSubmissionScreen> {
     _descriptionController.dispose();
     _provinceController.dispose();
     _districtController.dispose();
-    _latitudeController.dispose();
-    _longitudeController.dispose();
     super.dispose();
+  }
+
+  Future<({double latitude, double longitude})?> _resolveCoordinates() async {
+    final parts = <String>[
+      _placeNameController.text.trim(),
+      _districtController.text.trim(),
+      _provinceController.text.trim(),
+      'Sri Lanka',
+    ].where((p) => p.isNotEmpty).toList();
+
+    final query = parts.join(', ');
+    if (query.isEmpty) return null;
+
+    try {
+      final locations = await locationFromAddress(query);
+      if (locations.isEmpty) return null;
+      final first = locations.first;
+      return (latitude: first.latitude, longitude: first.longitude);
+    } catch (_) {
+      return null;
+    }
   }
 
   Future<void> _pickPhotos() async {
@@ -72,11 +90,14 @@ class _PlaceSubmissionScreenState extends ConsumerState<PlaceSubmissionScreen> {
       return;
     }
 
-    final lat = double.tryParse(_latitudeController.text.trim());
-    final lng = double.tryParse(_longitudeController.text.trim());
-    if (lat == null || lng == null) {
+    final coordinates = await _resolveCoordinates();
+    if (coordinates == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Latitude and longitude must be valid numbers')),
+        const SnackBar(
+          content: Text(
+            'Could not determine location automatically. Refine place/province/district and try again.',
+          ),
+        ),
       );
       return;
     }
@@ -87,8 +108,8 @@ class _PlaceSubmissionScreenState extends ConsumerState<PlaceSubmissionScreen> {
           category: _category,
           province: _provinceController.text.trim(),
           district: _districtController.text.trim(),
-          latitude: lat,
-          longitude: lng,
+          latitude: coordinates.latitude,
+          longitude: coordinates.longitude,
           photoPaths: _photos.map((p) => p.path).toList(),
         );
 
@@ -186,38 +207,6 @@ class _PlaceSubmissionScreenState extends ConsumerState<PlaceSubmissionScreen> {
                   border: OutlineInputBorder(),
                 ),
                 validator: (value) => (value == null || value.trim().isEmpty) ? 'District required' : null,
-              ),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextFormField(
-                      controller: _latitudeController,
-                      keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true),
-                      decoration: const InputDecoration(
-                        labelText: 'Latitude',
-                        border: OutlineInputBorder(),
-                      ),
-                      validator: (value) => (double.tryParse(value?.trim() ?? '') == null)
-                          ? 'Invalid latitude'
-                          : null,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: TextFormField(
-                      controller: _longitudeController,
-                      keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true),
-                      decoration: const InputDecoration(
-                        labelText: 'Longitude',
-                        border: OutlineInputBorder(),
-                      ),
-                      validator: (value) => (double.tryParse(value?.trim() ?? '') == null)
-                          ? 'Invalid longitude'
-                          : null,
-                    ),
-                  ),
-                ],
               ),
               const SizedBox(height: 16),
               OutlinedButton.icon(

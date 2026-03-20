@@ -132,6 +132,22 @@ async function buildProfileResponse(userId, userDoc) {
   const user = userDoc || await User.findOne({ auth0Id: userId });
   if (!user) return null;
 
+  const unlockedDistrictsCount = Math.max(
+    Array.isArray(user.unlockedDistricts) ? user.unlockedDistricts.length : 0,
+    Array.isArray(user.explorationUnlockedDistricts)
+      ? user.explorationUnlockedDistricts.length
+      : 0
+  );
+  const unlockedProvincesCount = Math.max(
+    Array.isArray(user.unlockedProvinces) ? user.unlockedProvinces.length : 0,
+    Array.isArray(user.explorationUnlockedProvinces)
+      ? user.explorationUnlockedProvinces.length
+      : 0
+  );
+  const totalPlacesVisited = Number.isFinite(user.totalPlacesVisited)
+    ? user.totalPlacesVisited
+    : Number(user?.explorationStats?.totalVisited || 0);
+
   const totalSubmitted = await PlaceSubmission.countDocuments({ userId });
   const approvedCount = await PlaceSubmission.countDocuments({
     userId,
@@ -182,6 +198,9 @@ async function buildProfileResponse(userId, userDoc) {
       totalSubmitted,
       approvedCount,
       approvalRate: parseFloat((approvalRate * 100).toFixed(2)),
+      unlockedDistrictsCount,
+      unlockedProvincesCount,
+      totalPlacesVisited,
     },
     badges: badgesList,
     leaderboardRank,
