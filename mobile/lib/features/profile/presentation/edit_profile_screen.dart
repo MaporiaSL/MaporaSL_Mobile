@@ -49,7 +49,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   String? _lastFailedUploadPath;
   int _avatarCacheBuster = 0;
   late String _currentAvatarUrl;
-  
+
   // Re-auth state for sensitive operations
   String? _pendingSensitiveAction;
   String? _pendingEmailForRetry;
@@ -216,9 +216,9 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
         }
         await _performDeleteAccount(userId);
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(_l10n.recentlyReauthed)),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(_l10n.recentlyReauthed)));
       }
     } on AuthRecentLoginRequiredException {
       if (!mounted) return;
