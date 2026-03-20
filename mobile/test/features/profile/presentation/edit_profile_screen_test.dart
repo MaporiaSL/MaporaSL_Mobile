@@ -99,6 +99,7 @@ void main() {
       () => authService.sendPasswordResetEmail(any()),
     ).thenAnswer((_) async {});
     when(() => authService.requestEmailChange(any())).thenAnswer((_) async {});
+    when(() => authService.reauthenticateUser()).thenAnswer((_) async {});
     when(() => authService.deleteCurrentUser()).thenAnswer((_) async {});
     when(() => authService.signOut()).thenAnswer((_) async {});
 
@@ -238,6 +239,56 @@ void main() {
       find.text('For security, please sign in again and retry this action.'),
       findsOneWidget,
     );
+  });
+
+  testWidgets('re-auth retry button retries change email action', (tester) async {
+    when(
+      () => authService.requestEmailChange('new@mail.com'),
+    ).thenThrow(const AuthRecentLoginRequiredException());
+
+    await pumpScreen(tester);
+
+    await tapAccountAction(tester, 'Change Email');
+    await tester.enterText(
+      find.descendant(
+        of: find.byType(AlertDialog),
+        matching: find.byType(TextField),
+      ),
+      'new@mail.com',
+    );
+    await tester.tap(find.text('Continue'));
+    await tester.pumpAndSettle();
+
+    when(() => authService.requestEmailChange('new@mail.com')).thenAnswer((_) async {});
+
+    await tester.tap(find.text('Sign In Again'));
+    await tester.pumpAndSettle();
+
+    verify(() => authService.reauthenticateUser()).called(1);
+    verify(() => authService.requestEmailChange('new@mail.com')).called(2);
+  });
+
+  testWidgets('re-auth retry button retries delete account action', (tester) async {
+    var deleteAttempts = 0;
+    when(() => authService.deleteCurrentUser()).thenAnswer((_) async {
+      deleteAttempts += 1;
+      if (deleteAttempts == 1) {
+        throw const AuthRecentLoginRequiredException();
+      }
+    });
+
+    await pumpScreen(tester);
+
+    await tapAccountAction(tester, 'Delete Account');
+    await tester.tap(find.text('Delete Account').last);
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Sign In Again'));
+    await tester.pumpAndSettle();
+
+    verify(() => authService.reauthenticateUser()).called(1);
+    verify(() => repository.deleteAccount('u1')).called(2);
+    verify(() => authService.deleteCurrentUser()).called(2);
   });
 
   testWidgets('remove avatar success updates profile', (tester) async {
