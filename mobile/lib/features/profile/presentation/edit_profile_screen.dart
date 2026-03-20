@@ -346,7 +346,11 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       Navigator.of(context).pushNamedAndRemoveUntil('/login', (_) => false);
     } on AuthRecentLoginRequiredException {
       if (!mounted) return;
-      setState(() => _inlineError = _l10n.recentLoginRequired);
+      setState(() {
+        _pendingSensitiveAction = 'deleteAccount';
+        _isReauthRequired = true;
+        _inlineError = _l10n.recentLoginRequired;
+      });
     } on Exception {
       if (!mounted) return;
       setState(() => _inlineError = _l10n.backendAccountDeleteFailed);
