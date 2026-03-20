@@ -15,7 +15,9 @@ class GeofenceNotifier extends StateNotifier<GeofenceState> {
   Set<String> _notifiedLocationIds = {};
 
   /// Start monitoring user location against assigned locations
-  Future<void> startMonitoring(List<ExplorationLocationWithDistrict> locations) async {
+  Future<void> startMonitoring(
+    List<ExplorationLocationWithDistrict> locations,
+  ) async {
     // Request permissions
     final serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
@@ -37,14 +39,15 @@ class GeofenceNotifier extends StateNotifier<GeofenceState> {
     await _positionSubscription?.cancel();
 
     // Start position stream
-    _positionSubscription = Geolocator.getPositionStream(
-      locationSettings: const LocationSettings(
-        accuracy: LocationAccuracy.high,
-        distanceFilter: 50, // Update every 50 meters
-      ),
-    ).listen((position) {
-      _checkProximity(position, locations);
-    });
+    _positionSubscription =
+        Geolocator.getPositionStream(
+          locationSettings: const LocationSettings(
+            accuracy: LocationAccuracy.high,
+            distanceFilter: 50, // Update every 50 meters
+          ),
+        ).listen((position) {
+          _checkProximity(position, locations);
+        });
 
     state = state.copyWith(isMonitoring: true, error: null);
   }
@@ -87,7 +90,11 @@ class GeofenceNotifier extends StateNotifier<GeofenceState> {
                 locationName: location.name,
                 districtName: location.districtName,
                 distanceMeters: distance,
-                xpReward: location.tier == 'sameDistrict' ? 10 : location.tier == 'sameProvince' ? 12 : 15,
+                xpReward: location.tier == 'sameDistrict'
+                    ? 10
+                    : location.tier == 'sameProvince'
+                    ? 12
+                    : 15,
               ),
             ],
           );
@@ -105,11 +112,17 @@ class GeofenceNotifier extends StateNotifier<GeofenceState> {
   }
 
   /// Calculate distance between two coordinates (Haversine formula)
-  double _calculateDistance(double lat1, double lon1, double lat2, double lon2) {
+  double _calculateDistance(
+    double lat1,
+    double lon1,
+    double lat2,
+    double lon2,
+  ) {
     const earthRadius = 6371000.0; // meters
     final dLat = _toRadians(lat2 - lat1);
     final dLon = _toRadians(lon2 - lon1);
-    final a = math.sin(dLat / 2) * math.sin(dLat / 2) +
+    final a =
+        math.sin(dLat / 2) * math.sin(dLat / 2) +
         math.cos(_toRadians(lat1)) *
             math.cos(_toRadians(lat2)) *
             math.sin(dLon / 2) *
@@ -129,14 +142,15 @@ class GeofenceNotifier extends StateNotifier<GeofenceState> {
     final xpReward = location.tier == 'sameDistrict'
         ? 10
         : location.tier == 'sameProvince'
-            ? 12
-            : 15;
+        ? 12
+        : 15;
 
     final channelId = 'proximity_alerts';
     final androidDetails = AndroidNotificationDetails(
       channelId,
       'Proximity Alerts',
-      channelDescription: 'Notifications when you are near exploration locations',
+      channelDescription:
+          'Notifications when you are near exploration locations',
       importance: Importance.high,
       priority: Priority.high,
       sound: const RawResourceAndroidNotificationSound('digital_chime'),
@@ -231,10 +245,11 @@ class ExplorationLocationWithDistrict {
 }
 
 /// Geofence provider
-final geofenceProvider =
-    StateNotifierProvider<GeofenceNotifier, GeofenceState>((ref) {
-  return GeofenceNotifier();
-});
+final geofenceProvider = StateNotifierProvider<GeofenceNotifier, GeofenceState>(
+  (ref) {
+    return GeofenceNotifier();
+  },
+);
 
 /// Initialize local notifications for geofencing alerts
 Future<void> initializeGeofencingNotifications() async {

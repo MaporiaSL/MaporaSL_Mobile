@@ -27,7 +27,9 @@ class ShareableCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    final formattedDate = DateFormat('dd MMM yyyy, HH:mm').format(DateTime.now());
+    final formattedDate = DateFormat(
+      'dd MMM yyyy, HH:mm',
+    ).format(DateTime.now());
 
     return Container(
       width: 360,
@@ -54,7 +56,10 @@ class ShareableCard extends StatelessWidget {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(999),
@@ -112,9 +117,7 @@ class ShareableCard extends StatelessWidget {
             decoration: BoxDecoration(
               color: Colors.black.withValues(alpha: 0.25),
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: Colors.white.withValues(alpha: 0.15),
-              ),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.15)),
             ),
             child: MiniPathMap(
               points: assignment.locations,
@@ -209,22 +212,33 @@ class _MiniPathMapPainter extends CustomPainter {
     final minLng = longitudes.reduce((a, b) => a < b ? a : b);
     final maxLng = longitudes.reduce((a, b) => a > b ? a : b);
 
-    final latSpan = (maxLat - minLat).abs() < 0.0001 ? 0.0001 : (maxLat - minLat);
-    final lngSpan = (maxLng - minLng).abs() < 0.0001 ? 0.0001 : (maxLng - minLng);
+    final latSpan = (maxLat - minLat).abs() < 0.0001
+        ? 0.0001
+        : (maxLat - minLat);
+    final lngSpan = (maxLng - minLng).abs() < 0.0001
+        ? 0.0001
+        : (maxLng - minLng);
 
     Offset toOffset(ExplorationLocation point) {
       const pad = 14.0;
       final usableW = size.width - (pad * 2);
       final usableH = size.height - (pad * 2);
       final x = ((point.longitude - minLng) / lngSpan) * usableW + pad;
-      final y = size.height - (((point.latitude - minLat) / latSpan) * usableH + pad);
+      final y =
+          size.height - (((point.latitude - minLat) / latSpan) * usableH + pad);
       return Offset(x, y);
     }
 
-    final visitedPoints = points.where((p) => visitedIds.contains(p.id)).toList();
+    final visitedPoints = points
+        .where((p) => visitedIds.contains(p.id))
+        .toList();
 
     if (visitedPoints.length > 1) {
-      final path = Path()..moveTo(toOffset(visitedPoints.first).dx, toOffset(visitedPoints.first).dy);
+      final path = Path()
+        ..moveTo(
+          toOffset(visitedPoints.first).dx,
+          toOffset(visitedPoints.first).dy,
+        );
       for (var i = 1; i < visitedPoints.length; i++) {
         final p = toOffset(visitedPoints[i]);
         path.lineTo(p.dx, p.dy);
@@ -274,7 +288,8 @@ class DiscoveryCertificateOverlay extends StatefulWidget {
       _DiscoveryCertificateOverlayState();
 }
 
-class _DiscoveryCertificateOverlayState extends State<DiscoveryCertificateOverlay> {
+class _DiscoveryCertificateOverlayState
+    extends State<DiscoveryCertificateOverlay> {
   final GlobalKey _cardKey = GlobalKey();
   bool _isSharing = false;
 
@@ -299,13 +314,17 @@ class _DiscoveryCertificateOverlayState extends State<DiscoveryCertificateOverla
       if (pngBytes == null) return;
 
       final dir = await getTemporaryDirectory();
-      final safeDistrict = widget.assignment.district.toLowerCase().replaceAll(' ', '_');
+      final safeDistrict = widget.assignment.district.toLowerCase().replaceAll(
+        ' ',
+        '_',
+      );
       final file = File('${dir.path}/maporia_${safeDistrict}_certificate.png');
       await file.writeAsBytes(pngBytes, flush: true);
 
       await Share.shareXFiles(
         [XFile(file.path)],
-        text: 'I unlocked ${widget.assignment.district} on MAPORIA. #MaporiaDiscovery',
+        text:
+            'I unlocked ${widget.assignment.district} on MAPORIA. #MaporiaDiscovery',
       );
     } finally {
       if (mounted) {
@@ -354,7 +373,9 @@ class _DiscoveryCertificateOverlayState extends State<DiscoveryCertificateOverla
                           child: CircularProgressIndicator(strokeWidth: 2),
                         )
                       : const Icon(Icons.share),
-                  label: Text(_isSharing ? 'Generating image...' : 'Share Certificate'),
+                  label: Text(
+                    _isSharing ? 'Generating image...' : 'Share Certificate',
+                  ),
                 ),
               ),
               const SizedBox(height: 8),

@@ -32,7 +32,8 @@ class DynamicVisitSheet extends ConsumerStatefulWidget {
   @override
   ConsumerState<DynamicVisitSheet> createState() => _DynamicVisitSheetState();
 
-  static void show(BuildContext context, {
+  static void show(
+    BuildContext context, {
     required String placeId,
     required String placeName,
     required double targetLat,
@@ -62,21 +63,24 @@ class _DynamicVisitSheetState extends ConsumerState<DynamicVisitSheet>
   int _currentStepIndex = 0;
   late AnimationController _radarController;
   bool _wasDistrictUnlocked = false;
-  bool _certificateShown = false;  List<VerificationTargetLocation> _targetLocations = [];
+  bool _certificateShown = false;
+  List<VerificationTargetLocation> _targetLocations = [];
   int _xpAwarded = 0;
   @override
   void initState() {
     super.initState();
     final useAnimations = ref.read(accessibilityProvider).useAnimations;
     _radarController = AnimationController(
-        vsync: this, duration: const Duration(seconds: 2));
-    
+      vsync: this,
+      duration: const Duration(seconds: 2),
+    );
+
     if (useAnimations) {
       _radarController.repeat();
     }
-    
+
     _initSteps();
-    
+
     // Prepare target locations for satellite pulse animation
     if (widget.isExploration && widget.explorationLocation != null) {
       _targetLocations = [
@@ -88,9 +92,11 @@ class _DynamicVisitSheetState extends ConsumerState<DynamicVisitSheet>
         ),
       ];
     }
-    
+
     if (widget.isExploration && widget.explorationLocation != null) {
-      final assignment = _findAssignmentForLocation(ref.read(explorationProvider));
+      final assignment = _findAssignmentForLocation(
+        ref.read(explorationProvider),
+      );
       _wasDistrictUnlocked = assignment?.isUnlocked == true;
     }
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -103,7 +109,9 @@ class _DynamicVisitSheetState extends ConsumerState<DynamicVisitSheet>
     if (target == null || target.isEmpty) return null;
 
     for (final assignment in state.assignments) {
-      final hasLocation = assignment.locations.any((location) => location.id == target);
+      final hasLocation = assignment.locations.any(
+        (location) => location.id == target,
+      );
       if (hasLocation) return assignment;
     }
     return null;
@@ -125,23 +133,39 @@ class _DynamicVisitSheetState extends ConsumerState<DynamicVisitSheet>
 
   void _initSteps() {
     _steps = [
-      VerificationStep(label: 'Satellite Signal Strength', icon: Icons.wifi_tethering),
-      VerificationStep(label: 'Main Geofence Boundary Check', icon: Icons.adjust),
-      VerificationStep(label: 'Multi-Path Reflection Correction', icon: Icons.reorder),
-      VerificationStep(label: 'Atmospheric Data Validation', icon: Icons.cloud_done),
+      VerificationStep(
+        label: 'Satellite Signal Strength',
+        icon: Icons.wifi_tethering,
+      ),
+      VerificationStep(
+        label: 'Main Geofence Boundary Check',
+        icon: Icons.adjust,
+      ),
+      VerificationStep(
+        label: 'Multi-Path Reflection Correction',
+        icon: Icons.reorder,
+      ),
+      VerificationStep(
+        label: 'Atmospheric Data Validation',
+        icon: Icons.cloud_done,
+      ),
       VerificationStep(label: 'Proximity Finalization', icon: Icons.fact_check),
     ];
   }
 
   void _triggerVerification() {
     if (widget.isExploration && widget.explorationLocation != null) {
-      ref.read(explorationProvider.notifier).verifyLocation(widget.explorationLocation!);
+      ref
+          .read(explorationProvider.notifier)
+          .verifyLocation(widget.explorationLocation!);
     } else {
-      ref.read(visitProvider.notifier).markVisitWithDeviceLocation(
-        widget.placeId,
-        widget.targetLat,
-        widget.targetLng,
-      );
+      ref
+          .read(visitProvider.notifier)
+          .markVisitWithDeviceLocation(
+            widget.placeId,
+            widget.targetLat,
+            widget.targetLng,
+          );
     }
   }
 
@@ -155,17 +179,29 @@ class _DynamicVisitSheetState extends ConsumerState<DynamicVisitSheet>
   Widget build(BuildContext context) {
     final visitState = ref.watch(visitProvider);
     final explorationState = ref.watch(explorationProvider);
-    
+
     // Abstract the state for the UI
-    final bool isVerifying = widget.isExploration ? explorationState.isVerifying : visitState.isVerifying;
-    final bool success = widget.isExploration 
-        ? (explorationState.verifyingLocationId == null && explorationState.error == null && !explorationState.isVerifying && explorationState.currentStepIndex == 5) 
+    final bool isVerifying = widget.isExploration
+        ? explorationState.isVerifying
+        : visitState.isVerifying;
+    final bool success = widget.isExploration
+        ? (explorationState.verifyingLocationId == null &&
+              explorationState.error == null &&
+              !explorationState.isVerifying &&
+              explorationState.currentStepIndex == 5)
         : visitState.success;
-    final String? error = widget.isExploration ? explorationState.error : visitState.error;
-    final int providerStepIndex = widget.isExploration ? explorationState.currentStepIndex : visitState.currentStepIndex;
-    final String? verificationStepDesc = widget.isExploration ? explorationState.verificationStep : visitState.verificationStep;
-    final currentAssignment =
-        widget.isExploration ? _findAssignmentForLocation(explorationState) : null;
+    final String? error = widget.isExploration
+        ? explorationState.error
+        : visitState.error;
+    final int providerStepIndex = widget.isExploration
+        ? explorationState.currentStepIndex
+        : visitState.currentStepIndex;
+    final String? verificationStepDesc = widget.isExploration
+        ? explorationState.verificationStep
+        : visitState.verificationStep;
+    final currentAssignment = widget.isExploration
+        ? _findAssignmentForLocation(explorationState)
+        : null;
     final districtJustUnlocked =
         widget.isExploration &&
         currentAssignment != null &&
@@ -183,15 +219,15 @@ class _DynamicVisitSheetState extends ConsumerState<DynamicVisitSheet>
 
     // Sync _steps with provider state
     for (int i = 0; i < _steps.length; i++) {
-        if (error != null && providerStepIndex == i) {
-            _steps[i].status = StepStatus.failed;
-        } else if (providerStepIndex > i || success) {
-            _steps[i].status = StepStatus.passed;
-        } else if (providerStepIndex == i && isVerifying) {
-            _steps[i].status = StepStatus.checking;
-        } else {
-            _steps[i].status = StepStatus.pending;
-        }
+      if (error != null && providerStepIndex == i) {
+        _steps[i].status = StepStatus.failed;
+      } else if (providerStepIndex > i || success) {
+        _steps[i].status = StepStatus.passed;
+      } else if (providerStepIndex == i && isVerifying) {
+        _steps[i].status = StepStatus.checking;
+      } else {
+        _steps[i].status = StepStatus.pending;
+      }
     }
     _currentStepIndex = providerStepIndex;
 
@@ -211,7 +247,7 @@ class _DynamicVisitSheetState extends ConsumerState<DynamicVisitSheet>
               color: Colors.black.withValues(alpha: 0.2),
               blurRadius: 30,
               offset: const Offset(0, -10),
-            )
+            ),
           ],
         ),
         child: Column(
@@ -227,8 +263,15 @@ class _DynamicVisitSheetState extends ConsumerState<DynamicVisitSheet>
             ),
             Expanded(
               child: ClipRRect(
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-                child: _buildContent(isVerifying, success, error, verificationStepDesc),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(20),
+                ),
+                child: _buildContent(
+                  isVerifying,
+                  success,
+                  error,
+                  verificationStepDesc,
+                ),
               ),
             ),
           ],
@@ -237,10 +280,16 @@ class _DynamicVisitSheetState extends ConsumerState<DynamicVisitSheet>
     );
   }
 
-  Widget _buildContent(bool isVerifying, bool success, String? error, String? stepDesc) {
+  Widget _buildContent(
+    bool isVerifying,
+    bool success,
+    String? error,
+    String? stepDesc,
+  ) {
     final explorationState = ref.watch(explorationProvider);
-    final currentAssignment =
-        widget.isExploration ? _findAssignmentForLocation(explorationState) : null;
+    final currentAssignment = widget.isExploration
+        ? _findAssignmentForLocation(explorationState)
+        : null;
     final districtJustUnlocked =
         widget.isExploration &&
         currentAssignment != null &&
@@ -249,7 +298,10 @@ class _DynamicVisitSheetState extends ConsumerState<DynamicVisitSheet>
         success &&
         error == null;
 
-    if (isVerifying || (error == null && _currentStepIndex < _steps.length && _currentStepIndex >= 0)) {
+    if (isVerifying ||
+        (error == null &&
+            _currentStepIndex < _steps.length &&
+            _currentStepIndex >= 0)) {
       return _buildVerifyingUI(stepDesc);
     } else if (success && error == null) {
       return _buildSuccessUI(
@@ -332,10 +384,17 @@ class _DynamicVisitSheetState extends ConsumerState<DynamicVisitSheet>
                       height: 100,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        border: Border.all(color: Colors.blue.withValues(alpha: 0.3), width: 2),
+                        border: Border.all(
+                          color: Colors.blue.withValues(alpha: 0.3),
+                          width: 2,
+                        ),
                       ),
                     ),
-                    const Icon(Icons.location_searching, size: 30, color: Colors.blue),
+                    const Icon(
+                      Icons.location_searching,
+                      size: 30,
+                      color: Colors.blue,
+                    ),
                   ],
                 ),
               const SizedBox(height: 24),
@@ -353,20 +412,25 @@ class _DynamicVisitSheetState extends ConsumerState<DynamicVisitSheet>
               const SizedBox(height: 24),
               Text(
                 stepDesc ?? 'Deep Verification In Progress',
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 24),
               Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
-            child: VerificationChecklist(
-              steps: _steps,
-              currentStepIndex: _currentStepIndex,
-            ),
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: VerificationChecklist(
+                  steps: _steps,
+                  currentStepIndex: _currentStepIndex,
+                ),
+              ),
+              const SizedBox(height: 24),
+            ],
           ),
-          const SizedBox(height: 24),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -390,7 +454,7 @@ class _DynamicVisitSheetState extends ConsumerState<DynamicVisitSheet>
               const SizedBox(height: 40),
               TweenAnimationBuilder<double>(
                 tween: Tween(begin: 0.0, end: 1.0),
-                duration: ref.watch(accessibilityProvider).useAnimations 
+                duration: ref.watch(accessibilityProvider).useAnimations
                     ? const Duration(milliseconds: 600)
                     : Duration.zero,
                 curve: Curves.elasticOut,
@@ -406,7 +470,9 @@ class _DynamicVisitSheetState extends ConsumerState<DynamicVisitSheet>
                       child: Icon(
                         districtJustUnlocked ? Icons.flag : Icons.check_circle,
                         size: 60,
-                        color: districtJustUnlocked ? Colors.amber : Colors.teal,
+                        color: districtJustUnlocked
+                            ? Colors.amber
+                            : Colors.teal,
                       ),
                     ),
                   );
@@ -414,8 +480,13 @@ class _DynamicVisitSheetState extends ConsumerState<DynamicVisitSheet>
               ),
               const SizedBox(height: 24),
               Text(
-                districtJustUnlocked ? 'District Unlocked!' : 'Visit Confirmed!',
-                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                districtJustUnlocked
+                    ? 'District Unlocked!'
+                    : 'Visit Confirmed!',
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               const SizedBox(height: 8),
               Text(
@@ -428,7 +499,10 @@ class _DynamicVisitSheetState extends ConsumerState<DynamicVisitSheet>
               if (districtJustUnlocked && _xpAwarded > 0) ...[
                 const SizedBox(height: 16),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 10,
+                  ),
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(
                       colors: [Color(0xFFFCD34D), Color(0xFFF59E0B)],
@@ -441,7 +515,7 @@ class _DynamicVisitSheetState extends ConsumerState<DynamicVisitSheet>
                         color: Color(0xFFFFB84D),
                         blurRadius: 12,
                         spreadRadius: 2,
-                      )
+                      ),
                     ],
                   ),
                   child: Text(
@@ -471,8 +545,13 @@ class _DynamicVisitSheetState extends ConsumerState<DynamicVisitSheet>
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.teal,
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 40,
+                    vertical: 16,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(100),
+                  ),
                 ),
                 child: const Text('Awesome!', style: TextStyle(fontSize: 16)),
               ),
@@ -527,7 +606,11 @@ class _DynamicVisitSheetState extends ConsumerState<DynamicVisitSheet>
             padding: const EdgeInsets.symmetric(horizontal: 32),
             child: Text(
               errorMsg,
-              style: TextStyle(fontSize: 14, color: Colors.red.shade800, height: 1.4),
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.red.shade800,
+                height: 1.4,
+              ),
               textAlign: TextAlign.center,
             ),
           ),
@@ -535,14 +618,18 @@ class _DynamicVisitSheetState extends ConsumerState<DynamicVisitSheet>
           OutlinedButton(
             onPressed: () {
               if (widget.isExploration && widget.explorationLocation != null) {
-                 ref.read(explorationProvider.notifier).verifyLocation(widget.explorationLocation!);
+                ref
+                    .read(explorationProvider.notifier)
+                    .verifyLocation(widget.explorationLocation!);
               } else {
                 ref.read(visitProvider.notifier).reset();
-                ref.read(visitProvider.notifier).markVisitWithDeviceLocation(
-                  widget.placeId,
-                  widget.targetLat,
-                  widget.targetLng,
-                );
+                ref
+                    .read(visitProvider.notifier)
+                    .markVisitWithDeviceLocation(
+                      widget.placeId,
+                      widget.targetLat,
+                      widget.targetLng,
+                    );
               }
               setState(() {
                 _initSteps();
@@ -551,7 +638,9 @@ class _DynamicVisitSheetState extends ConsumerState<DynamicVisitSheet>
             },
             style: OutlinedButton.styleFrom(
               padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(100),
+              ),
             ),
             child: const Text('Try Again', style: TextStyle(fontSize: 16)),
           ),
@@ -561,4 +650,3 @@ class _DynamicVisitSheetState extends ConsumerState<DynamicVisitSheet>
     );
   }
 }
-

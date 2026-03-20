@@ -25,10 +25,15 @@ class XPMultiplierNotifier extends StateNotifier<XPMultiplierState> {
     // Calculate today's unlocks for same-day combo
     final today = DateTime(unlockTime.year, unlockTime.month, unlockTime.day);
     final todayUnlocks = state.unlockedToday
-        .where((unlock) =>
-            DateTime(unlock.unlockedAt.year, unlock.unlockedAt.month,
-                    unlock.unlockedAt.day) ==
-            today)
+        .where(
+          (unlock) =>
+              DateTime(
+                unlock.unlockedAt.year,
+                unlock.unlockedAt.month,
+                unlock.unlockedAt.day,
+              ) ==
+              today,
+        )
         .length;
 
     // Apply same-day combo multiplier
@@ -304,5 +309,5 @@ class XPMultiplierState {
 /// XP Multiplier provider
 final xpMultiplierProvider =
     StateNotifierProvider<XPMultiplierNotifier, XPMultiplierState>((ref) {
-  return XPMultiplierNotifier();
-});
+      return XPMultiplierNotifier();
+    });

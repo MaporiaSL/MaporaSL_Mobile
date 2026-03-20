@@ -57,15 +57,14 @@ class _SatellitePulseSyncAnimatorState extends State<SatellitePulseSyncAnimator>
 
     _ringControllers = List.generate(
       widget.pulseCount,
-      (index) => AnimationController(
-        duration: widget.duration,
-        vsync: this,
-      ),
+      (index) => AnimationController(duration: widget.duration, vsync: this),
     );
 
     _pulseAnimation = Tween<double>(begin: 0, end: 1).animate(_pulseController);
-    _dataStreamAnimation =
-        Tween<double>(begin: 0, end: 1).animate(_dataStreamController);
+    _dataStreamAnimation = Tween<double>(
+      begin: 0,
+      end: 1,
+    ).animate(_dataStreamController);
 
     if (widget.isVerifying) {
       _startPulseSequence();
@@ -123,8 +122,9 @@ class _SatellitePulseSyncAnimatorState extends State<SatellitePulseSyncAnimator>
       painter: _SatellitePulsePainter(
         pulseAnimation: _pulseAnimation,
         dataStreamAnimation: _dataStreamAnimation,
-        ringAnimations:
-            _ringControllers.map((c) => c.view as Animation<double>).toList(),
+        ringAnimations: _ringControllers
+            .map((c) => c.view as Animation<double>)
+            .toList(),
         centerLat: widget.centerLat,
         centerLng: widget.centerLng,
         targetLocations: widget.targetLocations,
@@ -219,11 +219,17 @@ class _SatellitePulsePainter extends CustomPainter {
 
         // Animated line progress from target to center
         final streamProgress = dataStreamAnimation.value;
-        final startPoint = Offset.lerp(targetScreenPos, centerOffset, streamProgress)!;
+        final startPoint = Offset.lerp(
+          targetScreenPos,
+          centerOffset,
+          streamProgress,
+        )!;
 
         // Draw glowing data stream line
         final streamPaint = Paint()
-          ..color = const Color(0xFF22D3EE).withValues(alpha: streamProgress * 0.8)
+          ..color = const Color(
+            0xFF22D3EE,
+          ).withValues(alpha: streamProgress * 0.8)
           ..style = PaintingStyle.stroke
           ..strokeWidth = 3.0
           ..strokeCap = StrokeCap.round;
@@ -232,7 +238,9 @@ class _SatellitePulsePainter extends CustomPainter {
 
         // Draw trailing glow
         final glowPaint = Paint()
-          ..color = const Color(0xFF06B6D4).withValues(alpha: streamProgress * 0.4)
+          ..color = const Color(
+            0xFF06B6D4,
+          ).withValues(alpha: streamProgress * 0.4)
           ..style = PaintingStyle.stroke
           ..strokeWidth = 6.0
           ..maskFilter = const MaskFilter.blur(BlurStyle.outer, 6);
@@ -331,21 +339,20 @@ class _XPCountingAnimationState extends State<XPCountingAnimation>
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      duration: widget.duration,
-      vsync: this,
-    );
+    _controller = AnimationController(duration: widget.duration, vsync: this);
 
-    _slideAnimation = Tween<Offset>(
-      begin: widget.fromPosition,
-      end: const Offset(-20, -40), // Top-right corner offset
-    ).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOutCubic),
-    );
+    _slideAnimation =
+        Tween<Offset>(
+          begin: widget.fromPosition,
+          end: const Offset(-20, -40), // Top-right corner offset
+        ).animate(
+          CurvedAnimation(parent: _controller, curve: Curves.easeInOutCubic),
+        );
 
-    _opacityAnimation = Tween<double>(begin: 1.0, end: 0.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeIn),
-    );
+    _opacityAnimation = Tween<double>(
+      begin: 1.0,
+      end: 0.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeIn));
 
     _controller.forward().then((_) => widget.onComplete());
   }
@@ -369,7 +376,10 @@ class _XPCountingAnimationState extends State<XPCountingAnimation>
             child: Transform.scale(
               scale: 1.0 + (1.0 - _opacityAnimation.value) * 0.3,
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
                     colors: [Color(0xFFFCD34D), Color(0xFFF59E0B)],
@@ -382,7 +392,7 @@ class _XPCountingAnimationState extends State<XPCountingAnimation>
                       color: Color(0xFFFFB84D),
                       blurRadius: 12,
                       spreadRadius: 2,
-                    )
+                    ),
                   ],
                 ),
                 child: Text(
@@ -442,9 +452,10 @@ class _DigitalCoordinateCounterState extends State<DigitalCoordinateCounter>
       vsync: this,
     );
 
-    _scrollAnimation = IntTween(begin: 0, end: 100000).animate(
-      CurvedAnimation(parent: _scrollController, curve: Curves.linear),
-    );
+    _scrollAnimation = IntTween(
+      begin: 0,
+      end: 100000,
+    ).animate(CurvedAnimation(parent: _scrollController, curve: Curves.linear));
 
     if (!widget.isLocked) {
       _scrollController.repeat();
@@ -482,8 +493,7 @@ class _DigitalCoordinateCounterState extends State<DigitalCoordinateCounter>
             border: Border.all(
               color: widget.isLocked
                   ? const Color(0xFF22C55E)
-                  : const Color(0xFF22D3EE)
-                  .withValues(alpha: 0.5),
+                  : const Color(0xFF22D3EE).withValues(alpha: 0.5),
             ),
             borderRadius: BorderRadius.circular(8),
           ),
@@ -517,8 +527,7 @@ class _DigitalCoordinateCounterState extends State<DigitalCoordinateCounter>
             border: Border.all(
               color: widget.isLocked
                   ? const Color(0xFF22C55E)
-                  : const Color(0xFF22D3EE)
-                  .withValues(alpha: 0.5),
+                  : const Color(0xFF22D3EE).withValues(alpha: 0.5),
             ),
             borderRadius: BorderRadius.circular(8),
           ),

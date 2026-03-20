@@ -1113,8 +1113,8 @@ class _DistrictSatelliteMapState extends State<_DistrictSatelliteMap> {
         return;
       }
 
-      _userPointManager ??=
-          await map.annotations.createPointAnnotationManager();
+      _userPointManager ??= await map.annotations
+          .createPointAnnotationManager();
 
       final current = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
@@ -1122,14 +1122,15 @@ class _DistrictSatelliteMapState extends State<_DistrictSatelliteMap> {
       await _updateUserLocationMarker(current);
 
       _positionSubscription?.cancel();
-      _positionSubscription = Geolocator.getPositionStream(
-        locationSettings: const LocationSettings(
-          accuracy: LocationAccuracy.high,
-          distanceFilter: 25,
-        ),
-      ).listen((position) {
-        _updateUserLocationMarker(position);
-      });
+      _positionSubscription =
+          Geolocator.getPositionStream(
+            locationSettings: const LocationSettings(
+              accuracy: LocationAccuracy.high,
+              distanceFilter: 25,
+            ),
+          ).listen((position) {
+            _updateUserLocationMarker(position);
+          });
     } catch (_) {
       // Location display is best-effort and should not block map usage.
     }

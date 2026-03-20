@@ -6,10 +6,7 @@ import '../providers/xp_multiplier_provider.dart';
 class XPMultiplierStatusCard extends ConsumerWidget {
   final bool expanded;
 
-  const XPMultiplierStatusCard({
-    super.key,
-    this.expanded = false,
-  });
+  const XPMultiplierStatusCard({super.key, this.expanded = false});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -77,7 +74,9 @@ class XPMultiplierStatusCard extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: 8),
-            ...state.unlockedToday.map((unlock) => _UnlockBreakdownRow(unlock: unlock)),
+            ...state.unlockedToday.map(
+              (unlock) => _UnlockBreakdownRow(unlock: unlock),
+            ),
           ],
 
           // Session summary
@@ -122,10 +121,7 @@ class _ComboStatusRow extends StatelessWidget {
   final int comboCount;
   final String comboStatus;
 
-  const _ComboStatusRow({
-    required this.comboCount,
-    required this.comboStatus,
-  });
+  const _ComboStatusRow({required this.comboCount, required this.comboStatus});
 
   @override
   Widget build(BuildContext context) {
@@ -284,7 +280,7 @@ class ComboIndicator extends ConsumerWidget {
               color: Color(0xFFFFB84D),
               blurRadius: 12,
               spreadRadius: 2,
-            )
+            ),
           ],
         ),
         child: Row(
