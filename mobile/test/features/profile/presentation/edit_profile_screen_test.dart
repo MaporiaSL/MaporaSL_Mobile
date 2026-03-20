@@ -265,6 +265,8 @@ void main() {
     expect(find.text('Avatar removed successfully.'), findsOneWidget);
   });
 
+    await tester.pump(const Duration(seconds: 3));
+
   testWidgets('remove avatar failure shows inline error', (tester) async {
     when(
       () => repository.updateProfile(
@@ -323,6 +325,7 @@ void main() {
     expect(find.text('Updating avatar...'), findsOneWidget);
 
     completer.complete(initialProfile);
+    await tester.pump(const Duration(seconds: 3));
     await tester.pumpAndSettle();
   });
 }

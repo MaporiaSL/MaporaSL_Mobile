@@ -464,11 +464,9 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final editState = ref.watch(profileEditProvider);
-    final isBusy =
-        editState.isLoading ||
-        _isUploadingAvatar ||
-        _isOptimisticallySaving ||
-        _isAccountActionBusy;
+    final showBlockingBusy =
+        editState.isLoading || _isOptimisticallySaving || _isAccountActionBusy;
+    final isBusy = showBlockingBusy || _isUploadingAvatar;
 
     // Determine which avatar to display (priority: newly picked > existing URL > initials)
     Widget avatarWidget;
@@ -533,7 +531,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
               ),
           ],
         ),
-        body: isBusy
+        body: showBlockingBusy
             ? Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -850,7 +848,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                       SizedBox(
                         width: double.infinity,
                         child: FilledButton(
-                          onPressed: _save,
+                          onPressed: isBusy ? null : _save,
                           child: Padding(
                             padding: const EdgeInsets.symmetric(vertical: 4),
                             child: Text(
