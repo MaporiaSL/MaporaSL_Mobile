@@ -13,8 +13,13 @@ import 'providers/profile_providers.dart';
 
 class EditProfileScreen extends ConsumerStatefulWidget {
   final UserProfile initialProfile;
+  final bool disableAvatarNetworkImageForTesting;
 
-  const EditProfileScreen({super.key, required this.initialProfile});
+  const EditProfileScreen({
+    super.key,
+    required this.initialProfile,
+    this.disableAvatarNetworkImageForTesting = false,
+  });
 
   @override
   ConsumerState<EditProfileScreen> createState() => _EditProfileScreenState();
@@ -473,12 +478,19 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
         backgroundImage: FileImage(_pickedImage!),
       );
     } else if (_currentAvatarUrl.isNotEmpty) {
-      avatarWidget = CircleAvatar(
-        radius: 52,
-        backgroundImage: NetworkImage(
-          '$_currentAvatarUrl?v=$_avatarCacheBuster',
-        ),
-      );
+      if (widget.disableAvatarNetworkImageForTesting) {
+        avatarWidget = const CircleAvatar(
+          radius: 52,
+          child: Icon(Icons.person, size: 40),
+        );
+      } else {
+        avatarWidget = CircleAvatar(
+          radius: 52,
+          backgroundImage: NetworkImage(
+            '$_currentAvatarUrl?v=$_avatarCacheBuster',
+          ),
+        );
+      }
     } else {
       avatarWidget = CircleAvatar(
         radius: 52,
