@@ -274,11 +274,6 @@ void main() {
 
   testWidgets('shows avatar retry CTA and succeeds on retry', (tester) async {
     final tempDir = await Directory.systemTemp.createTemp('avatar_test');
-    addTearDown(() async {
-      if (await tempDir.exists()) {
-        await tempDir.delete(recursive: true);
-      }
-    });
     final avatarFile = File('${tempDir.path}/avatar.jpg');
     await avatarFile.writeAsString('avatar-bytes');
 
