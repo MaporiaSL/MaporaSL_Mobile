@@ -5,7 +5,10 @@ const User = require('../../src/models/User');
 const PlaceSubmission = require('../../src/models/PlaceSubmission');
 const UserBadge = require('../../src/models/UserBadge');
 const PlaceUsageTracking = require('../../src/models/PlaceUsageTracking');
-const { updateUserProfile } = require('../../src/controllers/profileController');
+const {
+  updateUserProfile,
+  deleteUserAccount,
+} = require('../../src/controllers/profileController');
 
 function createMockRes() {
   return {
@@ -150,5 +153,66 @@ test('updateUserProfile response includes new profile stats fields', async () =>
     PlaceSubmission.find = originalFind;
     UserBadge.findOne = originalBadgeFindOne;
     PlaceUsageTracking.findOne = originalUsageFindOne;
+  }
+});
+
+test('deleteUserAccount returns 403 when deleting another user account', async () => {
+  const req = {
+    userId: 'u-1',
+    params: { userId: 'u-2' },
+  };
+  const res = createMockRes();
+
+  await deleteUserAccount(req, res);
+
+  assert.equal(res.statusCode, 403);
+  assert.match(res.body.error, /Forbidden/);
+});
+
+test('deleteUserAccount cascades cleanup and returns audit contract', async () => {
+  const originalUserFindOne = User.findOne;
+  const originalUserDeleteOne = User.deleteOne;
+  const originalSubmissionFind = PlaceSubmission.find;
+  const originalSubmissionDeleteMany = PlaceSubmission.deleteMany;
+  const originalBadgeDeleteMany = UserBadge.deleteMany;
+  const originalUsageDeleteMany = PlaceUsageTracking.deleteMany;
+  const originalUsageUpdateMany = PlaceUsageTracking.updateMany;
+
+  User.findOne = async () => ({
+    auth0Id: 'u-1',
+    profilePicture: '',
+  });
+  User.deleteOne = async () => ({ deletedCount: 1 });
+  PlaceSubmission.find = async () => [{ _id: 's1' }, { _id: 's2' }];
+  PlaceSubmission.deleteMany = async () => ({ deletedCount: 2 });
+  UserBadge.deleteMany = async () => ({ deletedCount: 1 });
+  PlaceUsageTracking.deleteMany = async () => ({ deletedCount: 2 });
+  PlaceUsageTracking.updateMany = async () => ({ modifiedCount: 1 });
+
+  try {
+    const req = {
+      userId: 'u-1',
+      params: { userId: 'u-1' },
+    };
+    const res = createMockRes();
+
+    await deleteUserAccount(req, res);
+
+    assert.equal(res.statusCode, 200);
+    assert.equal(res.body.cleanup.userDeleted, 1);
+    assert.equal(res.body.cleanup.submissionsDeleted, 2);
+    assert.equal(res.body.cleanup.badgesDeleted, 1);
+    assert.equal(res.body.cleanup.usageDocsDeleted, 2);
+    assert.equal(res.body.cleanup.usageLinksDetached, 1);
+    assert.ok(res.body.audit.requestId);
+    assert.ok(res.body.audit.timestamp);
+  } finally {
+    User.findOne = originalUserFindOne;
+    User.deleteOne = originalUserDeleteOne;
+    PlaceSubmission.find = originalSubmissionFind;
+    PlaceSubmission.deleteMany = originalSubmissionDeleteMany;
+    UserBadge.deleteMany = originalBadgeDeleteMany;
+    PlaceUsageTracking.deleteMany = originalUsageDeleteMany;
+    PlaceUsageTracking.updateMany = originalUsageUpdateMany;
   }
 });

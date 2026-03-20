@@ -10,6 +10,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:mocktail/mocktail.dart';
 
 class MockProfileRepository extends Mock implements ProfileRepository {}
+
 class MockAuthService extends Mock implements AuthService {}
 
 void main() {
@@ -42,14 +43,16 @@ void main() {
     authService = MockAuthService();
 
     when(() => authService.currentUserEmail).thenReturn('test@example.com');
-    when(() => authService.sendPasswordResetEmail(any())).thenAnswer((_) async {});
+    when(
+      () => authService.sendPasswordResetEmail(any()),
+    ).thenAnswer((_) async {});
     when(() => authService.requestEmailChange(any())).thenAnswer((_) async {});
     when(() => authService.deleteCurrentUser()).thenAnswer((_) async {});
     when(() => authService.signOut()).thenAnswer((_) async {});
 
-    when(() => repository.deleteAccount(any())).thenAnswer(
-      (_) async => {'message': 'ok'},
-    );
+    when(
+      () => repository.deleteAccount(any()),
+    ).thenAnswer((_) async => {'message': 'ok'});
     when(
       () => repository.updateProfile(
         any(),
@@ -84,7 +87,9 @@ void main() {
     expect(find.text('Name cannot be empty'), findsOneWidget);
   });
 
-  testWidgets('calls updateProfile when a valid new name is saved', (tester) async {
+  testWidgets('calls updateProfile when a valid new name is saved', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
@@ -116,7 +121,9 @@ void main() {
     ).called(1);
   });
 
-  testWidgets('change email dialog cancel does not call request', (tester) async {
+  testWidgets('change email dialog cancel does not call request', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
@@ -178,8 +185,9 @@ void main() {
     await tester.tap(find.text('Change Password'));
     await tester.pumpAndSettle();
 
-    verify(() => authService.sendPasswordResetEmail('test@example.com'))
-        .called(1);
+    verify(
+      () => authService.sendPasswordResetEmail('test@example.com'),
+    ).called(1);
   });
 
   testWidgets('delete account cancel does not delete', (tester) async {
@@ -205,7 +213,9 @@ void main() {
     verifyNever(() => authService.deleteCurrentUser());
   });
 
-  testWidgets('delete account confirm calls cleanup and auth delete', (tester) async {
+  testWidgets('delete account confirm calls cleanup and auth delete', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
@@ -229,11 +239,12 @@ void main() {
     verify(() => authService.deleteCurrentUser()).called(1);
   });
 
-  testWidgets('re-auth required on change email shows dedicated guidance',
-      (tester) async {
-    when(() => authService.requestEmailChange(any())).thenThrow(
-      const AuthRecentLoginRequiredException(),
-    );
+  testWidgets('re-auth required on change email shows dedicated guidance', (
+    tester,
+  ) async {
+    when(
+      () => authService.requestEmailChange(any()),
+    ).thenThrow(const AuthRecentLoginRequiredException());
 
     await tester.pumpWidget(
       ProviderScope(

@@ -714,8 +714,8 @@ class ProfileSetupLocalizations {
   String get deleteAccountWarning => _value('deleteAccountWarning');
   String get deleteAccountFailed => _value('deleteAccountFailed');
   String get noEmailForPasswordReset => _value('noEmailForPasswordReset');
-    String get recentLoginRequired => _value('recentLoginRequired');
-    String get backendAccountDeleteFailed => _value('backendAccountDeleteFailed');
+  String get recentLoginRequired => _value('recentLoginRequired');
+  String get backendAccountDeleteFailed => _value('backendAccountDeleteFailed');
 
   String passwordResetSent(String email) {
     return 'Password reset link sent to $email.';
