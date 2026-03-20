@@ -77,3 +77,29 @@ The following suites validate app behavior after migration and setup localizatio
 
 Result:
 - Both suites passed in this run.
+
+## Latest Verification Update (Profile Finalization)
+
+### Backend Contract Extension Validation
+- Profile response contract now includes:
+  - `unlockedDistrictsCount`
+  - `unlockedProvincesCount`
+  - `totalPlacesVisited`
+- Contract tests were updated and passed for these keys.
+
+### Submit Place UX Validation
+- Manual latitude/longitude fields were removed from mobile place submission.
+- Coordinates are auto-resolved via geocoding from place name + district + province.
+- Failure path now blocks submission and shows actionable retry guidance.
+
+### Localization Consistency Validation
+- Profile and Place Submission screens now source user-facing strings from shared localization resource.
+- Regression fixed during validation: contribution sort dropdown labels were restored to localized values.
+
+### Focused Mobile Test Run
+- Command scope:
+  - `mobile/test/features/profile/presentation/profile_screen_contribution_controls_test.dart`
+  - `mobile/test/features/profile/presentation/profile_screen_error_states_test.dart`
+  - `mobile/test/features/profile/presentation/place_submission_screen_test.dart`
+  - `mobile/test/features/home/presentation/home_screen_guard_test.dart`
+- Result: `12 passed`, `0 failed`.

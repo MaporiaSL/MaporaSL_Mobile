@@ -55,6 +55,18 @@ Example:
 }
 ```
 
+### Profile Stats Fields (`GET /api/profile/:userId`)
+
+Profile responses now include aggregate contribution/engagement counters:
+- `unlockedDistrictsCount` (number)
+- `unlockedProvincesCount` (number)
+- `totalPlacesVisited` (number)
+
+Rules:
+- Fields are always numeric in successful responses.
+- Values default to `0` when no contributions/visits are recorded.
+- Clients should tolerate these fields being absent on legacy deployments and apply safe defaults.
+
 ## Endpoint Behavior
 
 ### `POST /api/auth/register`
@@ -84,6 +96,14 @@ Example:
   - Returns `400` with setup-specific `fieldErrors` if incomplete.
 - On success:
   - Returns profile payload with `requiredFields` and `optionalFields`.
+
+### `GET /api/profile/:userId`
+
+- Returns full profile data for authenticated user and includes profile stats fields.
+- Expected mobile-facing stats keys:
+  - `unlockedDistrictsCount`
+  - `unlockedProvincesCount`
+  - `totalPlacesVisited`
 
 ## Backward Compatibility Notes
 

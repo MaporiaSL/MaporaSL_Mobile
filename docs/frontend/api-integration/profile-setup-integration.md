@@ -14,6 +14,10 @@ Backend reference:
 - `POST /api/profile/:userId`
 - `POST /api/profile/:userId/avatar`
 
+Additional profile surfaces:
+- `GET /api/profile/:userId`
+- `GET /api/profile/:userId/contributions`
+
 ## Mobile Handling Rules
 
 1. Route gating
@@ -36,6 +40,22 @@ Backend reference:
 5. Session resiliency
 - Shared auth interceptor performs one forced refresh and one retry on `401`.
 - If refresh/retry fails, UI should fail gracefully and keep user recoverable.
+
+6. Profile statistics rendering
+- The profile response now exposes contribution stats used by `My Profile` summary cards:
+  - `unlockedDistrictsCount`
+  - `unlockedProvincesCount`
+  - `totalPlacesVisited`
+- Mobile parsing must treat missing values as `0` to preserve backward compatibility.
+
+7. Place submission coordinates
+- Manual latitude/longitude entry has been removed from the mobile form.
+- The app resolves coordinates automatically from place name + district + province using geocoding.
+- If geocoding cannot resolve coordinates, mobile blocks submit and shows a recoverable validation message.
+
+8. Localization consistency
+- User-facing strings for Profile and Place Submission flows are now sourced via `ProfileSetupLocalizations`.
+- Setup, profile overview, contribution states, leaderboard states, and place submission feedback should not introduce new hardcoded user text.
 
 ## Event and Telemetry Expectations
 
@@ -60,6 +80,10 @@ Keep event names stable for dashboard continuity.
   - setup required
   - blocked state
   - allowed core navigation
+- Profile and place submission tests cover:
+  - profile contribution controls and error states
+  - auto-location required submission flow
+  - localized labels/messages wired through shared localization resource
 - Auth interceptor tests cover:
   - one retry on `401`
   - no retry loop
