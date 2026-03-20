@@ -375,6 +375,24 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             ),
           ],
         ),
+        const SizedBox(height: 10),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            _StatCard(
+              label: 'Districts Unlocked',
+              value: profile.unlockedDistrictsCount.toString(),
+            ),
+            _StatCard(
+              label: 'Provinces Unlocked',
+              value: profile.unlockedProvincesCount.toString(),
+            ),
+            _StatCard(
+              label: 'Places Visited',
+              value: profile.totalPlacesVisited.toString(),
+            ),
+          ],
+        ),
       ],
     );
   }
