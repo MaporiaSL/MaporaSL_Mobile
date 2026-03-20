@@ -43,7 +43,7 @@ dependencies:
   # Networking & models
   dio: ^5.7.0
   flutter_dotenv: ^5.2.1
-  intl: ^0.19.0
+  intl: ^0.20.2
   json_annotation: ^4.10.0
   device_info_plus: ^10.1.2
   sensors_plus: ^6.1.1

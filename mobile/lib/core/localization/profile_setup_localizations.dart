@@ -152,10 +152,9 @@ class _ProfileSetupLocalizationsDelegate
   const _ProfileSetupLocalizationsDelegate();
 
   @override
-  bool isSupported(Locale locale) =>
-      ProfileSetupLocalizations.supportedLocales
-          .map((l) => l.languageCode)
-          .contains(locale.languageCode);
+  bool isSupported(Locale locale) => ProfileSetupLocalizations.supportedLocales
+      .map((l) => l.languageCode)
+      .contains(locale.languageCode);
 
   @override
   Future<ProfileSetupLocalizations> load(Locale locale) async {

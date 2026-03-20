@@ -61,8 +61,7 @@ class _FirstTimeProfileSetupScreenState
     'City Tours',
   ];
 
-  ProfileSetupLocalizations get _l10n =>
-      ProfileSetupLocalizations.of(context);
+  ProfileSetupLocalizations get _l10n => ProfileSetupLocalizations.of(context);
 
   @override
   void initState() {
@@ -206,7 +205,7 @@ class _FirstTimeProfileSetupScreenState
     final userId = ref.read(currentUserIdProvider);
     if (userId == null || userId.isEmpty) {
       setState(() {
-          _error = _l10n.sessionExpired;
+        _error = _l10n.sessionExpired;
       });
       return;
     }
@@ -234,9 +233,9 @@ class _FirstTimeProfileSetupScreenState
       });
       await _persistDraft();
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(_l10n.avatarUploaded)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(_l10n.avatarUploaded)));
       logProfileTelemetry('avatar_upload_retry_succeeded');
     } on DioException catch (e) {
       final data = e.response?.data;
@@ -628,9 +627,7 @@ class _FirstTimeProfileSetupScreenState
                     children: [
                       _fieldTypeChip(required: false),
                       const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(_l10n.avatarHelper),
-                      ),
+                      Expanded(child: Text(_l10n.avatarHelper)),
                     ],
                   ),
                   const SizedBox(height: 12),
