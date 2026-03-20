@@ -176,6 +176,23 @@ class ProfileSetupLocalizations {
       'keepEditing': 'Keep Editing',
       'discard': 'Discard',
       'cropAvatarTitle': 'Crop Avatar',
+      'removeAvatar': 'Remove avatar',
+      'avatarUploadInProgress': 'Updating avatar...',
+      'avatarRemovedSuccess': 'Avatar removed successfully.',
+      'accountSettings': 'Account Settings',
+      'changePassword': 'Change Password',
+      'changePasswordHint': 'Send a password reset link to your email',
+      'changeEmail': 'Change Email',
+      'changeEmailHint': 'Send verification to update your sign-in email',
+      'newEmail': 'New email address',
+      'deleteAccount': 'Delete Account',
+      'deleteAccountHint': 'Permanently remove your account access',
+      'deleteAccountWarning':
+          'This action is permanent. You may need to sign in again before deletion.',
+      'deleteAccountFailed':
+          'Could not delete account right now. Please re-authenticate and retry.',
+      'noEmailForPasswordReset':
+          'No email address is available for password reset.',
     },
     'si': {
       'screenTitle': 'Complete Your Profile',
@@ -330,6 +347,25 @@ class ProfileSetupLocalizations {
       'keepEditing': 'සංස්කරණය కొనసాగන්න',
       'discard': 'අත්හරින්න',
       'cropAvatarTitle': 'පැතිකඩ ඡායාරූපය කපන්න',
+      'removeAvatar': 'පැතිකඩ ඡායාරූපය ඉවත් කරන්න',
+      'avatarUploadInProgress': 'පැතිකඩ ඡායාරූපය යාවත්කාලීන කරමින්...',
+      'avatarRemovedSuccess': 'පැතිකඩ ඡායාරූපය සාර්ථකව ඉවත් කරන ලදී.',
+      'accountSettings': 'ගිණුම් සැකසුම්',
+      'changePassword': 'මුරපදය වෙනස් කරන්න',
+      'changePasswordHint':
+          'ඔබේ විද්‍යුත් තැපෑලට මුරපද යළි පිහිටුවීමේ සබැඳිය යවන්න',
+      'changeEmail': 'විද්‍යුත් තැපෑල වෙනස් කරන්න',
+      'changeEmailHint':
+          'පිවිසුම් විද්‍යුත් තැපෑල යාවත්කාලීන කිරීමට තහවුරු කිරීම යවන්න',
+      'newEmail': 'නව විද්‍යුත් තැපැල් ලිපිනය',
+      'deleteAccount': 'ගිණුම මකන්න',
+      'deleteAccountHint': 'ඔබේ ගිණුම් ප්‍රවේශය ස්ථිරව ඉවත් කරන්න',
+      'deleteAccountWarning':
+          'මෙය ස්ථිර ක්‍රියාවක් වේ. මකා දැමීමට පෙර නැවත පිවිසිය යුතු විය හැක.',
+      'deleteAccountFailed':
+          'දැනට ගිණුම මකා දැමිය නොහැක. නැවත සත්‍යාපනය කර යළි උත්සාහ කරන්න.',
+      'noEmailForPasswordReset':
+          'මුරපදය යළි පිහිටුවීමට විද්‍යුත් තැපෑලක් නොමැත.',
     },
     'ta': {
       'screenTitle': 'Complete Your Profile',
@@ -486,6 +522,24 @@ class ProfileSetupLocalizations {
       'keepEditing': 'திருத்தத்தை தொடர்க',
       'discard': 'நிராகரி',
       'cropAvatarTitle': 'அவதார் வெட்டு',
+      'removeAvatar': 'அவதாரை அகற்று',
+      'avatarUploadInProgress': 'அவதார் புதுப்பிக்கப்படுகிறது...',
+      'avatarRemovedSuccess': 'அவதார் வெற்றிகரமாக அகற்றப்பட்டது.',
+      'accountSettings': 'கணக்கு அமைப்புகள்',
+      'changePassword': 'கடவுச்சொல் மாற்று',
+      'changePasswordHint':
+          'உங்கள் மின்னஞ்சலுக்கு கடவுச்சொல் மீட்டமைப்பு இணைப்பை அனுப்பு',
+      'changeEmail': 'மின்னஞ்சலை மாற்று',
+      'changeEmailHint': 'உள்நுழைவு மின்னஞ்சலை மாற்ற உறுதிப்படுத்தலை அனுப்பு',
+      'newEmail': 'புதிய மின்னஞ்சல் முகவரி',
+      'deleteAccount': 'கணக்கை நீக்கு',
+      'deleteAccountHint': 'உங்கள் கணக்கு அணுகலை நிரந்தரமாக நீக்கு',
+      'deleteAccountWarning':
+          'இந்த செயல் நிரந்தரம். நீக்குவதற்கு முன் மீண்டும் உள்நுழைய வேண்டியிருக்கும்.',
+      'deleteAccountFailed':
+          'இப்போது கணக்கை நீக்க முடியவில்லை. மீண்டும் அங்கீகரித்து முயற்சிக்கவும்.',
+      'noEmailForPasswordReset':
+          'கடவுச்சொல் மீட்டமைக்க மின்னஞ்சல் முகவரி இல்லை.',
     },
   };
 
@@ -634,6 +688,32 @@ class ProfileSetupLocalizations {
   String get keepEditing => _value('keepEditing');
   String get discard => _value('discard');
   String get cropAvatarTitle => _value('cropAvatarTitle');
+  String get removeAvatar => _value('removeAvatar');
+  String get avatarUploadInProgress => _value('avatarUploadInProgress');
+  String get avatarRemovedSuccess => _value('avatarRemovedSuccess');
+  String get accountSettings => _value('accountSettings');
+  String get changePassword => _value('changePassword');
+  String get changePasswordHint => _value('changePasswordHint');
+  String get changeEmail => _value('changeEmail');
+  String get changeEmailHint => _value('changeEmailHint');
+  String get newEmail => _value('newEmail');
+  String get deleteAccount => _value('deleteAccount');
+  String get deleteAccountHint => _value('deleteAccountHint');
+  String get deleteAccountWarning => _value('deleteAccountWarning');
+  String get deleteAccountFailed => _value('deleteAccountFailed');
+  String get noEmailForPasswordReset => _value('noEmailForPasswordReset');
+
+  String passwordResetSent(String email) {
+    return 'Password reset link sent to $email.';
+  }
+
+  String emailChangeVerificationSent(String email) {
+    return 'Verification sent to $email. Confirm it to complete your email change.';
+  }
+
+  String accountActionFailed(String reason) {
+    return '${_value('errorPrefix')} $reason';
+  }
 
   String travelInterestsCount(int selected, int max) {
     return '${_value('travelInterestsPrefix')} ($selected/$max)';

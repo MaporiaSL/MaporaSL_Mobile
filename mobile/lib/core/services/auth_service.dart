@@ -50,6 +50,28 @@ class AuthService {
     await _auth.sendPasswordResetEmail(email: email);
   }
 
+  Future<void> requestEmailChange(String newEmail) async {
+    final user = _auth.currentUser;
+    if (user == null) {
+      throw FirebaseAuthException(
+        code: 'no-current-user',
+        message: 'No authenticated user is currently signed in.',
+      );
+    }
+    await user.verifyBeforeUpdateEmail(newEmail.trim());
+  }
+
+  Future<void> deleteCurrentUser() async {
+    final user = _auth.currentUser;
+    if (user == null) {
+      throw FirebaseAuthException(
+        code: 'no-current-user',
+        message: 'No authenticated user is currently signed in.',
+      );
+    }
+    await user.delete();
+  }
+
   Future<UserCredential> signInWithGoogle() async {
     final googleUser = await _googleSignIn.signIn();
     if (googleUser == null) {

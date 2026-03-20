@@ -575,6 +575,25 @@ class ProfileEditNotifier extends StateNotifier<ProfileEditState> {
     }
   }
 
+  Future<void> removeAvatar() async {
+    state = state.copyWith(isLoading: true, error: null, success: false);
+    try {
+      await _repository.updateProfile(_userId, avatarUrl: '');
+      state = state.copyWith(isLoading: false, success: true, avatarUrl: '');
+
+      Future.delayed(const Duration(seconds: 2), () {
+        if (!mounted) return;
+        state = state.copyWith(success: false);
+      });
+    } catch (e) {
+      state = state.copyWith(
+        isLoading: false,
+        error: profileActionErrorMessage(e),
+        success: false,
+      );
+    }
+  }
+
   /// Update user profile
   Future<void> updateProfile({String? name, String? avatarUrl}) async {
     state = state.copyWith(isLoading: true, error: null, success: false);

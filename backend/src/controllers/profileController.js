@@ -3,14 +3,9 @@ const PlaceSubmission = require('../models/PlaceSubmission');
 const UserBadge = require('../models/UserBadge');
 const PlaceUsageTracking = require('../models/PlaceUsageTracking');
 const { getStorage } = require('../config/firebase');
+const PROFILE_VALIDATION = require('../config/profileValidation');
 const path = require('path');
 const crypto = require('crypto');
-
-const MAX_NAME_LENGTH = 40;
-const MAX_BIO_LENGTH = 200;
-const MAX_DISTRICT_LENGTH = 60;
-const MAX_LANGUAGE_LENGTH = 30;
-const MAX_INTERESTS = 10;
 
 function toTitleCase(value) {
   return value
@@ -23,12 +18,13 @@ function toTitleCase(value) {
 
 function sanitizePreferredLanguage(rawValue) {
   const normalized = String(rawValue || '').trim().toLowerCase();
-  const supported = {
-    english: 'English',
-    sinhala: 'Sinhala',
-    tamil: 'Tamil',
-  };
-  return supported[normalized] || 'English';
+  const supported = new Map(
+    PROFILE_VALIDATION.SUPPORTED_LANGUAGES.map((lang) => [
+      lang.toLowerCase(),
+      lang,
+    ])
+  );
+  return supported.get(normalized) || PROFILE_VALIDATION.SUPPORTED_LANGUAGES[0];
 }
 
 function sanitizeTravelInterests(rawInterests) {
@@ -38,12 +34,12 @@ function sanitizeTravelInterests(rawInterests) {
   for (const interest of rawInterests) {
     const trimmed = String(interest || '').trim();
     if (!trimmed) continue;
-    const normalized = toTitleCase(trimmed).slice(0, 30);
+    const normalized = toTitleCase(trimmed).slice(0, PROFILE_VALIDATION.MAX_INTEREST_LABEL_LENGTH);
     const key = normalized.toLowerCase();
     if (!dedup.has(key)) {
       dedup.set(key, normalized);
     }
-    if (dedup.size >= MAX_INTERESTS) break;
+    if (dedup.size >= PROFILE_VALIDATION.MAX_INTERESTS) break;
   }
   return Array.from(dedup.values());
 }
@@ -70,31 +66,40 @@ function sanitizeProfileUpdateInput(payload) {
 
   if (name != null) {
     const trimmedName = String(name).trim();
-    if (trimmedName.length < 2) {
+    if (trimmedName.length < PROFILE_VALIDATION.MIN_NAME_LENGTH) {
       fieldErrors.name = 'Name must be at least 2 characters';
     }
-    if (trimmedName.length > MAX_NAME_LENGTH) {
-      fieldErrors.name = `Name must be under ${MAX_NAME_LENGTH} characters`;
+    if (trimmedName.length > PROFILE_VALIDATION.MAX_NAME_LENGTH) {
+      fieldErrors.name = `Name must be under ${PROFILE_VALIDATION.MAX_NAME_LENGTH} characters`;
     }
   }
 
-  if (bio != null && String(bio).trim().length > MAX_BIO_LENGTH) {
-    fieldErrors.bio = `Bio must be under ${MAX_BIO_LENGTH} characters`;
+  if (bio != null && String(bio).trim().length > PROFILE_VALIDATION.MAX_BIO_LENGTH) {
+    fieldErrors.bio = `Bio must be under ${PROFILE_VALIDATION.MAX_BIO_LENGTH} characters`;
   }
 
-  if (hometownDistrict != null && String(hometownDistrict).trim().length > MAX_DISTRICT_LENGTH) {
-    fieldErrors.hometownDistrict = `District must be under ${MAX_DISTRICT_LENGTH} characters`;
+  if (
+    hometownDistrict != null &&
+    String(hometownDistrict).trim().length > PROFILE_VALIDATION.MAX_DISTRICT_LENGTH
+  ) {
+    fieldErrors.hometownDistrict = `District must be under ${PROFILE_VALIDATION.MAX_DISTRICT_LENGTH} characters`;
   }
 
-  if (preferredLanguage != null && String(preferredLanguage).trim().length > MAX_LANGUAGE_LENGTH) {
-    fieldErrors.preferredLanguage = `Preferred language must be under ${MAX_LANGUAGE_LENGTH} characters`;
+  if (
+    preferredLanguage != null &&
+    String(preferredLanguage).trim().length > PROFILE_VALIDATION.MAX_LANGUAGE_LENGTH
+  ) {
+    fieldErrors.preferredLanguage = `Preferred language must be under ${PROFILE_VALIDATION.MAX_LANGUAGE_LENGTH} characters`;
   }
 
   if (travelInterests != null && !Array.isArray(travelInterests)) {
     fieldErrors.travelInterests = 'travelInterests must be a list of strings';
   }
 
-  if (Array.isArray(travelInterests) && travelInterests.length > MAX_INTERESTS * 3) {
+  if (
+    Array.isArray(travelInterests) &&
+    travelInterests.length > PROFILE_VALIDATION.MAX_INTERESTS * 3
+  ) {
     fieldErrors.travelInterests = 'Too many interests provided. Limit request size before save.';
   }
 
@@ -108,9 +113,14 @@ function sanitizeProfileUpdateInput(payload) {
   const updateDoc = {
     ...(name != null && { name: String(name).trim() }),
     ...(avatarUrl != null && { profilePicture: String(avatarUrl).trim() }),
-    ...(bio != null && { bio: String(bio).trim().slice(0, MAX_BIO_LENGTH) }),
+    ...(bio != null && {
+      bio: String(bio).trim().slice(0, PROFILE_VALIDATION.MAX_BIO_LENGTH),
+    }),
     ...(hometownDistrict != null && {
-      hometownDistrict: toTitleCase(String(hometownDistrict).trim()).slice(0, MAX_DISTRICT_LENGTH),
+      hometownDistrict: toTitleCase(String(hometownDistrict).trim()).slice(
+        0,
+        PROFILE_VALIDATION.MAX_DISTRICT_LENGTH
+      ),
     }),
     ...(preferredLanguage != null && {
       preferredLanguage: sanitizePreferredLanguage(preferredLanguage),

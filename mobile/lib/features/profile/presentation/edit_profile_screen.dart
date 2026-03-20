@@ -6,7 +6,9 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../core/localization/profile_setup_localizations.dart';
+import '../../../core/services/auth_service.dart';
 import '../domain/user_profile.dart';
+import '../domain/profile_validation_constraints.dart';
 import 'providers/profile_providers.dart';
 
 class EditProfileScreen extends ConsumerStatefulWidget {
@@ -26,32 +28,22 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   late String _selectedLanguage;
   late Set<String> _selectedInterests;
 
-  static const List<String> _languageOptions = <String>[
-    'English',
-    'Sinhala',
-    'Tamil',
-  ];
+  static const List<String> _languageOptions =
+      ProfileValidationConstraints.supportedLanguages;
 
-  static const List<String> _interestOptions = <String>[
-    'Nature',
-    'Hiking',
-    'Wildlife',
-    'Food',
-    'Culture',
-    'History',
-    'Photography',
-    'Beaches',
-    'Adventure',
-    'City Tours',
-  ];
+  static const List<String> _interestOptions =
+      ProfileValidationConstraints.suggestedInterests;
 
   /// Locally picked image (not yet uploaded)
   File? _pickedImage;
   bool _isUploadingAvatar = false;
   bool _isOptimisticallySaving = false;
+  bool _isAccountActionBusy = false;
   String? _inlineError;
+  String? _avatarActionMessage;
   String? _lastFailedUploadPath;
   int _avatarCacheBuster = 0;
+  late String _currentAvatarUrl;
 
   ProfileSetupLocalizations get _l10n => ProfileSetupLocalizations.of(context);
 
@@ -67,6 +59,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
         ? widget.initialProfile.preferredLanguage
         : _languageOptions.first;
     _selectedInterests = widget.initialProfile.travelInterests.toSet();
+    _currentAvatarUrl = widget.initialProfile.avatarUrl;
   }
 
   @override
@@ -111,6 +104,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     setState(() {
       _pickedImage = File(cropped.path);
       _inlineError = null;
+      _avatarActionMessage = null;
       _lastFailedUploadPath = null;
     });
   }
@@ -122,6 +116,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     setState(() {
       _isUploadingAvatar = true;
       _inlineError = null;
+      _avatarActionMessage = null;
     });
 
     await editNotifier.uploadAvatar(_lastFailedUploadPath!);
@@ -134,11 +129,160 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       _inlineError = uploadState.error != null
           ? _l10n.avatarUploadConnectionFailed
           : null;
+      _avatarActionMessage = uploadState.error == null
+          ? _l10n.avatarUploaded
+          : null;
       if (uploadState.error == null) {
         _lastFailedUploadPath = null;
       }
     });
     editNotifier.clearError();
+  }
+
+  Future<void> _removeAvatar() async {
+    final editNotifier = ref.read(profileEditProvider.notifier);
+    setState(() {
+      _isUploadingAvatar = true;
+      _inlineError = null;
+      _avatarActionMessage = null;
+    });
+
+    await editNotifier.removeAvatar();
+    if (!mounted) return;
+
+    final state = ref.read(profileEditProvider);
+    setState(() {
+      _isUploadingAvatar = false;
+      if (state.error != null) {
+        _inlineError = state.error;
+        return;
+      }
+
+      _pickedImage = null;
+      _currentAvatarUrl = '';
+      _avatarActionMessage = _l10n.avatarRemovedSuccess;
+      _avatarCacheBuster = DateTime.now().millisecondsSinceEpoch;
+      _lastFailedUploadPath = null;
+    });
+    ref.invalidate(userProfileProvider);
+    editNotifier.clearError();
+  }
+
+  Future<void> _triggerPasswordReset() async {
+    final authService = ref.read(authServiceProvider);
+    final email = authService.currentUserEmail ?? widget.initialProfile.email;
+
+    if (email.trim().isEmpty) {
+      setState(() => _inlineError = _l10n.noEmailForPasswordReset);
+      return;
+    }
+
+    setState(() {
+      _isAccountActionBusy = true;
+      _inlineError = null;
+    });
+    try {
+      await authService.sendPasswordResetEmail(email.trim());
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(_l10n.passwordResetSent(email.trim()))),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _inlineError = _l10n.accountActionFailed(e.toString());
+      });
+    } finally {
+      if (mounted) setState(() => _isAccountActionBusy = false);
+    }
+  }
+
+  Future<void> _showChangeEmailDialog() async {
+    final controller = TextEditingController();
+    final newEmail = await showDialog<String>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(_l10n.changeEmail),
+        content: TextField(
+          controller: controller,
+          keyboardType: TextInputType.emailAddress,
+          decoration: InputDecoration(
+            labelText: _l10n.newEmail,
+            border: const OutlineInputBorder(),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text(_l10n.cancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(context).pop(controller.text.trim()),
+            child: Text(_l10n.continueLabel),
+          ),
+        ],
+      ),
+    );
+
+    if (!mounted || newEmail == null || newEmail.isEmpty) return;
+
+    final authService = ref.read(authServiceProvider);
+    setState(() {
+      _isAccountActionBusy = true;
+      _inlineError = null;
+    });
+    try {
+      await authService.requestEmailChange(newEmail);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(_l10n.emailChangeVerificationSent(newEmail))),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _inlineError = _l10n.accountActionFailed(e.toString()));
+    } finally {
+      if (mounted) setState(() => _isAccountActionBusy = false);
+    }
+  }
+
+  Future<void> _confirmAndDeleteAccount() async {
+    final shouldDelete = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(_l10n.deleteAccount),
+        content: Text(_l10n.deleteAccountWarning),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(_l10n.cancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text(_l10n.deleteAccount),
+          ),
+        ],
+      ),
+    );
+
+    if (shouldDelete != true || !mounted) return;
+
+    final authService = ref.read(authServiceProvider);
+    setState(() {
+      _isAccountActionBusy = true;
+      _inlineError = null;
+    });
+    try {
+      await authService.deleteCurrentUser();
+      if (!mounted) return;
+      await authService.signOut();
+      if (!mounted) return;
+      Navigator.of(context).pushNamedAndRemoveUntil('/login', (_) => false);
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _inlineError = _l10n.deleteAccountFailed);
+    } finally {
+      if (mounted) setState(() => _isAccountActionBusy = false);
+    }
   }
 
   void _showAvatarSourceSheet() {
@@ -209,6 +353,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     setState(() {
       _isOptimisticallySaving = true;
       _inlineError = null;
+      _avatarActionMessage = null;
     });
 
     // Upload avatar first if a new image was picked
@@ -228,6 +373,8 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
         return;
       }
       _avatarCacheBuster = DateTime.now().millisecondsSinceEpoch;
+      _currentAvatarUrl = uploadState.avatarUrl ?? _currentAvatarUrl;
+      _avatarActionMessage = _l10n.avatarUploaded;
       _lastFailedUploadPath = null;
     }
 
@@ -295,7 +442,10 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   Widget build(BuildContext context) {
     final editState = ref.watch(profileEditProvider);
     final isBusy =
-        editState.isLoading || _isUploadingAvatar || _isOptimisticallySaving;
+        editState.isLoading ||
+        _isUploadingAvatar ||
+        _isOptimisticallySaving ||
+        _isAccountActionBusy;
 
     // Determine which avatar to display (priority: newly picked > existing URL > initials)
     Widget avatarWidget;
@@ -304,11 +454,11 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
         radius: 52,
         backgroundImage: FileImage(_pickedImage!),
       );
-    } else if (widget.initialProfile.avatarUrl.isNotEmpty) {
+    } else if (_currentAvatarUrl.isNotEmpty) {
       avatarWidget = CircleAvatar(
         radius: 52,
         backgroundImage: NetworkImage(
-          '${widget.initialProfile.avatarUrl}?v=$_avatarCacheBuster',
+          '$_currentAvatarUrl?v=$_avatarCacheBuster',
         ),
       );
     } else {
@@ -403,10 +553,51 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                         ],
                       ),
                       const SizedBox(height: 8),
-                      TextButton(
-                        onPressed: _showAvatarSourceSheet,
-                        child: Text(_l10n.changePhoto),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          TextButton(
+                            onPressed: _isUploadingAvatar
+                                ? null
+                                : _showAvatarSourceSheet,
+                            child: Text(_l10n.changePhoto),
+                          ),
+                          if (_currentAvatarUrl.isNotEmpty ||
+                              _pickedImage != null)
+                            TextButton(
+                              onPressed: _isUploadingAvatar
+                                  ? null
+                                  : _removeAvatar,
+                              child: Text(_l10n.removeAvatar),
+                            ),
+                        ],
                       ),
+                      if (_isUploadingAvatar)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 12),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const SizedBox(
+                                width: 14,
+                                height: 14,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Text(_l10n.avatarUploadInProgress),
+                            ],
+                          ),
+                        ),
+                      if (_avatarActionMessage != null)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 12),
+                          child: Text(
+                            _avatarActionMessage!,
+                            style: TextStyle(color: Colors.green.shade700),
+                          ),
+                        ),
                       const SizedBox(height: 32),
 
                       if (_inlineError != null)
@@ -428,7 +619,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                       // Name field
                       TextFormField(
                         controller: _nameController,
-                        maxLength: 40,
+                        maxLength: ProfileValidationConstraints.maxNameLength,
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         decoration: InputDecoration(
                           labelText: _l10n.displayName,
@@ -442,10 +633,12 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                           if (value == null || value.trim().isEmpty) {
                             return _l10n.nameCannotBeEmpty;
                           }
-                          if (value.trim().length < 2) {
+                          if (value.trim().length <
+                              ProfileValidationConstraints.minNameLength) {
                             return _l10n.nameMin;
                           }
-                          if (value.trim().length > 40) {
+                          if (value.trim().length >
+                              ProfileValidationConstraints.maxNameLength) {
                             return _l10n.nameMax;
                           }
                           return null;
@@ -456,7 +649,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                       TextFormField(
                         controller: _bioController,
                         maxLines: 3,
-                        maxLength: 200,
+                        maxLength: ProfileValidationConstraints.maxBioLength,
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         decoration: InputDecoration(
                           labelText: _l10n.description,
@@ -466,7 +659,8 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                         ),
                         validator: (value) {
                           final text = value?.trim() ?? '';
-                          if (text.length > 200) {
+                          if (text.length >
+                              ProfileValidationConstraints.maxBioLength) {
                             return _l10n.bioMax;
                           }
                           return null;
@@ -476,7 +670,8 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
 
                       TextFormField(
                         controller: _districtController,
-                        maxLength: 60,
+                        maxLength:
+                            ProfileValidationConstraints.maxDistrictLength,
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         decoration: InputDecoration(
                           labelText: _l10n.hometownDistrict,
@@ -490,7 +685,8 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                           if (text.isEmpty) {
                             return _l10n.districtCannotBeEmpty;
                           }
-                          if (text.length > 60) {
+                          if (text.length >
+                              ProfileValidationConstraints.maxDistrictLength) {
                             return _l10n.districtMax;
                           }
                           return null;
@@ -528,7 +724,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                         child: Text(
                           _l10n.travelInterestsCount(
                             _selectedInterests.length,
-                            10,
+                            ProfileValidationConstraints.maxInterests,
                           ),
                           style: Theme.of(context).textTheme.titleSmall,
                         ),
@@ -547,7 +743,9 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                             onSelected: (value) {
                               setState(() {
                                 if (value) {
-                                  if (_selectedInterests.length < 10) {
+                                  if (_selectedInterests.length <
+                                      ProfileValidationConstraints
+                                          .maxInterests) {
                                     _selectedInterests.add(interest);
                                   }
                                 } else {
@@ -573,6 +771,50 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                         style: TextStyle(color: Colors.grey[600]),
                       ),
                       const SizedBox(height: 40),
+
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          _l10n.accountSettings,
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Card(
+                        child: Column(
+                          children: [
+                            ListTile(
+                              leading: const Icon(Icons.lock_reset_outlined),
+                              title: Text(_l10n.changePassword),
+                              subtitle: Text(_l10n.changePasswordHint),
+                              onTap: isBusy ? null : _triggerPasswordReset,
+                            ),
+                            const Divider(height: 1),
+                            ListTile(
+                              leading: const Icon(
+                                Icons.alternate_email_outlined,
+                              ),
+                              title: Text(_l10n.changeEmail),
+                              subtitle: Text(_l10n.changeEmailHint),
+                              onTap: isBusy ? null : _showChangeEmailDialog,
+                            ),
+                            const Divider(height: 1),
+                            ListTile(
+                              leading: const Icon(
+                                Icons.delete_outline,
+                                color: Colors.red,
+                              ),
+                              title: Text(
+                                _l10n.deleteAccount,
+                                style: const TextStyle(color: Colors.red),
+                              ),
+                              subtitle: Text(_l10n.deleteAccountHint),
+                              onTap: isBusy ? null : _confirmAndDeleteAccount,
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 24),
 
                       // Save button
                       SizedBox(
