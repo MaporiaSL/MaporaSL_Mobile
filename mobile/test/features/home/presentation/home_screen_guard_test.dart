@@ -68,6 +68,7 @@ void main() {
         return completer.future;
       }),
     );
+    await tester.pump();
 
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
   });

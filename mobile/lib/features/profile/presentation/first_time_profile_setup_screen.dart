@@ -637,8 +637,8 @@ class _FirstTimeProfileSetupScreenState
                     children: [
                       CircleAvatar(
                         radius: 38,
-                        backgroundImage: widget.showAvatarPreview &&
-                                _avatarFile != null
+                        backgroundImage:
+                            widget.showAvatarPreview && _avatarFile != null
                             ? FileImage(_avatarFile!)
                             : null,
                         child: _avatarFile == null
