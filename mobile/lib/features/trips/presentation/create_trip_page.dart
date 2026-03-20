@@ -10,8 +10,13 @@ import '../../places/widgets/destination_picker.dart';
 /// Create/Edit custom trip page
 class CreateTripPage extends ConsumerStatefulWidget {
   final TripModel? trip; // null = create, non-null = edit
+  final List<String> initialDestinations;
 
-  const CreateTripPage({super.key, this.trip});
+  const CreateTripPage({
+    super.key,
+    this.trip,
+    this.initialDestinations = const [],
+  });
 
   @override
   ConsumerState<CreateTripPage> createState() => _CreateTripPageState();
@@ -52,6 +57,11 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage> {
     _endDate =
         widget.trip?.endDate ?? DateTime.now().add(const Duration(days: 1));
     _places = widget.trip?.locations?.map((l) => l.name).toList() ?? [];
+    for (final place in widget.initialDestinations) {
+      if (!_places.contains(place)) {
+        _places.add(place);
+      }
+    }
     _selectedTransport = _transportModes[0];
   }
 

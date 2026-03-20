@@ -12,6 +12,9 @@ MAPORIA turns real-world travel into progression: users explore districts, verif
 - Common docs: [docs/common/README.md](docs/common/README.md)
 - Backend docs: [docs/backend/README.md](docs/backend/README.md)
 - Frontend docs: [docs/frontend/README.md](docs/frontend/README.md)
+- Marking guide: [MARKING_GUIDE.md](MARKING_GUIDE.md)
+- Demo script: [DEMO_SCRIPT.md](DEMO_SCRIPT.md)
+- Feature checklist: [FEATURES_CHECKLIST.md](FEATURES_CHECKLIST.md)
 
 ## Tech Stack (Current)
 

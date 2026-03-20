@@ -106,20 +106,6 @@ class _MapScreenState extends ConsumerState<MapScreen>
   @override
   Widget build(BuildContext context) {
     ref.listen<ExplorationState>(explorationProvider, (previous, next) {
-      // Auto-focus first district once assignments are available so places
-      // are visible without requiring a manual district tap.
-      if ((previous?.assignments.isEmpty ?? true) &&
-          next.assignments.isNotEmpty &&
-          !_isDistrictFocused &&
-          selectedDistrict == null) {
-        final firstDistrict = next.assignments.first.district;
-        setState(() {
-          selectedDistrict = firstDistrict;
-          _isDistrictFocused = true;
-          _selectedLocation = null;
-        });
-      }
-
       // Show error messages
       if (next.error != null && next.error!.isNotEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(

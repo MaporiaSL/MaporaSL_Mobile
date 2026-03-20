@@ -82,7 +82,8 @@ class ExplorationNotifier extends StateNotifier<ExplorationState> {
     try {
       districts = await _api.fetchDistricts();
     } catch (error) {
-      errorMessage = errorMessage ?? 'Failed to load district summaries: $error';
+      errorMessage =
+          errorMessage ?? 'Failed to load district summaries: $error';
     }
 
     state = state.copyWith(

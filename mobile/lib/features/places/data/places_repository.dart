@@ -2,6 +2,22 @@
 import 'package:gemified_travel_portfolio/core/services/api_client.dart';
 import '../models/place.dart';
 
+class PlacesPage {
+  final List<Place> places;
+  final int currentPage;
+  final int totalPages;
+  final int totalPlaces;
+
+  const PlacesPage({
+    required this.places,
+    required this.currentPage,
+    required this.totalPages,
+    required this.totalPlaces,
+  });
+
+  bool get hasMore => currentPage < totalPages;
+}
+
 class PlacesRepository {
   final ApiClient _apiClient;
 
@@ -13,6 +29,24 @@ class PlacesRepository {
     int limit = 20,
     String? search,
     String? category,
+    String? district,
+  }) async {
+    final pageData = await getPlacesPage(
+      page: page,
+      limit: limit,
+      search: search,
+      category: category,
+      district: district,
+    );
+    return pageData.places;
+  }
+
+  Future<PlacesPage> getPlacesPage({
+    int page = 1,
+    int limit = 20,
+    String? search,
+    String? category,
+    String? district,
   }) async {
     try {
       final queryParams = {
@@ -20,6 +54,7 @@ class PlacesRepository {
         'limit': limit.toString(),
         if (search != null && search.isNotEmpty) 'search': search,
         if (category != null && category.isNotEmpty) 'category': category,
+        if (district != null && district.isNotEmpty) 'district': district,
       };
 
       debugPrint('Fetching places with params: $queryParams');
@@ -34,14 +69,21 @@ class PlacesRepository {
       if (response.statusCode == 200) {
         final data = response.data as Map<String, dynamic>;
         final List<dynamic> placesJson = data['places'] ?? [];
-        return placesJson
+        final places = placesJson
             .map((json) => Place.fromJson(json as Map<String, dynamic>))
             .toList();
-      } else {
-        throw Exception('Failed to load places: ${response.statusCode}');
+
+        return PlacesPage(
+          places: places,
+          currentPage: (data['currentPage'] as num?)?.toInt() ?? page,
+          totalPages: (data['totalPages'] as num?)?.toInt() ?? page,
+          totalPlaces: (data['totalPlaces'] as num?)?.toInt() ?? places.length,
+        );
       }
+
+      throw Exception('Failed to load places: ${response.statusCode}');
     } catch (e) {
-      debugPrint('Error in getPlaces: $e');
+      debugPrint('Error in getPlacesPage: $e');
       throw Exception('Error fetching places: $e');
     }
   }

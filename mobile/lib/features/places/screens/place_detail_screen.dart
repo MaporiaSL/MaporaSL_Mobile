@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../models/place.dart';
 import '../../visits/presentation/widgets/dynamic_visit_sheet.dart';
+import '../../trips/presentation/create_trip_page.dart';
 
 class PlaceDetailScreen extends ConsumerStatefulWidget {
   final Place place;
@@ -367,6 +368,24 @@ class _PlaceDetailScreenState extends ConsumerState<PlaceDetailScreen> {
                     ),
                   ),
                 ],
+              ),
+              const SizedBox(height: 10),
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton.icon(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => CreateTripPage(
+                          initialDestinations: [widget.place.name],
+                        ),
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.route),
+                  label: const Text('Add to New Trip'),
+                ),
               ),
             ],
           ),

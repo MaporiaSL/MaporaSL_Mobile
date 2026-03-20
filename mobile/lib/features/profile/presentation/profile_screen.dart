@@ -5,6 +5,7 @@ import 'edit_profile_screen.dart';
 import '../../settings/presentation/settings_screen.dart';
 import 'providers/profile_providers.dart';
 import '../../../providers/progress_provider.dart';
+import '../../achievements/presentation/achievements_screen.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
@@ -38,9 +39,7 @@ class ProfileScreen extends ConsumerWidget {
         ],
       ),
       body: profileAsyncValue.when(
-        loading: () => const Center(
-          child: CircularProgressIndicator(),
-        ),
+        loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stackTrace) => Center(
           child: Padding(
             padding: const EdgeInsets.all(16),
@@ -51,7 +50,9 @@ class ProfileScreen extends ConsumerWidget {
                 const SizedBox(height: 16),
                 Text(
                   'Error Loading Profile',
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Colors.red),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleLarge?.copyWith(color: Colors.red),
                 ),
                 const SizedBox(height: 8),
                 Text(
@@ -122,7 +123,7 @@ class ProfileScreen extends ConsumerWidget {
                 const SizedBox(height: 24),
 
                 // Gamification Progress
-                _buildExplorerProgressSection(progress),
+                _buildExplorerProgressSection(context, progress),
                 const SizedBox(height: 24),
 
                 // Badges
@@ -165,7 +166,8 @@ class ProfileScreen extends ConsumerWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => EditProfileScreen(initialProfile: profile),
+                          builder: (_) =>
+                              EditProfileScreen(initialProfile: profile),
                         ),
                       );
                     },
@@ -207,10 +209,7 @@ class ProfileScreen extends ConsumerWidget {
               const SizedBox(height: 4),
               Text(
                 profile.email,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey[600],
-                ),
+                style: TextStyle(fontSize: 14, color: Colors.grey[600]),
               ),
             ],
           ),
@@ -268,10 +267,7 @@ class ProfileScreen extends ConsumerWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  badge.icon,
-                  style: const TextStyle(fontSize: 16),
-                ),
+                Text(badge.icon, style: const TextStyle(fontSize: 16)),
                 const SizedBox(width: 8),
                 Text(
                   badge.name,
@@ -288,7 +284,10 @@ class ProfileScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildExplorerProgressSection(UserProgress progress) {
+  Widget _buildExplorerProgressSection(
+    BuildContext context,
+    UserProgress progress,
+  ) {
     final percentage = (progress.progressPercentage / 100).clamp(0.0, 1.0);
     return Container(
       width: double.infinity,
@@ -307,7 +306,10 @@ class ProfileScreen extends ConsumerWidget {
               const SizedBox(width: 8),
               Text(
                 'Explorer Level ${progress.currentLevel}',
-                style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
+                style: const TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 16,
+                ),
               ),
               const Spacer(),
               Text(
@@ -339,11 +341,34 @@ class ProfileScreen extends ConsumerWidget {
             spacing: 8,
             runSpacing: 8,
             children: [
-              _progressChip('Achievements', progress.completedAchievements.length.toString()),
-              _progressChip('Districts', progress.unlockedDistricts.length.toString()),
-              _progressChip('Provinces', progress.unlockedProvinces.length.toString()),
+              _progressChip(
+                'Achievements',
+                progress.completedAchievements.length.toString(),
+              ),
+              _progressChip(
+                'Districts',
+                progress.unlockedDistricts.length.toString(),
+              ),
+              _progressChip(
+                'Provinces',
+                progress.unlockedProvinces.length.toString(),
+              ),
               _progressChip('Visits', progress.totalVisits.toString()),
             ],
+          ),
+          const SizedBox(height: 10),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: OutlinedButton.icon(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const AchievementsScreen()),
+                );
+              },
+              icon: const Icon(Icons.emoji_events_outlined),
+              label: const Text('View achievements'),
+            ),
           ),
         ],
       ),
@@ -381,14 +406,16 @@ class ProfileScreen extends ConsumerWidget {
 
         return Column(
           children: places
-              .map((place) => ListTile(
-                    leading: Icon(
-                      place.approved ? Icons.verified : Icons.hourglass_empty,
-                      color: place.approved ? Colors.green : Colors.orange,
-                    ),
-                    title: Text(place.name),
-                    subtitle: Text(place.approved ? 'Approved' : 'Pending'),
-                  ))
+              .map(
+                (place) => ListTile(
+                  leading: Icon(
+                    place.approved ? Icons.verified : Icons.hourglass_empty,
+                    color: place.approved ? Colors.green : Colors.orange,
+                  ),
+                  title: Text(place.name),
+                  subtitle: Text(place.approved ? 'Approved' : 'Pending'),
+                ),
+              )
               .toList(),
         );
       },
@@ -401,24 +428,20 @@ class ProfileScreen extends ConsumerWidget {
       children: [
         Text(
           'Global Rank: #${profile.leaderboardRank}',
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
-          ),
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
         ),
         const SizedBox(height: 8),
         Text(
           'Impact: ${profile.impactCount} users visited your places',
-          style: TextStyle(
-            fontSize: 14,
-            color: Colors.grey[600],
-          ),
+          style: TextStyle(fontSize: 14, color: Colors.grey[600]),
         ),
       ],
     );
   }
 
-  Widget _buildTopContributorsSection(AsyncValue<List<Map<String, dynamic>>> asyncValue) {
+  Widget _buildTopContributorsSection(
+    AsyncValue<List<Map<String, dynamic>>> asyncValue,
+  ) {
     return asyncValue.when(
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (error, _) => Text('Could not load leaderboard: $error'),
@@ -479,7 +502,9 @@ class ProfileScreen extends ConsumerWidget {
           decoration: BoxDecoration(
             color: medalColors[entry.key].withValues(alpha: 0.15),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: medalColors[entry.key].withValues(alpha: 0.45)),
+            border: Border.all(
+              color: medalColors[entry.key].withValues(alpha: 0.45),
+            ),
           ),
           child: Row(
             children: [
@@ -557,16 +582,15 @@ class ProfileScreen extends ConsumerWidget {
       await authService.signOut();
 
       if (context.mounted) {
-        Navigator.of(context).pushNamedAndRemoveUntil(
-          '/login',
-          (route) => false,
-        );
+        Navigator.of(
+          context,
+        ).pushNamedAndRemoveUntil('/login', (route) => false);
       }
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error: $e')));
       }
     }
   }
@@ -582,15 +606,9 @@ class _StatCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text(
-          value,
-          style: Theme.of(context).textTheme.titleLarge,
-        ),
+        Text(value, style: Theme.of(context).textTheme.titleLarge),
         const SizedBox(height: 4),
-        Text(
-          label,
-          style: Theme.of(context).textTheme.bodySmall,
-        ),
+        Text(label, style: Theme.of(context).textTheme.bodySmall),
       ],
     );
   }
