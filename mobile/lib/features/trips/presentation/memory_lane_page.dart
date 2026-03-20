@@ -8,6 +8,7 @@ import 'widgets/quest_card.dart';
 import 'providers/trips_provider.dart';
 import 'create_trip_page.dart';
 import 'trip_detail_page.dart';
+import '../../../core/constants/app_colors.dart';
 
 /// Memory Lane - timeline of user trips with status-based grouping
 class MemoryLanePage extends ConsumerStatefulWidget {
@@ -43,11 +44,11 @@ class _MemoryLanePageState extends ConsumerState<MemoryLanePage>
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Memory Lane'),
+        title: const Text('Timeline & Trips'),
         bottom: TabBar(
           controller: _tabController,
           tabs: const [
-            Tab(text: 'Quests'),
+            Tab(text: 'Timeline'),
             Tab(text: 'Trips'),
           ],
         ),
@@ -93,24 +94,7 @@ class _MemoryLanePageState extends ConsumerState<MemoryLanePage>
     final quests = explorationState.assignments;
 
     if (quests.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.stars, size: 64, color: Colors.orange),
-            const SizedBox(height: 12),
-            const Text(
-              'No timeline available',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Your exploration path will appear here.',
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-          ],
-        ),
-      );
+      return _buildEmptyState(context);
     }
 
     return RefreshIndicator(
@@ -162,6 +146,10 @@ class _MemoryLanePageState extends ConsumerState<MemoryLanePage>
     final planned = byStatus('planned') + byStatus('active');
     final apiCompleted = byStatus('completed');
 
+    if (apiTrips.isEmpty) {
+      return _buildEmptyState(context);
+    }
+
     return RefreshIndicator(
       onRefresh: () async =>
           ref.read(tripsProvider.notifier).loadTrips(refresh: true),
@@ -186,9 +174,62 @@ class _MemoryLanePageState extends ConsumerState<MemoryLanePage>
               canEdit: true,
             ),
           if (planned.isNotEmpty) const SizedBox(height: 24),
-          // Only show completed section if there are actually completed trips
-          // Completed trips section removed as per request
-          // Show create button at the bottom if no API trips yet
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmptyState(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          // The large research/magnifying glass icon from the screenshot
+          Icon(
+            Icons.manage_search_rounded,
+            size: 100,
+            color: Colors.blue.shade700.withOpacity(0.3), // Matches nav bar color
+          ),
+          const SizedBox(height: 16),
+          const Text(
+            'No trips yet',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF424242),
+            ),
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            'Start planning your adventure!',
+            style: TextStyle(
+              fontSize: 14,
+              color: Color(0xFF757575),
+            ),
+          ),
+          const SizedBox(height: 24),
+          ElevatedButton.icon(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const CreateTripPage()),
+              );
+            },
+            icon: const Icon(Icons.add, size: 18),
+            label: const Text(
+              'Create Trip',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primary, // Use brand primary color
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              elevation: 0,
+            ),
+          ),
         ],
       ),
     );
