@@ -2,6 +2,17 @@ const User = require('../models/User');
 const PlaceSubmission = require('../models/PlaceSubmission');
 const UserBadge = require('../models/UserBadge');
 const PlaceUsageTracking = require('../models/PlaceUsageTracking');
+const Album = require('../models/Album');
+const Destination = require('../models/Destination');
+const Order = require('../models/Order');
+const PaymentReceipt = require('../models/PaymentReceipt');
+const Visit = require('../models/Visit');
+const UserDistrictAssignment = require('../models/UserDistrictAssignment');
+const Travel = require('../models/Travel');
+const ShoppingCart = require('../models/ShoppingCart');
+const PlaceAchievement = require('../models/PlaceAchievement');
+const PlaceVisit = require('../models/PlaceVisit');
+const Place = require('../models/Place');
 const { getStorage } = require('../config/firebase');
 const PROFILE_VALIDATION = require('../config/profileValidation');
 const path = require('path');
@@ -224,6 +235,92 @@ function generateAvatarStoragePath(userId, originalName) {
   return `users/${userId}/avatars/${uniqueId}${ext}`;
 }
 
+function extractStoragePathFromPublicUrl(url, bucketName) {
+  if (!url || !bucketName) return null;
+
+  const prefix = `https://storage.googleapis.com/${bucketName}/`;
+  if (!String(url).startsWith(prefix)) return null;
+  return decodeURIComponent(String(url).slice(prefix.length));
+}
+
+async function deleteAvatarFileIfManaged(url) {
+  if (!url) return;
+  try {
+    const bucket = getStorage();
+    const storagePath = extractStoragePathFromPublicUrl(url, bucket.name);
+    if (!storagePath || !storagePath.includes('/avatars/')) return;
+    await bucket.file(storagePath).delete({ ignoreNotFound: true });
+  } catch (error) {
+    console.warn('Non-blocking avatar cleanup failed:', error?.message || error);
+  }
+}
+
+async function cascadeDeleteUserOwnedData(userId) {
+  const submissions = await PlaceSubmission.find(
+    { userId },
+    { _id: 1, promotedPlaceId: 1 }
+  );
+  const submissionIds = submissions.map((s) => s._id);
+  const promotedPlaceIds = submissions
+    .map((s) => s.promotedPlaceId)
+    .filter(Boolean);
+
+  const [
+    placeSubmissionResult,
+    placeUsageResult,
+    userBadgeResult,
+    districtAssignResult,
+    placeVisitResult,
+    placeAchievementResult,
+    visitResult,
+    travelResult,
+    albumResult,
+    destinationResult,
+    cartResult,
+    orderResult,
+    receiptResult,
+    contributedPlacesResult,
+  ] = await Promise.all([
+    PlaceSubmission.deleteMany({ userId }),
+    PlaceUsageTracking.deleteMany({ placeId: { $in: submissionIds } }),
+    UserBadge.deleteMany({ userId }),
+    UserDistrictAssignment.deleteMany({ userId }),
+    PlaceVisit.deleteMany({ userId }),
+    PlaceAchievement.deleteMany({ userId }),
+    Visit.deleteMany({ userId }),
+    Travel.deleteMany({ userId }),
+    Album.deleteMany({ userId }),
+    Destination.deleteMany({ userId }),
+    ShoppingCart.deleteMany({ userId }),
+    Order.deleteMany({ userId }),
+    PaymentReceipt.deleteMany({ userId }),
+    Place.deleteMany({
+      $or: [
+        { 'contributor.auth0Id': userId },
+        { sourceSubmissionId: { $in: submissionIds } },
+        { _id: { $in: promotedPlaceIds } },
+      ],
+    }),
+  ]);
+
+  return {
+    placeSubmissions: placeSubmissionResult.deletedCount,
+    placeUsageTracking: placeUsageResult.deletedCount,
+    userBadges: userBadgeResult.deletedCount,
+    districtAssignments: districtAssignResult.deletedCount,
+    placeVisits: placeVisitResult.deletedCount,
+    placeAchievements: placeAchievementResult.deletedCount,
+    visits: visitResult.deletedCount,
+    travels: travelResult.deletedCount,
+    albums: albumResult.deletedCount,
+    destinations: destinationResult.deletedCount,
+    shoppingCarts: cartResult.deletedCount,
+    orders: orderResult.deletedCount,
+    paymentReceipts: receiptResult.deletedCount,
+    contributedPlaces: contributedPlacesResult.deletedCount,
+  };
+}
+
 /**
  * GET /api/profile/:userId
  * Fetch complete user profile with stats, badges, leaderboard rank, and impact metrics
@@ -340,6 +437,11 @@ async function updateUserProfile(req, res) {
       });
     }
 
+    const currentUser = await User.findOne({ auth0Id: userId });
+    if (!currentUser) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
     // Update user
     const updatedUser = await User.findOneAndUpdate(
       { auth0Id: userId },
@@ -347,8 +449,10 @@ async function updateUserProfile(req, res) {
       { new: true }
     );
 
-    if (!updatedUser) {
-      return res.status(404).json({ error: 'User not found' });
+    const oldAvatarUrl = currentUser.profilePicture || '';
+    const newAvatarUrl = updatedUser.profilePicture || '';
+    if (oldAvatarUrl && oldAvatarUrl !== newAvatarUrl) {
+      await deleteAvatarFileIfManaged(oldAvatarUrl);
     }
 
     if (payload.completeSetup === true) {
@@ -397,6 +501,65 @@ async function updateUserProfile(req, res) {
   } catch (error) {
     console.error('Update user profile error:', error);
     res.status(500).json({ error: 'Failed to update user profile' });
+  }
+}
+
+/**
+ * DELETE /api/profile/:userId/account
+ * Delete/anonymize profile data and cascade-delete related user-owned domain data.
+ * Requires JWT authentication.
+ */
+async function deleteUserAccountData(req, res) {
+  try {
+    const { userId } = req.params;
+
+    if (req.userId !== userId) {
+      return res.status(403).json({ error: 'Forbidden: Cannot delete another user\'s account' });
+    }
+
+    const user = await User.findOne({ auth0Id: userId });
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    if (user.profilePicture) {
+      await deleteAvatarFileIfManaged(user.profilePicture);
+    }
+
+    const cascadeSummary = await cascadeDeleteUserOwnedData(userId);
+
+    const timestamp = Date.now();
+    const anonymousEmail = `deleted+${timestamp}@maporia.local`;
+
+    user.name = 'Deleted User';
+    user.email = anonymousEmail;
+    user.profilePicture = '';
+    user.bio = '';
+    user.hometownDistrict = '';
+    user.preferredLanguage = PROFILE_VALIDATION.SUPPORTED_LANGUAGES[0] || 'English';
+    user.travelInterests = [];
+    user.profileSetupCompleted = false;
+    user.profileSetupCompletedAt = null;
+    user.totalPlacesVisited = 0;
+    user.unlockedDistricts = [];
+    user.unlockedProvinces = [];
+    user.explorationUnlockedDistricts = [];
+    user.explorationUnlockedProvinces = [];
+    if (user.explorationStats) {
+      user.explorationStats.totalVisited = 0;
+      user.explorationStats.totalXp = 0;
+      user.explorationStats.level = 1;
+    }
+
+    await user.save();
+
+    res.status(200).json({
+      message: 'Account data deleted and anonymized successfully',
+      cascadeSummary,
+    });
+  } catch (error) {
+    console.error('Delete user account data error:', error);
+    res.status(500).json({ error: 'Failed to delete account data' });
   }
 }
 
@@ -539,6 +702,7 @@ module.exports = {
   getUserProfile,
   getUserContributions,
   updateUserProfile,
+  deleteUserAccountData,
   logoutUser,
   getTopContributors,
   uploadUserAvatar,
