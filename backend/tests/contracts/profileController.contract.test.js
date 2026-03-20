@@ -230,3 +230,92 @@ test('deleteUserAccount cascades cleanup and returns audit contract', async () =
     PlaceUsageTracking.updateMany = originalUsageUpdateMany;
   }
 });
+
+test('deleteUserAccount returns 404 when user not found', async () => {
+  const originalUserFindOne = User.findOne;
+
+  User.findOne = async () => null;
+
+  try {
+    const req = {
+      userId: 'u-1',
+      params: { userId: 'u-1' },
+    };
+    const res = createMockRes();
+
+    await deleteUserAccount(req, res);
+
+    assert.equal(res.statusCode, 404);
+    assert.match(res.body.error, /not found/i);
+  } finally {
+    User.findOne = originalUserFindOne;
+  }
+});
+
+test('deleteUserAccount returns 500 on database operation failure', async () => {
+  const originalUserFindOne = User.findOne;
+
+  User.findOne = async () => {
+    throw new Error('Database connection failed');
+  };
+
+  try {
+    const req = {
+      userId: 'u-1',
+      params: { userId: 'u-1' },
+    };
+    const res = createMockRes();
+
+    await deleteUserAccount(req, res);
+
+    assert.equal(res.statusCode, 500);
+    assert.match(res.body.error, /Failed to delete/);
+  } finally {
+    User.findOne = originalUserFindOne;
+  }
+});
+
+test('deleteUserAccount succeeds even if storage cleanup fails (best-effort)', async () => {
+  const originalUserFindOne = User.findOne;
+  const originalUserDeleteOne = User.deleteOne;
+  const originalSubmissionFind = PlaceSubmission.find;
+  const originalSubmissionDeleteMany = PlaceSubmission.deleteMany;
+  const originalBadgeDeleteMany = UserBadge.deleteMany;
+  const originalUsageDeleteMany = PlaceUsageTracking.deleteMany;
+  const originalUsageUpdateMany = PlaceUsageTracking.updateMany;
+
+  User.findOne = async () => ({
+    auth0Id: 'u-1',
+    profilePicture: 'https://storage.googleapis.com/bucket/users/u1/avatars/a.jpg',
+  });
+  User.deleteOne = async () => ({ deletedCount: 1 });
+  PlaceSubmission.find = async () => [{ _id: 's1' }];
+  PlaceSubmission.deleteMany = async () => ({ deletedCount: 1 });
+  UserBadge.deleteMany = async () => ({ deletedCount: 0 });
+  PlaceUsageTracking.deleteMany = async () => ({ deletedCount: 0 });
+  PlaceUsageTracking.updateMany = async () => ({ modifiedCount: 0 });
+
+  try {
+    const req = {
+      userId: 'u-1',
+      params: { userId: 'u-1' },
+    };
+    const res = createMockRes();
+
+    // Even if storage fails, response should succeed
+    await deleteUserAccount(req, res);
+
+    assert.equal(res.statusCode, 200);
+    assert.ok(res.body.cleanup);
+    assert.equal(res.body.cleanup.userDeleted, 1);
+    assert.ok(res.body.audit && res.body.audit.requestId);
+  } finally {
+    User.findOne = originalUserFindOne;
+    User.deleteOne = originalUserDeleteOne;
+    PlaceSubmission.find = originalSubmissionFind;
+    PlaceSubmission.deleteMany = originalSubmissionDeleteMany;
+    UserBadge.deleteMany = originalBadgeDeleteMany;
+    PlaceUsageTracking.deleteMany = originalUsageDeleteMany;
+    PlaceUsageTracking.updateMany = originalUsageUpdateMany;
+  }
+});
