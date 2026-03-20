@@ -139,6 +139,7 @@ void main() {
       find.text('Access blocked until setup is complete.'),
       findsOneWidget,
     );
+    expect(find.widgetWithText(OutlinedButton, 'Retry'), findsOneWidget);
   });
 
   testWidgets('shows core app tabs when guard allows access', (tester) async {

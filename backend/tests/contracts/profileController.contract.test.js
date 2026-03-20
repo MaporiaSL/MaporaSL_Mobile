@@ -2,6 +2,9 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 
 const User = require('../../src/models/User');
+const PlaceSubmission = require('../../src/models/PlaceSubmission');
+const UserBadge = require('../../src/models/UserBadge');
+const PlaceUsageTracking = require('../../src/models/PlaceUsageTracking');
 const { updateUserProfile } = require('../../src/controllers/profileController');
 
 function createMockRes() {
@@ -85,5 +88,67 @@ test('updateUserProfile with completeSetup returns required contract fields when
     );
   } finally {
     User.findOneAndUpdate = originalFindOneAndUpdate;
+  }
+});
+
+test('updateUserProfile response includes new profile stats fields', async () => {
+  const originalFindOneAndUpdate = User.findOneAndUpdate;
+  const originalCountDocuments = PlaceSubmission.countDocuments;
+  const originalAggregate = PlaceSubmission.aggregate;
+  const originalFind = PlaceSubmission.find;
+  const originalBadgeFindOne = UserBadge.findOne;
+  const originalUsageFindOne = PlaceUsageTracking.findOne;
+
+  User.findOneAndUpdate = async () => ({
+    auth0Id: 'u-1',
+    email: 'a@example.com',
+    name: 'Alice',
+    profilePicture: '',
+    bio: '',
+    hometownDistrict: 'Colombo',
+    preferredLanguage: 'English',
+    travelInterests: [],
+    unlockedDistricts: ['d1', 'd2', 'd3'],
+    unlockedProvinces: ['p1'],
+    totalPlacesVisited: 9,
+    explorationUnlockedDistricts: ['d1', 'd2'],
+    explorationUnlockedProvinces: ['p1'],
+    explorationStats: { totalVisited: 7 },
+    profileSetupCompleted: true,
+    toObject() {
+      return this;
+    },
+  });
+
+  PlaceSubmission.countDocuments = async (filter) => {
+    if (filter && filter.status === 'approved') return 2;
+    return 5;
+  };
+  PlaceSubmission.aggregate = async () => [{ _id: 'u-1', approvedCount: 2 }];
+  PlaceSubmission.find = async () => [{ _id: 's1' }, { _id: 's2' }];
+  UserBadge.findOne = async () => ({ badges: [] });
+  PlaceUsageTracking.findOne = async () => ({ totalTimesAdded: 3 });
+
+  try {
+    const req = {
+      userId: 'u-1',
+      params: { userId: 'u-1' },
+      body: { name: 'Alice' },
+    };
+    const res = createMockRes();
+
+    await updateUserProfile(req, res);
+
+    assert.equal(res.statusCode, 200);
+    assert.equal(res.body.stats.unlockedDistrictsCount, 3);
+    assert.equal(res.body.stats.unlockedProvincesCount, 1);
+    assert.equal(res.body.stats.totalPlacesVisited, 9);
+  } finally {
+    User.findOneAndUpdate = originalFindOneAndUpdate;
+    PlaceSubmission.countDocuments = originalCountDocuments;
+    PlaceSubmission.aggregate = originalAggregate;
+    PlaceSubmission.find = originalFind;
+    UserBadge.findOne = originalBadgeFindOne;
+    PlaceUsageTracking.findOne = originalUsageFindOne;
   }
 });
