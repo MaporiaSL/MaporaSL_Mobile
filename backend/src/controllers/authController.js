@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const Session = require('../models/Session');
+const UserDistrictAssignment = require('../models/UserDistrictAssignment');
 const { assignExplorationForUser } = require('./explorationController');
 
 // Register or sync user (called after Firebase login)
@@ -111,8 +112,41 @@ async function logoutUser(req, res) {
   res.json({ message: 'Logout successful' });
 }
 
+// Delete user account and all associated data
+async function deleteAccount(req, res) {
+  try {
+    const userId = req.userId;
+
+    if (!userId) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    // Find the user
+    const user = await User.findOne({ auth0Id: userId });
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Delete all user-related data
+    // 1. Delete user's exploration assignments
+    await UserDistrictAssignment.deleteMany({ userId });
+
+    // 2. Delete user's sessions
+    await Session.deleteMany({ userId });
+
+    // 3. Delete the user account
+    await User.findOneAndDelete({ auth0Id: userId });
+
+    res.status(200).json({ message: 'Account deleted successfully' });
+  } catch (error) {
+    console.error('Delete account error:', error);
+    res.status(500).json({ error: 'Failed to delete account' });
+  }
+}
+
 module.exports = {
   registerUser,
   getMe,
-  logoutUser
+  logoutUser,
+  deleteAccount
 };

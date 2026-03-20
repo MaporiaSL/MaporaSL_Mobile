@@ -20,9 +20,7 @@ class ProfileRepository {
   Future<List<ContributedPlace>> getUserContributions(String userId) async {
     try {
       final data = await api.getUserContributions(userId);
-      return data
-          .map((place) => ContributedPlace.fromJson(place))
-          .toList();
+      return data.map((place) => ContributedPlace.fromJson(place)).toList();
     } catch (e) {
       rethrow;
     }
@@ -73,7 +71,9 @@ class ProfileRepository {
   }
 
   /// Get top contributors for leaderboard
-  Future<List<Map<String, dynamic>>> getTopContributors({int limit = 10}) async {
+  Future<List<Map<String, dynamic>>> getTopContributors({
+    int limit = 10,
+  }) async {
     try {
       final data = await api.getTopContributors(limit: limit);
       return List<Map<String, dynamic>>.from(data);
@@ -156,6 +156,15 @@ class ProfileRepository {
         longitude: longitude,
         photoPaths: photoPaths,
       );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  /// Delete user account and all associated data
+  Future<void> deleteAccount() async {
+    try {
+      await api.deleteAccount();
     } catch (e) {
       rethrow;
     }
