@@ -533,8 +533,7 @@ class _DistrictSatelliteMapState extends State<_DistrictSatelliteMap> {
   static const String _visitedLocationsLayerId = 'district-visited-circles';
   static const String _unvisitedLocationsSourceId =
       'district-unvisited-locations';
-  static const String _unvisitedLocationsLayerId =
-      'district-unvisited-circles';
+  static const String _unvisitedLocationsLayerId = 'district-unvisited-circles';
   static Map<String, dynamic>? _districtGeoJsonCache;
 
   mapbox.MapboxMap? _mapboxMap;
@@ -800,10 +799,7 @@ class _DistrictSatelliteMapState extends State<_DistrictSatelliteMap> {
         .map(
           (location) => {
             'type': 'Feature',
-            'properties': {
-              'id': location.id,
-              'name': location.name,
-            },
+            'properties': {'id': location.id, 'name': location.name},
             'geometry': {
               'type': 'Point',
               'coordinates': [location.longitude, location.latitude],
@@ -812,10 +808,7 @@ class _DistrictSatelliteMapState extends State<_DistrictSatelliteMap> {
         )
         .toList(growable: false);
 
-    return jsonEncode({
-      'type': 'FeatureCollection',
-      'features': features,
-    });
+    return jsonEncode({'type': 'FeatureCollection', 'features': features});
   }
 
   Future<void> _applyLocationLayers(mapbox.MapboxMap map) async {
