@@ -69,9 +69,8 @@ void main() {
 
     await fillValidForm(tester);
 
-    await tester.tap(
-      find.widgetWithText(FilledButton, 'Submit for Review').hitTestable(),
-    );
+    await tester.ensureVisible(find.text('Submit for Review'));
+    await tester.tap(find.text('Submit for Review'));
     await tester.pumpAndSettle();
 
     expect(
@@ -105,9 +104,8 @@ void main() {
 
     await fillValidForm(tester);
 
-    await tester.tap(
-      find.widgetWithText(FilledButton, 'Submit for Review').hitTestable(),
-    );
+    await tester.ensureVisible(find.text('Submit for Review'));
+    await tester.tap(find.text('Submit for Review'));
     await tester.pumpAndSettle();
 
     verify(
