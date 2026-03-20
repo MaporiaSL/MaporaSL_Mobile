@@ -5,7 +5,6 @@ const {
   getUserProfile,
   getUserContributions,
   updateUserProfile,
-  deleteUserAccountData,
   logoutUser,
   getTopContributors,
   uploadUserAvatar,
@@ -46,13 +45,6 @@ router.get('/:userId/contributions', getUserContributions);
  * @access  Private (JWT required, must match userId)
  */
 router.post('/:userId', updateUserProfile);
-
-/**
- * @route   DELETE /api/profile/:userId/account
- * @desc    Delete/anonymize account data and cascade related user-owned records
- * @access  Private (JWT required, must match userId)
- */
-router.delete('/:userId/account', deleteUserAccountData);
 
 /**
  * @route   POST /api/profile/:userId/avatar

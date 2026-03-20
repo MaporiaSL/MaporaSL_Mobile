@@ -72,11 +72,6 @@ class AuthService {
     await user.delete();
   }
 
-  bool requiresRecentLogin(Object error) {
-    if (error is! FirebaseAuthException) return false;
-    return error.code == 'requires-recent-login';
-  }
-
   Future<UserCredential> signInWithGoogle() async {
     final googleUser = await _googleSignIn.signIn();
     if (googleUser == null) {

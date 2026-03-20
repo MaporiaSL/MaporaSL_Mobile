@@ -130,14 +130,6 @@ class ProfileRepository {
     }
   }
 
-  Future<void> deleteAccountData(String userId) async {
-    try {
-      await api.deleteAccountData(userId);
-    } catch (e) {
-      rethrow;
-    }
-  }
-
   /// Get top contributors for leaderboard
   Future<List<Map<String, dynamic>>> getTopContributors({
     int limit = 10,

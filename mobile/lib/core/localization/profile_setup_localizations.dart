@@ -193,9 +193,6 @@ class ProfileSetupLocalizations {
           'Could not delete account right now. Please re-authenticate and retry.',
       'noEmailForPasswordReset':
           'No email address is available for password reset.',
-      'reauthRequiredTitle': 'Re-authentication Required',
-      'reauthRequiredMessage':
-          'For security, sign in again and retry this sensitive action.',
     },
     'si': {
       'screenTitle': 'Complete Your Profile',
@@ -369,9 +366,6 @@ class ProfileSetupLocalizations {
           'දැනට ගිණුම මකා දැමිය නොහැක. නැවත සත්‍යාපනය කර යළි උත්සාහ කරන්න.',
       'noEmailForPasswordReset':
           'මුරපදය යළි පිහිටුවීමට විද්‍යුත් තැපෑලක් නොමැත.',
-      'reauthRequiredTitle': 'නැවත සත්‍යාපනය අවශ්‍යයි',
-      'reauthRequiredMessage':
-          'ආරක්ෂාව සඳහා නැවත පිවිසී මෙම සංවේදී ක්‍රියාව නැවත උත්සාහ කරන්න.',
     },
     'ta': {
       'screenTitle': 'Complete Your Profile',
@@ -546,9 +540,6 @@ class ProfileSetupLocalizations {
           'இப்போது கணக்கை நீக்க முடியவில்லை. மீண்டும் அங்கீகரித்து முயற்சிக்கவும்.',
       'noEmailForPasswordReset':
           'கடவுச்சொல் மீட்டமைக்க மின்னஞ்சல் முகவரி இல்லை.',
-      'reauthRequiredTitle': 'மீண்டும் அங்கீகாரம் தேவை',
-      'reauthRequiredMessage':
-          'பாதுகாப்பிற்காக மீண்டும் உள்நுழைந்து இந்த சென்சிட்டிவ் செயலை மீண்டும் முயற்சிக்கவும்.',
     },
   };
 
@@ -711,8 +702,6 @@ class ProfileSetupLocalizations {
   String get deleteAccountWarning => _value('deleteAccountWarning');
   String get deleteAccountFailed => _value('deleteAccountFailed');
   String get noEmailForPasswordReset => _value('noEmailForPasswordReset');
-    String get reauthRequiredTitle => _value('reauthRequiredTitle');
-    String get reauthRequiredMessage => _value('reauthRequiredMessage');
 
   String passwordResetSent(String email) {
     return 'Password reset link sent to $email.';

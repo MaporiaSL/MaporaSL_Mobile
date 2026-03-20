@@ -28,10 +28,10 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   late String _selectedLanguage;
   late Set<String> _selectedInterests;
 
-    List<String> get _languageOptions =>
+  static const List<String> _languageOptions =
       ProfileValidationConstraints.supportedLanguages;
 
-    List<String> get _interestOptions =>
+  static const List<String> _interestOptions =
       ProfileValidationConstraints.suggestedInterests;
 
   /// Locally picked image (not yet uploaded)
@@ -60,17 +60,6 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
         : _languageOptions.first;
     _selectedInterests = widget.initialProfile.travelInterests.toSet();
     _currentAvatarUrl = widget.initialProfile.avatarUrl;
-
-    ProfileValidationConstraints.loadFromAssetIfNeeded().then((_) {
-      if (!mounted) return;
-      setState(() {
-        if (!_languageOptions.contains(_selectedLanguage)) {
-          _selectedLanguage = _languageOptions.isNotEmpty
-              ? _languageOptions.first
-              : 'English';
-        }
-      });
-    });
   }
 
   @override
@@ -278,16 +267,11 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     if (shouldDelete != true || !mounted) return;
 
     final authService = ref.read(authServiceProvider);
-    final userId = ref.read(currentUserIdProvider);
-    final repository = ref.read(profileRepositoryProvider);
-    if (userId == null) return;
-
     setState(() {
       _isAccountActionBusy = true;
       _inlineError = null;
     });
     try {
-      await repository.deleteAccountData(userId);
       await authService.deleteCurrentUser();
       if (!mounted) return;
       await authService.signOut();
@@ -295,42 +279,10 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       Navigator.of(context).pushNamedAndRemoveUntil('/login', (_) => false);
     } catch (e) {
       if (!mounted) return;
-      if (authService.requiresRecentLogin(e)) {
-        await _showReauthRequiredDialog();
-      } else {
-        setState(() => _inlineError = _l10n.deleteAccountFailed);
-      }
+      setState(() => _inlineError = _l10n.deleteAccountFailed);
     } finally {
       if (mounted) setState(() => _isAccountActionBusy = false);
     }
-  }
-
-  Future<void> _showReauthRequiredDialog() async {
-    await showDialog<void>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(_l10n.reauthRequiredTitle),
-        content: Text(_l10n.reauthRequiredMessage),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text(_l10n.cancel),
-          ),
-          FilledButton(
-            onPressed: () async {
-              Navigator.of(context).pop();
-              final authService = ref.read(authServiceProvider);
-              await authService.signOut();
-              if (!mounted) return;
-              Navigator.of(
-                context,
-              ).pushNamedAndRemoveUntil('/login', (_) => false);
-            },
-            child: Text(_l10n.signInAgain),
-          ),
-        ],
-      ),
-    );
   }
 
   void _showAvatarSourceSheet() {
@@ -786,11 +738,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                             interest,
                           );
                           return FilterChip(
-                        if (authService.requiresRecentLogin(e)) {
-                          await _showReauthRequiredDialog();
-                        } else {
-                          setState(() => _inlineError = _l10n.accountActionFailed(e.toString()));
-                        }
+                            label: Text(interest),
                             selected: selected,
                             onSelected: (value) {
                               setState(() {
