@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gemified_travel_portfolio/features/profile/data/datasources/profile_api.dart';
 import 'package:gemified_travel_portfolio/features/profile/data/repositories/profile_repository.dart';
@@ -41,5 +42,63 @@ void main() {
 
     expect(avatarUrl, contains('storage.googleapis.com'));
     verify(() => api.uploadAvatar('u1', '/tmp/avatar.jpg')).called(1);
+  });
+
+  test('deleteAccount success returns cleanup metadata', () async {
+    when(() => api.deleteAccount('u1')).thenAnswer(
+      (_) async => {
+        'message': 'Account and profile data deleted successfully',
+        'audit': {
+          'requestId': 'abc-123',
+          'timestamp': '2026-03-20T00:00:00.000Z',
+        },
+        'cleanup': {
+          'userDeleted': 1,
+          'submissionsDeleted': 5,
+          'badgesDeleted': 1,
+          'usageDocsDeleted': 3,
+          'usageLinksDetached': 2,
+        },
+      },
+    );
+
+    final result = await repository.deleteAccount('u1');
+
+    expect(result['message'], contains('deleted successfully'));
+    expect(result['cleanup']['userDeleted'], 1);
+    expect(result['cleanup']['submissionsDeleted'], 5);
+    expect(result['audit']['requestId'], isNotEmpty);
+    verify(() => api.deleteAccount('u1')).called(1);
+  });
+
+  test('deleteAccount propagates API network exception', () async {
+    when(() => api.deleteAccount('u1')).thenThrow(
+      DioException(
+        requestOptions: RequestOptions(path: '/api/profile/u1/account'),
+        type: DioExceptionType.connectionTimeout,
+      ),
+    );
+
+    try {
+      await repository.deleteAccount('u1');
+      fail('Expected DioException to be thrown');
+    } on DioException {
+      // Expected
+      verify(() => api.deleteAccount('u1')).called(1);
+    }
+  });
+
+  test('deleteAccount propagates API 404 not found exception', () async {
+    when(() => api.deleteAccount('u1')).thenThrow(
+      Exception('Failed to delete account: 404'),
+    );
+
+    try {
+      await repository.deleteAccount('u1');
+      fail('Expected Exception to be thrown');
+    } on Exception {
+      // Expected
+      verify(() => api.deleteAccount('u1')).called(1);
+    }
   });
 }
