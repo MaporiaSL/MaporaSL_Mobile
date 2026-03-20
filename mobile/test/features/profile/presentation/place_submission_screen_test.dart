@@ -69,7 +69,11 @@ void main() {
 
     await fillValidForm(tester);
 
-    await tester.ensureVisible(find.text('Submit for Review'));
+    await tester.scrollUntilVisible(
+      find.text('Submit for Review'),
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
     await tester.tap(find.text('Submit for Review'));
     await tester.pumpAndSettle();
 
@@ -104,7 +108,11 @@ void main() {
 
     await fillValidForm(tester);
 
-    await tester.ensureVisible(find.text('Submit for Review'));
+    await tester.scrollUntilVisible(
+      find.text('Submit for Review'),
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
     await tester.tap(find.text('Submit for Review'));
     await tester.pumpAndSettle();
 
