@@ -43,7 +43,8 @@ void main() {
     id: 'u1',
     name: 'Old Name',
     email: 'test@example.com',
-    avatarUrl: 'https://storage.googleapis.com/sample-bucket/users/u1/avatars/a.jpg',
+    avatarUrl:
+        'https://storage.googleapis.com/sample-bucket/users/u1/avatars/a.jpg',
     bio: '',
     hometownDistrict: 'Colombo',
     preferredLanguage: 'English',
@@ -284,10 +285,15 @@ void main() {
     await tester.tap(find.text('Remove avatar'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Something went wrong. Please try again.'), findsOneWidget);
+    expect(
+      find.text('Something went wrong. Please try again.'),
+      findsOneWidget,
+    );
   });
 
-  testWidgets('remove avatar loading state shows progress text', (tester) async {
+  testWidgets('remove avatar loading state shows progress text', (
+    tester,
+  ) async {
     final completer = Completer<UserProfile>();
     when(
       () => repository.updateProfile(
