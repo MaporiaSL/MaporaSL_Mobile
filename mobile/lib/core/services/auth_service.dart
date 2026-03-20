@@ -5,6 +5,30 @@ class AuthRecentLoginRequiredException implements Exception {
   const AuthRecentLoginRequiredException();
 }
 
+class AuthReauthInteractiveRequiredException implements Exception {
+  final String message;
+  const AuthReauthInteractiveRequiredException(this.message);
+
+  @override
+  String toString() => message;
+}
+
+class AuthReauthUnsupportedProviderException implements Exception {
+  final String message;
+  const AuthReauthUnsupportedProviderException(this.message);
+
+  @override
+  String toString() => message;
+}
+
+class AuthReauthCancelledException implements Exception {
+  final String message;
+  const AuthReauthCancelledException(this.message);
+
+  @override
+  String toString() => message;
+}
+
 class AuthService {
   AuthService({FirebaseAuth? auth, GoogleSignIn? googleSignIn})
     : _auth = auth ?? FirebaseAuth.instance,
@@ -134,9 +158,8 @@ class AuthService {
       if (providerIds.contains(GoogleAuthProvider.PROVIDER_ID)) {
         final googleUser = await _googleSignIn.signIn();
         if (googleUser == null) {
-          throw FirebaseAuthException(
-            code: 'google-sign-in-cancelled',
-            message: 'Google sign-in cancelled',
+          throw const AuthReauthCancelledException(
+            'Google sign-in was cancelled. Please try again.',
           );
         }
 
@@ -150,16 +173,13 @@ class AuthService {
       }
 
       if (providerIds.contains('password')) {
-        throw FirebaseAuthException(
-          code: 'reauth-interactive-required',
-          message:
-              'Please sign out and sign in again to complete this secure action.',
+        throw const AuthReauthInteractiveRequiredException(
+          'Please sign out and sign in again to complete this secure action.',
         );
       }
 
-      throw FirebaseAuthException(
-        code: 'reauth-unsupported-provider',
-        message: 'This sign-in provider does not support in-app re-auth here.',
+      throw const AuthReauthUnsupportedProviderException(
+        'This sign-in provider does not support in-app re-auth here.',
       );
     } on FirebaseAuthException catch (e) {
       if (e.code == 'requires-recent-login') {
