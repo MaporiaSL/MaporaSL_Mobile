@@ -11,7 +11,8 @@ class PlaceSubmissionScreen extends ConsumerStatefulWidget {
   const PlaceSubmissionScreen({super.key});
 
   @override
-  ConsumerState<PlaceSubmissionScreen> createState() => _PlaceSubmissionScreenState();
+  ConsumerState<PlaceSubmissionScreen> createState() =>
+      _PlaceSubmissionScreenState();
 }
 
 class _PlaceSubmissionScreenState extends ConsumerState<PlaceSubmissionScreen> {
@@ -74,7 +75,10 @@ class _PlaceSubmissionScreenState extends ConsumerState<PlaceSubmissionScreen> {
   }
 
   Future<void> _pickPhotos() async {
-    final images = await _picker.pickMultiImage(imageQuality: 80, maxWidth: 1600);
+    final images = await _picker.pickMultiImage(
+      imageQuality: 80,
+      maxWidth: 1600,
+    );
     if (images.isEmpty) return;
     setState(() {
       _photos = images.take(6).toList();
@@ -102,7 +106,9 @@ class _PlaceSubmissionScreenState extends ConsumerState<PlaceSubmissionScreen> {
       return;
     }
 
-    await ref.read(placeSubmissionProvider.notifier).submit(
+    await ref
+        .read(placeSubmissionProvider.notifier)
+        .submit(
           placeName: _placeNameController.text.trim(),
           description: _descriptionController.text.trim(),
           category: _category,
@@ -137,9 +143,7 @@ class _PlaceSubmissionScreenState extends ConsumerState<PlaceSubmissionScreen> {
     final submitState = ref.watch(placeSubmissionProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Submit New Place'),
-      ),
+      appBar: AppBar(title: const Text('Submit New Place')),
       body: SafeArea(
         child: Form(
           key: _formKey,
@@ -171,7 +175,8 @@ class _PlaceSubmissionScreenState extends ConsumerState<PlaceSubmissionScreen> {
                 ),
                 validator: (value) {
                   final text = value?.trim() ?? '';
-                  if (text.length < 50) return 'Description must be at least 50 characters';
+                  if (text.length < 50)
+                    return 'Description must be at least 50 characters';
                   return null;
                 },
               ),
@@ -183,7 +188,12 @@ class _PlaceSubmissionScreenState extends ConsumerState<PlaceSubmissionScreen> {
                   border: OutlineInputBorder(),
                 ),
                 items: _categories
-                    .map((cat) => DropdownMenuItem<String>(value: cat, child: Text(cat)))
+                    .map(
+                      (cat) => DropdownMenuItem<String>(
+                        value: cat,
+                        child: Text(cat),
+                      ),
+                    )
                     .toList(),
                 onChanged: (value) {
                   if (value == null) return;
@@ -197,7 +207,9 @@ class _PlaceSubmissionScreenState extends ConsumerState<PlaceSubmissionScreen> {
                   labelText: 'Province',
                   border: OutlineInputBorder(),
                 ),
-                validator: (value) => (value == null || value.trim().isEmpty) ? 'Province required' : null,
+                validator: (value) => (value == null || value.trim().isEmpty)
+                    ? 'Province required'
+                    : null,
               ),
               const SizedBox(height: 12),
               TextFormField(
@@ -206,15 +218,19 @@ class _PlaceSubmissionScreenState extends ConsumerState<PlaceSubmissionScreen> {
                   labelText: 'District',
                   border: OutlineInputBorder(),
                 ),
-                validator: (value) => (value == null || value.trim().isEmpty) ? 'District required' : null,
+                validator: (value) => (value == null || value.trim().isEmpty)
+                    ? 'District required'
+                    : null,
               ),
               const SizedBox(height: 16),
               OutlinedButton.icon(
                 onPressed: submitState.isSubmitting ? null : _pickPhotos,
                 icon: const Icon(Icons.photo_library_outlined),
-                label: Text(_photos.isEmpty
-                    ? 'Pick Photos (min 2)'
-                    : '${_photos.length} photo(s) selected'),
+                label: Text(
+                  _photos.isEmpty
+                      ? 'Pick Photos (min 2)'
+                      : '${_photos.length} photo(s) selected',
+                ),
               ),
               const SizedBox(height: 8),
               if (_photos.isNotEmpty)
