@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/foundation.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../core/localization/profile_setup_localizations.dart';
@@ -15,11 +16,14 @@ class FirstTimeProfileSetupScreen extends ConsumerStatefulWidget {
     required this.requiredFields,
     required this.optionalFields,
     this.showAvatarPreview = true,
+    this.initialAvatarPathForTesting,
   });
 
   final List<String> requiredFields;
   final List<String> optionalFields;
   final bool showAvatarPreview;
+  @visibleForTesting
+  final String? initialAvatarPathForTesting;
 
   @override
   ConsumerState<FirstTimeProfileSetupScreen> createState() =>
@@ -69,6 +73,9 @@ class _FirstTimeProfileSetupScreenState
   void initState() {
     super.initState();
     logProfileTelemetry('setup_started');
+    if (widget.initialAvatarPathForTesting != null) {
+      _avatarFile = File(widget.initialAvatarPathForTesting!);
+    }
     _bootstrapDraft();
     _nameController.addListener(_persistDraft);
     _districtController.addListener(_persistDraft);
