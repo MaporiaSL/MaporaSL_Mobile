@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../providers/xp_multiplier_provider.dart';
+import '../../providers/xp_multiplier_provider.dart';
 
 /// Widget displaying XP breakdown and multiplier information
 class XPMultiplierStatusCard extends ConsumerWidget {

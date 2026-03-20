@@ -65,7 +65,7 @@ dependencies:
   ionicons: ^0.2.2
   qr_flutter: ^4.1.0
   share_plus: ^10.0.2
-  flutter_local_notifications: ^16.0.0
+  flutter_local_notifications: ^17.0.0
 
 dev_dependencies:
   flutter_test:
