@@ -586,34 +586,49 @@ async function uploadUserAvatar(req, res) {
  * DELETE /api/profile/:userId/account
  * Delete/anonymize user-owned profile domain data and profile account record.
  * Requires JWT authentication and matching userId.
+ * Wraps database operations in a transaction for atomic all-or-nothing semantics.
  */
 async function deleteUserAccount(req, res) {
+  const session = await User.startSession();
+  session.startTransaction();
+
   try {
     const { userId } = req.params;
 
     if (req.userId !== userId) {
+      await session.abortTransaction();
+      session.endSession();
       return res.status(403).json({ error: 'Forbidden: Cannot delete another user\'s account' });
     }
 
-    const user = await User.findOne({ auth0Id: userId });
+    const user = await User.findOne({ auth0Id: userId }).session(session);
     if (!user) {
+      await session.abortTransaction();
+      session.endSession();
       return res.status(404).json({ error: 'User not found' });
     }
 
     const avatarUrl = user.profilePicture || '';
-    const submissions = await PlaceSubmission.find({ userId }, { _id: 1 });
+    const submissions = await PlaceSubmission.find({ userId }, { _id: 1 }).session(session);
     const submissionIds = submissions.map((item) => item._id.toString());
 
-    const deletedSubmissionsResult = await PlaceSubmission.deleteMany({ userId });
-    const deletedBadgesResult = await UserBadge.deleteMany({ userId });
+    const deletedSubmissionsResult = await PlaceSubmission.deleteMany(
+      { userId },
+      { session }
+    );
+    const deletedBadgesResult = await UserBadge.deleteMany(
+      { userId },
+      { session }
+    );
 
     let removedUsageDocsCount = 0;
     let detachedUsageLinksCount = 0;
 
     if (submissionIds.length > 0) {
-      const removedUsage = await PlaceUsageTracking.deleteMany({
-        placeId: { $in: submissionIds },
-      });
+      const removedUsage = await PlaceUsageTracking.deleteMany(
+        { placeId: { $in: submissionIds } },
+        { session }
+      );
       removedUsageDocsCount = removedUsage.deletedCount || 0;
     }
 
@@ -621,12 +636,21 @@ async function deleteUserAccount(req, res) {
       { 'usersWhoAdded.userId': userId },
       {
         $pull: { usersWhoAdded: { userId } },
-      }
+      },
+      { session }
     );
     detachedUsageLinksCount = detachUsage.modifiedCount || 0;
 
-    const deletedUserResult = await User.deleteOne({ auth0Id: userId });
+    const deletedUserResult = await User.deleteOne(
+      { auth0Id: userId },
+      { session }
+    );
 
+    // Commit transaction before best-effort storage cleanup
+    await session.commitTransaction();
+    session.endSession();
+
+    // Avatar cleanup is best-effort and does not affect response
     await safeDeleteAvatarFromStorage(avatarUrl);
 
     const auditId = crypto.randomUUID();
@@ -645,6 +669,8 @@ async function deleteUserAccount(req, res) {
       },
     });
   } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
     console.error('Delete user account error:', error);
     return res.status(500).json({ error: 'Failed to delete user account' });
   }
