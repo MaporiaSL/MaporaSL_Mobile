@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../features/exploration/data/models/exploration_models.dart';
 import '../../../../features/exploration/providers/exploration_provider.dart';
 import '../../../../features/exploration/presentation/widgets/shareable_card.dart';
+import '../../../../features/exploration/presentation/widgets/satellite_pulse_animator.dart';
 import '../../../../core/providers/accessibility_provider.dart';
 import '../../providers/visit_provider.dart';
 import './verification_checklist.dart';
@@ -61,8 +62,8 @@ class _DynamicVisitSheetState extends ConsumerState<DynamicVisitSheet>
   int _currentStepIndex = 0;
   late AnimationController _radarController;
   bool _wasDistrictUnlocked = false;
-  bool _certificateShown = false;
-
+  bool _certificateShown = false;  List<VerificationTargetLocation> _targetLocations = [];
+  int _xpAwarded = 0;
   @override
   void initState() {
     super.initState();
@@ -75,6 +76,19 @@ class _DynamicVisitSheetState extends ConsumerState<DynamicVisitSheet>
     }
     
     _initSteps();
+    
+    // Prepare target locations for satellite pulse animation
+    if (widget.isExploration && widget.explorationLocation != null) {
+      _targetLocations = [
+        VerificationTargetLocation(
+          latitude: widget.explorationLocation!.latitude,
+          longitude: widget.explorationLocation!.longitude,
+          isVisited: false,
+          name: widget.placeName,
+        ),
+      ];
+    }
+    
     if (widget.isExploration && widget.explorationLocation != null) {
       final assignment = _findAssignmentForLocation(ref.read(explorationProvider));
       _wasDistrictUnlocked = assignment?.isUnlocked == true;
@@ -249,55 +263,101 @@ class _DynamicVisitSheetState extends ConsumerState<DynamicVisitSheet>
   }
 
   Widget _buildVerifyingUI(String? stepDesc) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          const SizedBox(height: 24),
-          Stack(
-            alignment: Alignment.center,
+    return Stack(
+      children: [
+        SingleChildScrollView(
+          child: Column(
             children: [
-              AnimatedBuilder(
-                animation: _radarController,
-                builder: (_, child) {
-                  return Transform.rotate(
-                    angle: _radarController.value * 2 * math.pi,
-                    child: Container(
+              const SizedBox(height: 24),
+              // Satellite Pulse Sync Animation (replace radar)
+              if (widget.isExploration && _targetLocations.isNotEmpty)
+                Container(
+                  width: 280,
+                  height: 280,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xFF22D3EE).withValues(alpha: 0.3),
+                        blurRadius: 30,
+                        spreadRadius: 5,
+                      ),
+                    ],
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+                    child: SatellitePulseSyncAnimator(
+                      duration: const Duration(seconds: 3),
+                      onPulseComplete: () {
+                        // Audio cue plays here (digital chime)
+                      },
+                      pulseCount: 3,
+                      centerLat: widget.targetLat,
+                      centerLng: widget.targetLng,
+                      targetLocations: _targetLocations,
+                      isVerifying: true,
+                    ),
+                  ),
+                )
+              else
+                // Fallback radar for non-exploration
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    AnimatedBuilder(
+                      animation: _radarController,
+                      builder: (_, child) {
+                        return Transform.rotate(
+                          angle: _radarController.value * 2 * math.pi,
+                          child: Container(
+                            width: 100,
+                            height: 100,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              gradient: SweepGradient(
+                                colors: [
+                                  Colors.blue.withValues(alpha: 0.0),
+                                  Colors.blue.withValues(alpha: 0.5),
+                                  Colors.blue.withValues(alpha: 0.0),
+                                ],
+                                stops: const [0.0, 0.5, 1.0],
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                    Container(
                       width: 100,
                       height: 100,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        gradient: SweepGradient(
-                          colors: [
-                            Colors.blue.withValues(alpha: 0.0),
-                            Colors.blue.withValues(alpha: 0.5),
-                            Colors.blue.withValues(alpha: 0.0),
-                          ],
-                          stops: const [0.0, 0.5, 1.0],
-                        ),
+                        border: Border.all(color: Colors.blue.withValues(alpha: 0.3), width: 2),
                       ),
                     ),
-                  );
-                },
-              ),
-              Container(
-                width: 100,
-                height: 100,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(color: Colors.blue.withValues(alpha: 0.3), width: 2),
+                    const Icon(Icons.location_searching, size: 30, color: Colors.blue),
+                  ],
                 ),
+              const SizedBox(height: 24),
+              // Digital Coordinate Counter
+              if (widget.isExploration)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: DigitalCoordinateCounter(
+                    latitude: widget.targetLat,
+                    longitude: widget.targetLng,
+                    lockDuration: const Duration(milliseconds: 600),
+                    isLocked: _currentStepIndex >= 4, // Lock after 4th step
+                  ),
+                ),
+              const SizedBox(height: 24),
+              Text(
+                stepDesc ?? 'Deep Verification In Progress',
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
               ),
-              const Icon(Icons.location_searching, size: 30, color: Colors.blue),
-            ],
-          ),
-          const SizedBox(height: 24),
-          Text(
-            stepDesc ?? 'Deep Verification In Progress',
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 24),
-          Padding(
+              const SizedBox(height: 24),
+              Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: VerificationChecklist(
               steps: _steps,
@@ -314,69 +374,121 @@ class _DynamicVisitSheetState extends ConsumerState<DynamicVisitSheet>
     required bool districtJustUnlocked,
     required DistrictAssignment? currentAssignment,
   }) {
-    return SingleChildScrollView(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const SizedBox(height: 40),
-          TweenAnimationBuilder<double>(
-            tween: Tween(begin: 0.0, end: 1.0),
-            duration: ref.watch(accessibilityProvider).useAnimations 
-                ? const Duration(milliseconds: 600)
-                : Duration.zero,
-            curve: Curves.elasticOut,
-            builder: (context, value, child) {
-              return Transform.scale(
-                scale: value,
-                child: Container(
-                  padding: const EdgeInsets.all(20),
+    // Extract XP amount from exploration state if available
+    if (widget.isExploration && districtJustUnlocked) {
+      // This would come from the API response in a real implementation
+      // For now, calculating based on tier
+      _xpAwarded = 10 + math.Random().nextInt(5); // 10-15 XP base
+    }
+
+    return Stack(
+      children: [
+        SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const SizedBox(height: 40),
+              TweenAnimationBuilder<double>(
+                tween: Tween(begin: 0.0, end: 1.0),
+                duration: ref.watch(accessibilityProvider).useAnimations 
+                    ? const Duration(milliseconds: 600)
+                    : Duration.zero,
+                curve: Curves.elasticOut,
+                builder: (context, value, child) {
+                  return Transform.scale(
+                    scale: value,
+                    child: Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.teal.withValues(alpha: 0.2),
+                      ),
+                      child: Icon(
+                        districtJustUnlocked ? Icons.flag : Icons.check_circle,
+                        size: 60,
+                        color: districtJustUnlocked ? Colors.amber : Colors.teal,
+                      ),
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(height: 24),
+              Text(
+                districtJustUnlocked ? 'District Unlocked!' : 'Visit Confirmed!',
+                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                districtJustUnlocked
+                    ? '${currentAssignment?.visitedCount ?? 0}/${currentAssignment?.assignedCount ?? 0} Places Visited in ${currentAssignment?.district ?? ''}'
+                    : 'You have successfully visited ${widget.placeName}',
+                style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
+                textAlign: TextAlign.center,
+              ),
+              if (districtJustUnlocked && _xpAwarded > 0) ...[
+                const SizedBox(height: 16),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.teal.withValues(alpha: 0.2),
+                    gradient: const LinearGradient(
+                      colors: [Color(0xFFFCD34D), Color(0xFFF59E0B)],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    borderRadius: BorderRadius.circular(999),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Color(0xFFFFB84D),
+                        blurRadius: 12,
+                        spreadRadius: 2,
+                      )
+                    ],
                   ),
-                  child: const Icon(Icons.check_circle, size: 60, color: Colors.teal),
+                  child: Text(
+                    '+$_xpAwarded XP',
+                    style: const TextStyle(
+                      color: Color(0xFFB45309),
+                      fontWeight: FontWeight.w800,
+                      fontSize: 16,
+                    ),
+                  ),
                 ),
-              );
-            },
+              ],
+              if (districtJustUnlocked) ...[
+                const SizedBox(height: 20),
+                OutlinedButton.icon(
+                  onPressed: () {
+                    if (currentAssignment == null) return;
+                    _openCertificateOverlay(currentAssignment);
+                  },
+                  icon: const Icon(Icons.card_membership),
+                  label: const Text('View Certificate'),
+                ),
+              ],
+              const SizedBox(height: 32),
+              ElevatedButton(
+                onPressed: () => Navigator.of(context).pop(),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.teal,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
+                ),
+                child: const Text('Awesome!', style: TextStyle(fontSize: 16)),
+              ),
+              const SizedBox(height: 40),
+            ],
           ),
-          const SizedBox(height: 24),
-          Text(
-            districtJustUnlocked ? 'District Unlocked!' : 'Visit Confirmed!',
-            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        ),
+        // XP Flying Animation (if unlocked)
+        if (districtJustUnlocked && _xpAwarded > 0)
+          XPCountingAnimation(
+            xpAmount: _xpAwarded,
+            fromPosition: const Offset(140, 300), // Center of screen
+            duration: const Duration(milliseconds: 1200),
+            onComplete: () {},
           ),
-          const SizedBox(height: 8),
-          Text(
-            districtJustUnlocked
-                ? '${currentAssignment?.visitedCount ?? 0}/${currentAssignment?.assignedCount ?? 0} Places Visited in ${currentAssignment?.district ?? ''}'
-                : 'You have successfully visited ${widget.placeName}',
-            style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
-            textAlign: TextAlign.center,
-          ),
-          if (districtJustUnlocked) ...[
-            const SizedBox(height: 20),
-            OutlinedButton.icon(
-              onPressed: () {
-                if (currentAssignment == null) return;
-                _openCertificateOverlay(currentAssignment);
-              },
-              icon: const Icon(Icons.card_membership),
-              label: const Text('View Certificate'),
-            ),
-          ],
-          const SizedBox(height: 32),
-          ElevatedButton(
-            onPressed: () => Navigator.of(context).pop(),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.teal,
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
-            ),
-            child: const Text('Awesome!', style: TextStyle(fontSize: 16)),
-          ),
-          const SizedBox(height: 40),
-        ],
-      ),
+      ],
     );
   }
 
