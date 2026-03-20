@@ -92,6 +92,7 @@ void main() {
         home: FirstTimeProfileSetupScreen(
           requiredFields: ['name', 'hometownDistrict', 'preferredLanguage'],
           optionalFields: ['travelInterests', 'avatarUrl', 'bio'],
+          showAvatarPreview: false,
         ),
       ),
     );
