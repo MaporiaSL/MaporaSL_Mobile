@@ -334,21 +334,51 @@ async function assignExplorationForUser(userId, hometownDistrict, options = {}) 
       actualProvince = entry.province;
     }
 
-    // Ensure at least 4 places are assigned, maximum 10
-    let count;
-    if (locationIds.length === 0) {
-      // If district has no places, skip this district for now
-      // On next request, it can show empty results
-      continue;
-    } else if (locationIds.length < 4) {
-      // If less than 4 places, assign all of them
-      count = locationIds.length;
-    } else {
-      // Assign randomly between 4-10 places
-      count = getRandomInt(4, Math.min(10, locationIds.length));
-    }
+    // Special handling for Colombo district: always include IIT locations
+    let selected = [];
+    if (districtKey === 'colombo') {
+      // Find IIT locations by name
+      const iitPlaces = await Place.find({
+        district: 'Colombo',
+        name: { $regex: 'Informatics Institute of Technology' },
+        isActive: true,
+      });
 
-    const selected = shuffle(locationIds).slice(0, count);
+      if (iitPlaces.length > 0) {
+        // Always include all IIT locations
+        selected = iitPlaces.map(p => p._id);
+        
+        // Fill remaining slots (4-10 total) with other places
+        const otherPlaceIds = locationIds.filter(
+          id => !selected.find(sid => sid.toString() === id.toString())
+        );
+        
+        const remainingSlots = Math.max(1, getRandomInt(1, 7)); // 1-7 additional places
+        if (otherPlaceIds.length > 0) {
+          const otherSelected = shuffle(otherPlaceIds).slice(0, remainingSlots);
+          selected = [...selected, ...otherSelected];
+        }
+      } else {
+        // Fallback if IIT places not found
+        const count = locationIds.length < 4 
+          ? locationIds.length 
+          : getRandomInt(4, Math.min(10, locationIds.length));
+        selected = shuffle(locationIds).slice(0, count);
+      }
+    } else {
+      // Normal logic for other districts
+      if (locationIds.length === 0) {
+        // If district has no places, skip this district
+        continue;
+      } else if (locationIds.length < 4) {
+        // If less than 4 places, assign all of them
+        selected = locationIds;
+      } else {
+        // Assign randomly between 4-10 places
+        const count = getRandomInt(4, Math.min(10, locationIds.length));
+        selected = shuffle(locationIds).slice(0, count);
+      }
+    }
     
     if (selected.length > 0) {
       totalAssigned += selected.length;
