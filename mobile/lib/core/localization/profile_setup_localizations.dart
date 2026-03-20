@@ -197,7 +197,8 @@ class ProfileSetupLocalizations {
           'For security, please sign in again and retry this action.',
       'backendAccountDeleteFailed':
           'Account cleanup failed on server. Please try again shortly.',
-      'recentlyReauthed': 'Successfully signed in again. Proceeding with your action.',
+      'recentlyReauthed':
+          'Successfully signed in again. Proceeding with your action.',
       'reauthInteractiveRequired':
           'Please sign out and sign in again to complete this secure action.',
       'reauthUnsupportedProvider':
@@ -381,7 +382,8 @@ class ProfileSetupLocalizations {
           'ආරක්ෂාව සඳහා, කරුණාකර නැවත පිවිසී මෙම ක්‍රියාව නැවත උත්සාහ කරන්න.',
       'backendAccountDeleteFailed':
           'සේවාදායකයේ ගිණුම් පිරිසිදු කිරීම අසාර්ථක විය. ටික වේලාවකින් නැවත උත්සාහ කරන්න.',
-      'recentlyReauthed': 'සফලව නැවත පිවිසුණු ප්‍රතිෙ. ඔබේ ක්‍රියාව ඉදිරියට ගෙන යමින්.',
+      'recentlyReauthed':
+          'සফලව නැවත පිවිසුණු ප්‍රතිෙ. ඔබේ ක්‍රියාව ඉදිරියට ගෙන යමින්.',
       'reauthInteractiveRequired':
           'මෙම ආරක්ෂිත ක්‍රියාව සම්පූර්ණ කිරීමට පිටවී නැවත පිවිසෙන්න.',
       'reauthUnsupportedProvider':
@@ -566,7 +568,8 @@ class ProfileSetupLocalizations {
           'பாதுகாப்பிற்காக, மீண்டும் உள்நுழைந்து இந்த செயலை மறுபடியும் முயற்சிக்கவும்.',
       'backendAccountDeleteFailed':
           'சேவையகத்தில் கணக்கு சுத்திகரிப்பு தோல்வியடைந்தது. சிறிது நேரம் கழித்து முயற்சிக்கவும்.',
-      'recentlyReauthed': 'வெற்றிகரமாக மீண்டும் உள்நுழைந்துவிட்டீர்கள். உங்கள் செயலைத் தொடர்கிறோம்.',
+      'recentlyReauthed':
+          'வெற்றிகரமாக மீண்டும் உள்நுழைந்துவிட்டீர்கள். உங்கள் செயலைத் தொடர்கிறோம்.',
       'reauthInteractiveRequired':
           'இந்த பாதுகாப்பு செயல்பாட்டை முடிக்க வெளியேறி மீண்டும் உள்நுழைக.',
       'reauthUnsupportedProvider':
@@ -738,9 +741,9 @@ class ProfileSetupLocalizations {
   String get recentLoginRequired => _value('recentLoginRequired');
   String get backendAccountDeleteFailed => _value('backendAccountDeleteFailed');
   String get recentlyReauthed => _value('recentlyReauthed');
-    String get reauthInteractiveRequired => _value('reauthInteractiveRequired');
-    String get reauthUnsupportedProvider => _value('reauthUnsupportedProvider');
-    String get reauthCancelled => _value('reauthCancelled');
+  String get reauthInteractiveRequired => _value('reauthInteractiveRequired');
+  String get reauthUnsupportedProvider => _value('reauthUnsupportedProvider');
+  String get reauthCancelled => _value('reauthCancelled');
 
   String passwordResetSent(String email) {
     return 'Password reset link sent to $email.';

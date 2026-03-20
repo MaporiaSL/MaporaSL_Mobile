@@ -223,15 +223,15 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     } on AuthRecentLoginRequiredException {
       if (!mounted) return;
       setState(() => _inlineError = _l10n.recentLoginRequired);
-    } on AuthReauthInteractiveRequiredException catch (e) {
+    } on AuthReauthInteractiveRequiredException {
       if (!mounted) return;
-      setState(() => _inlineError = e.message);
-    } on AuthReauthUnsupportedProviderException catch (e) {
+      setState(() => _inlineError = _l10n.reauthInteractiveRequired);
+    } on AuthReauthUnsupportedProviderException {
       if (!mounted) return;
-      setState(() => _inlineError = e.message);
-    } on AuthReauthCancelledException catch (e) {
+      setState(() => _inlineError = _l10n.reauthUnsupportedProvider);
+    } on AuthReauthCancelledException {
       if (!mounted) return;
-      setState(() => _inlineError = e.message);
+      setState(() => _inlineError = _l10n.reauthCancelled);
     } catch (e) {
       if (!mounted) return;
       setState(() {
