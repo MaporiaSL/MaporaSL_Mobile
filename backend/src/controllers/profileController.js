@@ -224,6 +224,32 @@ function generateAvatarStoragePath(userId, originalName) {
   return `users/${userId}/avatars/${uniqueId}${ext}`;
 }
 
+function extractStoragePathFromPublicUrl(url, bucketName) {
+  const raw = String(url || '').trim();
+  if (!raw || !bucketName) return null;
+
+  const prefix = `https://storage.googleapis.com/${bucketName}/`;
+  if (!raw.startsWith(prefix)) return null;
+
+  const remainder = raw.slice(prefix.length);
+  if (!remainder) return null;
+  return decodeURIComponent(remainder.split('?')[0]);
+}
+
+async function safeDeleteAvatarFromStorage(avatarUrl) {
+  try {
+    if (!avatarUrl) return;
+    const bucket = getStorage();
+    const storagePath = extractStoragePathFromPublicUrl(avatarUrl, bucket.name);
+    if (!storagePath) return;
+
+    await bucket.file(storagePath).delete({ ignoreNotFound: true });
+  } catch (error) {
+    // Best-effort cleanup: profile updates should not fail because of stale file deletion issues.
+    console.warn('Avatar cleanup warning:', error.message);
+  }
+}
+
 /**
  * GET /api/profile/:userId
  * Fetch complete user profile with stats, badges, leaderboard rank, and impact metrics
@@ -340,6 +366,11 @@ async function updateUserProfile(req, res) {
       });
     }
 
+    const existingUser = await User.findOne({ auth0Id: userId });
+    if (!existingUser) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
     // Update user
     const updatedUser = await User.findOneAndUpdate(
       { auth0Id: userId },
@@ -349,6 +380,15 @@ async function updateUserProfile(req, res) {
 
     if (!updatedUser) {
       return res.status(404).json({ error: 'User not found' });
+    }
+
+    // If avatar is explicitly cleared, delete prior stored avatar as best-effort cleanup.
+    if (
+      Object.prototype.hasOwnProperty.call(updateDoc, 'profilePicture') &&
+      updateDoc.profilePicture === '' &&
+      existingUser.profilePicture
+    ) {
+      await safeDeleteAvatarFromStorage(existingUser.profilePicture);
     }
 
     if (payload.completeSetup === true) {
@@ -515,6 +555,9 @@ async function uploadUserAvatar(req, res) {
     await file.makePublic();
     const avatarUrl = `https://storage.googleapis.com/${bucket.name}/${storagePath}`;
 
+    const existingUser = await User.findOne({ auth0Id: userId });
+    const previousAvatarUrl = existingUser?.profilePicture || '';
+
     const updatedUser = await User.findOneAndUpdate(
       { auth0Id: userId },
       { profilePicture: avatarUrl },
@@ -529,9 +572,81 @@ async function uploadUserAvatar(req, res) {
       message: 'Avatar uploaded successfully',
       avatarUrl,
     });
+
+    if (previousAvatarUrl && previousAvatarUrl !== avatarUrl) {
+      await safeDeleteAvatarFromStorage(previousAvatarUrl);
+    }
   } catch (error) {
     console.error('Upload avatar error:', error);
     res.status(500).json({ error: 'Failed to upload avatar' });
+  }
+}
+
+/**
+ * DELETE /api/profile/:userId/account
+ * Delete/anonymize user-owned profile domain data and profile account record.
+ * Requires JWT authentication and matching userId.
+ */
+async function deleteUserAccount(req, res) {
+  try {
+    const { userId } = req.params;
+
+    if (req.userId !== userId) {
+      return res.status(403).json({ error: 'Forbidden: Cannot delete another user\'s account' });
+    }
+
+    const user = await User.findOne({ auth0Id: userId });
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const avatarUrl = user.profilePicture || '';
+    const submissions = await PlaceSubmission.find({ userId }, { _id: 1 });
+    const submissionIds = submissions.map((item) => item._id.toString());
+
+    const deletedSubmissionsResult = await PlaceSubmission.deleteMany({ userId });
+    const deletedBadgesResult = await UserBadge.deleteMany({ userId });
+
+    let removedUsageDocsCount = 0;
+    let detachedUsageLinksCount = 0;
+
+    if (submissionIds.length > 0) {
+      const removedUsage = await PlaceUsageTracking.deleteMany({
+        placeId: { $in: submissionIds },
+      });
+      removedUsageDocsCount = removedUsage.deletedCount || 0;
+    }
+
+    const detachUsage = await PlaceUsageTracking.updateMany(
+      { 'usersWhoAdded.userId': userId },
+      {
+        $pull: { usersWhoAdded: { userId } },
+      }
+    );
+    detachedUsageLinksCount = detachUsage.modifiedCount || 0;
+
+    const deletedUserResult = await User.deleteOne({ auth0Id: userId });
+
+    await safeDeleteAvatarFromStorage(avatarUrl);
+
+    const auditId = crypto.randomUUID();
+    return res.status(200).json({
+      message: 'Account and profile data deleted successfully',
+      audit: {
+        requestId: auditId,
+        timestamp: new Date().toISOString(),
+      },
+      cleanup: {
+        userDeleted: deletedUserResult.deletedCount || 0,
+        submissionsDeleted: deletedSubmissionsResult.deletedCount || 0,
+        badgesDeleted: deletedBadgesResult.deletedCount || 0,
+        usageDocsDeleted: removedUsageDocsCount,
+        usageLinksDetached: detachedUsageLinksCount,
+      },
+    });
+  } catch (error) {
+    console.error('Delete user account error:', error);
+    return res.status(500).json({ error: 'Failed to delete user account' });
   }
 }
 
@@ -542,4 +657,5 @@ module.exports = {
   logoutUser,
   getTopContributors,
   uploadUserAvatar,
+  deleteUserAccount,
 };
