@@ -721,13 +721,7 @@ class ProfileSetupLocalizations {
   String get backendAccountDeleteFailed => _value('backendAccountDeleteFailed');
   String get recentlyReauthed => _value('recentlyReauthed');
 
-  String accountActionFailed(String reason) {
-    return '${_value('errorPrefix')} $reason';
-  }
-
-  String reAuthFailed(String reason) {
-    return 'Sign-in failed: $reason';
-  }
+  String passwordResetSent(String email) {
     return 'Password reset link sent to $email.';
   }
 
@@ -737,6 +731,10 @@ class ProfileSetupLocalizations {
 
   String accountActionFailed(String reason) {
     return '${_value('errorPrefix')} $reason';
+  }
+
+  String reAuthFailed(String reason) {
+    return 'Sign-in failed: $reason';
   }
 
   String travelInterestsCount(int selected, int max) {

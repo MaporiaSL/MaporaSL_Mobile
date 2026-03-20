@@ -112,4 +112,28 @@ class AuthService {
     await _googleSignIn.signOut();
     await _auth.signOut();
   }
+
+  /// Re-authenticate the current user (requires recent sign-in).
+  /// Triggers Google Sign-In again to satisfy Firebase's re-auth requirement.
+  /// Throws AuthRecentLoginRequiredException if re-auth is required.
+  Future<void> reauthenticateUser() async {
+    final user = _auth.currentUser;
+    if (user == null) {
+      throw FirebaseAuthException(
+        code: 'no-current-user',
+        message: 'No authenticated user is currently signed in.',
+      );
+    }
+
+    try {
+      // For Google sign-in users, re-sign in with Google to refresh the auth session
+      final credentials = await signInWithGoogle();
+      // The new credential will refresh the current user's session
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'requires-recent-login') {
+        throw const AuthRecentLoginRequiredException();
+      }
+      rethrow;
+    }
+  }
 }
