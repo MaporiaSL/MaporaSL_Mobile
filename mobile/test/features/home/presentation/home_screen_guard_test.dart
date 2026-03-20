@@ -2,8 +2,10 @@ import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:gemified_travel_portfolio/core/localization/profile_setup_localizations.dart';
 import 'package:gemified_travel_portfolio/core/services/auth_service.dart';
 import 'package:gemified_travel_portfolio/features/auth/services/auth_gate.dart';
 import 'package:gemified_travel_portfolio/features/exploration/data/exploration_api.dart';
@@ -46,7 +48,16 @@ void main() {
         explorationApiProvider.overrideWithValue(explorationApi),
         authServiceProvider.overrideWithValue(authService),
       ],
-      child: const MaterialApp(home: HomeScreen()),
+      child: const MaterialApp(
+        localizationsDelegates: [
+          ProfileSetupLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: ProfileSetupLocalizations.supportedLocales,
+        home: HomeScreen(),
+      ),
     );
   }
 
