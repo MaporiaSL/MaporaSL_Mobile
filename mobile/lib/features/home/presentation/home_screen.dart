@@ -80,7 +80,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      guard.message ?? 'Access blocked until setup is complete.',
+                      guard.message ??
+                          'Access blocked until setup is complete.',
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 12),

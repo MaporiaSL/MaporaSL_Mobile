@@ -43,24 +43,35 @@ void main() {
   }
 
   Future<void> fillValidForm(WidgetTester tester) async {
-    await tester.enterText(find.widgetWithText(TextFormField, 'Place name'), 'Galle Fort');
+    await tester.enterText(
+      find.widgetWithText(TextFormField, 'Place name'),
+      'Galle Fort',
+    );
     await tester.enterText(
       find.widgetWithText(TextFormField, 'Description'),
       'A beautiful and historic place for travelers with scenic walls and nearby attractions.',
     );
-    await tester.enterText(find.widgetWithText(TextFormField, 'Province'), 'Southern');
-    await tester.enterText(find.widgetWithText(TextFormField, 'District'), 'Galle');
+    await tester.enterText(
+      find.widgetWithText(TextFormField, 'Province'),
+      'Southern',
+    );
+    await tester.enterText(
+      find.widgetWithText(TextFormField, 'District'),
+      'Galle',
+    );
   }
 
-  testWidgets('shows geocoding failure message when auto location fails', (tester) async {
-    await tester.pumpWidget(
-      buildScreen(resolver: (_) async => null),
-    );
+  testWidgets('shows geocoding failure message when auto location fails', (
+    tester,
+  ) async {
+    await tester.pumpWidget(buildScreen(resolver: (_) async => null));
     await tester.pumpAndSettle();
 
     await fillValidForm(tester);
 
-    await tester.tap(find.widgetWithText(FilledButton, 'Submit for Review').hitTestable());
+    await tester.tap(
+      find.widgetWithText(FilledButton, 'Submit for Review').hitTestable(),
+    );
     await tester.pumpAndSettle();
 
     expect(
@@ -86,13 +97,17 @@ void main() {
 
   testWidgets('submits using coordinates from resolver', (tester) async {
     await tester.pumpWidget(
-      buildScreen(resolver: (_) async => (latitude: 6.0329, longitude: 80.2168)),
+      buildScreen(
+        resolver: (_) async => (latitude: 6.0329, longitude: 80.2168),
+      ),
     );
     await tester.pumpAndSettle();
 
     await fillValidForm(tester);
 
-    await tester.tap(find.widgetWithText(FilledButton, 'Submit for Review').hitTestable());
+    await tester.tap(
+      find.widgetWithText(FilledButton, 'Submit for Review').hitTestable(),
+    );
     await tester.pumpAndSettle();
 
     verify(
