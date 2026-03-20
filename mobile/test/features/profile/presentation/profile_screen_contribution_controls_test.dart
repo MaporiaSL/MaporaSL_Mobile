@@ -18,6 +18,9 @@ void main() {
     totalSubmitted: 3,
     approvedCount: 1,
     approvalRate: 33.3,
+    unlockedDistrictsCount: 4,
+    unlockedProvincesCount: 2,
+    totalPlacesVisited: 11,
     badges: const [],
     contributedPlaces: const [],
     leaderboardRank: 1,
@@ -69,6 +72,10 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Contributed Places'), findsOneWidget);
+    expect(find.text('Districts Unlocked'), findsOneWidget);
+    expect(find.text('Provinces Unlocked'), findsOneWidget);
+    expect(find.text('Places Visited'), findsOneWidget);
+    expect(find.text('11'), findsOneWidget);
     expect(find.text('Approved'), findsWidgets);
     expect(find.text('Rejected'), findsWidgets);
 
