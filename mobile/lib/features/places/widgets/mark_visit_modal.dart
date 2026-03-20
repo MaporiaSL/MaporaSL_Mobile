@@ -1,7 +1,6 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/app_colors.dart';
-import '../../../core/config/app_config.dart';
 import '../../profile/presentation/providers/profile_providers.dart';
 import '../providers/place_visit_provider.dart';
 import './visit_verification_error_screen.dart';
@@ -81,8 +80,13 @@ class _MarkVisitModalState extends ConsumerState<MarkVisitModal> {
       return;
     }
 
-    final userId =
-        ref.read(currentUserIdProvider) ?? AppConfig.profileFallbackUserId;
+    final userId = ref.read(currentUserIdProvider);
+    if (userId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please sign in to record visits.')),
+      );
+      return;
+    }
     try {
       await ref
           .read(placeVisitProvider(userId).notifier)
@@ -162,8 +166,44 @@ class _MarkVisitModalState extends ConsumerState<MarkVisitModal> {
 
   @override
   Widget build(BuildContext context) {
-    final userId =
-        ref.watch(currentUserIdProvider) ?? AppConfig.profileFallbackUserId;
+    final userId = ref.watch(currentUserIdProvider);
+    if (userId == null) {
+      return Container(
+        padding: EdgeInsets.only(
+          left: 20,
+          right: 20,
+          top: 20,
+          bottom: MediaQuery.of(context).viewInsets.bottom + 20,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Sign In Required',
+              style: Theme.of(
+                context,
+              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'You need to sign in to verify and record visits.',
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium?.copyWith(color: AppColors.textMuted),
+            ),
+            const SizedBox(height: 20),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Close'),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
     final visitState = ref.watch(placeVisitProvider(userId));
     final int providerStepIndex = visitState.currentStepIndex;
     final String? error = visitState.error;
@@ -479,4 +519,3 @@ class _MarkVisitModalState extends ConsumerState<MarkVisitModal> {
     );
   }
 }
-

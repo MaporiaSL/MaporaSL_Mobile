@@ -53,16 +53,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       }
       final email = user.email ?? 'unknown@local.test';
       final name = user.displayName ?? email.split('@').first;
-      final district = await LocalPrefs.getHometownDistrict();
+      final district = await LocalPrefs.getHometownDistrict() ?? 'Colombo';
       try {
-        if (district != null) {
-          await AuthApi().registerUser(
-            email: email,
-            name: name,
-            hometownDistrict: district,
-          );
-          await LocalPrefs.clearHometownDistrict();
-        }
+        await AuthApi().registerUser(
+          email: email,
+          name: name,
+          hometownDistrict: district,
+        );
+        await LocalPrefs.clearHometownDistrict();
       } catch (_) {
         // Swallow registration errors during dev flow.
       }

@@ -575,9 +575,41 @@ async function getAssignments(req, res) {
 
 async function getDistricts(req, res) {
   try {
-    const assignments = await UserDistrictAssignment.find({
+    let assignments = await UserDistrictAssignment.find({
       userId: req.userId,
     });
+
+    if (assignments.length === 0) {
+      const user = await User.findOne({ auth0Id: req.userId });
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+
+      let hometownDistrict = user.hometownDistrict;
+      if (!hometownDistrict) {
+        hometownDistrict = await pickFallbackHometownDistrict();
+        if (!hometownDistrict) {
+          return res.status(400).json({
+            error: 'No active exploration places available to initialize assignments',
+          });
+        }
+
+        await User.findOneAndUpdate(
+          { auth0Id: req.userId },
+          {
+            $set: {
+              hometownDistrict,
+              updatedAt: new Date(),
+            },
+          }
+        );
+      }
+
+      await assignExplorationForUser(req.userId, hometownDistrict);
+      assignments = await UserDistrictAssignment.find({
+        userId: req.userId,
+      });
+    }
 
     const payload = assignments.map((assignment) => ({
       district: assignment.district,
