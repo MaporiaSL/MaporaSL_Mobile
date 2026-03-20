@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../../core/localization/profile_setup_localizations.dart';
 import '../../../core/services/local_prefs.dart';
 import 'providers/profile_providers.dart';
 
@@ -25,16 +26,6 @@ class FirstTimeProfileSetupScreen extends ConsumerStatefulWidget {
 
 class _FirstTimeProfileSetupScreenState
     extends ConsumerState<FirstTimeProfileSetupScreen> {
-  static const String _screenTitle = 'Complete Your Profile';
-  static const String _requiredTag = 'Required';
-  static const String _optionalTag = 'Optional';
-  static const String _retryAvatarUploadCta = 'Retry Avatar Upload';
-  static const String _avatarUploadSuccessMessage =
-      'Avatar uploaded successfully.';
-  static const String _setupCompletedMessage = 'Profile setup completed.';
-  static const String _sessionExpiredSetupMessage =
-      'Please sign in again to continue setup.';
-
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _districtController = TextEditingController();
@@ -69,6 +60,9 @@ class _FirstTimeProfileSetupScreenState
     'Adventure',
     'City Tours',
   ];
+
+  ProfileSetupLocalizations get _l10n =>
+      ProfileSetupLocalizations.of(context);
 
   @override
   void initState() {
@@ -166,7 +160,7 @@ class _FirstTimeProfileSetupScreenState
         border: Border.all(color: foreground.withOpacity(0.25)),
       ),
       child: Text(
-        required ? _requiredTag : _optionalTag,
+        required ? _l10n.requiredTag : _l10n.optionalTag,
         style: TextStyle(
           color: foreground,
           fontSize: 11,
@@ -212,7 +206,7 @@ class _FirstTimeProfileSetupScreenState
     final userId = ref.read(currentUserIdProvider);
     if (userId == null || userId.isEmpty) {
       setState(() {
-        _error = _sessionExpiredSetupMessage;
+          _error = _l10n.sessionExpired;
       });
       return;
     }
@@ -241,7 +235,7 @@ class _FirstTimeProfileSetupScreenState
       await _persistDraft();
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text(_avatarUploadSuccessMessage)),
+        SnackBar(content: Text(_l10n.avatarUploaded)),
       );
       logProfileTelemetry('avatar_upload_retry_succeeded');
     } on DioException catch (e) {
@@ -296,7 +290,7 @@ class _FirstTimeProfileSetupScreenState
     final userId = ref.read(currentUserIdProvider);
     if (userId == null || userId.isEmpty) {
       setState(() {
-        _error = _sessionExpiredSetupMessage;
+        _error = _l10n.sessionExpired;
       });
       return;
     }
@@ -366,7 +360,7 @@ class _FirstTimeProfileSetupScreenState
       if (!mounted) return;
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text(_setupCompletedMessage)));
+      ).showSnackBar(SnackBar(content: Text(_l10n.setupCompleted)));
       logProfileTelemetry(
         'setup_completed',
         details: {'selectedInterestsCount': _interests.length},
@@ -408,11 +402,11 @@ class _FirstTimeProfileSetupScreenState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(_screenTitle),
+        title: Text(_l10n.screenTitle),
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
-            tooltip: 'Logout',
+            tooltip: _l10n.logout,
             onPressed: _isSaving
                 ? null
                 : () async {
@@ -451,20 +445,22 @@ class _FirstTimeProfileSetupScreenState
                           height: 18,
                           child: CircularProgressIndicator(strokeWidth: 2),
                         )
-                      : Text(_step == 2 ? 'Finish Setup' : 'Continue'),
+                      : Text(
+                          _step == 2 ? _l10n.finishSetup : _l10n.continueLabel,
+                        ),
                 ),
                 const SizedBox(width: 8),
                 if (_step > 0)
                   TextButton(
                     onPressed: _isSaving ? null : details.onStepCancel,
-                    child: const Text('Back'),
+                    child: Text(_l10n.back),
                   ),
               ],
             );
           },
           steps: [
             Step(
-              title: const Text('Required Details'),
+              title: Text(_l10n.requiredDetails),
               isActive: _step >= 0,
               content: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -489,17 +485,15 @@ class _FirstTimeProfileSetupScreenState
                     controller: _nameController,
                     maxLength: 40,
                     decoration: InputDecoration(
-                      labelText: 'Name (Required)',
+                      labelText: _l10n.nameRequiredLabel,
                       errorText: _fieldErrors['name'],
                     ),
                     onChanged: (_) => _clearFieldError('name'),
                     validator: (v) {
                       final value = (v ?? '').trim();
-                      if (value.isEmpty) return 'Name is required';
-                      if (value.length < 2)
-                        return 'Name must be at least 2 characters';
-                      if (value.length > 40)
-                        return 'Name must be under 40 characters';
+                      if (value.isEmpty) return _l10n.nameRequired;
+                      if (value.length < 2) return _l10n.nameMin;
+                      if (value.length > 40) return _l10n.nameMax;
                       return null;
                     },
                   ),
@@ -508,15 +502,14 @@ class _FirstTimeProfileSetupScreenState
                     controller: _districtController,
                     maxLength: 60,
                     decoration: InputDecoration(
-                      labelText: 'Hometown District (Required)',
+                      labelText: _l10n.districtRequiredLabel,
                       errorText: _fieldErrors['hometownDistrict'],
                     ),
                     onChanged: (_) => _clearFieldError('hometownDistrict'),
                     validator: (v) {
                       final value = (v ?? '').trim();
-                      if (value.isEmpty) return 'District is required';
-                      if (value.length > 60)
-                        return 'District must be under 60 characters';
+                      if (value.isEmpty) return _l10n.districtRequired;
+                      if (value.length > 60) return _l10n.districtMax;
                       return null;
                     },
                   ),
@@ -524,7 +517,7 @@ class _FirstTimeProfileSetupScreenState
                   DropdownButtonFormField<String>(
                     initialValue: _language,
                     decoration: InputDecoration(
-                      labelText: 'Preferred Language (Required)',
+                      labelText: _l10n.languageRequiredLabel,
                       errorText: _fieldErrors['preferredLanguage'],
                     ),
                     items: _languages
@@ -548,7 +541,7 @@ class _FirstTimeProfileSetupScreenState
               ),
             ),
             Step(
-              title: const Text('Travel Interests'),
+              title: Text(_l10n.travelInterests),
               isActive: _step >= 1,
               content: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -612,14 +605,13 @@ class _FirstTimeProfileSetupScreenState
                     maxLength: 200,
                     maxLines: 3,
                     decoration: InputDecoration(
-                      labelText: 'Bio (Optional)',
+                      labelText: _l10n.bioOptionalLabel,
                       errorText: _fieldErrors['bio'],
                     ),
                     onChanged: (_) => _clearFieldError('bio'),
                     validator: (v) {
                       final value = (v ?? '').trim();
-                      if (value.length > 200)
-                        return 'Bio must be under 200 characters';
+                      if (value.length > 200) return _l10n.bioMax;
                       return null;
                     },
                   ),
@@ -627,7 +619,7 @@ class _FirstTimeProfileSetupScreenState
               ),
             ),
             Step(
-              title: const Text('Avatar and Confirm'),
+              title: Text(_l10n.avatarAndConfirm),
               isActive: _step >= 2,
               content: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -636,10 +628,8 @@ class _FirstTimeProfileSetupScreenState
                     children: [
                       _fieldTypeChip(required: false),
                       const SizedBox(width: 8),
-                      const Expanded(
-                        child: Text(
-                          'Add an avatar now or skip and update later.',
-                        ),
+                      Expanded(
+                        child: Text(_l10n.avatarHelper),
                       ),
                     ],
                   ),
@@ -659,7 +649,7 @@ class _FirstTimeProfileSetupScreenState
                       OutlinedButton.icon(
                         onPressed: _isSaving ? null : _pickAvatar,
                         icon: const Icon(Icons.photo),
-                        label: const Text('Choose Avatar'),
+                        label: Text(_l10n.chooseAvatar),
                       ),
                     ],
                   ),
@@ -668,11 +658,11 @@ class _FirstTimeProfileSetupScreenState
                     const SizedBox(height: 12),
                     Semantics(
                       button: true,
-                      label: 'Retry failed avatar upload',
+                      label: _l10n.retryAvatarSemantics,
                       child: OutlinedButton.icon(
                         onPressed: _isSaving ? null : _retryAvatarUpload,
                         icon: const Icon(Icons.refresh),
-                        label: const Text(_retryAvatarUploadCta),
+                        label: Text(_l10n.retryAvatarUpload),
                       ),
                     ),
                   ],
@@ -688,17 +678,21 @@ class _FirstTimeProfileSetupScreenState
                   ],
                   const SizedBox(height: 16),
                   if (_error != null)
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: Colors.red.shade50,
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: Colors.red.shade200),
-                      ),
-                      child: Text(
-                        _error!,
-                        style: TextStyle(color: Colors.red.shade700),
+                    Semantics(
+                      liveRegion: true,
+                      label: _error,
+                      child: Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.red.shade50,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: Colors.red.shade200),
+                        ),
+                        child: Text(
+                          _error!,
+                          style: TextStyle(color: Colors.red.shade700),
+                        ),
                       ),
                     ),
                 ],

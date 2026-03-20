@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
+import 'core/localization/profile_setup_localizations.dart';
 import 'core/theme/app_theme.dart';
 import 'splash/presentation/splash_screen.dart';
 
@@ -35,6 +37,13 @@ class MaporiaApp extends StatelessWidget {
     return MaterialApp(
       title: 'MAPORIA',
       debugShowCheckedModeBanner: false,
+      localizationsDelegates: const [
+        ProfileSetupLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: ProfileSetupLocalizations.supportedLocales,
       theme: AppTheme.light(),
       darkTheme: AppTheme.dark(),
       themeMode: ThemeMode.system,
