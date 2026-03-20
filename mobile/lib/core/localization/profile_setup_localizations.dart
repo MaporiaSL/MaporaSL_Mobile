@@ -19,8 +19,7 @@ class ProfileSetupLocalizations {
       context,
       ProfileSetupLocalizations,
     );
-    assert(result != null, 'ProfileSetupLocalizations not found in context');
-    return result!;
+    return result ?? ProfileSetupLocalizations(const Locale('en'));
   }
 
   static const _strings = <String, Map<String, String>>{
