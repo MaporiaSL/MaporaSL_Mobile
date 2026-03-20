@@ -135,7 +135,7 @@ class _MapScreenState extends ConsumerState<MapScreen>
       assignments,
       selectedDistrict,
     );
-    
+
     final userLocationState = ref.watch(userLocationProvider);
     final userLocation = userLocationState.location;
 

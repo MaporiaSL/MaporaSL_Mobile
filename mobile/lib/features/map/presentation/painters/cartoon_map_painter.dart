@@ -20,7 +20,7 @@ class CartoonMapPainter extends CustomPainter {
 
   /// Map of district ID to completion percentage (0.0 - 1.0)
   final Map<String, double> districtProgress;
-  
+
   /// User's current location to display on map
   final UserLocation? userLocation;
 
@@ -85,7 +85,10 @@ class CartoonMapPainter extends CustomPainter {
       // 6. Selected district highlight (Clear of fog)
       _drawSelectedDistrictHighlight(canvas);
 
-      // 7. Draw outer border
+      // 7. Draw user location indicator
+      _drawUserLocation(canvas, size);
+
+      // 8. Draw outer border
       _drawBorders(canvas, size);
     } catch (e) {
       debugPrint('❌ Map Polish: Critical rendering error: $e');
@@ -443,6 +446,92 @@ class CartoonMapPainter extends CustomPainter {
     for (final path in paths) {
       canvas.drawPath(path, pulsePaint);
     }
+  }
+
+  /// Draw user location indicator with accuracy circle and pulsing ring
+  void _drawUserLocation(Canvas canvas, Size size) {
+    if (userLocation == null || provincePaths.isEmpty) return;
+
+    try {
+      // For now, convert lat/lng to pixel coordinates
+      // This is a simple linear approximation - can be improved with proper projection
+      final canvasPoint = _latLngToPixel(
+        userLocation!.latitude,
+        userLocation!.longitude,
+        size,
+      );
+
+      if (canvasPoint == null) return; // Outside map bounds
+
+      const userLocationRadius = 6.0;
+      final accuracy = userLocation!.accuracy ?? 30.0;
+      final accuracyPixels =
+          (accuracy / 111000) * size.width / 2; // Rough conversion
+
+      // Layer 1: Accuracy circle (semi-transparent)
+      final accuracyPaint = Paint()
+        ..color = Colors.blue.withValues(alpha: 0.1)
+        ..style = PaintingStyle.fill;
+
+      canvas.drawCircle(canvasPoint, accuracyPixels, accuracyPaint);
+
+      // Layer 2: Accuracy border
+      final accuracyBorderPaint = Paint()
+        ..color = Colors.blue.withValues(alpha: 0.2)
+        ..strokeWidth = 1.0
+        ..style = PaintingStyle.stroke;
+
+      canvas.drawCircle(canvasPoint, accuracyPixels, accuracyBorderPaint);
+
+      // Layer 3: Pulsing outer ring
+      final pulseOpacity =
+          (math.sin(DateTime.now().millisecondsSinceEpoch / 800.0) + 1) / 2;
+      final pulseRadius = userLocationRadius + (8.0 * pulseOpacity);
+
+      final pulsePaint = Paint()
+        ..color = Colors.blue.withValues(alpha: 0.3 * (1 - pulseOpacity))
+        ..strokeWidth = 2.0
+        ..style = PaintingStyle.stroke;
+
+      canvas.drawCircle(canvasPoint, pulseRadius, pulsePaint);
+
+      // Layer 4: Main user location dot
+      final userDotPaint = Paint()
+        ..color = Colors.blue
+        ..style = PaintingStyle.fill;
+
+      canvas.drawCircle(canvasPoint, userLocationRadius, userDotPaint);
+
+      // Layer 5: White border for contrast
+      final dotBorderPaint = Paint()
+        ..color = Colors.white
+        ..strokeWidth = 1.5
+        ..style = PaintingStyle.stroke;
+
+      canvas.drawCircle(canvasPoint, userLocationRadius, dotBorderPaint);
+    } catch (e) {
+      debugPrint('❌ Map Polish: Error drawing user location: $e');
+    }
+  }
+
+  /// Convert latitude/longitude to canvas pixel coordinates
+  Offset? _latLngToPixel(double lat, double lng, Size size) {
+    // Simple bounds for Sri Lanka
+    const minLat = 5.9;
+    const maxLat = 7.7;
+    const minLng = 80.0;
+    const maxLng = 81.9;
+
+    // Check if location is within bounds
+    if (lat < minLat || lat > maxLat || lng < minLng || lng > maxLng) {
+      return null;
+    }
+
+    // Linear interpolation to canvas coordinates
+    final x = ((lng - minLng) / (maxLng - minLng)) * size.width;
+    final y = ((maxLat - lat) / (maxLat - minLat)) * size.height;
+
+    return Offset(x, y);
   }
 
   /// Draw enhanced outer border with glow effect

@@ -21,7 +21,8 @@ class UserLocation {
     const earthRadius = 6371000.0;
     final dLat = _toRadians(targetLat - latitude);
     final dLng = _toRadians(targetLng - longitude);
-    final a = (math.sin(dLat / 2) * math.sin(dLat / 2)) +
+    final a =
+        (math.sin(dLat / 2) * math.sin(dLat / 2)) +
         math.cos(_toRadians(latitude)) *
             math.cos(_toRadians(targetLat)) *
             (math.sin(dLng / 2) * math.sin(dLng / 2));
@@ -42,7 +43,7 @@ class UserLocationState {
   final String? error;
   final bool isLoading;
 
-  UserLocationState({
+  const UserLocationState({
     this.location,
     this.isTracking = false,
     this.hasPermission = false,
@@ -141,10 +142,7 @@ class UserLocationNotifier extends StateNotifier<UserLocationState> {
           );
         },
         onError: (error) {
-          state = state.copyWith(
-            error: error.toString(),
-            isTracking: false,
-          );
+          state = state.copyWith(error: error.toString(), isTracking: false);
         },
       );
     } catch (e) {
@@ -170,5 +168,5 @@ class UserLocationNotifier extends StateNotifier<UserLocationState> {
 /// Global provider for user location
 final userLocationProvider =
     StateNotifierProvider<UserLocationNotifier, UserLocationState>(
-  (ref) => UserLocationNotifier(),
-);
+      (ref) => UserLocationNotifier(),
+    );

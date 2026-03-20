@@ -36,7 +36,7 @@ class CartoonMapCanvas extends StatefulWidget {
 
   /// Map of district ID to completion percentage (0.0 - 1.0)
   final Map<String, double> districtProgress;
-  
+
   /// User's current location for display on map
   final UserLocation? userLocation;
 
@@ -363,7 +363,9 @@ class _CartoonMapCanvasState extends State<CartoonMapCanvas> {
                 districtPaths: _districtPaths,
                 provinceLabelPositions: _provinceLabelPositions,
                 theme: widget.theme,
-                districtProgress: widget.districtProgress,                userLocation: widget.userLocation,              ),
+                districtProgress: widget.districtProgress,
+                userLocation: widget.userLocation,
+              ),
               child: Container(),
             ),
           ),

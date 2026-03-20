@@ -9,11 +9,7 @@ class PlaceCard extends ConsumerWidget {
   final Place place;
   final VoidCallback onTap;
 
-  const PlaceCard({
-    super.key, 
-    required this.place, 
-    required this.onTap
-  });
+  const PlaceCard({super.key, required this.place, required this.onTap});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -36,7 +32,9 @@ class PlaceCard extends ConsumerWidget {
           children: [
             if (place.photos.isNotEmpty)
               ClipRRect(
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(15),
+                ),
                 child: Stack(
                   children: [
                     // Main image with loading & error handling
@@ -54,7 +52,7 @@ class PlaceCard extends ConsumerWidget {
                             child: CircularProgressIndicator(
                               value: loadingProgress.expectedTotalBytes != null
                                   ? loadingProgress.cumulativeBytesLoaded /
-                                      loadingProgress.expectedTotalBytes!
+                                        loadingProgress.expectedTotalBytes!
                                   : null,
                             ),
                           ),
@@ -67,13 +65,18 @@ class PlaceCard extends ConsumerWidget {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(Icons.image_not_supported,
-                                  size: 50, color: Colors.grey.shade400),
+                              Icon(
+                                Icons.image_not_supported,
+                                size: 50,
+                                color: Colors.grey.shade400,
+                              ),
                               const SizedBox(height: 8),
                               Text(
                                 'Photo unavailable',
                                 style: TextStyle(
-                                    color: Colors.grey.shade600, fontSize: 12),
+                                  color: Colors.grey.shade600,
+                                  fontSize: 12,
+                                ),
                               ),
                             ],
                           ),
@@ -87,7 +90,9 @@ class PlaceCard extends ConsumerWidget {
                         right: 8,
                         child: Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 4),
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
                           decoration: BoxDecoration(
                             color: Colors.black54,
                             borderRadius: BorderRadius.circular(12),
@@ -95,8 +100,11 @@ class PlaceCard extends ConsumerWidget {
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Icon(Icons.image_multiple,
-                                  color: Colors.white, size: 16),
+                              const Icon(
+                                Icons.image_multiple,
+                                color: Colors.white,
+                                size: 16,
+                              ),
                               const SizedBox(width: 4),
                               Text(
                                 '+${place.photos.length - 1}',
@@ -124,9 +132,8 @@ class PlaceCard extends ConsumerWidget {
                       Expanded(
                         child: Text(
                           place.name,
-                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: Theme.of(context).textTheme.titleLarge
+                              ?.copyWith(fontWeight: FontWeight.bold),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -134,11 +141,17 @@ class PlaceCard extends ConsumerWidget {
                       if (place.rating != null)
                         Row(
                           children: [
-                            const Icon(Icons.star, color: Colors.amber, size: 20),
+                            const Icon(
+                              Icons.star,
+                              color: Colors.amber,
+                              size: 20,
+                            ),
                             const SizedBox(width: 4),
                             Text(
                               place.rating!.toStringAsFixed(1),
-                              style: const TextStyle(fontWeight: FontWeight.bold),
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ],
                         ),
@@ -147,7 +160,11 @@ class PlaceCard extends ConsumerWidget {
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      const Icon(Icons.location_on, color: Colors.red, size: 16),
+                      const Icon(
+                        Icons.location_on,
+                        color: Colors.red,
+                        size: 16,
+                      ),
                       const SizedBox(width: 4),
                       Text(
                         '${place.district ?? "Unknown"}, ${place.province ?? ""}',
@@ -161,7 +178,10 @@ class PlaceCard extends ConsumerWidget {
                       place.description!,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(color: Colors.grey.shade700, fontSize: 13),
+                      style: TextStyle(
+                        color: Colors.grey.shade700,
+                        fontSize: 13,
+                      ),
                     ),
                   ],
                   const SizedBox(height: 16),
@@ -219,4 +239,3 @@ class PlaceCard extends ConsumerWidget {
     );
   }
 }
-
