@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import '../../../core/config/app_config.dart';
+import '../../../core/localization/profile_setup_localizations.dart';
 import '../domain/user_profile.dart' as profile_model;
 import 'admin_submission_moderation_screen.dart';
 import 'contribution_detail_screen.dart';
@@ -25,6 +26,8 @@ class ProfileScreen extends ConsumerStatefulWidget {
 class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   _ContributionFilter _filter = _ContributionFilter.all;
   _ContributionSort _sort = _ContributionSort.newest;
+
+  ProfileSetupLocalizations get _l10n => ProfileSetupLocalizations.of(context);
 
   void _retryAll() {
     final retries = ref.read(profileRetryCountProvider.notifier);
@@ -54,12 +57,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('My Profile'),
+        title: Text(_l10n.myProfile),
         actions: [
           if (AppConfig.authBypass)
             IconButton(
               icon: const Icon(Icons.admin_panel_settings_outlined),
-              tooltip: 'Moderation Queue',
+              tooltip: _l10n.moderationQueue,
               onPressed: () async {
                 await Navigator.push(
                   context,
@@ -73,7 +76,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             ),
           IconButton(
             icon: const Icon(Icons.logout),
-            tooltip: 'Logout',
+            tooltip: _l10n.logout,
             onPressed: _showLogoutConfirmation,
           ),
         ],
@@ -105,13 +108,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: _retryAll,
-                    child: const Text('Retry'),
+                    child: Text(_l10n.retry),
                   ),
                   if (errorUi.showSignInAction) ...[
                     const SizedBox(height: 8),
                     TextButton(
                       onPressed: _performLogout,
-                      child: const Text('Sign In Again'),
+                      child: Text(_l10n.signInAgain),
                     ),
                   ],
                 ],
@@ -134,18 +137,18 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      'Profile Not Found',
+                      _l10n.profileNotFound,
                       style: Theme.of(context).textTheme.titleLarge,
                     ),
                     const SizedBox(height: 8),
-                    const Text(
-                      'No user profile exists for this account yet. Tap retry to bootstrap your account profile.',
+                    Text(
+                      _l10n.profileNotFoundBody,
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 16),
                     ElevatedButton(
                       onPressed: _retryAll,
-                      child: const Text('Try Again'),
+                      child: Text(_l10n.tryAgain),
                     ),
                   ],
                 ),
@@ -181,7 +184,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   const SizedBox(height: 24),
                   if (profile.badges.isNotEmpty) ...[
                     Text(
-                      'Badges Earned',
+                      _l10n.badgesEarned,
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
                     const SizedBox(height: 12),
@@ -189,7 +192,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     const SizedBox(height: 24),
                   ],
                   Text(
-                    'Contributed Places',
+                    _l10n.contributedPlaces,
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                   const SizedBox(height: 12),
@@ -200,7 +203,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   _buildLeaderboardAndImpact(profile),
                   const SizedBox(height: 20),
                   Text(
-                    'Top Contributors',
+                    _l10n.topContributors,
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                   const SizedBox(height: 10),
@@ -219,7 +222,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                               ),
                             );
                           },
-                          child: const Text('Edit Profile'),
+                          child: Text(_l10n.editProfile),
                         ),
                       ),
                       const SizedBox(width: 10),
@@ -236,7 +239,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             _refreshContributionViews();
                           },
                           icon: const Icon(Icons.add_location_alt_outlined),
-                          label: const Text('Submit Place'),
+                          label: Text(_l10n.submitPlace),
                         ),
                       ),
                     ],
@@ -258,13 +261,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             scrollDirection: Axis.horizontal,
             child: Row(
               children: [
-                _filterChip('All', _ContributionFilter.all),
+                _filterChip(_l10n.all, _ContributionFilter.all),
                 const SizedBox(width: 8),
-                _filterChip('Pending', _ContributionFilter.pending),
+                _filterChip(_l10n.pending, _ContributionFilter.pending),
                 const SizedBox(width: 8),
-                _filterChip('Approved', _ContributionFilter.approved),
+                _filterChip(_l10n.approved, _ContributionFilter.approved),
                 const SizedBox(width: 8),
-                _filterChip('Rejected', _ContributionFilter.rejected),
+                _filterChip(_l10n.rejected, _ContributionFilter.rejected),
               ],
             ),
           ),
@@ -272,18 +275,18 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         const SizedBox(width: 8),
         DropdownButton<_ContributionSort>(
           value: _sort,
-          items: const [
+          items: [
             DropdownMenuItem(
               value: _ContributionSort.newest,
-              child: Text('Newest'),
+              child: Text(_l10n.newest),
             ),
             DropdownMenuItem(
               value: _ContributionSort.oldest,
-              child: Text('Oldest'),
+              child: Text(_l10n.oldest),
             ),
             DropdownMenuItem(
               value: _ContributionSort.status,
-              child: Text('Status'),
+              child: Text(_l10n.status),
             ),
           ],
           onChanged: (value) {
@@ -342,7 +345,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               if (profile.preferredLanguage.isNotEmpty) ...[
                 const SizedBox(height: 2),
                 Text(
-                  'Language: ${profile.preferredLanguage}',
+                  '${_l10n.languagePrefix} ${profile.preferredLanguage}',
                   style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                 ),
               ],
@@ -362,15 +365,15 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             _StatCard(
-              label: 'Submitted',
+              label: _l10n.submitted,
               value: profile.totalSubmitted.toString(),
             ),
             _StatCard(
-              label: 'Approved',
+              label: _l10n.approved,
               value: profile.approvedCount.toString(),
             ),
             _StatCard(
-              label: 'Approval Rate',
+              label: _l10n.approvalRate,
               value: '${profile.approvalRate.toStringAsFixed(1)}%',
             ),
           ],
@@ -380,15 +383,15 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             _StatCard(
-              label: 'Districts Unlocked',
+              label: _l10n.districtsUnlocked,
               value: profile.unlockedDistrictsCount.toString(),
             ),
             _StatCard(
-              label: 'Provinces Unlocked',
+              label: _l10n.provincesUnlocked,
               value: profile.unlockedProvincesCount.toString(),
             ),
             _StatCard(
-              label: 'Places Visited',
+              label: _l10n.placesVisited,
               value: profile.totalPlacesVisited.toString(),
             ),
           ],
@@ -435,7 +438,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       error: (error, _) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Could not load submissions right now.'),
+          Text(_l10n.contributionsLoadError),
           const SizedBox(height: 4),
           Text(
             _buildErrorUi(error).message,
@@ -445,16 +448,16 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           OutlinedButton.icon(
             onPressed: _retryAll,
             icon: const Icon(Icons.refresh),
-            label: const Text('Retry Contributions'),
+            label: Text(_l10n.retryContributions),
           ),
         ],
       ),
       data: (places) {
         final filtered = _filterAndSort(places);
         if (filtered.isEmpty) {
-          return const Padding(
-            padding: EdgeInsets.all(16),
-            child: Text('No submissions in this view yet.'),
+          return Padding(
+            padding: const EdgeInsets.all(16),
+            child: Text(_l10n.noSubmissionsInView),
           );
         }
 
@@ -494,16 +497,18 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         ),
                         if (place.submittedAt != null)
                           Text(
-                            'Submitted: ${DateFormat.yMMMd().format(place.submittedAt!)}',
+                            '${_l10n.submittedPrefix} ${DateFormat.yMMMd().format(place.submittedAt!)}',
                           ),
                         if (place.status == 'rejected' &&
                             (place.rejectionReason ?? '').isNotEmpty)
-                          Text('Reason: ${place.rejectionReason}'),
+                          Text(
+                            '${_l10n.reasonPrefix} ${place.rejectionReason}',
+                          ),
                       ],
                     ),
                     trailing: IconButton(
                       icon: const Icon(Icons.chevron_right),
-                      tooltip: 'View details',
+                      tooltip: _l10n.viewDetails,
                       onPressed: () => _openContributionDetail(place),
                     ),
                   ),
@@ -571,11 +576,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   String _statusLabel(String status) {
     switch (status) {
       case 'approved':
-        return 'Approved';
+        return _l10n.approved;
       case 'rejected':
-        return 'Rejected';
+        return _l10n.rejected;
       default:
-        return 'Pending Review';
+        return _l10n.pendingReview;
     }
   }
 
@@ -595,12 +600,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Global Rank: #${profile.leaderboardRank}',
+          '${_l10n.globalRankPrefix} #${profile.leaderboardRank}',
           style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
         ),
         const SizedBox(height: 8),
         Text(
-          'Impact: ${profile.impactCount} users visited your places',
+          '${_l10n.impactPrefix} ${profile.impactCount} ${_l10n.impactSuffix}',
           style: TextStyle(fontSize: 14, color: Colors.grey[600]),
         ),
       ],
@@ -615,7 +620,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       error: (error, _) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Could not load leaderboard.'),
+          Text(_l10n.leaderboardLoadError),
           const SizedBox(height: 4),
           Text(
             _buildErrorUi(error).message,
@@ -625,13 +630,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           OutlinedButton.icon(
             onPressed: _retryAll,
             icon: const Icon(Icons.refresh),
-            label: const Text('Retry Leaderboard'),
+            label: Text(_l10n.retryLeaderboard),
           ),
         ],
       ),
       data: (contributors) {
         if (contributors.isEmpty) {
-          return const Text('No leaderboard data yet.');
+          return Text(_l10n.noLeaderboardDataYet);
         }
 
         final top = contributors.take(5).toList();
@@ -639,7 +644,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           children: top.asMap().entries.map((entry) {
             final rank = entry.key + 1;
             final item = entry.value;
-            final name = (item['userName'] ?? 'Unknown').toString();
+            final name = (item['userName'] ?? _l10n.unknown).toString();
             final count = (item['approvedCount'] ?? 0).toString();
 
             return ListTile(
@@ -647,7 +652,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               contentPadding: EdgeInsets.zero,
               leading: CircleAvatar(radius: 14, child: Text('$rank')),
               title: Text(name),
-              trailing: Text('$count approved'),
+              trailing: Text('$count ${_l10n.approvedSuffix}'),
             );
           }).toList(),
         );
@@ -659,66 +664,62 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     if (error is ProfileLoadException) {
       switch (error.type) {
         case ProfileLoadErrorType.authLoading:
-          return const _ErrorUiData(
-            title: 'Preparing Your Session',
-            message:
-                'We are still setting up your sign-in token. Please try again.',
+          return _ErrorUiData(
+            title: _l10n.preparingSessionTitle,
+            message: _l10n.preparingSessionMessage,
           );
         case ProfileLoadErrorType.missingToken:
-          return const _ErrorUiData(
-            title: 'Sign In Required',
-            message: 'Please sign in to access your profile.',
+          return _ErrorUiData(
+            title: _l10n.signInRequiredTitle,
+            message: _l10n.signInRequiredMessage,
             showSignInAction: true,
           );
         case ProfileLoadErrorType.expiredToken:
-          return const _ErrorUiData(
-            title: 'Session Expired',
-            message: 'Your login session expired. Sign in again to continue.',
+          return _ErrorUiData(
+            title: _l10n.sessionExpiredTitle,
+            message: _l10n.sessionExpiredMessage,
             showSignInAction: true,
           );
         case ProfileLoadErrorType.userNotRegistered:
-          return const _ErrorUiData(
-            title: 'Creating Your Profile',
-            message:
-                'We could not sync your account yet. Tap retry to complete setup.',
+          return _ErrorUiData(
+            title: _l10n.creatingProfileTitle,
+            message: _l10n.creatingProfileMessage,
           );
         case ProfileLoadErrorType.offline:
-          return const _ErrorUiData(
-            title: 'No Internet Connection',
-            message: 'Connect to the internet and retry loading your profile.',
+          return _ErrorUiData(
+            title: _l10n.noInternetTitle,
+            message: _l10n.noInternetMessage,
           );
         case ProfileLoadErrorType.forbidden:
-          return const _ErrorUiData(
-            title: 'Access Denied',
-            message:
-                'This profile request is not allowed right now. Try signing in again.',
+          return _ErrorUiData(
+            title: _l10n.accessDeniedTitle,
+            message: _l10n.accessDeniedMessage,
           );
         case ProfileLoadErrorType.server:
-          return const _ErrorUiData(
-            title: 'Server Error',
-            message:
-                'The server is currently unavailable. Please try again shortly.',
+          return _ErrorUiData(
+            title: _l10n.serverErrorTitle,
+            message: _l10n.serverErrorMessage,
           );
         case ProfileLoadErrorType.unknown:
-          return const _ErrorUiData(
-            title: 'Unable To Load Profile',
-            message: 'An unexpected error occurred. Please retry.',
+          return _ErrorUiData(
+            title: _l10n.unableLoadProfileTitle,
+            message: _l10n.unableLoadProfileMessage,
           );
       }
     }
 
     final message = error.toString().toLowerCase();
     if (message.contains('401') || message.contains('unauthorized')) {
-      return const _ErrorUiData(
-        title: 'Session Expired',
-        message: 'Your login session has expired. Sign in again to continue.',
+      return _ErrorUiData(
+        title: _l10n.sessionExpiredTitle,
+        message: _l10n.sessionExpiredMessage,
         showSignInAction: true,
       );
     }
 
-    return const _ErrorUiData(
-      title: 'Error Loading Profile',
-      message: 'An unexpected error occurred while loading profile data.',
+    return _ErrorUiData(
+      title: _l10n.errorLoadingProfileTitle,
+      message: _l10n.errorLoadingProfileMessage,
     );
   }
 
@@ -782,19 +783,19 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Logout'),
-        content: const Text('Are you sure you want to logout?'),
+        title: Text(_l10n.logoutConfirmTitle),
+        content: Text(_l10n.logoutConfirmMessage),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text(_l10n.cancel),
           ),
           TextButton(
             onPressed: () {
               Navigator.pop(context);
               _performLogout();
             },
-            child: const Text('Logout'),
+            child: Text(_l10n.logout),
           ),
         ],
       ),
@@ -811,7 +812,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       if (!mounted) return;
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text('Error: $e')));
+      ).showSnackBar(SnackBar(content: Text('${_l10n.errorPrefix} $e')));
     }
   }
 }

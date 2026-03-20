@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../../core/localization/profile_setup_localizations.dart';
 import 'providers/profile_providers.dart';
 
 class PlaceSubmissionScreen extends ConsumerStatefulWidget {
@@ -55,6 +56,8 @@ class _PlaceSubmissionScreenState extends ConsumerState<PlaceSubmissionScreen> {
   ];
 
   bool get _canSubmit => _photos.length >= 2;
+
+  ProfileSetupLocalizations get _l10n => ProfileSetupLocalizations.of(context);
 
   @override
   void initState() {
@@ -109,9 +112,9 @@ class _PlaceSubmissionScreenState extends ConsumerState<PlaceSubmissionScreen> {
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
     if (!_canSubmit) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select at least 2 photos')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(_l10n.selectAtLeast2Photos)));
       return;
     }
 
@@ -126,13 +129,9 @@ class _PlaceSubmissionScreenState extends ConsumerState<PlaceSubmissionScreen> {
           )
         : await _resolveCoordinates();
     if (coordinates == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Could not determine location automatically. Refine place/province/district and try again.',
-          ),
-        ),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(_l10n.autoLocationFailed)));
       return;
     }
 
@@ -154,7 +153,9 @@ class _PlaceSubmissionScreenState extends ConsumerState<PlaceSubmissionScreen> {
 
     if (state.error != null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Submission failed: ${state.error}')),
+        SnackBar(
+          content: Text('${_l10n.submissionFailedPrefix} ${state.error}'),
+        ),
       );
       return;
     }
@@ -162,9 +163,9 @@ class _PlaceSubmissionScreenState extends ConsumerState<PlaceSubmissionScreen> {
     ref.invalidate(userProfileProvider);
     ref.invalidate(userContributionsProvider);
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Place submitted successfully for review!')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(_l10n.placeSubmittedSuccess)));
     Navigator.of(context).pop();
   }
 
@@ -173,7 +174,7 @@ class _PlaceSubmissionScreenState extends ConsumerState<PlaceSubmissionScreen> {
     final submitState = ref.watch(placeSubmissionProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Submit New Place')),
+      appBar: AppBar(title: Text(_l10n.submitNewPlaceTitle)),
       body: SafeArea(
         child: Form(
           key: _formKey,
@@ -182,13 +183,13 @@ class _PlaceSubmissionScreenState extends ConsumerState<PlaceSubmissionScreen> {
             children: [
               TextFormField(
                 controller: _placeNameController,
-                decoration: const InputDecoration(
-                  labelText: 'Place name',
+                decoration: InputDecoration(
+                  labelText: _l10n.placeName,
                   border: OutlineInputBorder(),
                 ),
                 validator: (value) {
                   final text = value?.trim() ?? '';
-                  if (text.length < 3) return 'Enter at least 3 characters';
+                  if (text.length < 3) return _l10n.min3Characters;
                   return null;
                 },
               ),
@@ -198,23 +199,22 @@ class _PlaceSubmissionScreenState extends ConsumerState<PlaceSubmissionScreen> {
                 maxLines: 4,
                 minLines: 3,
                 maxLength: 400,
-                decoration: const InputDecoration(
-                  labelText: 'Description',
-                  helperText: 'At least 50 characters',
+                decoration: InputDecoration(
+                  labelText: _l10n.description,
+                  helperText: _l10n.atLeast50Characters,
                   border: OutlineInputBorder(),
                 ),
                 validator: (value) {
                   final text = value?.trim() ?? '';
-                  if (text.length < 50)
-                    return 'Description must be at least 50 characters';
+                  if (text.length < 50) return _l10n.descriptionMin50;
                   return null;
                 },
               ),
               const SizedBox(height: 12),
               DropdownButtonFormField<String>(
                 initialValue: _category,
-                decoration: const InputDecoration(
-                  labelText: 'Category',
+                decoration: InputDecoration(
+                  labelText: _l10n.category,
                   border: OutlineInputBorder(),
                 ),
                 items: _categories
@@ -233,23 +233,23 @@ class _PlaceSubmissionScreenState extends ConsumerState<PlaceSubmissionScreen> {
               const SizedBox(height: 12),
               TextFormField(
                 controller: _provinceController,
-                decoration: const InputDecoration(
-                  labelText: 'Province',
+                decoration: InputDecoration(
+                  labelText: _l10n.province,
                   border: OutlineInputBorder(),
                 ),
                 validator: (value) => (value == null || value.trim().isEmpty)
-                    ? 'Province required'
+                    ? _l10n.provinceRequired
                     : null,
               ),
               const SizedBox(height: 12),
               TextFormField(
                 controller: _districtController,
-                decoration: const InputDecoration(
-                  labelText: 'District',
+                decoration: InputDecoration(
+                  labelText: _l10n.district,
                   border: OutlineInputBorder(),
                 ),
                 validator: (value) => (value == null || value.trim().isEmpty)
-                    ? 'District required'
+                    ? _l10n.districtRequired
                     : null,
               ),
               const SizedBox(height: 16),
@@ -258,8 +258,8 @@ class _PlaceSubmissionScreenState extends ConsumerState<PlaceSubmissionScreen> {
                 icon: const Icon(Icons.photo_library_outlined),
                 label: Text(
                   _photos.isEmpty
-                      ? 'Pick Photos (min 2)'
-                      : '${_photos.length} photo(s) selected',
+                      ? _l10n.pickPhotosMin2
+                      : '${_photos.length} ${_l10n.photosSelectedSuffix}',
                 ),
               ),
               const SizedBox(height: 8),
@@ -292,11 +292,11 @@ class _PlaceSubmissionScreenState extends ConsumerState<PlaceSubmissionScreen> {
                         height: 20,
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
-                    : const Text('Submit for Review'),
+                    : Text(_l10n.submitForReview),
               ),
               const SizedBox(height: 8),
               Text(
-                'Your submission will be reviewed by admins before it appears publicly.',
+                _l10n.submissionReviewNote,
                 style: Theme.of(context).textTheme.bodySmall,
               ),
             ],
