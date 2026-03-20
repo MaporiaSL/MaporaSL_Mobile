@@ -49,6 +49,10 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   String? _lastFailedUploadPath;
   int _avatarCacheBuster = 0;
   late String _currentAvatarUrl;
+  
+  // Re-auth state for sensitive operations
+  String? _pendingSensitiveAction;
+  bool _isReauthRequired = false;
 
   ProfileSetupLocalizations get _l10n => ProfileSetupLocalizations.of(context);
 

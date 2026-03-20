@@ -3,7 +3,7 @@ const PlaceSubmission = require('../models/PlaceSubmission');
 const UserBadge = require('../models/UserBadge');
 const PlaceUsageTracking = require('../models/PlaceUsageTracking');
 const { getStorage } = require('../config/firebase');
-const PROFILE_VALIDATION = require('../config/profileValidation');
+const { PROFILE_VALIDATION, ACCOUNT_DELETION_POLICY } = require('../config/profileValidation');
 const path = require('path');
 const crypto = require('crypto');
 
@@ -587,6 +587,10 @@ async function uploadUserAvatar(req, res) {
  * Delete/anonymize user-owned profile domain data and profile account record.
  * Requires JWT authentication and matching userId.
  * Wraps database operations in a transaction for atomic all-or-nothing semantics.
+ * 
+ * Data Retention Policy: See ACCOUNT_DELETION_POLICY in profileValidation.js
+ * Current behavior: HARD_DELETE_SUBMISSIONS = true (all contributions removed)
+ * Next phase: Consider ANONYMIZE mode for compliance/data-preservation balance.
  */
 async function deleteUserAccount(req, res) {
   const session = await User.startSession();
