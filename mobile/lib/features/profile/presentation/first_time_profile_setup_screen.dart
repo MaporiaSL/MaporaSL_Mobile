@@ -14,10 +14,12 @@ class FirstTimeProfileSetupScreen extends ConsumerStatefulWidget {
     super.key,
     required this.requiredFields,
     required this.optionalFields,
+    this.showAvatarPreview = true,
   });
 
   final List<String> requiredFields;
   final List<String> optionalFields;
+  final bool showAvatarPreview;
 
   @override
   ConsumerState<FirstTimeProfileSetupScreen> createState() =>
@@ -635,7 +637,8 @@ class _FirstTimeProfileSetupScreenState
                     children: [
                       CircleAvatar(
                         radius: 38,
-                        backgroundImage: _avatarFile != null
+                        backgroundImage: widget.showAvatarPreview &&
+                                _avatarFile != null
                             ? FileImage(_avatarFile!)
                             : null,
                         child: _avatarFile == null
