@@ -52,7 +52,7 @@ class TripsPage extends StatelessWidget {
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.transparent,
-        foregroundColor: Colors.black,
+        foregroundColor: Colors.black87,
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -74,11 +74,11 @@ class TripsPage extends StatelessWidget {
       // This is the exact body layout from the tutorial's home_page.dart
       body: ListView(
         physics: const BouncingScrollPhysics(),
-        padding: const EdgeInsets.all(14),
+        padding: const EdgeInsets.all(15),
         children: [
           // LOCATION CARD
           const LocationCard(),
-          const SizedBox(height: 20),
+          const SizedBox(height: 18),
 
           // CATEGORIES (Mountain, Beach, etc.)
           //const TouristPlaces(),
@@ -89,7 +89,7 @@ class TripsPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                "Recommendation",
+                "Recommendations",
                 style: Theme.of(context).textTheme.titleLarge,
               ),
               TextButton(
@@ -105,13 +105,13 @@ class TripsPage extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 12),
           const RecommendedPlaces(),
           const SizedBox(height: 20),
 
           // COMPLETED QUESTS
           Text('Your Triumphs', style: Theme.of(context).textTheme.titleLarge),
-          const SizedBox(height: 10),
+          const SizedBox(height: 12),
           _buildCompletedTrips(context),
           const SizedBox(height: 20),
 
@@ -120,7 +120,7 @@ class TripsPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                "Nearby From You",
+                "Nearby Around You",
                 style: Theme.of(context).textTheme.titleLarge,
               ),
               TextButton(onPressed: () {}, child: const Text("View All")),
@@ -143,21 +143,21 @@ class TripsPage extends StatelessWidget {
 
   Widget _buildCompletedTrips(BuildContext context) {
     return SizedBox(
-      height: 170,
+      height: 168,
       child: ListView.separated(
         physics: const BouncingScrollPhysics(),
         scrollDirection: Axis.horizontal,
         itemCount: _completedQuests.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 12),
+        separatorBuilder: (_, __) => const SizedBox(width: 10),
         itemBuilder: (context, index) {
           final quest = _completedQuests[index];
           return Container(
-            width: 230,
+            width: 228,
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(18),
               color: const Color(0xFFFFF7E3),
-              border: Border.all(color: const Color(0xFFEAD9AA)),
+              border: Border.all(color: const Color(0xFFE5D4A3)),
             ),
             child: Stack(
               children: [
@@ -369,7 +369,7 @@ class AllRecommendationsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('All Recommendations')),
-      body: const Center(child: Text('All recommendations will appear here.')),
+      body: const Center(child: Text('All recommendations appear here.')),
     );
   }
 }
