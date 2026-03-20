@@ -679,7 +679,9 @@ class ProfileScreen extends ConsumerWidget {
         // Show final confirmation
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Account deleted successfully. You cannot log back in with these credentials.'),
+            content: Text(
+              'Account deleted successfully. You cannot log back in with these credentials.',
+            ),
             duration: Duration(seconds: 3),
           ),
         );

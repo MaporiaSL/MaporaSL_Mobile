@@ -22,9 +22,10 @@ class AuthInterceptor extends Interceptor {
         debugPrint('❌ Error fetching Firebase token: $e');
       }
     } else {
-      debugPrint('⚠️ No Firebase user logged in - request will be unauthenticated');
+      debugPrint(
+        '⚠️ No Firebase user logged in - request will be unauthenticated',
+      );
     }
     return handler.next(options);
   }
 }
-
