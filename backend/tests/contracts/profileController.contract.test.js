@@ -20,6 +20,14 @@ function createMockRes() {
     },
     json(payload) {
       this.body = payload;
+    function createMockSession() {
+      return {
+        startTransaction: async () => {},
+        commitTransaction: async () => {},
+        abortTransaction: async () => {},
+        endSession: async () => {},
+      };
+    }
       return this;
     },
   };
@@ -186,12 +194,14 @@ test('deleteUserAccount returns 403 when deleting another user account', async (
 test('deleteUserAccount cascades cleanup and returns audit contract', async () => {
   const originalUserFindOne = User.findOne;
   const originalUserDeleteOne = User.deleteOne;
+  const originalUserStartSession = User.startSession;
   const originalSubmissionFind = PlaceSubmission.find;
   const originalSubmissionDeleteMany = PlaceSubmission.deleteMany;
   const originalBadgeDeleteMany = UserBadge.deleteMany;
   const originalUsageDeleteMany = PlaceUsageTracking.deleteMany;
   const originalUsageUpdateMany = PlaceUsageTracking.updateMany;
 
+  User.startSession = async () => createMockSession();
   User.findOne = async () => ({
     auth0Id: 'u-1',
     profilePicture: '',
@@ -222,6 +232,7 @@ test('deleteUserAccount cascades cleanup and returns audit contract', async () =
     assert.ok(res.body.audit.timestamp);
   } finally {
     User.findOne = originalUserFindOne;
+      User.startSession = originalUserStartSession;
     User.deleteOne = originalUserDeleteOne;
     PlaceSubmission.find = originalSubmissionFind;
     PlaceSubmission.deleteMany = originalSubmissionDeleteMany;
@@ -233,7 +244,9 @@ test('deleteUserAccount cascades cleanup and returns audit contract', async () =
 
 test('deleteUserAccount returns 404 when user not found', async () => {
   const originalUserFindOne = User.findOne;
+  const originalUserStartSession = User.startSession;
 
+  User.startSession = async () => createMockSession();
   User.findOne = async () => null;
 
   try {
@@ -249,12 +262,15 @@ test('deleteUserAccount returns 404 when user not found', async () => {
     assert.match(res.body.error, /not found/i);
   } finally {
     User.findOne = originalUserFindOne;
+    User.startSession = originalUserStartSession;
   }
 });
 
 test('deleteUserAccount returns 500 on database operation failure', async () => {
   const originalUserFindOne = User.findOne;
+  const originalUserStartSession = User.startSession;
 
+  User.startSession = async () => createMockSession();
   User.findOne = async () => {
     throw new Error('Database connection failed');
   };
@@ -272,6 +288,7 @@ test('deleteUserAccount returns 500 on database operation failure', async () => 
     assert.match(res.body.error, /Failed to delete/);
   } finally {
     User.findOne = originalUserFindOne;
+    User.startSession = originalUserStartSession;
   }
 });
 
@@ -283,7 +300,9 @@ test('deleteUserAccount succeeds even if storage cleanup fails (best-effort)', a
   const originalBadgeDeleteMany = UserBadge.deleteMany;
   const originalUsageDeleteMany = PlaceUsageTracking.deleteMany;
   const originalUsageUpdateMany = PlaceUsageTracking.updateMany;
+  const originalUserStartSession = User.startSession;
 
+  User.startSession = async () => createMockSession();
   User.findOne = async () => ({
     auth0Id: 'u-1',
     profilePicture: 'https://storage.googleapis.com/bucket/users/u1/avatars/a.jpg',
@@ -312,6 +331,7 @@ test('deleteUserAccount succeeds even if storage cleanup fails (best-effort)', a
   } finally {
     User.findOne = originalUserFindOne;
     User.deleteOne = originalUserDeleteOne;
+    User.startSession = originalUserStartSession;
     PlaceSubmission.find = originalSubmissionFind;
     PlaceSubmission.deleteMany = originalSubmissionDeleteMany;
     UserBadge.deleteMany = originalBadgeDeleteMany;
