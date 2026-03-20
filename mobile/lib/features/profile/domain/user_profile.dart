@@ -10,6 +10,9 @@ class UserProfile {
   final int totalSubmitted;
   final int approvedCount;
   final double approvalRate;
+  final int unlockedDistrictsCount;
+  final int unlockedProvincesCount;
+  final int totalPlacesVisited;
   final List<ContributionBadge> badges;
   final List<ContributedPlace> contributedPlaces;
   final int leaderboardRank;
@@ -27,6 +30,9 @@ class UserProfile {
     required this.totalSubmitted,
     required this.approvedCount,
     required this.approvalRate,
+    required this.unlockedDistrictsCount,
+    required this.unlockedProvincesCount,
+    required this.totalPlacesVisited,
     required this.badges,
     required this.contributedPlaces,
     required this.leaderboardRank,
@@ -50,6 +56,9 @@ class UserProfile {
       totalSubmitted: json['stats']['totalSubmitted'] ?? 0,
       approvedCount: json['stats']['approvedCount'] ?? 0,
       approvalRate: (json['stats']['approvalRate'] ?? 0).toDouble(),
+      unlockedDistrictsCount: json['stats']['unlockedDistrictsCount'] ?? 0,
+      unlockedProvincesCount: json['stats']['unlockedProvincesCount'] ?? 0,
+      totalPlacesVisited: json['stats']['totalPlacesVisited'] ?? 0,
       badges:
           (json['badges'] as List?)
               ?.map((b) => ContributionBadge.fromJson(b))
@@ -76,6 +85,9 @@ class UserProfile {
       'totalSubmitted': totalSubmitted,
       'approvedCount': approvedCount,
       'approvalRate': approvalRate,
+      'unlockedDistrictsCount': unlockedDistrictsCount,
+      'unlockedProvincesCount': unlockedProvincesCount,
+      'totalPlacesVisited': totalPlacesVisited,
     },
     'badges': badges.map((b) => b.toJson()).toList(),
     'leaderboardRank': leaderboardRank,
