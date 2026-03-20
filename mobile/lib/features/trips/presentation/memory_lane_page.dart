@@ -43,11 +43,11 @@ class _MemoryLanePageState extends ConsumerState<MemoryLanePage>
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Timeline & Trips'),
+        title: const Text('Memory Lane'),
         bottom: TabBar(
           controller: _tabController,
           tabs: const [
-            Tab(text: 'Timeline'),
+            Tab(text: 'Quests'),
             Tab(text: 'Trips'),
           ],
         ),
@@ -187,17 +187,8 @@ class _MemoryLanePageState extends ConsumerState<MemoryLanePage>
             ),
           if (planned.isNotEmpty) const SizedBox(height: 24),
           // Only show completed section if there are actually completed trips
-          if (apiCompleted.isNotEmpty) ...[
-            _StatusSection(
-              label: 'Completed',
-              color: Colors.purple,
-              icon: Icons.check_circle,
-              trips: apiCompleted,
-              canEdit: false,
-            ),
-            const SizedBox(height: 24),
-          ],
-          // Show create button removed as requested
+          // Completed trips section removed as per request
+          // Show create button at the bottom if no API trips yet
         ],
       ),
     );

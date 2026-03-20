@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 
-import 'custom_trip_builder_page.dart';
+import 'create_trip_page.dart';
 import 'widgets/custom_icon_button.dart';
 import 'widgets/location_card.dart';
 import 'widgets/nearby_places.dart';
@@ -112,7 +112,7 @@ class TripsPage extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute<void>(
-            builder: (context) => const CustomTripBuilderPage(),
+            builder: (context) => const CreateTripPage(),
           ),
         );
       },
