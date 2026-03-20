@@ -1,0 +1,316 @@
+{
+  "categories": {
+    "Historical": [
+      {
+        "name": "Sigiriya Rock Fortress",
+        "location": "Matale",
+        "description": "An ancient palace and fortress complex carved into a massive column of rock."
+      },
+      {
+        "name": "Polonnaruwa Ancient City",
+        "location": "Polonnaruwa",
+        "description": "The second most ancient of Sri Lanka's kingdoms, featuring well-preserved ruins and giant Buddha statues."
+      },
+      {
+        "name": "Galle Dutch Fort",
+        "location": "Galle",
+        "description": "A 16th-century fortified city built by the Portuguese and extensively fortified by the Dutch."
+      },
+      {
+        "name": "Anuradhapura Sacred City",
+        "location": "Anuradhapura",
+        "description": "The first ancient capital of Sri Lanka, famous for its ruins of ancient Lankan civilization."
+      },
+      {
+        "name": "Dambulla Cave Temple",
+        "location": "Matale",
+        "description": "The largest and best-preserved cave temple complex in Sri Lanka, packed with ancient statues and murals."
+      },
+      {
+        "name": "Yapahuwa Rock Fortress",
+        "location": "Kurunegala",
+        "description": "A massive granite rock rising abruptly from the plain, serving as the capital in the 13th century."
+      },
+      {
+        "name": "Mihintale",
+        "location": "Anuradhapura",
+        "description": "A mountain peak believed to be the site of a meeting that inaugurated the presence of Buddhism in Sri Lanka."
+      },
+      {
+        "name": "Ritigala Forest Monastery",
+        "location": "Anuradhapura",
+        "description": "An ancient Buddhist monastery and mountain strict nature reserve shrouded in myth."
+      },
+      {
+        "name": "Fort Frederick",
+        "location": "Trincomalee",
+        "description": "A fort built by the Portuguese completed in 1624 CE, built on Swami Rock."
+      },
+      {
+        "name": "Nalanda Gedige",
+        "location": "Matale",
+        "description": "An ancient complete stone building near Matale, known for its mix of Hindu and Buddhist architecture."
+      }
+    ],
+    "Beaches": [
+      {
+        "name": "Mirissa Beach",
+        "location": "Matara",
+        "description": "A crescent-shaped beach famous for vibrant nightlife and whale watching."
+      },
+      {
+        "name": "Unawatuna Beach",
+        "location": "Galle",
+        "description": "A major tourist attraction known for its beautiful beach and corals."
+      },
+      {
+        "name": "Arugam Bay",
+        "location": "Ampara",
+        "description": "A world-renowned surf spot located on the dry zone of Sri Lanka's southeast coast."
+      },
+      {
+        "name": "Nilaveli Beach",
+        "location": "Trincomalee",
+        "description": "A pristine coastal resort town with white sands and calm waters, near Pigeon Island."
+      },
+      {
+        "name": "Hiriketiya Beach",
+        "location": "Matara",
+        "description": "A gorgeous horseshoe bay that has become a haven for surfers and digital nomads."
+      },
+      {
+        "name": "Bentota Beach",
+        "location": "Galle",
+        "description": "A premium beach destination known for water sports and luxury resorts."
+      },
+      {
+        "name": "Pasikudah Beach",
+        "location": "Batticaloa",
+        "description": "Famous for its incredibly shallow and calm reef, allowing you to walk miles into the sea."
+      },
+      {
+        "name": "Tangalle Beach",
+        "location": "Hambantota",
+        "description": "Vast stretches of quiet, golden sandy beaches perfect for peaceful retreats."
+      },
+      {
+        "name": "Hikkaduwa Beach",
+        "location": "Galle",
+        "description": "Known for strong surf, coral sanctuary, and a very active beach party scene."
+      },
+      {
+        "name": "Casuarina Beach",
+        "location": "Jaffna",
+        "description": "Considered the best beach in the Jaffna Peninsula, named after the Casuarina trees lining it."
+      }
+    ],
+    "Adventure": [
+      {
+        "name": "Adam's Peak (Sri Pada)",
+        "location": "Nuwara Eliya",
+        "description": "A 2,243m tall conical mountain famous for the 'sacred footprint' and a challenging night climb."
+      },
+      {
+        "name": "Ella Rock",
+        "location": "Badulla",
+        "description": "A challenging hike through tea plantations and railways offering panoramic views of the hill country."
+      },
+      {
+        "name": "Kitulgala White Water Rafting",
+        "location": "Kegalle",
+        "description": "The adventure sports capital of Sri Lanka, offering thrilling rafting on the Kelani River."
+      },
+      {
+        "name": "Knuckles Mountain Range",
+        "location": "Kandy/Matale",
+        "description": "A rugged mountain range offering some of the best and most isolated trekking paths in the country."
+      },
+      {
+        "name": "Horton Plains & World's End",
+        "location": "Nuwara Eliya",
+        "description": "A protected national park featuring a dramatic 4,000-foot sheer drop."
+      },
+      {
+        "name": "Pidurangala Rock",
+        "location": "Matale",
+        "description": "A massive rock formation offering a rugged climb and the best viewing angle of Sigiriya."
+      },
+      {
+        "name": "Ambuluwawa Tower",
+        "location": "Kandy",
+        "description": "A unique, terrifyingly narrow winding tower situated on a mountain peak offering 360-degree views."
+      },
+      {
+        "name": "The Pekoe Trail",
+        "location": "Central Highlands",
+        "description": "A newly established 300km walking trail navigating through Sri Lanka's scenic tea country."
+      },
+      {
+        "name": "Meemure Village Trek",
+        "location": "Matale",
+        "description": "An isolated village deep in the Knuckles range, perfect for hardcore jungle trekking and camping."
+      },
+      {
+        "name": "Makandawa Forest Reserve",
+        "location": "Kegalle",
+        "description": "A pristine rainforest perfect for bird watching, waterfall abseiling, and jungle hiking."
+      }
+    ],
+    "Urban": [
+      {
+        "name": "Lotus Tower",
+        "location": "Colombo",
+        "description": "The tallest self-supported structure in South Asia, offering an observation deck and revolving restaurant."
+      },
+      {
+        "name": "Galle Face Green",
+        "location": "Colombo",
+        "description": "A 5 hectare ocean-side urban park, perfect for street food and evening strolls."
+      },
+      {
+        "name": "Dutch Hospital Shopping Precinct",
+        "location": "Colombo",
+        "description": "A heritage building transformed into a high-end dining and shopping complex."
+      },
+      {
+        "name": "Pettah Floating Market",
+        "location": "Colombo",
+        "description": "An urban market featuring stalls situated on boats over the Beira Lake."
+      },
+      {
+        "name": "Independence Square",
+        "location": "Colombo",
+        "description": "A national monument and a popular recreational area for jogging and relaxing."
+      },
+      {
+        "name": "Red Mosque (Jami Ul-Alfar)",
+        "location": "Colombo",
+        "description": "A striking red-and-white candy-striped mosque located in the bustling Pettah district."
+      },
+      {
+        "name": "Colombo City Centre",
+        "location": "Colombo",
+        "description": "A premier modern lifestyle mall overlooking the Beira Lake."
+      },
+      {
+        "name": "Viharamahadevi Park",
+        "location": "Colombo",
+        "description": "The oldest and largest urban park in Colombo, featuring massive trees and a golden Buddha statue."
+      },
+      {
+        "name": "Kandy City Centre (KCC)",
+        "location": "Kandy",
+        "description": "A modern commercial and shopping complex blending with traditional Kandyan architecture."
+      },
+      {
+        "name": "Jaffna Public Library",
+        "location": "Jaffna",
+        "description": "A beautifully restored historical building that stands as an iconic urban landmark in the north."
+      }
+    ],
+    "Religious": [
+      {
+        "name": "Temple of the Sacred Tooth Relic",
+        "location": "Kandy",
+        "description": "A world-renowned Buddhist temple housing the relic of the tooth of the Buddha."
+      },
+      {
+        "name": "Ruwanwelisaya",
+        "location": "Anuradhapura",
+        "description": "A massive hemispherical stupa considered a marvel of ancient architectural engineering."
+      },
+      {
+        "name": "Kelaniya Raja Maha Vihara",
+        "location": "Gampaha",
+        "description": "A revered Buddhist temple believed to have been visited by Buddha himself."
+      },
+      {
+        "name": "Gangaramaya Temple",
+        "location": "Colombo",
+        "description": "One of the most important temples in Colombo, blending modern architecture and cultural essence."
+      },
+      {
+        "name": "Nallur Kandaswamy Kovil",
+        "location": "Jaffna",
+        "description": "A magnificent and highly venerated Hindu temple dedicated to Lord Murugan."
+      },
+      {
+        "name": "Kataragama Temple",
+        "location": "Monaragala",
+        "description": "A unique pilgrimage town sacred to Buddhists, Hindus, and indigenous Vedda people."
+      },
+      {
+        "name": "Koneswaram Temple",
+        "location": "Trincomalee",
+        "description": "A classical-medieval Hindu temple complex perched high on Swami Rock overlooking the ocean."
+      },
+      {
+        "name": "Seetha Amman Temple",
+        "location": "Nuwara Eliya",
+        "description": "A vibrant Hindu temple marking the site where Sita was held captive in the Ramayana epic."
+      },
+      {
+        "name": "Munneswaram Temple",
+        "location": "Puttalam",
+        "description": "An important regional Hindu temple complex in existence since the epic of Ramayana."
+      },
+      {
+        "name": "Shrine of Our Lady of Madhu",
+        "location": "Mannar",
+        "description": "A revered Roman Catholic Marian shrine with a history of over 400 years."
+      }
+    ],
+    "Other": [
+      {
+        "name": "Yala National Park",
+        "location": "Hambantota/Monaragala",
+        "description": "Sri Lanka's most famous wildlife park, boasting a high density of leopards."
+      },
+      {
+        "name": "Nine Arches Bridge",
+        "location": "Badulla",
+        "description": "A stunning colonial-era railway bridge built entirely of brick, rock, and cement without steel."
+      },
+      {
+        "name": "Sinharaja Forest Reserve",
+        "location": "Ratnapura/Galle",
+        "description": "A national park and biodiversity hotspot recognized as a UNESCO World Heritage Site."
+      },
+      {
+        "name": "Udawalawe National Park",
+        "location": "Ratnapura/Monaragala",
+        "description": "One of the best places in the world to see wild elephants roaming freely."
+      },
+      {
+        "name": "Peradeniya Royal Botanical Gardens",
+        "location": "Kandy",
+        "description": "Renowned for its collection of orchids and over 4000 species of plants."
+      },
+      {
+        "name": "Pinnawala Elephant Orphanage",
+        "location": "Kegalle",
+        "description": "A nursery and captive breeding ground for wild Asian elephants."
+      },
+      {
+        "name": "Minneriya National Park",
+        "location": "Polonnaruwa",
+        "description": "Famous for the 'Elephant Gathering', the largest known meeting place of Asian elephants."
+      },
+      {
+        "name": "Diyaluma Falls",
+        "location": "Badulla",
+        "description": "The second-highest waterfall in Sri Lanka, featuring natural infinity pools at the top."
+      },
+      {
+        "name": "Little Adam's Peak",
+        "location": "Badulla",
+        "description": "An easily accessible mountain peak in Ella offering spectacular views of the gorge."
+      },
+      {
+        "name": "Madu River Safari",
+        "location": "Galle",
+        "description": "A complex coastal wetland ecosystem perfect for boat safaris through mangrove tunnels."
+      }
+    ]
+  }
+}
