@@ -197,6 +197,7 @@ class ProfileSetupLocalizations {
           'For security, please sign in again and retry this action.',
       'backendAccountDeleteFailed':
           'Account cleanup failed on server. Please try again shortly.',
+      'recentlyReauthed': 'Successfully signed in again. Proceeding with your action.',
     },
     'si': {
       'screenTitle': 'Complete Your Profile',
@@ -374,6 +375,7 @@ class ProfileSetupLocalizations {
           'ආරක්ෂාව සඳහා, කරුණාකර නැවත පිවිසී මෙම ක්‍රියාව නැවත උත්සාහ කරන්න.',
       'backendAccountDeleteFailed':
           'සේවාදායකයේ ගිණුම් පිරිසිදු කිරීම අසාර්ථක විය. ටික වේලාවකින් නැවත උත්සාහ කරන්න.',
+      'recentlyReauthed': 'සফලව නැවත පිවිසුණු ප්‍රතිෙ. ඔබේ ක්‍රියාව ඉදිරියට ගෙන යමින්.',
     },
     'ta': {
       'screenTitle': 'Complete Your Profile',
