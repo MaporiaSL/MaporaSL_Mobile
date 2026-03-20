@@ -18,10 +18,39 @@ const XP_CONFIG = {
 };
 
 const COUNT_TIERS = {
-  sameDistrict: { min: 4, max: 7 },
-  sameProvince: { min: 4, max: 6 },
-  otherProvince: { min: 3, max: 5 },
+  sameDistrict: { min: 4, max: 10 },
+  sameProvince: { min: 4, max: 10 },
+  otherProvince: { min: 4, max: 10 },
 };
+
+// All 25 districts of Sri Lanka - Ensure every district gets assigned
+const ALL_SRI_LANKA_DISTRICTS = [
+  { district: 'Colombo', province: 'Western Province' },
+  { district: 'Gampaha', province: 'Western Province' },
+  { district: 'Kalutara', province: 'Western Province' },
+  { district: 'Matara', province: 'Southern Province' },
+  { district: 'Galle', province: 'Southern Province' },
+  { district: 'Hambantota', province: 'Southern Province' },
+  { district: 'Jaffna', province: 'Northern Province' },
+  { district: 'Mullaitivu', province: 'Northern Province' },
+  { district: 'Vavuniya', province: 'Northern Province' },
+  { district: 'Mannar', province: 'Northern Province' },
+  { district: 'Batticaloa', province: 'Eastern Province' },
+  { district: 'Trincomalee', province: 'Eastern Province' },
+  { district: 'Ampara', province: 'Eastern Province' },
+  { district: 'Kandy', province: 'Central Province' },
+  { district: 'Matale', province: 'Central Province' },
+  { district: 'Nuwara Eliya', province: 'Central Province' },
+  { district: 'Badulla', province: 'Uva Province' },
+  { district: 'Monaragala', province: 'Uva Province' },
+  { district: 'Ratnapura', province: 'Sabaragamuwa Province' },
+  { district: 'Kegalle', province: 'Sabaragamuwa Province' },
+  { district: 'Kurunegala', province: 'North Western Province' },
+  { district: 'Puttalam', province: 'North Western Province' },
+  { district: 'Anuradhapura', province: 'North Central Province' },
+  { district: 'Polonnaruwa', province: 'North Central Province' },
+  { district: 'Matara', province: 'Southern Province' }, // Duplicate removed in actual logic
+];
 
 function normalizeKey(value) {
   return value?.toString().trim().toLowerCase();
@@ -266,33 +295,73 @@ async function assignExplorationForUser(userId, hometownDistrict, options = {}) 
   const assignments = [];
   let totalAssigned = 0;
 
-  placesByDistrict.forEach((entry, districtKey) => {
-    const tier = resolveTier(
-      districtKey,
-      normalizeKey(entry.province),
-      normalizeKey(hometownDistrict),
-      hometownProvinceKey
-    );
-    const range = COUNT_TIERS[tier];
-    const locationIds = entry.locationIds || entry.placeIds;
-    const maxPossible = locationIds.length;
-    const count = Math.min(getRandomInt(range.min, range.max), maxPossible);
+  // Ensure EVERY district gets assigned 4-10 places
+  // Get unique districts from ALL_SRI_LANKA_DISTRICTS to avoid duplicates
+  const uniqueDistricts = [];
+  const seenDistricts = new Set();
+  
+  for (const districtInfo of ALL_SRI_LANKA_DISTRICTS) {
+    const key = normalizeKey(districtInfo.district);
+    if (!seenDistricts.has(key)) {
+      seenDistricts.add(key);
+      uniqueDistricts.push(districtInfo);
+    }
+  }
+
+  // Process each district from the complete list
+  for (const districtInfo of uniqueDistricts) {
+    const districtKey = normalizeKey(districtInfo.district);
+    
+    // Get places for this district
+    let locationIds = [];
+    let actualDistrict = districtInfo.district;
+    let actualProvince = districtInfo.province;
+    
+    // Check if this district exists in our places collection
+    if (placesByDistrict.has(districtKey)) {
+      const entry = placesByDistrict.get(districtKey);
+      locationIds = entry.placeIds || entry.locationIds || [];
+      actualDistrict = entry.district;
+      actualProvince = entry.province;
+    }
+
+    // Ensure at least 4 places are assigned, maximum 10
+    let count;
+    if (locationIds.length === 0) {
+      // If district has no places, skip this district for now
+      // On next request, it can show empty results
+      continue;
+    } else if (locationIds.length < 4) {
+      // If less than 4 places, assign all of them
+      count = locationIds.length;
+    } else {
+      // Assign randomly between 4-10 places
+      count = getRandomInt(4, Math.min(10, locationIds.length));
+    }
+
     const selected = shuffle(locationIds).slice(0, count);
+    
+    if (selected.length > 0) {
+      totalAssigned += selected.length;
 
-    totalAssigned += selected.length;
+      assignments.push({
+        userId,
+        district: actualDistrict,
+        province: actualProvince,
+        assignedLocationIds: selected,
+        visitedLocationIds: [],
+        visitedLocationProofs: [],
+        assignedCount: selected.length,
+        visitedCount: 0,
+        unlockedAt: null,
+      });
+    }
+  }
 
-    assignments.push({
-      userId,
-      district: entry.district,
-      province: entry.province,
-      assignedLocationIds: selected,
-      visitedLocationIds: [],
-      visitedLocationProofs: [],
-      assignedCount: selected.length,
-      visitedCount: 0,
-      unlockedAt: null,
-    });
-  });
+  // If no assignments were created (no places at all), throw error
+  if (assignments.length === 0) {
+    throw new Error('No exploration places available for assignment');
+  }
 
   await UserDistrictAssignment.deleteMany({ userId });
   await UserDistrictAssignment.insertMany(assignments, { ordered: false });
