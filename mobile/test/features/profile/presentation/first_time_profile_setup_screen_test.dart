@@ -4,8 +4,10 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:gemified_travel_portfolio/core/localization/profile_setup_localizations.dart';
 import 'package:gemified_travel_portfolio/core/services/auth_service.dart';
 import 'package:gemified_travel_portfolio/features/profile/data/repositories/profile_repository.dart';
 import 'package:gemified_travel_portfolio/features/profile/domain/user_profile.dart';
@@ -80,6 +82,13 @@ void main() {
         currentUserIdProvider.overrideWithValue('u1'),
       ],
       child: const MaterialApp(
+        localizationsDelegates: [
+          ProfileSetupLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: ProfileSetupLocalizations.supportedLocales,
         home: FirstTimeProfileSetupScreen(
           requiredFields: ['name', 'hometownDistrict', 'preferredLanguage'],
           optionalFields: ['travelInterests', 'avatarUrl', 'bio'],
@@ -274,8 +283,81 @@ void main() {
 
   testWidgets('shows avatar retry CTA and succeeds on retry', (tester) async {
     final tempDir = await Directory.systemTemp.createTemp('avatar_test');
-    final avatarFile = File('${tempDir.path}/avatar.jpg');
-    await avatarFile.writeAsString('avatar-bytes');
+    final avatarFile = File('${tempDir.path}/avatar.png');
+    await avatarFile.writeAsBytes(
+      const <int>[
+        137,
+        80,
+        78,
+        71,
+        13,
+        10,
+        26,
+        10,
+        0,
+        0,
+        0,
+        13,
+        73,
+        72,
+        68,
+        82,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        8,
+        6,
+        0,
+        0,
+        0,
+        31,
+        21,
+        196,
+        137,
+        0,
+        0,
+        0,
+        13,
+        73,
+        68,
+        65,
+        84,
+        120,
+        156,
+        99,
+        248,
+        255,
+        255,
+        63,
+        0,
+        5,
+        254,
+        2,
+        254,
+        167,
+        53,
+        129,
+        132,
+        0,
+        0,
+        0,
+        0,
+        73,
+        69,
+        78,
+        68,
+        174,
+        66,
+        96,
+        130,
+      ],
+      flush: true,
+    );
 
     SharedPreferences.setMockInitialValues({
       'profile_setup_draft': jsonEncode({
