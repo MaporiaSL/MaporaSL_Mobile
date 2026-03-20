@@ -263,9 +263,8 @@ void main() {
       ),
     ).called(1);
     expect(find.text('Avatar removed successfully.'), findsOneWidget);
-  });
-
     await tester.pump(const Duration(seconds: 3));
+  });
 
   testWidgets('remove avatar failure shows inline error', (tester) async {
     when(
