@@ -48,7 +48,13 @@ test('updateUserProfile returns fieldErrors for invalid payload', async () => {
 });
 
 test('updateUserProfile with completeSetup returns required contract fields when profile incomplete', async () => {
+  const originalFindOne = User.findOne;
   const originalFindOneAndUpdate = User.findOneAndUpdate;
+
+  User.findOne = async () => ({
+    auth0Id: 'u-1',
+    profilePicture: '',
+  });
 
   User.findOneAndUpdate = async () => ({
     toObject: () => ({
@@ -90,17 +96,24 @@ test('updateUserProfile with completeSetup returns required contract fields when
       'Preferred language is required',
     );
   } finally {
+    User.findOne = originalFindOne;
     User.findOneAndUpdate = originalFindOneAndUpdate;
   }
 });
 
 test('updateUserProfile response includes new profile stats fields', async () => {
+  const originalFindOne = User.findOne;
   const originalFindOneAndUpdate = User.findOneAndUpdate;
   const originalCountDocuments = PlaceSubmission.countDocuments;
   const originalAggregate = PlaceSubmission.aggregate;
   const originalFind = PlaceSubmission.find;
   const originalBadgeFindOne = UserBadge.findOne;
   const originalUsageFindOne = PlaceUsageTracking.findOne;
+
+  User.findOne = async () => ({
+    auth0Id: 'u-1',
+    profilePicture: '',
+  });
 
   User.findOneAndUpdate = async () => ({
     auth0Id: 'u-1',
@@ -147,6 +160,7 @@ test('updateUserProfile response includes new profile stats fields', async () =>
     assert.equal(res.body.stats.unlockedProvincesCount, 1);
     assert.equal(res.body.stats.totalPlacesVisited, 9);
   } finally {
+    User.findOne = originalFindOne;
     User.findOneAndUpdate = originalFindOneAndUpdate;
     PlaceSubmission.countDocuments = originalCountDocuments;
     PlaceSubmission.aggregate = originalAggregate;
