@@ -716,8 +716,15 @@ class ProfileSetupLocalizations {
   String get noEmailForPasswordReset => _value('noEmailForPasswordReset');
   String get recentLoginRequired => _value('recentLoginRequired');
   String get backendAccountDeleteFailed => _value('backendAccountDeleteFailed');
+  String get recentlyReauthed => _value('recentlyReauthed');
 
-  String passwordResetSent(String email) {
+  String accountActionFailed(String reason) {
+    return '${_value('errorPrefix')} $reason';
+  }
+
+  String reAuthFailed(String reason) {
+    return 'Sign-in failed: $reason';
+  }
     return 'Password reset link sent to $email.';
   }
 
