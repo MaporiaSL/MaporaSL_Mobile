@@ -1,0 +1,3215 @@
+[
+  {
+    "name": "Gangaramaya Temple",
+    "district": "Colombo",
+    "province": "Western",
+    "latitude": 6.9148,
+    "longitude": 79.8577,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        79.8577,
+        6.9148
+      ]
+    }
+  },
+  {
+    "name": "Galle Face Green",
+    "district": "Colombo",
+    "province": "Western",
+    "latitude": 6.9271,
+    "longitude": 79.8441,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        79.8441,
+        6.9271
+      ]
+    }
+  },
+  {
+    "name": "National Museum of Colombo",
+    "district": "Colombo",
+    "province": "Western",
+    "latitude": 6.9103,
+    "longitude": 79.8609,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        79.8609,
+        6.9103
+      ]
+    }
+  },
+  {
+    "name": "Lotus Tower",
+    "district": "Colombo",
+    "province": "Western",
+    "latitude": 6.9298,
+    "longitude": 79.8578,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        79.8578,
+        6.9298
+      ]
+    }
+  },
+  {
+    "name": "Independence Memorial Hall",
+    "district": "Colombo",
+    "province": "Western",
+    "latitude": 6.9042,
+    "longitude": 79.8651,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        79.8651,
+        6.9042
+      ]
+    }
+  },
+  {
+    "name": "Viharamahadevi Park",
+    "district": "Colombo",
+    "province": "Western",
+    "latitude": 6.9128,
+    "longitude": 79.8612,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        79.8612,
+        6.9128
+      ]
+    }
+  },
+  {
+    "name": "Pettah Floating Market",
+    "district": "Colombo",
+    "province": "Western",
+    "latitude": 6.9332,
+    "longitude": 79.8546,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        79.8546,
+        6.9332
+      ]
+    }
+  },
+  {
+    "name": "Kelaniya Raja Maha Vihara",
+    "district": "Colombo",
+    "province": "Western",
+    "latitude": 6.9525,
+    "longitude": 79.9173,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        79.9173,
+        6.9525
+      ]
+    }
+  },
+  {
+    "name": "Dehiwala Zoological Gardens",
+    "district": "Colombo",
+    "province": "Western",
+    "latitude": 6.8521,
+    "longitude": 79.8732,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        79.8732,
+        6.8521
+      ]
+    }
+  },
+  {
+    "name": "Temple of the Sacred Tooth Relic",
+    "district": "Kandy",
+    "province": "Central",
+    "latitude": 7.2936,
+    "longitude": 80.6413,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.6413,
+        7.2936
+      ]
+    }
+  },
+  {
+    "name": "Royal Botanical Gardens, Peradeniya",
+    "district": "Kandy",
+    "province": "Central",
+    "latitude": 7.2719,
+    "longitude": 80.5961,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.5961,
+        7.2719
+      ]
+    }
+  },
+  {
+    "name": "Kandy Lake",
+    "district": "Kandy",
+    "province": "Central",
+    "latitude": 7.2923,
+    "longitude": 80.6418,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.6418,
+        7.2923
+      ]
+    }
+  },
+  {
+    "name": "Bahirawakanda Buddha Statue",
+    "district": "Kandy",
+    "province": "Central",
+    "latitude": 7.2911,
+    "longitude": 80.6305,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.6305,
+        7.2911
+      ]
+    }
+  },
+  {
+    "name": "Udawattakele Sanctuary",
+    "district": "Kandy",
+    "province": "Central",
+    "latitude": 7.3,
+    "longitude": 80.64,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.64,
+        7.3
+      ]
+    }
+  },
+  {
+    "name": "Ambakke Devalaya",
+    "district": "Kandy",
+    "province": "Central",
+    "latitude": 7.2183,
+    "longitude": 80.5675,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.5675,
+        7.2183
+      ]
+    }
+  },
+  {
+    "name": "Knuckles Mountain Range",
+    "district": "Kandy",
+    "province": "Central",
+    "latitude": 7.4525,
+    "longitude": 80.785,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.785,
+        7.4525
+      ]
+    }
+  },
+  {
+    "name": "Hanthana Mountain Range",
+    "district": "Kandy",
+    "province": "Central",
+    "latitude": 7.2561,
+    "longitude": 80.6272,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.6272,
+        7.2561
+      ]
+    }
+  },
+  {
+    "name": "Sigiriya Rock Fortress",
+    "district": "Matale",
+    "province": "Central",
+    "latitude": 7.957,
+    "longitude": 80.7603,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.7603,
+        7.957
+      ]
+    }
+  },
+  {
+    "name": "Dambulla Royal Cave Temple",
+    "district": "Matale",
+    "province": "Central",
+    "latitude": 7.8562,
+    "longitude": 80.6482,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.6482,
+        7.8562
+      ]
+    }
+  },
+  {
+    "name": "Pidurangala Rock",
+    "district": "Matale",
+    "province": "Central",
+    "latitude": 7.9653,
+    "longitude": 80.7628,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.7628,
+        7.9653
+      ]
+    }
+  },
+  {
+    "name": "Nalanda Gedige",
+    "district": "Matale",
+    "province": "Central",
+    "latitude": 7.6698,
+    "longitude": 80.6457,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.6457,
+        7.6698
+      ]
+    }
+  },
+  {
+    "name": "Riverston Peak",
+    "district": "Matale",
+    "province": "Central",
+    "latitude": 7.5255,
+    "longitude": 80.7363,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.7363,
+        7.5255
+      ]
+    }
+  },
+  {
+    "name": "Aluvihare Rock Temple",
+    "district": "Matale",
+    "province": "Central",
+    "latitude": 7.4914,
+    "longitude": 80.6214,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.6214,
+        7.4914
+      ]
+    }
+  },
+  {
+    "name": "Wasgamuwa National Park",
+    "district": "Matale",
+    "province": "Central",
+    "latitude": 7.7214,
+    "longitude": 80.9547,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.9547,
+        7.7214
+      ]
+    }
+  },
+  {
+    "name": "Gregory Lake",
+    "district": "Nuwara Eliya",
+    "province": "Central",
+    "latitude": 6.9631,
+    "longitude": 80.7761,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.7761,
+        6.9631
+      ]
+    }
+  },
+  {
+    "name": "Horton Plains National Park",
+    "district": "Nuwara Eliya",
+    "province": "Central",
+    "latitude": 6.8028,
+    "longitude": 80.8091,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.8091,
+        6.8028
+      ]
+    }
+  },
+  {
+    "name": "World's End",
+    "district": "Nuwara Eliya",
+    "province": "Central",
+    "latitude": 6.7865,
+    "longitude": 80.7915,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.7915,
+        6.7865
+      ]
+    }
+  },
+  {
+    "name": "Hakgala Botanical Garden",
+    "district": "Nuwara Eliya",
+    "province": "Central",
+    "latitude": 6.925,
+    "longitude": 80.8167,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.8167,
+        6.925
+      ]
+    }
+  },
+  {
+    "name": "Victoria Park",
+    "district": "Nuwara Eliya",
+    "province": "Central",
+    "latitude": 6.9714,
+    "longitude": 80.7672,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.7672,
+        6.9714
+      ]
+    }
+  },
+  {
+    "name": "St. Clair's Falls",
+    "district": "Nuwara Eliya",
+    "province": "Central",
+    "latitude": 6.9388,
+    "longitude": 80.6258,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.6258,
+        6.9388
+      ]
+    }
+  },
+  {
+    "name": "Devon Falls",
+    "district": "Nuwara Eliya",
+    "province": "Central",
+    "latitude": 6.9358,
+    "longitude": 80.6322,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.6322,
+        6.9358
+      ]
+    }
+  },
+  {
+    "name": "Pedro Tea Estate",
+    "district": "Nuwara Eliya",
+    "province": "Central",
+    "latitude": 6.9734,
+    "longitude": 80.7963,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.7963,
+        6.9734
+      ]
+    }
+  },
+  {
+    "name": "Galle Dutch Fort",
+    "district": "Galle",
+    "province": "Southern",
+    "latitude": 6.0263,
+    "longitude": 80.2166,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.2166,
+        6.0263
+      ]
+    }
+  },
+  {
+    "name": "Unawatuna Beach",
+    "district": "Galle",
+    "province": "Southern",
+    "latitude": 6.0174,
+    "longitude": 80.2489,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.2489,
+        6.0174
+      ]
+    }
+  },
+  {
+    "name": "Hikkaduwa Marine National Park",
+    "district": "Galle",
+    "province": "Southern",
+    "latitude": 6.1395,
+    "longitude": 80.1063,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.1063,
+        6.1395
+      ]
+    }
+  },
+  {
+    "name": "Rumassala Sanctuary",
+    "district": "Galle",
+    "province": "Southern",
+    "latitude": 6.0135,
+    "longitude": 80.2405,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.2405,
+        6.0135
+      ]
+    }
+  },
+  {
+    "name": "Jungle Beach",
+    "district": "Galle",
+    "province": "Southern",
+    "latitude": 6.0163,
+    "longitude": 80.2392,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.2392,
+        6.0163
+      ]
+    }
+  },
+  {
+    "name": "Koggala Lake",
+    "district": "Galle",
+    "province": "Southern",
+    "latitude": 5.9928,
+    "longitude": 80.3546,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.3546,
+        5.9928
+      ]
+    }
+  },
+  {
+    "name": "Ahungalla Beach",
+    "district": "Galle",
+    "province": "Southern",
+    "latitude": 6.305,
+    "longitude": 80.027,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.027,
+        6.305
+      ]
+    }
+  },
+  {
+    "name": "Maduganga River Safari",
+    "district": "Galle",
+    "province": "Southern",
+    "latitude": 6.2736,
+    "longitude": 80.0571,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.0571,
+        6.2736
+      ]
+    }
+  },
+  {
+    "name": "Mirissa Beach",
+    "district": "Matara",
+    "province": "Southern",
+    "latitude": 5.9483,
+    "longitude": 80.4716,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.4716,
+        5.9483
+      ]
+    }
+  },
+  {
+    "name": "Dondra Head Lighthouse",
+    "district": "Matara",
+    "province": "Southern",
+    "latitude": 5.9229,
+    "longitude": 80.5872,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.5872,
+        5.9229
+      ]
+    }
+  },
+  {
+    "name": "Polhena Beach",
+    "district": "Matara",
+    "province": "Southern",
+    "latitude": 5.9366,
+    "longitude": 80.5255,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.5255,
+        5.9366
+      ]
+    }
+  },
+  {
+    "name": "Matara Star Fort",
+    "district": "Matara",
+    "province": "Southern",
+    "latitude": 5.9497,
+    "longitude": 80.5452,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.5452,
+        5.9497
+      ]
+    }
+  },
+  {
+    "name": "Paravi Duwa Temple",
+    "district": "Matara",
+    "province": "Southern",
+    "latitude": 5.9423,
+    "longitude": 80.5445,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.5445,
+        5.9423
+      ]
+    }
+  },
+  {
+    "name": "Coconut Tree Hill",
+    "district": "Matara",
+    "province": "Southern",
+    "latitude": 5.9431,
+    "longitude": 80.4632,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.4632,
+        5.9431
+      ]
+    }
+  },
+  {
+    "name": "Secret Beach Mirissa",
+    "district": "Matara",
+    "province": "Southern",
+    "latitude": 5.9458,
+    "longitude": 80.4512,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.4512,
+        5.9458
+      ]
+    }
+  },
+  {
+    "name": "Yala National Park",
+    "district": "Hambantota",
+    "province": "Southern",
+    "latitude": 6.3686,
+    "longitude": 81.4722,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        81.4722,
+        6.3686
+      ]
+    }
+  },
+  {
+    "name": "Bundala National Park",
+    "district": "Hambantota",
+    "province": "Southern",
+    "latitude": 6.2023,
+    "longitude": 81.1873,
+    "category": "other",
+    "description": "Located about fifteen kilometers east of Hambantota Bundala National Park is one of Sri Lanka's foremost destinations for birdwatchers, protecting an important area of coastal wetland famous for its abundant aquatic (and other) birdlife. The park is also home to significant populations of elephants, Marsh & estuarine crocodiles, turtles & other fauna, including the leopard. Stretching along the coast east of Hambantota, Bundala National Park is ideal for instant gratification: in a four hour jeep ride, we can see elephants, 8ft crocs, giant squirrels & flamingoes. Afternoon safaris in the dry season (December - May) provide visitors with the best chance of seeing the wildlife.",
+    "photos": [
+      "https://www.sltda.gov.lk/storage/common_media/bundala-national-park_3524392389_o2915942788.jpg"
+    ],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        81.1873,
+        6.2023
+      ]
+    }
+  },
+  {
+    "name": "Kataragama Sacred City",
+    "district": "Hambantota",
+    "province": "Southern",
+    "latitude": 6.415,
+    "longitude": 81.3328,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        81.3328,
+        6.415
+      ]
+    }
+  },
+  {
+    "name": "Ridiyagama Safari Park",
+    "district": "Hambantota",
+    "province": "Southern",
+    "latitude": 6.2291,
+    "longitude": 81.0125,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        81.0125,
+        6.2291
+      ]
+    }
+  },
+  {
+    "name": "Madunagala Hot Springs",
+    "district": "Hambantota",
+    "province": "Southern",
+    "latitude": 6.2014,
+    "longitude": 81.0183,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        81.0183,
+        6.2014
+      ]
+    }
+  },
+  {
+    "name": "Shangri-La's Golf Resort",
+    "district": "Hambantota",
+    "province": "Southern",
+    "latitude": 6.1367,
+    "longitude": 81.0425,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        81.0425,
+        6.1367
+      ]
+    }
+  },
+  {
+    "name": "Mulkirigala Rock Temple",
+    "district": "Hambantota",
+    "province": "Southern",
+    "latitude": 6.1625,
+    "longitude": 80.7397,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.7397,
+        6.1625
+      ]
+    }
+  },
+  {
+    "name": "Nallur Kandaswamy Kovil",
+    "district": "Jaffna",
+    "province": "Northern",
+    "latitude": 9.6744,
+    "longitude": 80.0303,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.0303,
+        9.6744
+      ]
+    }
+  },
+  {
+    "name": "Jaffna Fort",
+    "district": "Jaffna",
+    "province": "Northern",
+    "latitude": 9.6617,
+    "longitude": 80.0075,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.0075,
+        9.6617
+      ]
+    }
+  },
+  {
+    "name": "Casuarina Beach",
+    "district": "Jaffna",
+    "province": "Northern",
+    "latitude": 9.7567,
+    "longitude": 79.8864,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        79.8864,
+        9.7567
+      ]
+    }
+  },
+  {
+    "name": "Nagadeepa Purana Vihara",
+    "district": "Jaffna",
+    "province": "Northern",
+    "latitude": 9.6133,
+    "longitude": 79.7758,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        79.7758,
+        9.6133
+      ]
+    }
+  },
+  {
+    "name": "Kantharodai Ruins",
+    "district": "Jaffna",
+    "province": "Northern",
+    "latitude": 9.7423,
+    "longitude": 80.0031,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.0031,
+        9.7423
+      ]
+    }
+  },
+  {
+    "name": "Keerimalai Hot Springs",
+    "district": "Jaffna",
+    "province": "Northern",
+    "latitude": 9.8155,
+    "longitude": 80.0104,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.0104,
+        9.8155
+      ]
+    }
+  },
+  {
+    "name": "Point Pedro",
+    "district": "Jaffna",
+    "province": "Northern",
+    "latitude": 9.8245,
+    "longitude": 80.245,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.245,
+        9.8245
+      ]
+    }
+  },
+  {
+    "name": "Delft Island",
+    "district": "Jaffna",
+    "province": "Northern",
+    "latitude": 9.5083,
+    "longitude": 79.6833,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        79.6833,
+        9.5083
+      ]
+    }
+  },
+  {
+    "name": "Jaffna Public Library",
+    "district": "Jaffna",
+    "province": "Northern",
+    "latitude": 9.6628,
+    "longitude": 80.0135,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.0135,
+        9.6628
+      ]
+    }
+  },
+  {
+    "name": "Jaya Sri Maha Bodhi",
+    "district": "Anuradhapura",
+    "province": "North Central",
+    "latitude": 8.3449,
+    "longitude": 80.3971,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.3971,
+        8.3449
+      ]
+    }
+  },
+  {
+    "name": "Ruwanwelisaya",
+    "district": "Anuradhapura",
+    "province": "North Central",
+    "latitude": 8.3501,
+    "longitude": 80.3965,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.3965,
+        8.3501
+      ]
+    }
+  },
+  {
+    "name": "Mihintale",
+    "district": "Anuradhapura",
+    "province": "North Central",
+    "latitude": 8.3514,
+    "longitude": 80.5181,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.5181,
+        8.3514
+      ]
+    }
+  },
+  {
+    "name": "Abhayagiri Dagoba",
+    "district": "Anuradhapura",
+    "province": "North Central",
+    "latitude": 8.3712,
+    "longitude": 80.3951,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.3951,
+        8.3712
+      ]
+    }
+  },
+  {
+    "name": "Jetavanaramaya",
+    "district": "Anuradhapura",
+    "province": "North Central",
+    "latitude": 8.3516,
+    "longitude": 80.4035,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.4035,
+        8.3516
+      ]
+    }
+  },
+  {
+    "name": "Isurumuniya Temple",
+    "district": "Anuradhapura",
+    "province": "North Central",
+    "latitude": 8.3344,
+    "longitude": 80.3904,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.3904,
+        8.3344
+      ]
+    }
+  },
+  {
+    "name": "Thuparamaya",
+    "district": "Anuradhapura",
+    "province": "North Central",
+    "latitude": 8.3551,
+    "longitude": 80.3959,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.3959,
+        8.3551
+      ]
+    }
+  },
+  {
+    "name": "Wilpattu National Park",
+    "district": "Anuradhapura",
+    "province": "North Central",
+    "latitude": 8.4333,
+    "longitude": 80,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80,
+        8.4333
+      ]
+    }
+  },
+  {
+    "name": "Gal Vihara",
+    "district": "Polonnaruwa",
+    "province": "North Central",
+    "latitude": 7.9658,
+    "longitude": 81.0003,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        81.0003,
+        7.9658
+      ]
+    }
+  },
+  {
+    "name": "Parakrama Samudra",
+    "district": "Polonnaruwa",
+    "province": "North Central",
+    "latitude": 7.9145,
+    "longitude": 80.9765,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.9765,
+        7.9145
+      ]
+    }
+  },
+  {
+    "name": "Vatadage",
+    "district": "Polonnaruwa",
+    "province": "North Central",
+    "latitude": 7.9479,
+    "longitude": 81.0004,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        81.0004,
+        7.9479
+      ]
+    }
+  },
+  {
+    "name": "Minneriya National Park",
+    "district": "Polonnaruwa",
+    "province": "North Central",
+    "latitude": 7.9786,
+    "longitude": 80.8872,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.8872,
+        7.9786
+      ]
+    }
+  },
+  {
+    "name": "Lankatilaka Image House",
+    "district": "Polonnaruwa",
+    "province": "North Central",
+    "latitude": 7.9547,
+    "longitude": 81.0012,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        81.0012,
+        7.9547
+      ]
+    }
+  },
+  {
+    "name": "Royal Palace of King Parakramabahu",
+    "district": "Polonnaruwa",
+    "province": "North Central",
+    "latitude": 7.9392,
+    "longitude": 80.9995,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.9995,
+        7.9392
+      ]
+    }
+  },
+  {
+    "name": "Kaudulla National Park",
+    "district": "Polonnaruwa",
+    "province": "North Central",
+    "latitude": 8.1367,
+    "longitude": 80.9167,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.9167,
+        8.1367
+      ]
+    }
+  },
+  {
+    "name": "Nilaveli Beach",
+    "district": "Trincomalee",
+    "province": "Eastern",
+    "latitude": 8.6874,
+    "longitude": 81.1895,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        81.1895,
+        8.6874
+      ]
+    }
+  },
+  {
+    "name": "Pigeon Island National Park",
+    "district": "Trincomalee",
+    "province": "Eastern",
+    "latitude": 8.7183,
+    "longitude": 81.2033,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        81.2033,
+        8.7183
+      ]
+    }
+  },
+  {
+    "name": "Fort Frederick",
+    "district": "Trincomalee",
+    "province": "Eastern",
+    "latitude": 8.5776,
+    "longitude": 81.2396,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        81.2396,
+        8.5776
+      ]
+    }
+  },
+  {
+    "name": "Koneswaram Temple",
+    "district": "Trincomalee",
+    "province": "Eastern",
+    "latitude": 8.5833,
+    "longitude": 81.2442,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        81.2442,
+        8.5833
+      ]
+    }
+  },
+  {
+    "name": "Marble Beach",
+    "district": "Trincomalee",
+    "province": "Eastern",
+    "latitude": 8.4975,
+    "longitude": 81.2183,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        81.2183,
+        8.4975
+      ]
+    }
+  },
+  {
+    "name": "Kanniya Hot Springs",
+    "district": "Trincomalee",
+    "province": "Eastern",
+    "latitude": 8.5891,
+    "longitude": 81.1834,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        81.1834,
+        8.5891
+      ]
+    }
+  },
+  {
+    "name": "Uppuveli Beach",
+    "district": "Trincomalee",
+    "province": "Eastern",
+    "latitude": 8.6083,
+    "longitude": 81.2167,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        81.2167,
+        8.6083
+      ]
+    }
+  },
+  {
+    "name": "Arugam Bay",
+    "district": "Ampara",
+    "province": "Eastern",
+    "latitude": 6.84,
+    "longitude": 81.8333,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        81.8333,
+        6.84
+      ]
+    }
+  },
+  {
+    "name": "Kumana National Park",
+    "district": "Ampara",
+    "province": "Eastern",
+    "latitude": 6.5167,
+    "longitude": 81.7167,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        81.7167,
+        6.5167
+      ]
+    }
+  },
+  {
+    "name": "Muhudu Maha Viharaya",
+    "district": "Ampara",
+    "province": "Eastern",
+    "latitude": 6.8778,
+    "longitude": 81.8483,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        81.8483,
+        6.8778
+      ]
+    }
+  },
+  {
+    "name": "Gal Oya National Park",
+    "district": "Ampara",
+    "province": "Eastern",
+    "latitude": 7.2167,
+    "longitude": 81.45,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        81.45,
+        7.2167
+      ]
+    }
+  },
+  {
+    "name": "Buddhangala Monastery",
+    "district": "Ampara",
+    "province": "Eastern",
+    "latitude": 7.3333,
+    "longitude": 81.7,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        81.7,
+        7.3333
+      ]
+    }
+  },
+  {
+    "name": "Panama Beach",
+    "district": "Ampara",
+    "province": "Eastern",
+    "latitude": 6.7583,
+    "longitude": 81.8083,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        81.8083,
+        6.7583
+      ]
+    }
+  },
+  {
+    "name": "Magul Maha Viharaya",
+    "district": "Ampara",
+    "province": "Eastern",
+    "latitude": 6.8375,
+    "longitude": 81.7214,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        81.7214,
+        6.8375
+      ]
+    }
+  },
+  {
+    "name": "Nine Arches Bridge",
+    "district": "Badulla",
+    "province": "Uva",
+    "latitude": 6.8768,
+    "longitude": 81.0608,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        81.0608,
+        6.8768
+      ]
+    }
+  },
+  {
+    "name": "Little Adam's Peak",
+    "district": "Badulla",
+    "province": "Uva",
+    "latitude": 6.8647,
+    "longitude": 81.0622,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        81.0622,
+        6.8647
+      ]
+    }
+  },
+  {
+    "name": "Ella Rock",
+    "district": "Badulla",
+    "province": "Uva",
+    "latitude": 6.8624,
+    "longitude": 81.0453,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        81.0453,
+        6.8624
+      ]
+    }
+  },
+  {
+    "name": "Dunhinda Falls",
+    "district": "Badulla",
+    "province": "Uva",
+    "latitude": 7.0169,
+    "longitude": 81.0619,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        81.0619,
+        7.0169
+      ]
+    }
+  },
+  {
+    "name": "Ravana Falls",
+    "district": "Badulla",
+    "province": "Uva",
+    "latitude": 6.8414,
+    "longitude": 81.055,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        81.055,
+        6.8414
+      ]
+    }
+  },
+  {
+    "name": "Diyaluma Falls",
+    "district": "Badulla",
+    "province": "Uva",
+    "latitude": 6.7269,
+    "longitude": 81.0319,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        81.0319,
+        6.7269
+      ]
+    }
+  },
+  {
+    "name": "Lipton's Seat",
+    "district": "Badulla",
+    "province": "Uva",
+    "latitude": 6.7867,
+    "longitude": 81.0183,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        81.0183,
+        6.7867
+      ]
+    }
+  },
+  {
+    "name": "Adisham Bungalow",
+    "district": "Badulla",
+    "province": "Uva",
+    "latitude": 6.7833,
+    "longitude": 80.9333,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.9333,
+        6.7833
+      ]
+    }
+  },
+  {
+    "name": "Muthiyangana Raja Maha Vihara",
+    "district": "Badulla",
+    "province": "Uva",
+    "latitude": 6.9855,
+    "longitude": 81.0594,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        81.0594,
+        6.9855
+      ]
+    }
+  },
+  {
+    "name": "Adam's Peak (Sri Pada)",
+    "district": "Ratnapura",
+    "province": "Sabaragamuwa",
+    "latitude": 6.8096,
+    "longitude": 80.4994,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.4994,
+        6.8096
+      ]
+    }
+  },
+  {
+    "name": "Sinharaja Forest Reserve",
+    "district": "Ratnapura",
+    "province": "Sabaragamuwa",
+    "latitude": 6.3833,
+    "longitude": 80.4167,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.4167,
+        6.3833
+      ]
+    }
+  },
+  {
+    "name": "Bopath Ella",
+    "district": "Ratnapura",
+    "province": "Sabaragamuwa",
+    "latitude": 6.7865,
+    "longitude": 80.3542,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.3542,
+        6.7865
+      ]
+    }
+  },
+  {
+    "name": "Udawalawe National Park",
+    "district": "Ratnapura",
+    "province": "Sabaragamuwa",
+    "latitude": 6.4744,
+    "longitude": 80.8906,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.8906,
+        6.4744
+      ]
+    }
+  },
+  {
+    "name": "Ratnapura Gem Museum",
+    "district": "Ratnapura",
+    "province": "Sabaragamuwa",
+    "latitude": 6.6828,
+    "longitude": 80.3992,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.3992,
+        6.6828
+      ]
+    }
+  },
+  {
+    "name": "Kirindi Ella",
+    "district": "Ratnapura",
+    "province": "Sabaragamuwa",
+    "latitude": 6.6433,
+    "longitude": 80.5283,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.5283,
+        6.6433
+      ]
+    }
+  },
+  {
+    "name": "Pinnawala Elephant Orphanage",
+    "district": "Kegalle",
+    "province": "Sabaragamuwa",
+    "latitude": 7.3,
+    "longitude": 80.3833,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.3833,
+        7.3
+      ]
+    }
+  },
+  {
+    "name": "Belilena Cave",
+    "district": "Kegalle",
+    "province": "Sabaragamuwa",
+    "latitude": 6.9917,
+    "longitude": 80.4333,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.4333,
+        6.9917
+      ]
+    }
+  },
+  {
+    "name": "Saradiel Village",
+    "district": "Kegalle",
+    "province": "Sabaragamuwa",
+    "latitude": 7.2333,
+    "longitude": 80.4333,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.4333,
+        7.2333
+      ]
+    }
+  },
+  {
+    "name": "Kitulgala White Water Rafting",
+    "district": "Kegalle",
+    "province": "Sabaragamuwa",
+    "latitude": 6.9933,
+    "longitude": 80.4183,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.4183,
+        6.9933
+      ]
+    }
+  },
+  {
+    "name": "Utuwankanda (Saradiel Rock)",
+    "district": "Kegalle",
+    "province": "Sabaragamuwa",
+    "latitude": 7.2405,
+    "longitude": 80.4286,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.4286,
+        7.2405
+      ]
+    }
+  },
+  {
+    "name": "Yapahuwa Rock Fortress",
+    "district": "Kurunegala",
+    "province": "North Western",
+    "latitude": 7.8286,
+    "longitude": 80.2528,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.2528,
+        7.8286
+      ]
+    }
+  },
+  {
+    "name": "Ethagala (Elephant Rock)",
+    "district": "Kurunegala",
+    "province": "North Western",
+    "latitude": 7.487,
+    "longitude": 80.368,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.368,
+        7.487
+      ]
+    }
+  },
+  {
+    "name": "Ridi Viharaya",
+    "district": "Kurunegala",
+    "province": "North Western",
+    "latitude": 7.5647,
+    "longitude": 80.4851,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.4851,
+        7.5647
+      ]
+    }
+  },
+  {
+    "name": "Panduvasnuwara Ancient City",
+    "district": "Kurunegala",
+    "province": "North Western",
+    "latitude": 7.6625,
+    "longitude": 80.0167,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.0167,
+        7.6625
+      ]
+    }
+  },
+  {
+    "name": "Arankele Monastery",
+    "district": "Kurunegala",
+    "province": "North Western",
+    "latitude": 7.7667,
+    "longitude": 80.3833,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.3833,
+        7.7667
+      ]
+    }
+  },
+  {
+    "name": "Dambadeniya Ancient City",
+    "district": "Kurunegala",
+    "province": "North Western",
+    "latitude": 7.3614,
+    "longitude": 80.1417,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.1417,
+        7.3614
+      ]
+    }
+  },
+  {
+    "name": "Kalpitiya Beach",
+    "district": "Puttalam",
+    "province": "North Western",
+    "latitude": 8.2333,
+    "longitude": 79.7667,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        79.7667,
+        8.2333
+      ]
+    }
+  },
+  {
+    "name": "Munneswaram Temple",
+    "district": "Puttalam",
+    "province": "North Western",
+    "latitude": 7.5852,
+    "longitude": 79.8336,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        79.8336,
+        7.5852
+      ]
+    }
+  },
+  {
+    "name": "St. Anne's Church, Talawila",
+    "district": "Puttalam",
+    "province": "North Western",
+    "latitude": 8.0833,
+    "longitude": 79.7167,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        79.7167,
+        8.0833
+      ]
+    }
+  },
+  {
+    "name": "Anawilundawa Bird Sanctuary",
+    "district": "Puttalam",
+    "province": "North Western",
+    "latitude": 7.705,
+    "longitude": 79.8167,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        79.8167,
+        7.705
+      ]
+    }
+  },
+  {
+    "name": "Wilpattu Entrance (Eluwankulama)",
+    "district": "Puttalam",
+    "province": "North Western",
+    "latitude": 8.2611,
+    "longitude": 79.8472,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        79.8472,
+        8.2611
+      ]
+    }
+  },
+  {
+    "name": "Pasikudah Beach",
+    "district": "Batticaloa",
+    "province": "Eastern",
+    "latitude": 7.9228,
+    "longitude": 81.5644,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        81.5644,
+        7.9228
+      ]
+    }
+  },
+  {
+    "name": "Kalkudah Beach",
+    "district": "Batticaloa",
+    "province": "Eastern",
+    "latitude": 7.9167,
+    "longitude": 81.5833,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        81.5833,
+        7.9167
+      ]
+    }
+  },
+  {
+    "name": "Batticaloa Fort",
+    "district": "Batticaloa",
+    "province": "Eastern",
+    "latitude": 7.718,
+    "longitude": 81.696,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        81.696,
+        7.718
+      ]
+    }
+  },
+  {
+    "name": "Kallady Beach",
+    "district": "Batticaloa",
+    "province": "Eastern",
+    "latitude": 7.71,
+    "longitude": 81.7167,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        81.7167,
+        7.71
+      ]
+    }
+  },
+  {
+    "name": "Batticaloa Lighthouse",
+    "district": "Batticaloa",
+    "province": "Eastern",
+    "latitude": 7.75,
+    "longitude": 81.6833,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        81.6833,
+        7.75
+      ]
+    }
+  },
+  {
+    "name": "Maligawila Buddha Statue",
+    "district": "Moneragala",
+    "province": "Uva",
+    "latitude": 6.7417,
+    "longitude": 81.3628,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        81.3628,
+        6.7417
+      ]
+    }
+  },
+  {
+    "name": "Buduruwagala Rock Carvings",
+    "district": "Moneragala",
+    "province": "Uva",
+    "latitude": 6.685,
+    "longitude": 81.0825,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        81.0825,
+        6.685
+      ]
+    }
+  },
+  {
+    "name": "Yala East (Kumana Entrance)",
+    "district": "Moneragala",
+    "province": "Uva",
+    "latitude": 6.5167,
+    "longitude": 81.7167,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        81.7167,
+        6.5167
+      ]
+    }
+  },
+  {
+    "name": "Bibile Rubber Plantations",
+    "district": "Moneragala",
+    "province": "Uva",
+    "latitude": 7.1583,
+    "longitude": 81.2167,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        81.2167,
+        7.1583
+      ]
+    }
+  },
+  {
+    "name": "Senanayake Samudra",
+    "district": "Moneragala",
+    "province": "Uva",
+    "latitude": 7.1833,
+    "longitude": 81.5333,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        81.5333,
+        7.1833
+      ]
+    }
+  },
+  {
+    "name": "Kalutara Bodhiya",
+    "district": "Kalutara",
+    "province": "Western",
+    "latitude": 6.585,
+    "longitude": 79.9592,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        79.9592,
+        6.585
+      ]
+    }
+  },
+  {
+    "name": "Richmond Castle",
+    "district": "Kalutara",
+    "province": "Western",
+    "latitude": 6.6111,
+    "longitude": 79.9705,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        79.9705,
+        6.6111
+      ]
+    }
+  },
+  {
+    "name": "Brief Garden by Bevis Bawa",
+    "district": "Kalutara",
+    "province": "Western",
+    "latitude": 6.45,
+    "longitude": 80,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80,
+        6.45
+      ]
+    }
+  },
+  {
+    "name": "Bentota Beach (North Side)",
+    "district": "Kalutara",
+    "province": "Western",
+    "latitude": 6.425,
+    "longitude": 79.9917,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        79.9917,
+        6.425
+      ]
+    }
+  },
+  {
+    "name": "Thudugala Ella",
+    "district": "Kalutara",
+    "province": "Western",
+    "latitude": 6.6167,
+    "longitude": 80.0333,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.0333,
+        6.6167
+      ]
+    }
+  },
+  {
+    "name": "Negombo Beach",
+    "district": "Gampaha",
+    "province": "Western",
+    "latitude": 7.2081,
+    "longitude": 79.8358,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        79.8358,
+        7.2081
+      ]
+    }
+  },
+  {
+    "name": "Maligatenna Raja Maha Vihara",
+    "district": "Gampaha",
+    "province": "Western",
+    "latitude": 7.0861,
+    "longitude": 80.0867,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.0867,
+        7.0861
+      ]
+    }
+  },
+  {
+    "name": "Dutch Canal Negombo",
+    "district": "Gampaha",
+    "province": "Western",
+    "latitude": 7.21,
+    "longitude": 79.84,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        79.84,
+        7.21
+      ]
+    }
+  },
+  {
+    "name": "Henarathgoda Botanical Garden",
+    "district": "Gampaha",
+    "province": "Western",
+    "latitude": 7.0944,
+    "longitude": 79.9917,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        79.9917,
+        7.0944
+      ]
+    }
+  },
+  {
+    "name": "Angurukaramulla Temple",
+    "district": "Gampaha",
+    "province": "Western",
+    "latitude": 7.2125,
+    "longitude": 79.855,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        79.855,
+        7.2125
+      ]
+    }
+  },
+  {
+    "name": "Adam's Bridge (Rama Setu)",
+    "district": "Mannar",
+    "province": "Northern",
+    "latitude": 9.07,
+    "longitude": 79.51,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        79.51,
+        9.07
+      ]
+    }
+  },
+  {
+    "name": "Talaimannar Pier & Lighthouse",
+    "district": "Mannar",
+    "province": "Northern",
+    "latitude": 9.1,
+    "longitude": 79.7333,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        79.7333,
+        9.1
+      ]
+    }
+  },
+  {
+    "name": "Mannar Baobab Tree",
+    "district": "Mannar",
+    "province": "Northern",
+    "latitude": 8.9814,
+    "longitude": 79.9122,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        79.9122,
+        8.9814
+      ]
+    }
+  },
+  {
+    "name": "Mannar Fort",
+    "district": "Mannar",
+    "province": "Northern",
+    "latitude": 8.9817,
+    "longitude": 79.9133,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        79.9133,
+        8.9817
+      ]
+    }
+  },
+  {
+    "name": "Shrine of Our Lady of Madhu",
+    "district": "Mannar",
+    "province": "Northern",
+    "latitude": 8.85,
+    "longitude": 80.2,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.2,
+        8.85
+      ]
+    }
+  },
+  {
+    "name": "Thiruketheeswaram Temple",
+    "district": "Mannar",
+    "province": "Northern",
+    "latitude": 8.95,
+    "longitude": 79.9333,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        79.9333,
+        8.95
+      ]
+    }
+  },
+  {
+    "name": "Iranamadu Tank",
+    "district": "Kilinochchi",
+    "province": "Northern",
+    "latitude": 9.31,
+    "longitude": 80.43,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.43,
+        9.31
+      ]
+    }
+  },
+  {
+    "name": "Elephant Pass War Memorial",
+    "district": "Kilinochchi",
+    "province": "Northern",
+    "latitude": 9.5317,
+    "longitude": 80.4144,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.4144,
+        9.5317
+      ]
+    }
+  },
+  {
+    "name": "Pooneryn Fort",
+    "district": "Kilinochchi",
+    "province": "Northern",
+    "latitude": 9.5,
+    "longitude": 80.2,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.2,
+        9.5
+      ]
+    }
+  },
+  {
+    "name": "Chundikulam Bird Sanctuary",
+    "district": "Kilinochchi",
+    "province": "Northern",
+    "latitude": 9.5,
+    "longitude": 80.5,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.5,
+        9.5
+      ]
+    }
+  },
+  {
+    "name": "Murukandy Pillayar Temple",
+    "district": "Kilinochchi",
+    "province": "Northern",
+    "latitude": 9.2431,
+    "longitude": 80.3956,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.3956,
+        9.2431
+      ]
+    }
+  },
+  {
+    "name": "Madukanda Vihara",
+    "district": "Vavuniya",
+    "province": "Northern",
+    "latitude": 8.7444,
+    "longitude": 80.5517,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.5517,
+        8.7444
+      ]
+    }
+  },
+  {
+    "name": "Vavuniya Archaeological Museum",
+    "district": "Vavuniya",
+    "province": "Northern",
+    "latitude": 8.75,
+    "longitude": 80.4917,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.4917,
+        8.75
+      ]
+    }
+  },
+  {
+    "name": "Kandasamy Kovil",
+    "district": "Vavuniya",
+    "province": "Northern",
+    "latitude": 8.7511,
+    "longitude": 80.495,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.495,
+        8.7511
+      ]
+    }
+  },
+  {
+    "name": "Grand Juma Mosque",
+    "district": "Vavuniya",
+    "province": "Northern",
+    "latitude": 8.755,
+    "longitude": 80.4981,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.4981,
+        8.755
+      ]
+    }
+  },
+  {
+    "name": "Kaludiya Pokuna Vavuniya",
+    "district": "Vavuniya",
+    "province": "Northern",
+    "latitude": 8.7,
+    "longitude": 80.6,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.6,
+        8.7
+      ]
+    }
+  },
+  {
+    "name": "Mullaitivu Beach",
+    "district": "Mullaitivu",
+    "province": "Northern",
+    "latitude": 9.2833,
+    "longitude": 81.3,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        81.3,
+        9.2833
+      ]
+    }
+  },
+  {
+    "name": "Nanthikadal Lagoon",
+    "district": "Mullaitivu",
+    "province": "Northern",
+    "latitude": 9.25,
+    "longitude": 81.25,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        81.25,
+        9.25
+      ]
+    }
+  },
+  {
+    "name": "Oddusuddan Thaanthonreeswarar Kovil",
+    "district": "Mullaitivu",
+    "province": "Northern",
+    "latitude": 9.1481,
+    "longitude": 80.6558,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.6558,
+        9.1481
+      ]
+    }
+  },
+  {
+    "name": "Victory Monument Puthukkudiyiruppu",
+    "district": "Mullaitivu",
+    "province": "Northern",
+    "latitude": 9.3167,
+    "longitude": 80.6833,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.6833,
+        9.3167
+      ]
+    }
+  },
+  {
+    "name": "Nayaru Lagoon",
+    "district": "Mullaitivu",
+    "province": "Northern",
+    "latitude": 9.1667,
+    "longitude": 80.8333,
+    "category": "other",
+    "description": null,
+    "photos": [],
+    "isActive": true,
+    "source": "system",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.8333,
+        9.1667
+      ]
+    }
+  },
+  {
+    "name": "Informatics Institute of Technology (IIT) - Main Campus",
+    "district": "Colombo",
+    "province": "Western",
+    "latitude": 6.8706,
+    "longitude": 79.8706,
+    "category": "educational",
+    "description": "The main campus of IIT Sri Lanka located in Wellawatta.",
+    "photos": [],
+    "isActive": true,
+    "source": "user_specified",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        79.8706,
+        6.8706
+      ]
+    }
+  },
+  {
+    "name": "IIT School of Computing/Professional Center",
+    "district": "Colombo",
+    "province": "Western",
+    "latitude": 6.9032,
+    "longitude": 79.8523,
+    "category": "educational",
+    "description": "IIT Professional Center/Business School located in Colombo.",
+    "photos": [],
+    "isActive": true,
+    "source": "user_specified",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        79.8523,
+        6.9032
+      ]
+    }
+  },
+  {
+    "name": "Rawana Ella Falls",
+    "district": "Badulla",
+    "province": "Uva",
+    "latitude": 6.8408548,
+    "longitude": 81.0545278,
+    "category": "city",
+    "description": "",
+    "photos": [],
+    "isActive": true,
+    "source": "osm",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        81.0545278,
+        6.8408548
+      ]
+    }
+  },
+  {
+    "name": "Kushtarajagala Statue",
+    "district": "Matara",
+    "province": "Southern",
+    "latitude": 5.9694792,
+    "longitude": 80.4199094,
+    "category": "city",
+    "description": "",
+    "photos": [],
+    "isActive": true,
+    "source": "osm",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.4199094,
+        5.9694792
+      ]
+    }
+  },
+  {
+    "name": "Mackwoods Museum",
+    "district": "Nuwara Eliya",
+    "province": "Central",
+    "latitude": 6.972736,
+    "longitude": 80.766188,
+    "category": "historical",
+    "description": "",
+    "photos": [],
+    "isActive": true,
+    "source": "osm",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        80.766188,
+        6.972736
+      ]
+    }
+  }
+]
