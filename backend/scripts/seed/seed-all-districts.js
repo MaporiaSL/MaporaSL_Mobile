@@ -30,6 +30,7 @@ const ALL_SRI_LANKA_DISTRICTS = [
   { district: 'Puttalam', province: 'North Western Province', lat: 8.0328, lng: 79.8276 },
   { district: 'Anuradhapura', province: 'North Central Province', lat: 8.3263, lng: 80.4303 },
   { district: 'Polonnaruwa', province: 'North Central Province', lat: 7.9408, lng: 81.0033 },
+  { district: 'Kilinochchi', province: 'Northern Province', lat: 9.3803, lng: 80.3770 },
 ];
 
 async function seedAllDistricts() {
