@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/real_store_models.dart';
 import '../providers/real_store_providers.dart';
+import '../../../core/utils/currency_formatter.dart';
 
 class ProductDetailsPage extends ConsumerWidget {
   const ProductDetailsPage({super.key, required this.item});
@@ -54,7 +55,7 @@ class ProductDetailsPage extends ConsumerWidget {
                         ),
                       ),
                       Text(
-                        'LKR ${item.priceLkr}',
+                        CurrencyFormatter.formatLkr(item.priceLkr),
                         style: Theme.of(context).textTheme.headlineSmall
                             ?.copyWith(
                               color: Colors.green.shade700,

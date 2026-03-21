@@ -1,10 +1,12 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/real_store_models.dart';
 import '../providers/real_store_providers.dart';
 import '../data/real_store_api.dart';
 import 'package:payhere_mobilesdk_flutter/payhere_mobilesdk_flutter.dart';
+import 'package:dio/dio.dart';
 import 'order_success_page.dart';
+import '../../../core/utils/currency_formatter.dart';
 
 class CheckoutPage extends ConsumerStatefulWidget {
   const CheckoutPage({super.key});
@@ -22,6 +24,15 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
   final _cityController = TextEditingController();
   final _phoneController = TextEditingController();
   final _emailController = TextEditingController();
+  
+  String? _selectedDistrict;
+  final List<String> _sriLankanDistricts = [
+    'Ampara', 'Anuradhapura', 'Badulla', 'Batticaloa', 'Colombo', 'Galle',
+    'Gampaha', 'Hambantota', 'Jaffna', 'Kalutara', 'Kandy', 'Kegalle',
+    'Kilinochchi', 'Kurunegala', 'Mannar', 'Matale', 'Matara', 'Monaragala',
+    'Mullaitivu', 'Nuwara Eliya', 'Polonnaruwa', 'Puttalam', 'Ratnapura',
+    'Trincomalee', 'Vavuniya'
+  ];
 
   bool _isSubmitting = false;
 
@@ -45,6 +56,7 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
         fullName: _nameController.text.trim(),
         street: _streetController.text.trim(),
         city: _cityController.text.trim(),
+        district: _selectedDistrict ?? '',
         phone: _phoneController.text.trim(),
         email: _emailController.text.trim(),
       );
@@ -61,8 +73,8 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
         "sandbox": true,
         "merchant_id": order.payhereMerchantId,
         "merchant_secret": "", // Not needed for mobile SDK, hash is enough
-        "notify_url":
-            "https://ent13zglezxqd.x.pipedream.net/", // Should be your actual backend API URL usually
+        "notify_url": order.payhereNotifyUrl ??
+            "https://ent13zglezxqd.x.pipedream.net/", // Fallback to Pipedream if server fails
         "order_id": order.orderId,
         "items": "Maporia Order ${order.orderId}",
         "amount": double.parse(order.total.toStringAsFixed(2)),
@@ -89,10 +101,15 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
       // Start PayHere Payment
       PayHere.startPayment(
         paymentObject,
-        (paymentId) {
+        (paymentId) async {
           debugPrint(
             "PayHere One-Time Payment Success. Payment Id: $paymentId",
           );
+          try {
+            await ref.read(realStoreApiProvider).verifyPayment(order.orderId);
+          } catch (e) {
+            debugPrint("Failed to assert local payment verification: $e");
+          }
           final _ = ref.refresh(shoppingCartProvider);
           if (mounted) {
             Navigator.of(context).pushReplacement(
@@ -117,6 +134,16 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
           }
         },
       );
+    } on DioException catch (dioErr) {
+      if (mounted) {
+        final errorMsg = dioErr.response?.data != null 
+            ? dioErr.response!.data.toString() 
+            : dioErr.message;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to place order: $errorMsg')),
+        );
+        setState(() => _isSubmitting = false);
+      }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(
@@ -192,6 +219,26 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
                     ),
                     validator: (v) => v?.isEmpty == true ? 'Required' : null,
                   ),
+                  const SizedBox(height: 12),
+                  DropdownButtonFormField<String>(
+                    decoration: const InputDecoration(
+                      labelText: 'District',
+                      border: OutlineInputBorder(),
+                    ),
+                    value: _selectedDistrict,
+                    items: _sriLankanDistricts.map((district) {
+                      return DropdownMenuItem(
+                        value: district,
+                        child: Text(district),
+                      );
+                    }).toList(),
+                    onChanged: (val) {
+                      setState(() {
+                        _selectedDistrict = val;
+                      });
+                    },
+                    validator: (v) => v == null || v.isEmpty ? 'Required' : null,
+                  ),
 
                   const SizedBox(height: 32),
                   _buildSectionTitle(context, 'Order Summary'),
@@ -205,16 +252,40 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
                     ),
                     child: Column(
                       children: [
-                        _buildSummaryRow('Subtotal', 'LKR ${cart.subtotal}'),
+                        ...cart.items.map((item) => Padding(
+                          padding: const EdgeInsets.only(bottom: 8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(child: Text('${item.quantity}x ${item.itemName}', style: const TextStyle(color: Colors.black87))),
+                              Text(CurrencyFormatter.formatLkr(item.subtotal), style: const TextStyle(color: Colors.black87)),
+                            ],
+                          ),
+                        )),
+                        const Divider(),
+                        _buildSummaryRow(
+                          'Subtotal',
+                          CurrencyFormatter.formatLkr(cart.subtotal),
+                        ),
                         const Divider(),
                         _buildSummaryRow(
                           'Shipping',
-                          'LKR ${cart.estimatedShipping}',
+                          // Will calculate shipping dynamically based on district in the future or via backend
+                          CurrencyFormatter.formatLkr(
+                            _selectedDistrict == 'Colombo' ? 300 :
+                            (_selectedDistrict == 'Gampaha' || _selectedDistrict == 'Kalutara' ? 400 : 
+                            (_selectedDistrict != null ? 500 : cart.estimatedShipping))
+                          ),
                         ),
                         const Divider(),
                         _buildSummaryRow(
                           'Total',
-                          'LKR ${cart.total}',
+                          CurrencyFormatter.formatLkr(
+                            cart.subtotal + cart.tax + 
+                            (_selectedDistrict == 'Colombo' ? 300 :
+                            (_selectedDistrict == 'Gampaha' || _selectedDistrict == 'Kalutara' ? 400 : 
+                            (_selectedDistrict != null ? 500 : cart.estimatedShipping)))
+                          ),
                           isBold: true,
                         ),
                       ],
@@ -269,6 +340,7 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
     final style = TextStyle(
       fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
       fontSize: isBold ? 16 : 14,
+      color: Colors.black87,
     );
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),

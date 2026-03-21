@@ -8,6 +8,11 @@ final realStoreItemsProvider = FutureProvider.autoDispose<
   return api.getItems();
 });
 
+final ordersProvider = FutureProvider.autoDispose<List<Order>>((ref) async {
+  final api = ref.watch(realStoreApiProvider);
+  return api.getOrders();
+});
+
 class ShoppingCartNotifier extends StateNotifier<AsyncValue<ShoppingCart>> {
   ShoppingCartNotifier(this._api) : super(const AsyncValue.loading()) {
     _load();
