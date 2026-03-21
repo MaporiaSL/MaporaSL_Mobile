@@ -181,19 +181,23 @@ class _MapScreenState extends ConsumerState<MapScreen>
                 top: 20,
                 left: 16,
                 right: 16,
-                child: _DistrictHeaderBar(
-                  district: selectedDistrict ?? 'District',
-                  theme: theme,
-                  onClose: () {
-                    _focusAnimationController.reverse().then((_) {
-                      setState(() {
-                        selectedDistrict = null;
-                        selectedProvince = null;
-                        _isDistrictFocused = false;
-                        _selectedLocation = null;
+                child: GestureDetector(
+                  onTap:
+                      () {}, // Consume tap events to prevent map from intercepting
+                  child: _DistrictHeaderBar(
+                    district: selectedDistrict ?? 'District',
+                    theme: theme,
+                    onClose: () {
+                      _focusAnimationController.reverse().then((_) {
+                        setState(() {
+                          selectedDistrict = null;
+                          selectedProvince = null;
+                          _isDistrictFocused = false;
+                          _selectedLocation = null;
+                        });
                       });
-                    });
-                  },
+                    },
+                  ),
                 ),
               ),
               if (_selectedLocation != null)
@@ -356,43 +360,55 @@ class _DistrictHeaderBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
-      decoration: BoxDecoration(
-        color: AppColors.secondary.withValues(alpha: 0.9),
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.25),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        mainAxisSize: MainAxisSize.max,
-        children: [
-          Expanded(
-            child: Text(
-              district,
-              style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.w700,
-                fontSize: 22,
-                letterSpacing: 0.5,
+    // The GestureDetector now wraps the whole content, ensuring any tap inside
+    // this header is handled here and not passed to the map below.
+    return GestureDetector(
+      onTap: () {
+        // This empty onTap handler is crucial. It "consumes" the tap event,
+        // preventing it from propagating to widgets lower in the Stack (like the map).
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+        decoration: BoxDecoration(
+          color: AppColors.secondary.withOpacity(0.9),
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.25),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: Text(
+                district,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 22,
+                  letterSpacing: 0.5,
+                ),
               ),
             ),
-          ),
-          IconButton(
-            onPressed: onClose,
-            icon: const Icon(Icons.close, color: Colors.white, size: 26),
-            tooltip: 'Close',
-            splashRadius: 24,
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
-          ),
-        ],
+            // The Material widget provides the visual "splash" effect on tap
+            // and ensures the IconButton's hit area is correctly defined.
+            Material(
+              color: Colors.transparent,
+              child: IconButton(
+                onPressed: onClose,
+                icon: const Icon(Icons.close, color: Colors.white, size: 26),
+                tooltip: 'Close',
+                splashRadius: 24,
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

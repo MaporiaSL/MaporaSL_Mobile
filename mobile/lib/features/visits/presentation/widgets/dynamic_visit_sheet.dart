@@ -572,6 +572,30 @@ class _DynamicVisitSheetState extends ConsumerState<DynamicVisitSheet>
   }
 
   Widget _buildErrorUI(String errorMsg) {
+    // Make error messages more user-friendly
+    String displayError = errorMsg;
+    final lowerError = errorMsg.toLowerCase();
+
+    if (lowerError.contains('not enough valid gps samples') ||
+        lowerError.contains('gps') ||
+        lowerError.contains('dioexception') ||
+        lowerError.contains('400') ||
+        lowerError.contains('bad response')) {
+      displayError =
+          'We could not verify your location. Please ensure you are close to the spot, step outside for a clear GPS signal, and try again.';
+    } else if (lowerError.contains('too far')) {
+      displayError =
+          'You appear to be too far from the location. Please get closer and try verifying again.';
+    } else if (lowerError.contains('timeout') ||
+        lowerError.contains('connection')) {
+      displayError =
+          'Network error. Please check your internet connection and try again.';
+    } else if (errorMsg.length > 100) {
+      // Fallback for any other long developer-like stack traces
+      displayError =
+          'Verification failed. Please make sure you are physically at the location and try again.';
+    }
+
     return SingleChildScrollView(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -605,7 +629,7 @@ class _DynamicVisitSheetState extends ConsumerState<DynamicVisitSheet>
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 32),
             child: Text(
-              errorMsg,
+              displayError,
               style: TextStyle(
                 fontSize: 14,
                 color: Colors.red.shade800,
