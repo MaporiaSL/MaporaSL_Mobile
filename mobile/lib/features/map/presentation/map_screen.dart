@@ -467,20 +467,34 @@ class _PlaceDetailCard extends StatelessWidget {
                   Text(location.type.isEmpty ? 'Attraction' : location.type),
                   const SizedBox(height: 8),
                   Text(
-                    location.description?.isNotEmpty == true
-                        ? location.description!
-                        : 'No description available yet. Visit this location to contribute better details.',
+                    location.rejectionReason != null && location.status == VerificationStatus.failed
+                        ? 'Verification failed: ${location.rejectionReason}'
+                        : (location.description?.isNotEmpty == true
+                            ? location.description!
+                            : 'No description available yet. Visit this location to contribute better details.'),
+                    style: TextStyle(
+                      color: location.status == VerificationStatus.failed ? Colors.red.shade700 : null,
+                      fontWeight: location.status == VerificationStatus.failed ? FontWeight.w500 : null,
+                    ),
                   ),
                   const SizedBox(height: 12),
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton.icon(
-                      onPressed: location.visited ? null : onVerify,
-                      icon: const Icon(Icons.verified),
+                      onPressed: (location.visited || location.status == VerificationStatus.verifying) ? null : onVerify,
+                      icon: Icon(
+                        location.visited ? Icons.check_circle : (location.status == VerificationStatus.verifying ? Icons.hourglass_empty : Icons.verified),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: location.status == VerificationStatus.failed ? Colors.red : (location.visited ? Colors.teal : null),
+                        foregroundColor: (location.status == VerificationStatus.failed || location.visited) ? Colors.white : null,
+                      ),
                       label: Text(
                         location.visited
                             ? 'Already Verified'
-                            : 'Verify This Place',
+                            : (location.status == VerificationStatus.verifying 
+                                ? 'Verifying...' 
+                                : (location.status == VerificationStatus.failed ? 'Try Again' : 'Verify This Place')),
                       ),
                     ),
                   ),
@@ -796,9 +810,9 @@ class _DistrictSatelliteMapState extends State<_DistrictSatelliteMap> {
     await _removeStyleSource(_outsideMaskSourceId);
   }
 
-  String _buildLocationsGeoJson({required bool visited}) {
+  String _buildLocationsGeoJson({required VerificationStatus status}) {
     final features = widget.assignment.locations
-        .where((location) => location.visited == visited)
+        .where((location) => location.status == status)
         .map(
           (location) => {
             'type': 'Feature',
@@ -817,16 +831,24 @@ class _DistrictSatelliteMapState extends State<_DistrictSatelliteMap> {
   Future<void> _applyLocationLayers(mapbox.MapboxMap map) async {
     final visitedSource = mapbox.GeoJsonSource(
       id: _visitedLocationsSourceId,
-      data: _buildLocationsGeoJson(visited: true),
+      data: _buildLocationsGeoJson(status: VerificationStatus.passed),
     );
     await map.style.addSource(visitedSource);
 
+    final failedLocationsSourceId = 'district-failed-locations';
+    final failedSource = mapbox.GeoJsonSource(
+      id: failedLocationsSourceId,
+      data: _buildLocationsGeoJson(status: VerificationStatus.failed),
+    );
+    await map.style.addSource(failedSource);
+
     final unvisitedSource = mapbox.GeoJsonSource(
       id: _unvisitedLocationsSourceId,
-      data: _buildLocationsGeoJson(visited: false),
+      data: _buildLocationsGeoJson(status: VerificationStatus.none),
     );
     await map.style.addSource(unvisitedSource);
 
+    // Unvisited (Red)
     await map.style.addLayer(
       mapbox.CircleLayer(
         id: _unvisitedLocationsLayerId,
@@ -839,6 +861,21 @@ class _DistrictSatelliteMapState extends State<_DistrictSatelliteMap> {
       ),
     );
 
+    // Failed (Orange/Amber)
+    const failedLocationsLayerId = 'district-failed-circles';
+    await map.style.addLayer(
+      mapbox.CircleLayer(
+        id: failedLocationsLayerId,
+        sourceId: failedLocationsSourceId,
+        circleColor: const Color(0xFFF59E0B).toARGB32(),
+        circleRadius: 7.0,
+        circleOpacity: 1.0,
+        circleStrokeColor: const Color(0xFFFFFFFF).toARGB32(),
+        circleStrokeWidth: 2.0,
+      ),
+    );
+
+    // Visited (Green)
     await map.style.addLayer(
       mapbox.CircleLayer(
         id: _visitedLocationsLayerId,

@@ -1,4 +1,4 @@
-﻿import 'dart:ui';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../features/exploration/data/models/exploration_models.dart';
@@ -574,26 +574,38 @@ class _DynamicVisitSheetState extends ConsumerState<DynamicVisitSheet>
   Widget _buildErrorUI(String errorMsg) {
     // Make error messages more user-friendly
     String displayError = errorMsg;
-    final lowerError = errorMsg.toLowerCase();
+    
+    // If we have a specific rejection reason from the location, use it
+    if (widget.isExploration && widget.explorationLocation != null) {
+      final explorationState = ref.watch(explorationProvider);
+      final location = explorationState.assignments
+          .expand((a) => a.locations)
+          .firstWhere((l) => l.id == widget.explorationLocation!.id, 
+                    orElse: () => widget.explorationLocation!);
+      
+      if (location.rejectionReason != null) {
+        displayError = location.rejectionReason!;
+      }
+    }
 
+    final lowerError = displayError.toLowerCase();
     if (lowerError.contains('not enough valid gps samples') ||
         lowerError.contains('gps') ||
-        lowerError.contains('dioexception') ||
-        lowerError.contains('400') ||
-        lowerError.contains('bad response')) {
+        lowerError.contains('accuracy')) {
       displayError =
-          'We could not verify your location. Please ensure you are close to the spot, step outside for a clear GPS signal, and try again.';
+          'Poor GPS signal. Please ensure you are outdoors with a clear view of the sky and try again.';
     } else if (lowerError.contains('too far')) {
       displayError =
           'You appear to be too far from the location. Please get closer and try verifying again.';
     } else if (lowerError.contains('timeout') ||
-        lowerError.contains('connection')) {
+        lowerError.contains('connection') || 
+        lowerError.contains('dioexception')) {
       displayError =
           'Network error. Please check your internet connection and try again.';
-    } else if (errorMsg.length > 100) {
-      // Fallback for any other long developer-like stack traces
-      displayError =
-          'Verification failed. Please make sure you are physically at the location and try again.';
+    } else if (lowerError.contains('cooldown') || lowerError.contains('429')) {
+      displayError = 'Verification cooldown active. Please wait a few minutes before trying again.';
+    } else if (displayError.length > 80) {
+      displayError = 'Verification failed. Please ensure you are at the correct location and try again.';
     }
 
     return SingleChildScrollView(

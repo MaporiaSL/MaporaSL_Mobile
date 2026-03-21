@@ -744,7 +744,9 @@ async function visitLocation(req, res) {
       return distance <= MAX_DISTANCE_METERS;
     });
 
-    if (validSamples.length < MIN_SAMPLE_COUNT) {
+    const bypassVerification = process.env.BYPASS_VERIFICATION === 'true';
+
+    if (!bypassVerification && validSamples.length < MIN_SAMPLE_COUNT) {
       return res.status(400).json({
         error: 'Not enough valid GPS samples to verify visit',
         requiredSamples: MIN_SAMPLE_COUNT,

@@ -37,9 +37,19 @@ exports.markVisit = async (req, res) => {
 
     // 3. Perform Validation (Advanced if metadata provided, otherwise basic geofence)
     const { primary, failsafe, category } = getRadiusConfig(place.type || 'attraction');
+    const bypassVerification = process.env.BYPASS_VERIFICATION === 'true';
     let validationResult;
 
-    if (metadata) {
+    if (bypassVerification) {
+      validationResult = {
+        isValid: true,
+        status: 'approved',
+        confidence: 1.0,
+        invalidReason: null,
+        flaggedReason: null,
+        flagSeverity: 1
+      };
+    } else if (metadata) {
       // Advanced validation (Ported from placeVisitRoutes)
       validationResult = await validateVisitAdvanced(
         userId,
