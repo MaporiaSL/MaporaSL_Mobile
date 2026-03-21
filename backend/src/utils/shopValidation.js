@@ -17,9 +17,10 @@ const validateCheckout = [
     .notEmpty()
     .withMessage('Street is required'),
   body('shippingAddress.city').notEmpty().withMessage('City is required'),
+  body('shippingAddress.district').notEmpty().withMessage('District is required'),
   body('shippingAddress.phone')
-    .isMobilePhone()
-    .withMessage('Invalid phone'),
+    .notEmpty()
+    .withMessage('Phone number is required'),
   body('shippingAddress.email').isEmail().withMessage('Invalid email'),
 ];
 
