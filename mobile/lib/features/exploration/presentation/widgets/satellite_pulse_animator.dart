@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:math' as math;
 
 /// Satellite Pulse Sync Animator
 /// Real-time visual feedback showing GPS verification as satellite data handshake
@@ -123,8 +122,8 @@ class _SatellitePulseSyncAnimatorState extends State<SatellitePulseSyncAnimator>
         pulseAnimation: _pulseAnimation,
         dataStreamAnimation: _dataStreamAnimation,
         ringAnimations: _ringControllers
-            .map((c) => c.view as Animation<double>)
-            .toList(),
+          .map((c) => c.view)
+          .toList(),
         centerLat: widget.centerLat,
         centerLng: widget.centerLng,
         targetLocations: widget.targetLocations,
@@ -161,13 +160,13 @@ class _SatellitePulsePainter extends CustomPainter {
 
     // Draw background gradient
     final bgGradient = Paint()
-      ..shader = RadialGradient(
+      ..shader = const RadialGradient(
         colors: [
-          const Color(0x0F22D3EE),
-          const Color(0x0006B6D4),
+          Color(0x0F22D3EE),
+          Color(0x0006B6D4),
           Colors.transparent,
         ],
-        stops: const [0.0, 0.6, 1.0],
+        stops: [0.0, 0.6, 1.0],
       ).createShader(Rect.fromCircle(center: centerOffset, radius: maxRadius));
     canvas.drawCircle(centerOffset, maxRadius, bgGradient);
 
@@ -437,7 +436,6 @@ class _DigitalCoordinateCounterState extends State<DigitalCoordinateCounter>
     with TickerProviderStateMixin {
   late AnimationController _scrollController;
   late AnimationController _lockController;
-  late Animation<int> _scrollAnimation;
 
   @override
   void initState() {
@@ -451,11 +449,6 @@ class _DigitalCoordinateCounterState extends State<DigitalCoordinateCounter>
       duration: const Duration(milliseconds: 600),
       vsync: this,
     );
-
-    _scrollAnimation = IntTween(
-      begin: 0,
-      end: 100000,
-    ).animate(CurvedAnimation(parent: _scrollController, curve: Curves.linear));
 
     if (!widget.isLocked) {
       _scrollController.repeat();

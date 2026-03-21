@@ -283,9 +283,9 @@ class ComboIndicator extends ConsumerWidget {
             ),
           ],
         ),
-        child: Row(
+        child: const Row(
           mainAxisSize: MainAxisSize.min,
-          children: const [
+          children: [
             Text(
               '🔥 COMBO! 2x XP',
               style: TextStyle(

@@ -13,7 +13,7 @@ class GeofenceNotifier extends StateNotifier<GeofenceState> {
   GeofenceNotifier() : super(const GeofenceState());
 
   StreamSubscription<Position>? _positionSubscription;
-  Set<String> _notifiedLocationIds = {};
+  final Set<String> _notifiedLocationIds = {};
 
   /// Start monitoring user location against assigned locations
   Future<void> startMonitoring(
@@ -139,14 +139,13 @@ class GeofenceNotifier extends StateNotifier<GeofenceState> {
     required ExplorationLocationWithDistrict location,
     required double distance,
   }) async {
-    final distanceKm = (distance / 1000).toStringAsFixed(1);
     final xpReward = location.tier == 'sameDistrict'
         ? 10
         : location.tier == 'sameProvince'
         ? 12
         : 15;
 
-    final channelId = 'proximity_alerts';
+    const channelId = 'proximity_alerts';
     final androidDetails = AndroidNotificationDetails(
       channelId,
       'Proximity Alerts',
@@ -159,7 +158,7 @@ class GeofenceNotifier extends StateNotifier<GeofenceState> {
       largeIcon: const DrawableResourceAndroidBitmap('notification_icon'),
     );
 
-    final iosDetails = DarwinNotificationDetails(
+    const iosDetails = DarwinNotificationDetails(
       categoryIdentifier: 'proximity',
       sound: 'digital_chime.wav',
       presentAlert: true,

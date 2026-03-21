@@ -191,7 +191,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             ),
           ),
 
-          Expanded(child: Center(child: SizedBox.shrink())),
+          const Expanded(child: Center(child: SizedBox.shrink())),
 
           /// Dots Indicator
           Row(

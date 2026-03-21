@@ -101,7 +101,7 @@ class PlaceCard extends ConsumerWidget {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               const Icon(
-                                Icons.image_multiple,
+                                Icons.image,
                                 color: Colors.white,
                                 size: 16,
                               ),
