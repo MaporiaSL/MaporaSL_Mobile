@@ -1,6 +1,5 @@
 const fs = require('fs');
 const path = require('path');
-const UnlockLocation = require('../models/UnlockLocation');
 const Place = require('../models/Place');
 const UserDistrictAssignment = require('../models/UserDistrictAssignment');
 const User = require('../models/User');
@@ -114,7 +113,7 @@ function computeXp(tier) {
   return config.base + getRandomInt(0, config.bonusMax);
 }
 
-async function pickFallbackHometownDistrict() {
+async function pickSystemHometownDistrict() {
   const placeGroup = await Place.aggregate([
     { $match: { isActive: true } },
     { $group: { _id: '$district', count: { $sum: 1 } } },
@@ -124,17 +123,6 @@ async function pickFallbackHometownDistrict() {
 
   if (placeGroup.length && placeGroup[0]._id) {
     return placeGroup[0]._id;
-  }
-
-  const unlockGroup = await UnlockLocation.aggregate([
-    { $match: { isActive: true } },
-    { $group: { _id: '$district', count: { $sum: 1 } } },
-    { $sort: { count: -1 } },
-    { $limit: 1 },
-  ]);
-
-  if (unlockGroup.length && unlockGroup[0]._id) {
-    return unlockGroup[0]._id;
   }
 
   return null;
@@ -247,56 +235,39 @@ async function updateExplorationProgress(userId) {
 }
 
 async function assignExplorationForUser(userId, hometownDistrict, options = {}) {
-  // Try to get places from the new Place collection first
-  // Falls back to UnlockLocation for backward compatibility
-  
-  let placesByDistrict = new Map();
-  let hometownEntry = null;
-  
-  // Try to use the new Place model (ever-growing list)
   const places = await Place.find({ isActive: true });
-  
-  if (places.length > 0) {
-    // Use dynamic Place collection
-    const districtMap = new Map();
-    places.forEach((place) => {
-      const key = normalizeKey(place.district);
-      if (!districtMap.has(key)) {
-        districtMap.set(key, {
-          district: place.district,
-          province: place.province,
-          placeIds: [],
-        });
-      }
-      districtMap.get(key).placeIds.push(place._id);
-    });
-    
-    placesByDistrict = districtMap;
-    const hometownKey = normalizeKey(hometownDistrict);
-    hometownEntry = districtMap.get(hometownKey);
-  } else {
-    // Fallback to UnlockLocation for backward compatibility
-    const locations = await UnlockLocation.find({ isActive: true });
-    if (!locations.length) {
-      throw new Error('No places found in either Place or UnlockLocation collections');
-    }
-    
-    const districtMap = buildDistrictMap(locations);
-    placesByDistrict = districtMap;
-    const hometownKey = normalizeKey(hometownDistrict);
-    hometownEntry = districtMap.get(hometownKey);
+
+  if (places.length === 0) {
+    throw new Error('No places found in the primary database for this district.');
   }
+
+  const districtMap = new Map();
+  places.forEach((place) => {
+    const key = normalizeKey(place.district);
+    if (!districtMap.has(key)) {
+      districtMap.set(key, {
+        district: place.district,
+        province: place.province,
+        placeIds: [],
+      });
+    }
+    districtMap.get(key).placeIds.push(place._id);
+  });
+
+  placesByDistrict = districtMap;
+  const hometownKey = normalizeKey(hometownDistrict);
+  hometownEntry = districtMap.get(hometownKey);
   
   if (!hometownEntry) {
     // If hometown district not found, pick a fallback that has places
-    const fallbackDistrict = await pickFallbackHometownDistrict();
+    const fallbackDistrict = await pickSystemHometownDistrict();
     if (!fallbackDistrict) {
       throw new Error('No districts with places found - cannot create assignments');
     }
     const fallbackKey = normalizeKey(fallbackDistrict);
     hometownEntry = placesByDistrict.get(fallbackKey);
     if (!hometownEntry) {
-      throw new Error(`Fallback district "${fallbackDistrict}" has no places in catalog`);
+      throw new Error(`System district "${fallbackDistrict}" has no places in catalog`);
     }
   }
 
@@ -424,81 +395,6 @@ async function assignExplorationForUser(userId, hometownDistrict, options = {}) 
   return { assignments, totalAssigned };
 }
 
-async function seedUnlockLocations(req, res) {
-  try {
-    const jsonPath = path.resolve(
-      __dirname,
-      '../../..',
-      'project_resorces',
-      'places_seed_data_2026.json'
-    );
-    const raw = fs.readFileSync(jsonPath, 'utf-8');
-    const data = JSON.parse(raw);
-
-    if (!data?.districts?.length) {
-      return res.status(400).json({ error: 'Seed data missing districts' });
-    }
-
-    const operations = [];
-    data.districts.forEach((districtEntry) => {
-      districtEntry.attractions.forEach((attraction) => {
-        operations.push({
-          updateOne: {
-            filter: {
-              district: districtEntry.district,
-              name: attraction.name,
-            },
-            update: {
-              $set: {
-                district: districtEntry.district,
-                province: districtEntry.province,
-                name: attraction.name,
-                type: attraction.type,
-                latitude: attraction.lat,
-                longitude: attraction.lon,
-                isActive: true,
-              },
-            },
-            upsert: true,
-          },
-        });
-      });
-    });
-
-    if (!operations.length) {
-      return res.status(400).json({ error: 'No seed operations created' });
-    }
-
-    const result = await UnlockLocation.bulkWrite(operations, { ordered: false });
-
-    const counts = await UnlockLocation.aggregate([
-      { $match: { isActive: true } },
-      {
-        $group: {
-          _id: '$district',
-          count: { $sum: 1 },
-        },
-      },
-    ]);
-
-    const underMin = counts.filter((entry) => entry.count < 3);
-    if (underMin.length) {
-      return res.status(400).json({
-        error: 'Some districts have fewer than 3 locations',
-        districts: underMin,
-      });
-    }
-
-    return res.status(200).json({
-      message: 'Unlock locations seeded',
-      result,
-    });
-  } catch (error) {
-    console.error('Seed unlock locations error:', error);
-    return res.status(500).json({ error: 'Failed to seed unlock locations' });
-  }
-}
-
 async function getAssignments(req, res) {
   try {
     let assignments = await UserDistrictAssignment.find({
@@ -514,7 +410,7 @@ async function getAssignments(req, res) {
 
       let hometownDistrict = user.hometownDistrict;
       if (!hometownDistrict) {
-        hometownDistrict = await pickFallbackHometownDistrict();
+        hometownDistrict = await pickSystemHometownDistrict();
         if (!hometownDistrict) {
           return res.status(400).json({
             error: 'No active exploration places available to initialize assignments',
@@ -550,12 +446,6 @@ async function getAssignments(req, res) {
       _id: { $in: locationIds },
     });
 
-    // If no places found, fall back to UnlockLocation
-    if (locations.length === 0) {
-      locations = await UnlockLocation.find({
-        _id: { $in: locationIds },
-      });
-    }
 
     const locationMap = new Map(
       locations.map((location) => [location._id.toString(), location])
@@ -626,9 +516,7 @@ async function getAssignments(req, res) {
         });
 
         if (reassignedLocations.length === 0) {
-          reassignedLocations = await UnlockLocation.find({
-            _id: { $in: reassignedIds },
-          });
+          
         }
 
         const reassignedMap = new Map(
@@ -695,7 +583,7 @@ async function getDistricts(req, res) {
 
       let hometownDistrict = user.hometownDistrict;
       if (!hometownDistrict) {
-        hometownDistrict = await pickFallbackHometownDistrict();
+        hometownDistrict = await pickSystemHometownDistrict();
         if (!hometownDistrict) {
           return res.status(400).json({
             error: 'No active exploration places available to initialize assignments',
@@ -804,11 +692,7 @@ async function visitLocation(req, res) {
       }
     }
 
-    // Find location from Place collection first, then UnlockLocation
-    let location = await Place.findById(locationId);
-    if (!location) {
-      location = await UnlockLocation.findById(locationId);
-    }
+    const location = await Place.findById(locationId);
 
     if (!location) {
       return res.status(404).json({ error: 'Location not found' });
@@ -895,11 +779,8 @@ async function visitLocation(req, res) {
     
     let hometownProvince = null;
     if (!hometownLocation) {
-      const unlockLocation = await UnlockLocation.findOne({
-        district: user.hometownDistrict,
-        isActive: true,
-      });
-      hometownProvince = unlockLocation?.province;
+      
+      
     } else {
       hometownProvince = hometownLocation.province;
     }
@@ -1029,11 +910,7 @@ async function adminOverrideVisit(req, res) {
         .json({ error: 'userId, locationId, and reason are required' });
     }
 
-    // Find location from Place collection first, then UnlockLocation
-    let location = await Place.findById(locationId);
-    if (!location) {
-      location = await UnlockLocation.findById(locationId);
-    }
+    const location = await Place.findById(locationId);
 
     if (!location) {
       return res.status(404).json({ error: 'Location not found' });
@@ -1083,7 +960,6 @@ async function adminOverrideVisit(req, res) {
 }
 
 module.exports = {
-  seedUnlockLocations,
   assignExplorationForUser,
   getAssignments,
   getDistricts,
@@ -1092,3 +968,4 @@ module.exports = {
   rerollAssignments,
   adminOverrideVisit,
 };
+
