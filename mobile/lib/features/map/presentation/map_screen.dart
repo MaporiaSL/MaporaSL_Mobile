@@ -1,4 +1,4 @@
-﻿import 'dart:async';
+import 'dart:async';
 import 'dart:convert';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
@@ -156,12 +156,7 @@ class _MapScreenState extends ConsumerState<MapScreen>
       return Scaffold(
         backgroundColor: Colors.black.withValues(alpha: 0.02),
         extendBodyBehindAppBar: true,
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          automaticallyImplyLeading: false,
-          actions: const [],
-        ),
+        appBar: null,
         body: SafeArea(
           top: false,
           child: Stack(
@@ -177,13 +172,9 @@ class _MapScreenState extends ConsumerState<MapScreen>
                   });
                 },
               ),
-              Positioned(
-                top: 20,
-                left: 16,
-                right: 16,
-                child: GestureDetector(
-                  onTap:
-                      () {}, // Consume tap events to prevent map from intercepting
+              SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 10, left: 16, right: 16),
                   child: _DistrictHeaderBar(
                     district: selectedDistrict ?? 'District',
                     theme: theme,
