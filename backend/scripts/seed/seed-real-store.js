@@ -1,10 +1,10 @@
 const path = require('path');
 // Load root-level .env (one directory above /backend)
-require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
+require('dotenv').config({ path: path.resolve(__dirname, '../../../.env') });
 const mongoose = require('mongoose');
-const connectDB = require('./src/config/db');
-const RealStoreItem = require('./src/models/RealStoreItem');
-const sampleProducts = require('./src/data/realStoreSampleProducts.json');
+const connectDB = require('../../src/config/db');
+const RealStoreItem = require('../../src/models/RealStoreItem');
+const sampleProducts = require('../../src/data/realStoreSampleProducts.json');
 
 async function seedRealStore() {
   try {
