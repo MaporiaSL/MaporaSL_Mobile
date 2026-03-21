@@ -48,57 +48,6 @@ const destinationSchema = new mongoose.Schema({
     type: Date,
     default: Date.now
   },
-  // Places Feature Fields
-  category: {
-    type: String,
-    enum: ['temple', 'beach', 'mountain', 'historical', 'wildlife', 'city', 'forest', 'park', 'waterfall', 'garden', 'food'],
-    default: null,
-    index: true
-  },
-  description: {
-    type: String,
-    default: null
-  },
-  address: {
-    type: String,
-    default: null
-  },
-  province: {
-    type: String,
-    default: null
-  },
-  googleMapsUrl: {
-    type: String,
-    default: null
-  },
-  rating: {
-    average: { type: Number, default: 0, min: 0, max: 5 },
-    reviewCount: { type: Number, default: 0 }
-  },
-  photos: {
-    type: [String],
-    default: []
-  },
-  accessibility: {
-    season: String,
-    bestTime: String,
-    difficulty: String,
-    estimatedDuration: String,
-    entryFee: String,
-    wheelchairAccessible: Boolean
-  },
-  tags: [String],
-  isSystemPlace: {
-    type: Boolean,
-    default: false,
-    index: true
-  },
-  // Modified required fields to allow system places
-  userId: {
-    type: String,
-    required: function () { return !this.isSystemPlace; },
-    index: true
-  },
   travelId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Travel',

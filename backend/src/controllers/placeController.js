@@ -43,29 +43,6 @@ exports.getPlaces = async (req, res) => {
 
     total = await Place.countDocuments(query);
 
-    // If no places in new collection, try old Destination collection
-    if (total === 0) {
-      const oldQuery = { isSystemPlace: true };
-
-      if (search) {
-        oldQuery.$or = [
-          { name: { $regex: `^${search}`, $options: 'i' } },
-          { description: { $regex: search, $options: 'i' } },
-        ];
-      }
-
-      if (category) oldQuery.category = category;
-      if (province) oldQuery.province = province;
-      if (district) oldQuery.districtId = { $regex: district, $options: 'i' };
-
-      places = await Destination.find(oldQuery)
-        .limit(limit * 1)
-        .skip((page - 1) * limit)
-        .sort({ visitCount: -1, rating: -1 });
-
-      total = await Destination.countDocuments(oldQuery);
-    }
-
     res.status(200).json({
       places,
       totalPages: Math.ceil(total / limit),
@@ -81,10 +58,6 @@ exports.getPlaces = async (req, res) => {
 exports.getPlaceById = async (req, res) => {
   try {
     let place = await Place.findById(req.params.id);
-
-    if (!place) {
-      place = await Destination.findById(req.params.id);
-    }
 
     if (!place) {
       return res.status(404).json({ message: 'Place not found' });
@@ -108,16 +81,6 @@ exports.getPlacesByDistrict = async (req, res) => {
     })
       .limit(Math.min(100, parseInt(limit)))
       .sort({ rating: -1 });
-
-    // Fallback to old system
-    if (places.length === 0) {
-      places = await Destination.find({
-        districtId: { $regex: district, $options: 'i' },
-        isSystemPlace: true,
-      })
-        .limit(Math.min(100, parseInt(limit)))
-        .sort({ visitCount: -1, rating: -1 });
-    }
 
     if (places.length === 0) {
       return res.status(404).json({
