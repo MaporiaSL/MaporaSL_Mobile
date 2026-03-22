@@ -17,7 +17,7 @@ class FilterChips extends ConsumerWidget {
         children: TripFilter.values.map((filter) {
           final isSelected = selectedFilter == filter;
           return Padding(
-            padding: const EdgeInsets.only(right: 8),
+            padding: const EdgeInsets.only(right: 7),
             child: FilterChip(
               label: Text(filter.label),
               selected: isSelected,
@@ -42,4 +42,3 @@ class FilterChips extends ConsumerWidget {
     );
   }
 }
-

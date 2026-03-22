@@ -100,7 +100,7 @@ class _CustomTripBuilderPageState extends State<CustomTripBuilderPage> {
 
   @override
   Widget build(BuildContext context) {
-    const blue = Color(0xFF2C6DB9);
+    final blue = const Color(0xFF2C6DB9);
 
     return Scaffold(
       backgroundColor: _bgColor,
@@ -208,9 +208,9 @@ class _CustomTripBuilderPageState extends State<CustomTripBuilderPage> {
           Container(
             width: 46,
             height: 46,
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: Color(0xFFDCEBFF),
+              color: const Color(0xFFDCEBFF),
             ),
             child: const Icon(Ionicons.sparkles, color: Color(0xFF2C6DB9)),
           ),
@@ -220,11 +220,11 @@ class _CustomTripBuilderPageState extends State<CustomTripBuilderPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Bounty: +500 XP',
+                  'Bounty: +525 XP',
                   style: GoogleFonts.poppins(
                     fontSize: 18,
                     fontWeight: FontWeight.w800,
-                    color: const Color(0xFF184C91),
+                    color: Color(0xFF184C91),
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -233,7 +233,7 @@ class _CustomTripBuilderPageState extends State<CustomTripBuilderPage> {
                   style: GoogleFonts.poppins(
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
-                    color: const Color(0xFF184C91),
+                    color: Color(0xFF184C91),
                   ),
                 ),
               ],
@@ -441,7 +441,7 @@ class _CustomTripBuilderPageState extends State<CustomTripBuilderPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         DropdownButtonFormField<String>(
-          initialValue: _categoryOptions.contains(_selectedCategory)
+          value: _categoryOptions.contains(_selectedCategory)
               ? _selectedCategory
               : null,
           icon: const Icon(Ionicons.chevron_down_outline),
@@ -531,7 +531,7 @@ class _CustomTripBuilderPageState extends State<CustomTripBuilderPage> {
           ),
           const SizedBox(height: 8),
           DropdownButtonFormField<String>(
-            initialValue: _selectedLocationName,
+            value: _selectedLocationName,
             isExpanded: true,
             icon: const Icon(Ionicons.chevron_down_outline),
             decoration: InputDecoration(
