@@ -11,6 +11,7 @@ const {
   validateCheckout,
   handleValidationErrors,
 } = require('../utils/shopValidation');
+const { sendOrderConfirmationEmail } = require('../utils/emailService');
 
 const router = express.Router();
 
@@ -132,6 +133,12 @@ router.post('/payhere/notify', express.urlencoded({ extended: true }), async (re
         notes,
       });
       await order.save();
+      
+      // Trigger confirmation email
+      if (newStatus === 'PAID') {
+        await CartService.clearCart(order.userId);
+        await sendOrderConfirmationEmail(order);
+      }
     }
 
     // PayHere expects a 200 OK immediately
@@ -240,6 +247,18 @@ router.post(
       }
 
       const orderId = await generateOrderId();
+      
+      let districtShipping = cart.estimatedShipping;
+      if (shippingAddress && shippingAddress.district) {
+         if (shippingAddress.district === 'Colombo') {
+           districtShipping = 300;
+         } else if (shippingAddress.district === 'Gampaha' || shippingAddress.district === 'Kalutara') {
+           districtShipping = 400;
+         } else {
+           districtShipping = 500;
+         }
+      }
+      const finalTotal = cart.subtotal + cart.tax + districtShipping;
 
       const order = await Order.create({
         orderId,
@@ -248,8 +267,8 @@ router.post(
         pricing: {
           subtotal: cart.subtotal,
           tax: cart.tax,
-          shippingEstimate: cart.estimatedShipping,
-          total: cart.total,
+          shippingEstimate: districtShipping,
+          total: finalTotal,
           currency: 'LKR',
         },
         shippingAddress,
@@ -264,7 +283,7 @@ router.post(
         ],
       });
 
-      await CartService.clearCart(req.userId);
+      // Removed CartService.clearCart(req.userId) here. We only clear the cart when payment succeeds!
 
       // Generate PayHere Hash
       const merchantId = process.env.PAYHERE_MERCHANT_ID || '1234567';
@@ -282,6 +301,7 @@ router.post(
           ...order.toJSON(),
           payhereHash: hash,
           payhereMerchantId: merchantId,
+          payhereNotifyUrl: process.env.PAYHERE_NOTIFY_URL || '',
         },
         message: 'Order created safely. Please proceed to PayHere payment.',
       });
@@ -291,6 +311,34 @@ router.post(
     }
   }
 );
+
+// POST /api/store/checkout/success (DEV / LOCAL TESTING ONLY)
+// Allows the mobile app to verify success when PayHere cannot reach localhost webhook
+router.post('/checkout/success', async (req, res) => {
+  try {
+    const { orderId } = req.body;
+    const order = await Order.findOne({ orderId });
+    if (!order) return res.status(404).json({ error: 'Order not found' });
+
+    if (order.status !== 'PAID') {
+      order.status = 'PAID';
+      order.statusHistory.push({
+        status: 'PAID',
+        updatedAt: new Date(),
+        notes: 'Payment confirmed locally from client side.',
+      });
+      await order.save();
+
+      // Trigger confirmation email and clear the user's cart
+      await CartService.clearCart(order.userId);
+      await sendOrderConfirmationEmail(order);
+    }
+
+    res.json({ success: true, order });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 // GET /api/store/orders - list current user's orders
 router.get('/orders', async (req, res) => {

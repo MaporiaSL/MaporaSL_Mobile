@@ -109,6 +109,7 @@ class ShippingAddress {
     required this.fullName,
     required this.street,
     required this.city,
+    required this.district,
     required this.phone,
     required this.email,
     this.postalCode,
@@ -118,6 +119,7 @@ class ShippingAddress {
   final String fullName;
   final String street;
   final String city;
+  final String district;
   final String phone;
   final String email;
   final String? postalCode;
@@ -128,6 +130,7 @@ class ShippingAddress {
       'fullName': fullName,
       'street': street,
       'city': city,
+      'district': district,
       'phone': phone,
       'email': email,
       if (postalCode != null) 'postalCode': postalCode,
@@ -144,8 +147,11 @@ class Order {
     required this.total,
     required this.currency,
     required this.status,
+    required this.items,
+    this.createdAt,
     this.payhereHash,
     this.payhereMerchantId,
+    this.payhereNotifyUrl,
   });
 
   final String orderId;
@@ -153,20 +159,29 @@ class Order {
   final int total;
   final String currency;
   final String status;
+  final List<CartItem> items;
+  final DateTime? createdAt;
   final String? payhereHash;
   final String? payhereMerchantId;
+  final String? payhereNotifyUrl;
 
   factory Order.fromJson(Map<String, dynamic> json) {
     final pricing =
         json['pricing'] as Map<String, dynamic>? ?? <String, dynamic>{};
+    final itemsJson = json['items'] as List<dynamic>? ?? <dynamic>[];
     return Order(
       orderId: json['orderId'] as String? ?? '',
       userId: json['userId'] as String? ?? '',
       total: (pricing['total'] as num? ?? 0).toInt(),
       currency: pricing['currency'] as String? ?? 'LKR',
       status: json['status'] as String? ?? '',
+      items: itemsJson
+          .map((e) => CartItem.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      createdAt: json['createdAt'] != null ? DateTime.tryParse(json['createdAt'] as String) : null,
       payhereHash: json['payhereHash'] as String?,
       payhereMerchantId: json['payhereMerchantId'] as String?,
+      payhereNotifyUrl: json['payhereNotifyUrl'] as String?,
     );
   }
 }

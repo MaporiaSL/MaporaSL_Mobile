@@ -4,6 +4,8 @@ import '../models/real_store_models.dart';
 import '../providers/real_store_providers.dart';
 import 'checkout_page.dart';
 import 'product_details_page.dart';
+import 'order_history_page.dart';
+import '../../../core/utils/currency_formatter.dart';
 
 class ShopPage extends ConsumerWidget {
   const ShopPage({super.key});
@@ -17,6 +19,15 @@ class ShopPage extends ConsumerWidget {
       appBar: AppBar(
         title: const Text('Shop'),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.history),
+            tooltip: 'Order History',
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const OrderHistoryPage()),
+              );
+            },
+          ),
           cartAsync.when(
             data: (cart) {
               final count = cart.items.fold<int>(
@@ -158,7 +169,7 @@ class _RealStoreItemCard extends ConsumerWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'LKR ${item.priceLkr}',
+                  CurrencyFormatter.formatLkr(item.priceLkr),
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: Colors.green.shade700,
                     fontWeight: FontWeight.bold,
@@ -283,7 +294,7 @@ class ShoppingCartPage extends ConsumerWidget {
                     return ListTile(
                       title: Text(item.itemName),
                       subtitle: Text(
-                        'LKR ${item.unitPrice} x ${item.quantity}',
+                        '${CurrencyFormatter.formatLkr(item.unitPrice)} x ${item.quantity}',
                       ),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -322,13 +333,9 @@ class ShoppingCartPage extends ConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Text('Subtotal: LKR ${cart.subtotal}'),
-                    Text('Tax: LKR ${cart.tax}'),
-                    Text('Shipping: LKR ${cart.estimatedShipping}'),
-                    const SizedBox(height: 8),
                     Text(
-                      'Total: LKR ${cart.total}',
-                      style: Theme.of(context).textTheme.titleMedium,
+                      'Subtotal: ${CurrencyFormatter.formatLkr(cart.subtotal)}',
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 12),
                     ElevatedButton(
