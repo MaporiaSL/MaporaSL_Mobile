@@ -95,7 +95,7 @@ class QuestCard extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Quest Progress',
           style: TextStyle(
             fontSize: 11,
