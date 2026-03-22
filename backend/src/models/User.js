@@ -38,6 +38,15 @@ const userSchema = new mongoose.Schema({
     type: [String],
     default: []
   },
+  profileSetupCompleted: {
+    type: Boolean,
+    default: false,
+    index: true,
+  },
+  profileSetupCompletedAt: {
+    type: Date,
+    default: null,
+  },
   explorationUnlockedDistricts: {
     type: [String],
     default: []
@@ -109,34 +118,6 @@ const userSchema = new mongoose.Schema({
   totalPlacesVisited: {
     type: Number,
     default: 0
-  },
-  isPhotoPrivate: {
-    type: Boolean,
-    default: true
-  },
-  locationDuringCheckinsOnly: {
-    type: Boolean,
-    default: true
-  },
-  notifications: {
-    achievements: { type: Boolean, default: true },
-    trips: { type: Boolean, default: true },
-    places: { type: Boolean, default: true },
-    social: { type: Boolean, default: true },
-    // New notification types
-    nearbyTrips: { type: Boolean, default: true },
-    placeVisits: { type: Boolean, default: true },
-    celebrations: { type: Boolean, default: true }
-  },
-  security: {
-    twoFactorSecret: { type: String, default: null },
-    twoFactorEnabled: { type: Boolean, default: false }
-  },
-  display: {
-    mapTheme: { type: String, enum: ['light', 'dark'], default: 'light' },
-    cloudAnimation: { type: Boolean, default: true },
-    units: { type: String, enum: ['km', 'miles'], default: 'km' },
-    language: { type: String, default: 'English' }
   },
   createdAt: {
     type: Date,
