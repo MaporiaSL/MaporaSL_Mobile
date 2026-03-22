@@ -211,33 +211,41 @@ class QuestCard extends ConsumerWidget {
               style: TextStyle(fontSize: 10, color: Colors.grey[500]),
             ) 
           : null,
-        trailing: !location.visited
-            ? ElevatedButton(
-                onPressed: () {
-                  DynamicVisitSheet.show(
-                    context,
-                    placeId: location.id,
-                    placeName: location.name,
-                    targetLat: location.latitude,
-                    targetLng: location.longitude,
-                    isExploration: true,
-                    explorationLocation: location,
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF2196F3),
-                  foregroundColor: Colors.white,
-                  elevation: 0,
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
-                  minimumSize: const Size(60, 28),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                ),
-                child: const Text('Visit', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+        trailing: location.visited
+            ? Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Unlocked',
+                    style: TextStyle(
+                      color: Colors.green[600],
+                      fontSize: 10,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(color: Colors.green[50], shape: BoxShape.circle),
+                    child: Icon(Icons.check, color: Colors.green[400], size: 12),
+                  ),
+                ],
               )
             : Container(
-                padding: const EdgeInsets.all(4),
-                decoration: BoxDecoration(color: Colors.green[50], shape: BoxShape.circle),
-                child: Icon(Icons.check, color: Colors.green[400], size: 14),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                decoration: BoxDecoration(
+                  color: Colors.grey[100],
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  'Locked',
+                  style: TextStyle(
+                    color: Colors.grey[500],
+                    fontSize: 10,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 0.5,
+                  ),
+                ),
               ),
       ),
     );
