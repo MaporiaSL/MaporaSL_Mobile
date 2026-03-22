@@ -9,6 +9,7 @@ import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart' as mapbox;
 import '../../../core/constants/app_colors.dart';
 import '../data/regions_data.dart';
 import 'widgets/cartoon_map_canvas.dart';
+import 'widgets/map_legend.dart';
 import 'theme/map_visual_theme.dart';
 import '../../exploration/providers/exploration_provider.dart';
 import '../../../core/providers/theme_provider.dart';
@@ -231,12 +232,10 @@ class _MapScreenState extends ConsumerState<MapScreen>
           ),
         ),
       );
-    }
-
-    return Scaffold(
+    }    return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'ðŸ—ºï¸ Discover Sri Lanka',
+          '🗺️ Discover Sri Lanka',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         elevation: 0,
@@ -285,32 +284,31 @@ class _MapScreenState extends ConsumerState<MapScreen>
                                   return;
                                 }
 
-                                final sameDistrict =
-                                    _normalizeKey(selectedDistrict) ==
-                                    _normalizeKey(districtName);
-                                if (sameDistrict && _isDistrictFocused) {
-                                  selectedDistrict = null;
-                                  selectedProvince = null;
-                                  _isDistrictFocused = false;
-                                  _selectedLocation = null;
-                                  return;
-                                }
+                            final sameDistrict =
+                                _normalizeKey(selectedDistrict) ==
+                                _normalizeKey(districtName);
+                            if (sameDistrict && _isDistrictFocused) {
+                              selectedDistrict = null;
+                              selectedProvince = null;
+                              _isDistrictFocused = false;
+                              _selectedLocation = null;
+                              return;
+                            }
 
-                                selectedDistrict = districtName;
-                                selectedProvince =
-                                    (provinceName != null &&
-                                        provinceName.isNotEmpty)
-                                    ? provinceName
-                                    : null;
-                                _isDistrictFocused = true;
-                                _selectedLocation = null;
+                            selectedDistrict = districtName;
+                            selectedProvince =
+                                (provinceName != null &&
+                                    provinceName.isNotEmpty)
+                                ? provinceName
+                                : null;
+                            _isDistrictFocused = true;
+                            _selectedLocation = null;
                               });
                             },
                       ),
                     ],
                   ),
                 ),
-
                 if (_selectedLocation != null)
                   Positioned(
                     left: 16,
@@ -338,6 +336,15 @@ class _MapScreenState extends ConsumerState<MapScreen>
                       },
                     ),
                   ),
+                // Map legend
+                Positioned(
+                  top: 16,
+                  right: 16,
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 200),
+                    child: MapLegend(),
+                  ),
+                ),
               ],
             );
           },

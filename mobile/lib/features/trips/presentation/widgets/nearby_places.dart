@@ -9,7 +9,7 @@ class NearbyPlaces extends StatelessWidget {
       children: List.generate(
         3,
         (index) => Padding(
-          padding: const EdgeInsets.only(bottom: 12.0),
+          padding: const EdgeInsets.only(bottom: 11.0),
           child: Container(
             height: 100,
             decoration: BoxDecoration(
@@ -35,7 +35,9 @@ class NearbyPlaces extends StatelessWidget {
                     ),
                     color: Colors.blue.shade50,
                   ),
-                  child: const Center(child: Icon(Icons.water, color: Colors.blue, size: 40)),
+                  child: const Center(
+                    child: Icon(Icons.water, color: Colors.blue, size: 40),
+                  ),
                 ),
                 Expanded(
                   child: Padding(
@@ -46,23 +48,33 @@ class NearbyPlaces extends StatelessWidget {
                       children: [
                         const Text(
                           "Hidden Waterfall",
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
                         ),
                         const SizedBox(height: 4),
                         Row(
                           children: [
-                            Icon(Icons.location_on, size: 14, color: Colors.grey.shade500),
+                            Icon(
+                              Icons.location_on,
+                              size: 14,
+                              color: Colors.grey.shade500,
+                            ),
                             const SizedBox(width: 4),
                             Text(
                               "2.3 km away",
-                              style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
+                              style: TextStyle(
+                                color: Colors.grey.shade600,
+                                fontSize: 12,
+                              ),
                             ),
                           ],
                         ),
                       ],
                     ),
                   ),
-                )
+                ),
               ],
             ),
           ),
@@ -71,4 +83,3 @@ class NearbyPlaces extends StatelessWidget {
     );
   }
 }
-

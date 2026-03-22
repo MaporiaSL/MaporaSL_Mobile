@@ -36,7 +36,7 @@ class RecommendedPlaces extends ConsumerWidget {
                 },
                 borderRadius: BorderRadius.circular(20),
                 child: Container(
-                  width: 200,
+                  width: 198,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
                     color: Colors.white,
@@ -45,7 +45,7 @@ class RecommendedPlaces extends ConsumerWidget {
                         color: Colors.grey.withValues(alpha: 0.1),
                         blurRadius: 10,
                         spreadRadius: 2,
-                      )
+                      ),
                     ],
                   ),
                   child: Column(
@@ -55,12 +55,18 @@ class RecommendedPlaces extends ConsumerWidget {
                         height: 150,
                         width: double.infinity,
                         decoration: BoxDecoration(
-                          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+                          borderRadius: const BorderRadius.vertical(
+                            top: Radius.circular(20),
+                          ),
                           color: Colors.blue.shade100,
                           // If you implement imageUrls in PrePlannedTrip schema later, you can use Image.network here!
                         ),
                         child: const Center(
-                          child: Icon(Icons.terrain, size: 50, color: Colors.blue),
+                          child: Icon(
+                            Icons.terrain,
+                            size: 50,
+                            color: Colors.blue,
+                          ),
                         ),
                       ),
                       Padding(
@@ -70,34 +76,51 @@ class RecommendedPlaces extends ConsumerWidget {
                           children: [
                             Text(
                               trip.title,
-                              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
                             const SizedBox(height: 5),
                             Row(
                               children: [
-                                Icon(Icons.star, color: Colors.orange.shade400, size: 16),
+                                Icon(
+                                  Icons.star,
+                                  color: Colors.orange.shade400,
+                                  size: 16,
+                                ),
                                 const Text(
-                                  " 4.8", 
-                                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                                  " 4.8",
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                                 const Spacer(),
                                 Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 4,
+                                  ),
                                   decoration: BoxDecoration(
                                     color: Colors.blue.shade50,
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                   child: Row(
                                     children: [
-                                      Icon(Icons.timer_outlined, size: 12, color: Colors.blue.shade700),
+                                      Icon(
+                                        Icons.timer_outlined,
+                                        size: 12,
+                                        color: Colors.blue.shade700,
+                                      ),
                                       const SizedBox(width: 4),
                                       Text(
                                         "${trip.durationDays} Days",
                                         style: TextStyle(
-                                          fontSize: 12, 
-                                          fontWeight: FontWeight.bold, 
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold,
                                           color: Colors.blue.shade700,
                                         ),
                                       ),
@@ -105,10 +128,10 @@ class RecommendedPlaces extends ConsumerWidget {
                                   ),
                                 ),
                               ],
-                            )
+                            ),
                           ],
                         ),
-                      )
+                      ),
                     ],
                   ),
                 ),
@@ -117,9 +140,9 @@ class RecommendedPlaces extends ConsumerWidget {
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (err, _) => Center(child: Text("Failed to load recommendations: $err")),
+        error: (err, _) =>
+            Center(child: Text("Failed to load recommendations: $err")),
       ),
     );
   }
 }
-

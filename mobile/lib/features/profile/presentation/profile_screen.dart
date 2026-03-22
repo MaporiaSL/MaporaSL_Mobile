@@ -59,42 +59,47 @@ class ProfileScreen extends ConsumerWidget {
         ],
       ),
       body: profileAsyncValue.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stackTrace) => Center(
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(Icons.error_outline, size: 64, color: Colors.red),
-                const SizedBox(height: 16),
-                Text(
-                  'Error Loading Profile',
-                  style: Theme.of(
-                    context,
-                  ).textTheme.titleLarge?.copyWith(color: Colors.red),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  error.toString(),
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-                const SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: () => ref.refresh(userProfileProvider),
-                  child: const Text('Retry'),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Check Logs: User ID may be null (auth required)',
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.labelSmall,
-                ),
-              ],
+        loading: () => _buildLoadingSkeleton(context),
+        error: (error, stackTrace) {
+          final errorUi = _buildErrorUi(error);
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.error_outline, size: 64, color: Colors.red),
+                  const SizedBox(height: 16),
+                  Text(
+                    errorUi.title,
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleLarge
+                        ?.copyWith(color: Colors.red),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    errorUi.message,
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () => _retryAll(ref),
+                    child: const Text('Retry'),
+                  ),
+                  if (errorUi.showSignInAction) ...[
+                    const SizedBox(height: 8),
+                    TextButton(
+                      onPressed: () => _performLogout(context, ref),
+                      child: const Text('Sign In Again'),
+                    ),
+                  ],
+                ],
+              ),
             ),
-          ),
-        ),
+          );
+        },
         data: (profile) {
           if (profile == null) {
             return Center(
@@ -115,7 +120,7 @@ class ProfileScreen extends ConsumerWidget {
                     ),
                     const SizedBox(height: 8),
                     const Text(
-                      'No user profile exists for this account.\n\nThis could mean:\n• User not authenticated\n• User ID not found in database\n• Backend API error',
+                      'No user profile exists for this account.\n\nThis could mean:\nG�� User not authenticated\nG�� User ID not found in database\nG�� Backend API error',
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 16),
@@ -198,6 +203,73 @@ class ProfileScreen extends ConsumerWidget {
             ),
           );
         },
+      ),
+    );
+  }
+
+  void _retryAll(WidgetRef ref) {
+    ref.refresh(userProfileProvider);
+    ref.refresh(userContributionsProvider);
+    ref.refresh(topContributorsProvider);
+    ref.refresh(progressProvider);
+  }
+
+  _ErrorUiData _buildErrorUi(Object error) {
+    final message = error.toString().isEmpty
+        ? 'An unexpected error occurred while loading profile data.'
+        : error.toString();
+    return _ErrorUiData(
+      title: 'Error Loading Profile',
+      message: message,
+    );
+  }
+
+  Widget _buildLoadingSkeleton(BuildContext context) {
+    final placeholder = Colors.grey.shade300;
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              CircleAvatar(radius: 40, backgroundColor: placeholder),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(height: 16, width: 160, color: placeholder),
+                    const SizedBox(height: 8),
+                    Container(height: 12, width: 220, color: placeholder),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 24),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: List.generate(
+              3,
+              (_) => Container(height: 64, width: 86, color: placeholder),
+            ),
+          ),
+          const SizedBox(height: 24),
+          Container(height: 16, width: 170, color: placeholder),
+          const SizedBox(height: 12),
+          ...List.generate(
+            3,
+            (_) => Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Container(
+                height: 44,
+                width: double.infinity,
+                color: placeholder,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -310,7 +382,7 @@ class ProfileScreen extends ConsumerWidget {
   ) {
     // Level up logic is now handled on the backend
     final percentage = (profile.xpTotal % 100 / 100).clamp(0.0, 1.0);
-    
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(14),
@@ -625,10 +697,10 @@ class ProfileScreen extends ConsumerWidget {
         title: const Text('Delete Account'),
         content: const Text(
           'Are you sure you want to delete your account? This action is PERMANENT and cannot be undone.\n\n'
-          '• All your data will be permanently removed from our servers\n'
-          '• Your account will be deleted from Firebase Auth\n'
-          '• You will NOT be able to log back in with these credentials\n'
-          '• This action happens immediately',
+          'G�� All your data will be permanently removed from our servers\n'
+          'G�� Your account will be deleted from Firebase Auth\n'
+          'G�� You will NOT be able to log back in with these credentials\n'
+          'G�� This action happens immediately',
         ),
         actions: [
           TextButton(
@@ -722,4 +794,16 @@ class _StatCard extends StatelessWidget {
       ],
     );
   }
+}
+
+class _ErrorUiData {
+  final String title;
+  final String message;
+  final bool showSignInAction;
+
+  const _ErrorUiData({
+    required this.title,
+    required this.message,
+    this.showSignInAction = false,
+  });
 }
