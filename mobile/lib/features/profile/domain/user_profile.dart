@@ -15,6 +15,17 @@ class UserProfile {
   final int leaderboardRank;
   final int impactCount;
 
+  // New exploration stats
+  final int xpTotal;
+  final int currentLevel;
+  final int xpToNextLevel;
+  final int unlockedDistrictsCount;
+  final int unlockedProvincesCount;
+  final int totalAssigned;
+  final int totalVisited;
+  final List<String> unlockedDistricts;
+  final List<String> unlockedProvinces;
+
   UserProfile({
     required this.id,
     required this.name,
@@ -31,6 +42,15 @@ class UserProfile {
     required this.contributedPlaces,
     required this.leaderboardRank,
     required this.impactCount,
+    this.xpTotal = 0,
+    this.currentLevel = 1,
+    this.xpToNextLevel = 0,
+    this.unlockedDistrictsCount = 0,
+    this.unlockedProvincesCount = 0,
+    this.totalAssigned = 0,
+    this.totalVisited = 0,
+    this.unlockedDistricts = const [],
+    this.unlockedProvinces = const [],
   });
 
   factory UserProfile.fromJson(Map<String, dynamic> json) {
@@ -39,45 +59,73 @@ class UserProfile {
       name: json['user']['name'] ?? '',
       email: json['user']['email'] ?? '',
       avatarUrl: json['user']['avatarUrl'] ?? '',
-        bio: json['user']['bio'] ?? '',
-        hometownDistrict: json['user']['hometownDistrict'] ?? '',
-        preferredLanguage: json['user']['preferredLanguage'] ?? '',
-        travelInterests: (json['user']['travelInterests'] as List?)
-            ?.whereType<String>()
-            .toList() ??
+      bio: json['user']['bio'] ?? '',
+      hometownDistrict: json['user']['hometownDistrict'] ?? '',
+      preferredLanguage: json['user']['preferredLanguage'] ?? '',
+      travelInterests: (json['user']['travelInterests'] as List?)
+              ?.whereType<String>()
+              .toList() ??
           const [],
       totalSubmitted: json['stats']['totalSubmitted'] ?? 0,
       approvedCount: json['stats']['approvedCount'] ?? 0,
       approvalRate: (json['stats']['approvalRate'] ?? 0).toDouble(),
       badges: (json['badges'] as List?)
-          ?.map((b) => ContributionBadge.fromJson(b))
-          .toList() ?? [],
+              ?.map((b) => ContributionBadge.fromJson(b))
+              .toList() ??
+          [],
       contributedPlaces: const [],
       leaderboardRank: json['leaderboardRank'] ?? 0,
       impactCount: json['impactCount'] ?? 0,
+      // Exploration stats mapping
+      xpTotal: json['stats']['xpTotal'] ?? 0,
+      currentLevel: json['stats']['currentLevel'] ?? 1,
+      xpToNextLevel: json['stats']['xpToNextLevel'] ?? 0,
+      unlockedDistrictsCount: json['stats']['unlockedDistrictsCount'] ?? 0,
+      unlockedProvincesCount: json['stats']['unlockedProvincesCount'] ?? 0,
+      totalAssigned: json['stats']['totalAssigned'] ?? 0,
+      totalVisited: json['stats']['totalVisited'] ?? 0,
+      unlockedDistricts: (json['exploration']?['unlockedDistricts'] as List?)
+              ?.whereType<String>()
+              .toList() ??
+          const [],
+      unlockedProvinces: (json['exploration']?['unlockedProvinces'] as List?)
+              ?.whereType<String>()
+              .toList() ??
+          const [],
     );
   }
 
   Map<String, dynamic> toJson() => {
-    'user': {
-      'id': id,
-      'name': name,
-      'email': email,
-      'avatarUrl': avatarUrl,
-      'bio': bio,
-      'hometownDistrict': hometownDistrict,
-      'preferredLanguage': preferredLanguage,
-      'travelInterests': travelInterests,
-    },
-    'stats': {
-      'totalSubmitted': totalSubmitted,
-      'approvedCount': approvedCount,
-      'approvalRate': approvalRate,
-    },
-    'badges': badges.map((b) => b.toJson()).toList(),
-    'leaderboardRank': leaderboardRank,
-    'impactCount': impactCount,
-  };
+        'user': {
+          'id': id,
+          'name': name,
+          'email': email,
+          'avatarUrl': avatarUrl,
+          'bio': bio,
+          'hometownDistrict': hometownDistrict,
+          'preferredLanguage': preferredLanguage,
+          'travelInterests': travelInterests,
+        },
+        'stats': {
+          'totalSubmitted': totalSubmitted,
+          'approvedCount': approvedCount,
+          'approvalRate': approvalRate,
+          'xpTotal': xpTotal,
+          'currentLevel': currentLevel,
+          'xpToNextLevel': xpToNextLevel,
+          'unlockedDistrictsCount': unlockedDistrictsCount,
+          'unlockedProvincesCount': unlockedProvincesCount,
+          'totalAssigned': totalAssigned,
+          'totalVisited': totalVisited,
+        },
+        'exploration': {
+          'unlockedDistricts': unlockedDistricts,
+          'unlockedProvinces': unlockedProvinces,
+        },
+        'badges': badges.map((b) => b.toJson()).toList(),
+        'leaderboardRank': leaderboardRank,
+        'impactCount': impactCount,
+      };
 }
 
 class ContributionBadge {

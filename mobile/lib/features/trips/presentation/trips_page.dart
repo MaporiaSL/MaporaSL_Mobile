@@ -10,23 +10,19 @@ import 'widgets/recommended_places.dart';
 class TripsPage extends StatelessWidget {
   const TripsPage({super.key});
 
-  // Static quest/trip data removed to follow separation of concerns:
-  // Discovery Page (Trips) vs History/Management (Timeline)
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.transparent,
-        foregroundColor: Colors.black,
+        foregroundColor: Colors.black87,
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text("Good Morning"),
+            const Text('Good Morning'),
             Text(
-              "Adventurer", // You can change this to your user's name!
+              'Adventurer',
               style: Theme.of(context).textTheme.labelMedium,
             ),
           ],
@@ -39,25 +35,17 @@ class TripsPage extends StatelessWidget {
           ),
         ],
       ),
-      // This is the exact body layout from the tutorial's home_page.dart
       body: ListView(
         physics: const BouncingScrollPhysics(),
-        padding: const EdgeInsets.all(14),
+        padding: const EdgeInsets.all(15),
         children: [
-          // LOCATION CARD
           const LocationCard(),
-          const SizedBox(height: 20),
-
-          // CATEGORIES (Mountain, Beach, etc.)
-          //const TouristPlaces(),
-          //const SizedBox(height: 10),
-
-          // RECOMMENDATIONS LIST
+          const SizedBox(height: 18),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                "Recommendation",
+                'Recommendations',
                 style: Theme.of(context).textTheme.titleLarge,
               ),
               TextButton(
@@ -69,39 +57,35 @@ class TripsPage extends StatelessWidget {
                     ),
                   );
                 },
-                child: const Text("View All"),
+                child: const Text('View All'),
               ),
             ],
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 12),
           const RecommendedPlaces(),
           const SizedBox(height: 20),
-
-
-          // NEARBY FROM YOU LIST
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                "Nearby From You",
+                'Nearby Around You',
                 style: Theme.of(context).textTheme.titleLarge,
               ),
-              TextButton(onPressed: () {}, child: const Text("View All")),
+              TextButton(onPressed: () {}, child: const Text('View All')),
             ],
           ),
           const SizedBox(height: 10),
           const NearbyPlaces(),
           const SizedBox(height: 20),
-
-          // CREATE CUSTOM TRIP ACTION
-          Text('Plan Your Own Adventure', style: Theme.of(context).textTheme.titleLarge),
+          Text(
+            'Plan Your Own Adventure',
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
           const SizedBox(height: 12),
           _buildCreateTripCard(context),
           const SizedBox(height: 30),
         ],
       ),
-      // Notice: No bottomNavigationBar here!
-      // This allows your main CurvedNavigationBar to handle the menu.
     );
   }
 
@@ -163,20 +147,6 @@ class TripsPage extends StatelessWidget {
       ),
     );
   }
-
-
-}
-
-class _QuestCardData {
-  final String title;
-  final String subtitle;
-  final int days;
-
-  const _QuestCardData({
-    required this.title,
-    required this.subtitle,
-    required this.days,
-  });
 }
 
 class AllRecommendationsPage extends StatelessWidget {
@@ -186,7 +156,7 @@ class AllRecommendationsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('All Recommendations')),
-      body: const Center(child: Text('All recommendations will appear here.')),
+      body: const Center(child: Text('All recommendations appear here.')),
     );
   }
 }

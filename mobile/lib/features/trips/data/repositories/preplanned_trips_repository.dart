@@ -14,7 +14,7 @@ class PrePlannedTripsRepository {
     String? startingPoint,
     String? difficulty,
     List<String>? tags,
-    int limit = 20,
+    int limit = 50,
     int skip = 0,
   }) {
     return _api.fetchTemplates(

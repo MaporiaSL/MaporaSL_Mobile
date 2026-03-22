@@ -220,7 +220,7 @@ class _CustomTripBuilderPageState extends State<CustomTripBuilderPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Bounty: +500 XP',
+                  'Bounty: +525 XP',
                   style: GoogleFonts.poppins(
                     fontSize: 18,
                     fontWeight: FontWeight.w800,

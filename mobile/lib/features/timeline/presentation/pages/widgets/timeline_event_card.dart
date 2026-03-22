@@ -21,13 +21,13 @@ class TimelineEventCard extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: _getShadowColor().withOpacity(0.25),
+            color: _getShadowColor().withValues(alpha: 0.25),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
         ],
         border: Border.all(
-          color: _getBorderColor().withOpacity(0.6),
+          color: _getBorderColor().withValues(alpha: 0.6),
           width: 1.5,
         ),
       ),
@@ -71,13 +71,13 @@ class TimelineEventCard extends StatelessWidget {
                         Icon(
                           Icons.access_time_rounded,
                           size: 14,
-                          color: AppColors.textMuted.withOpacity(0.8),
+                          color: AppColors.textMuted.withValues(alpha: 0.8),
                         ),
                         const SizedBox(width: 4),
                         Text(
                           DateFormat('MMM d, y • h:mm a').format(event.timestamp),
                           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: AppColors.textMuted.withOpacity(0.8),
+                                color: AppColors.textMuted.withValues(alpha: 0.8),
                                 fontWeight: FontWeight.w600,
                               ),
                         ),
@@ -85,7 +85,7 @@ class TimelineEventCard extends StatelessWidget {
                     ),
                     IconButton(
                       onPressed: () => _showShareOptions(context, event),
-                      icon: Icon(Icons.share_rounded, size: 18, color: AppColors.textDark.withOpacity(0.6)),
+                      icon: Icon(Icons.share_rounded, size: 18, color: AppColors.textDark.withValues(alpha: 0.6)),
                       padding: EdgeInsets.zero,
                       constraints: const BoxConstraints(),
                     ),
@@ -95,7 +95,7 @@ class TimelineEventCard extends StatelessWidget {
                 Text(
                   event.description,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: AppColors.textDark.withOpacity(0.85),
+                        color: AppColors.textDark.withValues(alpha: 0.85),
                         height: 1.4,
                       ),
                 ),
@@ -268,9 +268,9 @@ class TimelineEventCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.12),
+        color: color.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -307,11 +307,11 @@ class TimelineEventCard extends StatelessWidget {
       return Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
-          boxShadow: [
+          boxShadow: const [
             BoxShadow(
               color: Colors.black12,
               blurRadius: 8,
-              offset: const Offset(0, 4),
+              offset: Offset(0, 4),
             )
           ],
         ),
@@ -326,11 +326,11 @@ class TimelineEventCard extends StatelessWidget {
               height: 180,
               width: double.infinity,
               color: AppColors.surfaceMuted,
-              child: Column(
+              child: const Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.broken_image_rounded, color: AppColors.textMuted, size: 40),
-                  const SizedBox(height: 8),
+                  Icon(Icons.broken_image_rounded, color: AppColors.textMuted, size: 40),
+                  SizedBox(height: 8),
                   Text('Image unavailable', style: TextStyle(color: AppColors.textMuted)),
                 ],
               ),
@@ -344,12 +344,12 @@ class TimelineEventCard extends StatelessWidget {
       return Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.8),
+          color: Colors.white.withValues(alpha: 0.8),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: AppColors.accent.withOpacity(0.4)),
+          border: Border.all(color: AppColors.accent.withValues(alpha: 0.4)),
           boxShadow: [
             BoxShadow(
-              color: AppColors.accent.withOpacity(0.08),
+              color: AppColors.accent.withValues(alpha: 0.08),
               blurRadius: 10,
               offset: const Offset(0, 4),
             )
@@ -360,13 +360,13 @@ class TimelineEventCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: AppColors.accent.withOpacity(0.15),
+                color: AppColors.accent.withValues(alpha: 0.15),
                 shape: BoxShape.circle,
               ),
               child: const Icon(Icons.emoji_events_rounded, color: AppColors.accent, size: 36),
             ),
             const SizedBox(width: 16),
-            Expanded(
+            const Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -379,7 +379,7 @@ class TimelineEventCard extends StatelessWidget {
                       letterSpacing: 0.3,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  SizedBox(height: 4),
                   Text(
                     'Amazing progress. Keep exploring!',
                     style: TextStyle(

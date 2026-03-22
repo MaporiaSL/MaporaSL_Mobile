@@ -6,6 +6,7 @@ import '../../settings/presentation/settings_screen.dart';
 import 'providers/profile_providers.dart';
 import '../../../providers/progress_provider.dart';
 import '../../achievements/presentation/achievements_screen.dart';
+import '../../../splash/presentation/splash_screen.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
@@ -31,50 +32,73 @@ class ProfileScreen extends ConsumerWidget {
               );
             },
           ),
-          IconButton(
-            icon: const Icon(Icons.logout),
-            tooltip: 'Logout',
-            onPressed: () => _showLogoutConfirmation(context, ref),
+          PopupMenuButton(
+            itemBuilder: (context) => [
+              PopupMenuItem(
+                child: const Row(
+                  children: [
+                    Icon(Icons.logout, size: 20),
+                    SizedBox(width: 12),
+                    Text('Logout'),
+                  ],
+                ),
+                onTap: () => _showLogoutConfirmation(context, ref),
+              ),
+              PopupMenuItem(
+                child: const Row(
+                  children: [
+                    Icon(Icons.delete, size: 20, color: Colors.red),
+                    SizedBox(width: 12),
+                    Text('Delete Account', style: TextStyle(color: Colors.red)),
+                  ],
+                ),
+                onTap: () => _showDeleteConfirmation(context, ref),
+              ),
+            ],
           ),
         ],
       ),
       body: profileAsyncValue.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stackTrace) => Center(
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(Icons.error_outline, size: 64, color: Colors.red),
-                const SizedBox(height: 16),
-                Text(
-                  'Error Loading Profile',
-                  style: Theme.of(
-                    context,
-                  ).textTheme.titleLarge?.copyWith(color: Colors.red),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  error.toString(),
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-                const SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: () => ref.refresh(userProfileProvider),
-                  child: const Text('Retry'),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Check Logs: User ID may be null (auth required)',
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.labelSmall,
-                ),
-              ],
+        loading: () => _buildLoadingSkeleton(context),
+        error: (error, stackTrace) {
+          final errorUi = _buildErrorUi(error);
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.error_outline, size: 64, color: Colors.red),
+                  const SizedBox(height: 16),
+                  Text(
+                    errorUi.title,
+                    style: Theme.of(
+                      context,
+                    ).textTheme.titleLarge?.copyWith(color: Colors.red),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    errorUi.message,
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () => _retryAll(ref),
+                    child: const Text('Retry'),
+                  ),
+                  if (errorUi.showSignInAction) ...[
+                    const SizedBox(height: 8),
+                    TextButton(
+                      onPressed: () => _performLogout(context, ref),
+                      child: const Text('Sign In Again'),
+                    ),
+                  ],
+                ],
+              ),
             ),
-          ),
-        ),
+          );
+        },
         data: (profile) {
           if (profile == null) {
             return Center(
@@ -95,7 +119,7 @@ class ProfileScreen extends ConsumerWidget {
                     ),
                     const SizedBox(height: 8),
                     const Text(
-                      'No user profile exists for this account.\n\nThis could mean:\n• User not authenticated\n• User ID not found in database\n• Backend API error',
+                      'No user profile exists for this account.\n\nThis could mean:\nG�� User not authenticated\nG�� User ID not found in database\nG�� Backend API error',
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 16),
@@ -123,7 +147,7 @@ class ProfileScreen extends ConsumerWidget {
                 const SizedBox(height: 24),
 
                 // Gamification Progress
-                _buildExplorerProgressSection(context, progress),
+                _buildExplorerProgressSection(context, profile),
                 const SizedBox(height: 24),
 
                 // Badges
@@ -178,6 +202,70 @@ class ProfileScreen extends ConsumerWidget {
             ),
           );
         },
+      ),
+    );
+  }
+
+  void _retryAll(WidgetRef ref) {
+    ref.refresh(userProfileProvider);
+    ref.refresh(userContributionsProvider);
+    ref.refresh(topContributorsProvider);
+    ref.refresh(progressProvider);
+  }
+
+  _ErrorUiData _buildErrorUi(Object error) {
+    final message = error.toString().isEmpty
+        ? 'An unexpected error occurred while loading profile data.'
+        : error.toString();
+    return _ErrorUiData(title: 'Error Loading Profile', message: message);
+  }
+
+  Widget _buildLoadingSkeleton(BuildContext context) {
+    final placeholder = Colors.grey.shade300;
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              CircleAvatar(radius: 40, backgroundColor: placeholder),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(height: 16, width: 160, color: placeholder),
+                    const SizedBox(height: 8),
+                    Container(height: 12, width: 220, color: placeholder),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 24),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: List.generate(
+              3,
+              (_) => Container(height: 64, width: 86, color: placeholder),
+            ),
+          ),
+          const SizedBox(height: 24),
+          Container(height: 16, width: 170, color: placeholder),
+          const SizedBox(height: 12),
+          ...List.generate(
+            3,
+            (_) => Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Container(
+                height: 44,
+                width: double.infinity,
+                color: placeholder,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -286,9 +374,11 @@ class ProfileScreen extends ConsumerWidget {
 
   Widget _buildExplorerProgressSection(
     BuildContext context,
-    UserProgress progress,
+    profile_model.UserProfile profile,
   ) {
-    final percentage = (progress.progressPercentage / 100).clamp(0.0, 1.0);
+    // Level up logic is now handled on the backend
+    final percentage = (profile.xpTotal % 100 / 100).clamp(0.0, 1.0);
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(14),
@@ -305,7 +395,7 @@ class ProfileScreen extends ConsumerWidget {
               const Icon(Icons.workspace_premium, color: Colors.indigo),
               const SizedBox(width: 8),
               Text(
-                'Explorer Level ${progress.currentLevel}',
+                'Explorer Level ${profile.currentLevel}',
                 style: const TextStyle(
                   fontWeight: FontWeight.w700,
                   fontSize: 16,
@@ -313,7 +403,7 @@ class ProfileScreen extends ConsumerWidget {
               ),
               const Spacer(),
               Text(
-                '${progress.totalXP} XP',
+                '${profile.xpTotal} XP',
                 style: TextStyle(
                   fontWeight: FontWeight.w600,
                   color: Colors.blueGrey.shade700,
@@ -333,7 +423,7 @@ class ProfileScreen extends ConsumerWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            '${progress.xpToNextLevel} XP to next level',
+            '${profile.xpToNextLevel} XP to next level',
             style: TextStyle(color: Colors.blueGrey.shade700),
           ),
           const SizedBox(height: 10),
@@ -341,19 +431,10 @@ class ProfileScreen extends ConsumerWidget {
             spacing: 8,
             runSpacing: 8,
             children: [
-              _progressChip(
-                'Achievements',
-                progress.completedAchievements.length.toString(),
-              ),
-              _progressChip(
-                'Districts',
-                progress.unlockedDistricts.length.toString(),
-              ),
-              _progressChip(
-                'Provinces',
-                progress.unlockedProvinces.length.toString(),
-              ),
-              _progressChip('Visits', progress.totalVisits.toString()),
+              _progressChip('Achievements', profile.badges.length.toString()),
+              _progressChip('Districts', '${profile.unlockedDistrictsCount}'),
+              _progressChip('Provinces', '${profile.unlockedProvincesCount}'),
+              _progressChip('Visits', profile.totalVisited.toString()),
             ],
           ),
           const SizedBox(height: 10),
@@ -582,15 +663,103 @@ class ProfileScreen extends ConsumerWidget {
       await authService.signOut();
 
       if (context.mounted) {
-        Navigator.of(
-          context,
-        ).pushNamedAndRemoveUntil('/login', (route) => false);
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (_) => const SplashScreen()),
+          (route) => false,
+        );
       }
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text('Error: $e')));
+      }
+    }
+  }
+
+  void _showDeleteConfirmation(BuildContext context, WidgetRef ref) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete Account'),
+        content: const Text(
+          'Are you sure you want to delete your account? This action is PERMANENT and cannot be undone.\n\n'
+          'G�� All your data will be permanently removed from our servers\n'
+          'G�� Your account will be deleted from Firebase Auth\n'
+          'G�� You will NOT be able to log back in with these credentials\n'
+          'G�� This action happens immediately',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              _performDelete(context, ref);
+            },
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: const Text('Delete Permanently'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _performDelete(BuildContext context, WidgetRef ref) async {
+    try {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Deleting account permanently...'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+
+      final authService = ref.read(authServiceProvider);
+      final userId = authService.currentUser?.uid;
+
+      if (userId == null) {
+        throw Exception('User not found');
+      }
+
+      // Get the current user's ID token for authentication
+      final idToken = await authService.getIdToken();
+      if (idToken == null) {
+        throw Exception('Failed to get authentication token');
+      }
+
+      // Call the backend API to delete the account
+      final repository = ref.read(profileRepositoryProvider);
+      await repository.deleteAccount();
+
+      // Sign out the user locally
+      await authService.signOut();
+
+      if (context.mounted) {
+        // Show final confirmation
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Account deleted successfully. You cannot log back in with these credentials.',
+            ),
+            duration: Duration(seconds: 3),
+          ),
+        );
+
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (_) => const SplashScreen()),
+          (route) => false,
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error deleting account: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
       }
     }
   }
@@ -612,4 +781,16 @@ class _StatCard extends StatelessWidget {
       ],
     );
   }
+}
+
+class _ErrorUiData {
+  final String title;
+  final String message;
+  final bool showSignInAction;
+
+  const _ErrorUiData({
+    required this.title,
+    required this.message,
+    this.showSignInAction = false,
+  });
 }

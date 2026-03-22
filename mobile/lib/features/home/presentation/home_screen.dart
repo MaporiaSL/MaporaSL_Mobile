@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../map/presentation/map_screen.dart';
@@ -20,13 +20,13 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
-  int _selectedIndex = 0;
+  int _selectedIndex = 2;
   bool _isCheckingProfile = true;
 
   final List<Widget> _screens = const [
-    MapScreen(travelId: 'default'), // 0 Map
-    AlbumPage(), // 1 Album
-    TripsPage(), // 2 Trips
+    AlbumPage(), // 0 Album
+    TripsPage(), // 1 Trips
+    MapScreen(travelId: 'default'), // 2 Map
     MemoryLanePage(), // 3 Timeline
     ShopPage(), // 4 Shop
   ];
@@ -53,16 +53,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       }
       final email = user.email ?? 'unknown@local.test';
       final name = user.displayName ?? email.split('@').first;
-      final district = await LocalPrefs.getHometownDistrict();
+      final district = await LocalPrefs.getHometownDistrict() ?? 'Colombo';
       try {
-        if (district != null) {
-          await AuthApi().registerUser(
-            email: email,
-            name: name,
-            hometownDistrict: district,
-          );
-          await LocalPrefs.clearHometownDistrict();
-        }
+        await AuthApi().registerUser(
+          email: email,
+          name: name,
+          hometownDistrict: district,
+        );
+        await LocalPrefs.clearHometownDistrict();
       } catch (_) {
         // Swallow registration errors during dev flow.
       }
@@ -83,7 +81,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           : Stack(
               children: [
                 _screens[_selectedIndex],
-                if (_selectedIndex == 0)
+                if (_selectedIndex == 2)
                   Positioned(
                     right: 16,
                     bottom: 96,
@@ -154,6 +152,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       bottomNavigationBar: BottomNavBar(
         currentIndex: _selectedIndex,
         onTap: (index) {
+          if (index == 0 && _selectedIndex == 0) {
+            // Reset district focus if tapping map again while active
+            ref.read(districtFocusProvider.notifier).state = false;
+          }
           setState(() => _selectedIndex = index);
         },
       ),

@@ -4,6 +4,8 @@
 *.pyc
 *.swp
 *.lock
+*.bak
+_gradle_probe/
 .DS_Store
 .atom/
 .buildlog/

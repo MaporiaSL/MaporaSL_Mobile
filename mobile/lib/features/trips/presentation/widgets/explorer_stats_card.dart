@@ -11,7 +11,7 @@ class ExplorerStatsCard extends ConsumerWidget {
     final statsAsync = ref.watch(tripsStatsProvider);
 
     return Card(
-      margin: const EdgeInsets.all(16),
+      margin: const EdgeInsets.all(14),
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
@@ -174,4 +174,3 @@ class _StatItem extends StatelessWidget {
     );
   }
 }
-

@@ -3,6 +3,7 @@ import '../../data/regions_data.dart';
 import '../../data/geojson_parser.dart';
 import '../painters/cartoon_map_painter.dart';
 import '../theme/map_visual_theme.dart';
+import '../../providers/user_location_provider.dart';
 
 class DistrictFocusTarget {
   final Offset centroidFraction;
@@ -36,6 +37,9 @@ class CartoonMapCanvas extends StatefulWidget {
   /// Map of district ID to completion percentage (0.0 - 1.0)
   final Map<String, double> districtProgress;
 
+  /// User's current location for display on map
+  final UserLocation? userLocation;
+
   const CartoonMapCanvas({
     super.key,
     required this.regions,
@@ -48,6 +52,7 @@ class CartoonMapCanvas extends StatefulWidget {
     this.focusMode = false,
     this.focusedDistrictName,
     this.districtProgress = const <String, double>{},
+    this.userLocation,
   });
 
   @override
@@ -359,6 +364,7 @@ class _CartoonMapCanvasState extends State<CartoonMapCanvas> {
                 provinceLabelPositions: _provinceLabelPositions,
                 theme: widget.theme,
                 districtProgress: widget.districtProgress,
+                userLocation: widget.userLocation,
               ),
               child: Container(),
             ),

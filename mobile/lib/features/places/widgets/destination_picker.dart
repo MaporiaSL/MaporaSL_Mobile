@@ -25,21 +25,21 @@ class _DestinationPickerState extends State<DestinationPicker> {
     if (_currentQuery != query) return const Iterable<Widget>.empty();
 
     try {
-      print('DEBUG: [DestinationPicker] Searching local database for: "$query"');
+      debugPrint('DEBUG: [DestinationPicker] Searching local database for: "$query"');
 
       // Fetch from internal DB (now contains 1200+ places)
       final internalPlaces = await _repository.getPlaces(search: query, limit: 10).timeout(
         const Duration(seconds: 5), 
         onTimeout: () {
-          print('DEBUG: [DestinationPicker] Local DB request timed out');
+          debugPrint('DEBUG: [DestinationPicker] Local DB request timed out');
           return <Place>[];
         },
       ).catchError((e) {
-        print('DEBUG: [DestinationPicker] Local DB Error: $e');
+        debugPrint('DEBUG: [DestinationPicker] Local DB Error: $e');
         return <Place>[];
       });
       
-      print('DEBUG: [DestinationPicker] Found ${internalPlaces.length} results');
+      debugPrint('DEBUG: [DestinationPicker] Found ${internalPlaces.length} results');
 
       final List<Widget> items = [];
 
@@ -60,7 +60,7 @@ class _DestinationPickerState extends State<DestinationPicker> {
           title: Text(place.name),
           subtitle: Text('${place.district ?? ""}, ${place.province ?? ""}'),
           onTap: () {
-            print('DEBUG: [DestinationPicker] Selected place: ${place.name}');
+            debugPrint('DEBUG: [DestinationPicker] Selected place: ${place.name}');
             widget.onDestinationSelected(place.name);
             _searchController.closeView(place.name);
           },
@@ -68,7 +68,7 @@ class _DestinationPickerState extends State<DestinationPicker> {
       }
 
       if (items.isEmpty) {
-        print('DEBUG: [DestinationPicker] No results found for "$query"');
+        debugPrint('DEBUG: [DestinationPicker] No results found for "$query"');
         items.add(const Center(
           child: Padding(
             padding: EdgeInsets.all(32.0),
@@ -85,7 +85,7 @@ class _DestinationPickerState extends State<DestinationPicker> {
       
       return items;
     } catch (e) {
-      print('DEBUG: [DestinationPicker] Search Critical Error: $e');
+      debugPrint('DEBUG: [DestinationPicker] Search Critical Error: $e');
       return [
         ListTile(
           leading: const Icon(Icons.error, color: Colors.red),

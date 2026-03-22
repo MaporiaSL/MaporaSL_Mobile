@@ -1,6 +1,5 @@
 Param(
   [string]$ApiBaseUrl = $null,
-  [string]$AuthBypass = $null,
   [string[]]$FlutterArgs = @()
 )
 
@@ -28,17 +27,10 @@ Get-Content $envFile | ForEach-Object {
 }
 
 if ($ApiBaseUrl) { $envMap["API_BASE_URL"] = $ApiBaseUrl }
-if ($AuthBypass) { $envMap["AUTH_BYPASS"] = $AuthBypass }
 
 $defines = @()
 if ($envMap.ContainsKey("API_BASE_URL")) {
   $defines += "--dart-define=API_BASE_URL=$($envMap["API_BASE_URL"])"
-}
-if ($envMap.ContainsKey("AUTH_BYPASS")) {
-  $defines += "--dart-define=AUTH_BYPASS=$($envMap["AUTH_BYPASS"])"
-}
-if ($envMap.ContainsKey("PROFILE_FALLBACK_USER_ID")) {
-  $defines += "--dart-define=PROFILE_FALLBACK_USER_ID=$($envMap["PROFILE_FALLBACK_USER_ID"])"
 }
 
 Set-Location (Join-Path $root "mobile")

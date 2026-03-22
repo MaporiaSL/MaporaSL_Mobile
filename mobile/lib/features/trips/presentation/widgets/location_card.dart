@@ -6,7 +6,7 @@ class LocationCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      elevation: 4,
+      elevation: 3.5,
       shadowColor: Colors.blue.withValues(alpha: 0.2),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: Padding(
@@ -20,7 +20,11 @@ class LocationCard extends StatelessWidget {
                 color: Colors.blue.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(16),
               ),
-              child: const Icon(Icons.location_on, color: Colors.blue, size: 30),
+              child: const Icon(
+                Icons.location_on,
+                color: Colors.blue,
+                size: 30,
+              ),
             ),
             const SizedBox(width: 16),
             Expanded(
@@ -50,4 +54,3 @@ class LocationCard extends StatelessWidget {
     );
   }
 }
-

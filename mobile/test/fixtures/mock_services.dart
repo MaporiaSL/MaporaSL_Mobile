@@ -1,4 +1,4 @@
-/// Mock service implementations for testing
+// Mock service implementations for testing
 import 'package:gemified_travel_portfolio/features/exploration/data/models/exploration_models.dart';
 
 /// Mock API Service

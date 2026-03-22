@@ -1,4 +1,4 @@
-/// Test helpers and utilities for Flutter testing
+// Test helpers and utilities for Flutter testing
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -83,7 +83,6 @@ class TestHelpers {
   static Future<void> scrollToWidget(
     WidgetTester tester,
     Finder finder, {
-    ScrollDirection direction = ScrollDirection.down,
     double delta = 300.0,
   }) async {
     await tester.drag(find.byType(SingleChildScrollView), Offset(0, -delta));

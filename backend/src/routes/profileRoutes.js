@@ -8,6 +8,7 @@ const {
   logoutUser,
   getTopContributors,
   uploadUserAvatar,
+  deleteUserAccount,
 } = require('../controllers/profileController');
 const { checkJwt, extractUserId } = require('../middleware/auth');
 
@@ -52,6 +53,13 @@ router.post('/:userId', updateUserProfile);
  * @access  Private (JWT required, must match userId)
  */
 router.post('/:userId/avatar', avatarUpload.single('avatar'), uploadUserAvatar);
+
+/**
+ * @route   DELETE /api/profile/:userId/account
+ * @desc    Delete user account profile domain data and user record
+ * @access  Private (JWT required, must match userId)
+ */
+router.delete('/:userId/account', deleteUserAccount);
 
 /**
  * @route   POST /api/auth/logout

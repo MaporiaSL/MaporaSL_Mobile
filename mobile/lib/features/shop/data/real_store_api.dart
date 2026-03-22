@@ -71,6 +71,13 @@ class RealStoreApi {
     );
   }
 
+  Future<void> verifyPayment(String orderId) async {
+    await _client.post(
+      '/api/store/checkout/success',
+      data: {'orderId': orderId},
+    );
+  }
+
   Future<List<Order>> getOrders() async {
     final Response response = await _client.get('/api/store/orders');
     final List data = response.data as List? ?? <dynamic>[];

@@ -23,12 +23,11 @@ class BottomNavBar extends StatelessWidget {
       onTap: onTap,
       height: 75,
       items: <Widget>[
-        _buildNavItem(Icons.map, Icons.map_outlined, 'Map', 0),
         _buildNavItem(
           Icons.photo_album,
           Icons.photo_album_outlined,
           'Album',
-          1,
+          0,
         ),
         _buildNavItem(Icons.card_travel, Icons.card_travel, 'Trips', 2),
         _buildNavItem(Icons.history, Icons.history_outlined, 'Timeline', 3),

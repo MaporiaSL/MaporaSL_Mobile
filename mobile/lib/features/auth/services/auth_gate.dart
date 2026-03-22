@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import '../../../core/config/app_config.dart';
 import '../../home/presentation/home_screen.dart';
 import '../presentation/login_screen.dart';
 import '../presentation/email_verification_screen.dart';
@@ -24,9 +22,6 @@ class AuthGate extends StatelessWidget {
         final user = snapshot.data;
 
         if (user == null) {
-          if (kDebugMode && AppConfig.authBypass) {
-            return const HomeScreen();
-          }
           return const LoginScreen();
         }
 
