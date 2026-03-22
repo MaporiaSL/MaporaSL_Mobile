@@ -156,7 +156,7 @@ class ExplorationNotifier extends StateNotifier<ExplorationState> {
 
       state = state.copyWith(
         currentStepIndex: 5,
-        verificationStep: 'Verification complete',
+        verificationStep: 'Verification Successful!',
       );
     } catch (error) {
       final errorStr = error.toString().toLowerCase();

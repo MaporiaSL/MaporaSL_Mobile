@@ -285,8 +285,18 @@ class _DynamicVisitSheetState extends ConsumerState<DynamicVisitSheet>
                   Colors.orange,
                   Colors.purple,
                   Colors.amber,
+                  Colors.cyan,
+                  Colors.lime,
                 ],
                 createParticlePath: _drawStar,
+              ),
+            ),
+            Positioned(
+              top: 10,
+              right: 10,
+              child: IconButton(
+                icon: const Icon(Icons.close, color: Colors.grey),
+                onPressed: () => Navigator.of(context).pop(),
               ),
             ),
             Column(
@@ -480,10 +490,10 @@ class _DynamicVisitSheetState extends ConsumerState<DynamicVisitSheet>
     required DistrictAssignment? currentAssignment,
   }) {
     // Extract XP amount from exploration state if available
-    if (widget.isExploration && districtJustUnlocked) {
-      // This would come from the API response in a real implementation
-      // For now, calculating based on tier
-      _xpAwarded = 10 + math.Random().nextInt(5); // 10-15 XP base
+    if (widget.isExploration) {
+      // Award XP for any successful discovery
+      _xpAwarded = districtJustUnlocked ? 25 : 10;
+      _xpAwarded += math.Random().nextInt(5);
     }
 
     return Stack(
@@ -522,20 +532,29 @@ class _DynamicVisitSheetState extends ConsumerState<DynamicVisitSheet>
               const SizedBox(height: 24),
               Text(
                 districtJustUnlocked
-                    ? 'District Unlocked!'
-                    : 'Visit Confirmed!',
+                    ? 'DISTRICT UNLOCKED!'
+                    : 'NEW DISCOVERY!',
                 style: const TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
+                  fontSize: 28,
+                  fontWeight: FontWeight.w900,
+                  color: Color(0xFF0F172A),
+                  letterSpacing: -0.5,
                 ),
               ),
               const SizedBox(height: 8),
-              Text(
-                districtJustUnlocked
-                    ? '${currentAssignment?.visitedCount ?? 0}/${currentAssignment?.assignedCount ?? 0} Places Visited in ${currentAssignment?.district ?? ''}'
-                    : 'You have successfully visited ${widget.placeName}',
-                style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
-                textAlign: TextAlign.center,
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 40),
+                child: Text(
+                  districtJustUnlocked
+                      ? 'Congratulations! You have mastered the entire ${currentAssignment?.district ?? ''} district.'
+                      : 'You just unlocked ${widget.placeName}! A new certificate has been added to your collection.',
+                  style: TextStyle(
+                    fontSize: 15,
+                    color: Colors.grey.shade700,
+                    height: 1.4,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
               ),
               if (districtJustUnlocked && _xpAwarded > 0) ...[
                 const SizedBox(height: 16),
@@ -569,15 +588,34 @@ class _DynamicVisitSheetState extends ConsumerState<DynamicVisitSheet>
                   ),
                 ),
               ],
-              if (districtJustUnlocked) ...[
-                const SizedBox(height: 20),
-                OutlinedButton.icon(
-                  onPressed: () {
-                    if (currentAssignment == null) return;
-                    _openCertificateOverlay(assignment: currentAssignment);
-                  },
-                  icon: const Icon(Icons.card_membership),
-                  label: const Text('View Certificate'),
+              if (widget.isExploration) ...[
+                const SizedBox(height: 24),
+                Container(
+                  width: double.infinity,
+                  margin: const EdgeInsets.symmetric(horizontal: 40),
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      _openCertificateOverlay(
+                        assignment: currentAssignment,
+                        location: currentAssignment == null || districtJustUnlocked ? null : widget.explorationLocation,
+                      );
+                    },
+                    icon: const Icon(Icons.share, size: 20),
+                    label: Text(
+                      districtJustUnlocked ? 'SHARE DISTRICT MEDAL' : 'SHARE DISCOVERY CARD',
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF0F172A),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.all(18),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      elevation: 4,
+                      shadowColor: Colors.black45,
+                    ),
+                  ),
                 ),
               ],
               const SizedBox(height: 32),
@@ -594,7 +632,11 @@ class _DynamicVisitSheetState extends ConsumerState<DynamicVisitSheet>
                     borderRadius: BorderRadius.circular(100),
                   ),
                 ),
-                child: const Text('Awesome!', style: TextStyle(fontSize: 16)),
+                child: const Text('BACK TO MAP', style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 1.1,
+                )),
               ),
               const SizedBox(height: 40),
             ],
