@@ -232,7 +232,8 @@ class _MapScreenState extends ConsumerState<MapScreen>
           ),
         ),
       );
-    }    return Scaffold(
+    }
+    return Scaffold(
       appBar: AppBar(
         title: const Text(
           '🗺️ Discover Sri Lanka',
@@ -284,25 +285,25 @@ class _MapScreenState extends ConsumerState<MapScreen>
                                   return;
                                 }
 
-                            final sameDistrict =
-                                _normalizeKey(selectedDistrict) ==
-                                _normalizeKey(districtName);
-                            if (sameDistrict && _isDistrictFocused) {
-                              selectedDistrict = null;
-                              selectedProvince = null;
-                              _isDistrictFocused = false;
-                              _selectedLocation = null;
-                              return;
-                            }
+                                final sameDistrict =
+                                    _normalizeKey(selectedDistrict) ==
+                                    _normalizeKey(districtName);
+                                if (sameDistrict && _isDistrictFocused) {
+                                  selectedDistrict = null;
+                                  selectedProvince = null;
+                                  _isDistrictFocused = false;
+                                  _selectedLocation = null;
+                                  return;
+                                }
 
-                            selectedDistrict = districtName;
-                            selectedProvince =
-                                (provinceName != null &&
-                                    provinceName.isNotEmpty)
-                                ? provinceName
-                                : null;
-                            _isDistrictFocused = true;
-                            _selectedLocation = null;
+                                selectedDistrict = districtName;
+                                selectedProvince =
+                                    (provinceName != null &&
+                                        provinceName.isNotEmpty)
+                                    ? provinceName
+                                    : null;
+                                _isDistrictFocused = true;
+                                _selectedLocation = null;
                               });
                             },
                       ),
