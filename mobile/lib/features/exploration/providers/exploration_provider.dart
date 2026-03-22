@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import '../data/exploration_api.dart';
 import '../data/models/exploration_models.dart';
+import '../../profile/presentation/providers/profile_providers.dart';
 
 class ExplorationState {
   final bool isLoading;
