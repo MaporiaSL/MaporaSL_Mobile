@@ -37,7 +37,6 @@ class QuestCard extends ConsumerWidget {
           collapsedShape: const Border(),
           backgroundColor: Colors.white,
           collapsedBackgroundColor: Colors.white,
-          leading: _buildLeadingIndicator(isCompleted, isNew),
           title: Row(
             children: [
               Expanded(
@@ -58,19 +57,13 @@ class QuestCard extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  children: [
-                    Icon(Icons.location_on, size: 12, color: Colors.grey[400]),
-                    const SizedBox(width: 4),
-                    Text(
-                      assignment.province,
-                      style: TextStyle(
-                        color: Colors.grey[600],
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
+                Text(
+                  assignment.province,
+                  style: TextStyle(
+                    color: Colors.grey[600],
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
                 const SizedBox(height: 12),
                 _buildProgressSection(context, progress),
@@ -99,63 +92,21 @@ class QuestCard extends ConsumerWidget {
     );
   }
 
-  Widget _buildLeadingIndicator(bool isCompleted, bool isNew) {
-    return Container(
-      width: 48,
-      height: 48,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: isCompleted
-              ? [const Color(0xFF4CAF50), const Color(0xFF2E7D32)]
-              : isNew
-                  ? [const Color(0xFF2196F3), const Color(0xFF1976D2)]
-                  : [const Color(0xFFFF9800), const Color(0xFFF57C00)],
-        ),
-        borderRadius: BorderRadius.circular(14),
-        boxShadow: [
-          BoxShadow(
-            color: (isCompleted ? Colors.green : isNew ? Colors.blue : Colors.orange).withValues(alpha: 0.3),
-            blurRadius: 8,
-            offset: const Offset(0, 3),
-          ),
-        ],
-      ),
-      child: Icon(
-        isCompleted ? Icons.emoji_events : isNew ? Icons.rocket_launch : Icons.auto_awesome,
-        color: Colors.white,
-        size: 24,
-      ),
-    );
-  }
-
   Widget _buildXPBadge(int xp, bool isCompleted) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
         color: isCompleted ? Colors.amber[50] : Colors.blue[50],
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: (isCompleted ? Colors.amber[200] : Colors.blue[200])!),
       ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            Icons.bolt,
-            size: 14,
-            color: isCompleted ? Colors.amber[800] : Colors.blue[800],
-          ),
-          const SizedBox(width: 2),
-          Text(
-            '+$xp XP',
-            style: TextStyle(
-              fontSize: 11,
-              fontWeight: FontWeight.bold,
-              color: isCompleted ? Colors.amber[900] : Colors.blue[900],
-            ),
-          ),
-        ],
+      child: Text(
+        '+$xp XP',
+        style: TextStyle(
+          fontSize: 11,
+          fontWeight: FontWeight.bold,
+          color: isCompleted ? Colors.amber[900] : Colors.blue[900],
+        ),
       ),
     );
   }
@@ -245,19 +196,6 @@ class QuestCard extends ConsumerWidget {
       child: ListTile(
         dense: true,
         visualDensity: VisualDensity.compact,
-        leading: Container(
-          width: 32,
-          height: 32,
-          decoration: BoxDecoration(
-            color: location.visited ? Colors.green[50] : Colors.grey[50],
-            shape: BoxShape.circle,
-          ),
-          child: Icon(
-            location.visited ? Icons.check_circle : _getCategoryIcon(location.type),
-            color: location.visited ? Colors.green : Colors.grey[400],
-            size: 18,
-          ),
-        ),
         title: Text(
           location.name,
           style: TextStyle(
@@ -296,19 +234,13 @@ class QuestCard extends ConsumerWidget {
                 ),
                 child: const Text('Visit', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
               )
-            : Icon(Icons.verified, color: Colors.green[300], size: 20),
+            : Container(
+                padding: const EdgeInsets.all(4),
+                decoration: BoxDecoration(color: Colors.green[50], shape: BoxShape.circle),
+                child: Icon(Icons.check, color: Colors.green[400], size: 14),
+              ),
       ),
     );
-  }
-
-  IconData _getCategoryIcon(String type) {
-    final t = type.toLowerCase();
-    if (t.contains('temple')) return Icons.temple_hindu;
-    if (t.contains('nature') || t.contains('park')) return Icons.forest;
-    if (t.contains('historical')) return Icons.account_balance;
-    if (t.contains('beach')) return Icons.beach_access;
-    if (t.contains('waterfall')) return Icons.water;
-    return Icons.location_on_outlined;
   }
 }
 
