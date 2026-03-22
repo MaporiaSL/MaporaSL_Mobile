@@ -143,7 +143,7 @@ class ProfileScreen extends ConsumerWidget {
                 const SizedBox(height: 24),
 
                 // Gamification Progress
-                _buildExplorerProgressSection(context, progress),
+                _buildExplorerProgressSection(context, profile),
                 const SizedBox(height: 24),
 
                 // Badges
@@ -306,9 +306,11 @@ class ProfileScreen extends ConsumerWidget {
 
   Widget _buildExplorerProgressSection(
     BuildContext context,
-    UserProgress progress,
+    profile_model.UserProfile profile,
   ) {
-    final percentage = (progress.progressPercentage / 100).clamp(0.0, 1.0);
+    // Level up logic is now handled on the backend
+    final percentage = (profile.xpTotal % 100 / 100).clamp(0.0, 1.0);
+    
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(14),
@@ -325,7 +327,7 @@ class ProfileScreen extends ConsumerWidget {
               const Icon(Icons.workspace_premium, color: Colors.indigo),
               const SizedBox(width: 8),
               Text(
-                'Explorer Level ${progress.currentLevel}',
+                'Explorer Level ${profile.currentLevel}',
                 style: const TextStyle(
                   fontWeight: FontWeight.w700,
                   fontSize: 16,
@@ -333,7 +335,7 @@ class ProfileScreen extends ConsumerWidget {
               ),
               const Spacer(),
               Text(
-                '${progress.totalXP} XP',
+                '${profile.xpTotal} XP',
                 style: TextStyle(
                   fontWeight: FontWeight.w600,
                   color: Colors.blueGrey.shade700,
@@ -353,7 +355,7 @@ class ProfileScreen extends ConsumerWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            '${progress.xpToNextLevel} XP to next level',
+            '${profile.xpToNextLevel} XP to next level',
             style: TextStyle(color: Colors.blueGrey.shade700),
           ),
           const SizedBox(height: 10),
@@ -363,17 +365,17 @@ class ProfileScreen extends ConsumerWidget {
             children: [
               _progressChip(
                 'Achievements',
-                progress.completedAchievements.length.toString(),
+                profile.badges.length.toString(),
               ),
               _progressChip(
                 'Districts',
-                progress.unlockedDistricts.length.toString(),
+                '${profile.unlockedDistrictsCount}',
               ),
               _progressChip(
                 'Provinces',
-                progress.unlockedProvinces.length.toString(),
+                '${profile.unlockedProvincesCount}',
               ),
-              _progressChip('Visits', progress.totalVisits.toString()),
+              _progressChip('Visits', profile.totalVisited.toString()),
             ],
           ),
           const SizedBox(height: 10),

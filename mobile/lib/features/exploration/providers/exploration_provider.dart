@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import '../data/exploration_api.dart';
 import '../data/models/exploration_models.dart';
+import '../../profile/presentation/providers/profile_providers.dart';
 
 class ExplorationState {
   final bool isLoading;
@@ -62,9 +63,10 @@ class ExplorationState {
 }
 
 class ExplorationNotifier extends StateNotifier<ExplorationState> {
-  ExplorationNotifier(this._api) : super(ExplorationState.initial());
+  ExplorationNotifier(this._api, this._ref) : super(ExplorationState.initial());
 
   final ExplorationApi _api;
+  final Ref _ref;
 
   Future<void> loadAssignments() async {
     state = state.copyWith(isLoading: true, error: null);
@@ -158,6 +160,9 @@ class ExplorationNotifier extends StateNotifier<ExplorationState> {
         currentStepIndex: 5,
         verificationStep: 'Verification Successful!',
       );
+      
+      // Sync profile stats after successful visit
+      _ref.invalidate(userProfileProvider);
     } catch (error) {
       final errorStr = error.toString().toLowerCase();
       if (errorStr.contains('not enough valid gps samples') || errorStr.contains('gps')) {
@@ -240,5 +245,5 @@ class ExplorationNotifier extends StateNotifier<ExplorationState> {
 
 final explorationProvider =
     StateNotifierProvider<ExplorationNotifier, ExplorationState>((ref) {
-      return ExplorationNotifier(ExplorationApi());
+      return ExplorationNotifier(ExplorationApi(), ref);
     });
