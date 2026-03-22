@@ -165,6 +165,32 @@ async function updateUserProfile(req, res) {
       return res.status(404).json({ error: 'User not found' });
     }
 
+    // Fetch submission stats for the full profile response
+    const totalSubmitted = await PlaceSubmission.countDocuments({ userId });
+    const approvedCount = await PlaceSubmission.countDocuments({
+      userId,
+      status: 'approved',
+    });
+    const approvalRate = totalSubmitted > 0 ? approvedCount / totalSubmitted : 0;
+
+    // Fetch user badges
+    const userBadges = await UserBadge.findOne({ userId });
+    const badgesList = userBadges ? userBadges.badges : [];
+
+    // Calculate leaderboard rank (consistent with getUserProfile)
+    const rankedUsers = await PlaceSubmission.aggregate([
+      { $match: { status: 'approved' } },
+      { $group: { _id: '$userId', approvedCount: { $sum: 1 } } },
+      { $sort: { approvedCount: -1 } },
+    ]);
+
+    let leaderboardRank = null;
+    rankedUsers.forEach((u, index) => {
+      if (u._id === userId) {
+        leaderboardRank = index + 1;
+      }
+    });
+
     res.status(200).json({
       message: 'Profile updated successfully',
       user: {
@@ -172,7 +198,18 @@ async function updateUserProfile(req, res) {
         name: updatedUser.name,
         email: updatedUser.email,
         avatarUrl: updatedUser.profilePicture || '',
+        bio: updatedUser.bio || '',
+        hometownDistrict: updatedUser.hometownDistrict || '',
+        preferredLanguage: updatedUser.preferredLanguage || 'English',
+        travelInterests: updatedUser.travelInterests || [],
       },
+      stats: {
+        totalSubmitted,
+        approvedCount,
+        approvalRate: parseFloat((approvalRate * 100).toFixed(2)),
+      },
+      badges: badgesList,
+      leaderboardRank: leaderboardRank || 0,
     });
   } catch (error) {
     console.error('Update user profile error:', error);
@@ -275,8 +312,17 @@ async function uploadUserAvatar(req, res) {
     });
 
     // Make the avatar publicly accessible for mobile profile rendering.
-    await file.makePublic();
-    const avatarUrl = `https://storage.googleapis.com/${bucket.name}/${storagePath}`;
+    // Use try-catch because many modern Firebase projects have Uniform Bucket-Level Access (UBLA) 
+    // enabled, which prevents ACL-based makePublic() calls from working.
+    try {
+      await file.makePublic();
+    } catch (publicError) {
+      console.warn('makePublic failed (possibly UBLA is enabled):', publicError.message);
+      // We proceed anyway; if the bucket has public read access, the URL will still work.
+    }
+
+    // Use the official Firebase Storage public URL format which is more reliable across platforms
+    const avatarUrl = `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/${encodeURIComponent(storagePath)}?alt=media`;
 
     const updatedUser = await User.findOneAndUpdate(
       { auth0Id: userId },
