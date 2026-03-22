@@ -272,25 +272,6 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage> {
           ),
           const SizedBox(height: 24),
 
-          // Trip Type & Category Section
-          Row(
-            children: [
-              Expanded(
-                child: DropdownButtonFormField<String>(
-                  value: _tripType,
-                  decoration: const InputDecoration(
-                    labelText: 'Trip Style',
-                    border: OutlineInputBorder(),
-                  ),
-                  items: ['Solo', 'Family', 'Group', 'Adventure', 'Business']
-                      .map((t) => DropdownMenuItem(value: t, child: Text(t)))
-                      .toList(),
-                  onChanged: (val) => setState(() => _tripType = val),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 24),
           
           // ==========================================
           // CATEGORY SELECTION (CHIPS)
