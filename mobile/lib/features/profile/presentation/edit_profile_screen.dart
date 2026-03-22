@@ -21,7 +21,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController _nameController;
   late final TextEditingController _bioController;
-  late final TextEditingController _districtController;
+  late String _selectedDistrict;
   late String _selectedLanguage;
   late Set<String> _selectedInterests;
 
@@ -29,6 +29,14 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     'English',
     'Sinhala',
     'Tamil',
+  ];
+
+  static const List<String> _districtOptions = <String>[
+    'Ampara', 'Anuradhapura', 'Badulla', 'Batticaloa', 'Colombo',
+    'Galle', 'Gampaha', 'Hambantota', 'Jaffna', 'Kalutara',
+    'Kandy', 'Kegalle', 'Kilinochchi', 'Kurunegala', 'Mannar',
+    'Matale', 'Matara', 'Monaragala', 'Mullaitivu', 'Nuwara Eliya',
+    'Polonnaruwa', 'Puttalam', 'Ratnapura', 'Trincomalee', 'Vavuniya',
   ];
 
   static const List<String> _interestOptions = <String>[
@@ -42,6 +50,8 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     'Beaches',
     'Adventure',
     'City Tours',
+    'Tea Estates',
+    'Surfing',
   ];
 
   /// Locally picked image (not yet uploaded)
@@ -57,9 +67,9 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     super.initState();
     _nameController = TextEditingController(text: widget.initialProfile.name);
     _bioController = TextEditingController(text: widget.initialProfile.bio);
-    _districtController = TextEditingController(
-      text: widget.initialProfile.hometownDistrict,
-    );
+    _selectedDistrict = _districtOptions.contains(widget.initialProfile.hometownDistrict)
+        ? widget.initialProfile.hometownDistrict
+        : _districtOptions.first;
     _selectedLanguage = widget.initialProfile.preferredLanguage.isNotEmpty
         ? widget.initialProfile.preferredLanguage
         : _languageOptions.first;
@@ -70,7 +80,6 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   void dispose() {
     _nameController.dispose();
     _bioController.dispose();
-    _districtController.dispose();
     super.dispose();
   }
 
@@ -198,7 +207,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     final previousStateSnapshot = (
       name: _nameController.text,
       bio: _bioController.text,
-      district: _districtController.text,
+      district: _selectedDistrict,
       language: _selectedLanguage,
       interests: Set<String>.from(_selectedInterests),
     );
@@ -231,7 +240,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     // Save profile details
     final newName = _nameController.text.trim();
     final newBio = _bioController.text.trim();
-    final newDistrict = _districtController.text.trim();
+    final newDistrict = _selectedDistrict;
     final newInterests = _selectedInterests.toList()..sort();
     final currentInterests = widget.initialProfile.travelInterests.toList()..sort();
 
@@ -260,7 +269,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
         _isOptimisticallySaving = false;
         _nameController.text = previousStateSnapshot.name;
         _bioController.text = previousStateSnapshot.bio;
-        _districtController.text = previousStateSnapshot.district;
+        _selectedDistrict = previousStateSnapshot.district;
         _selectedLanguage = previousStateSnapshot.language;
         _selectedInterests = previousStateSnapshot.interests;
         _inlineError = 'Save failed. Please try again.';
@@ -459,24 +468,29 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                     ),
                     const SizedBox(height: 16),
 
-                    TextFormField(
-                      controller: _districtController,
-                      maxLength: 60,
-                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                    DropdownButtonFormField<String>(
+                      value: _selectedDistrict,
                       decoration: const InputDecoration(
-                        labelText: 'Hometown district',
-                        hintText: 'e.g. Colombo',
+                        labelText: 'Home district',
                         border: OutlineInputBorder(),
                         prefixIcon: Icon(Icons.location_city_outlined),
-                        helperText: 'Used to personalize local suggestions',
+                        helperText: 'Used to personalize your local travel experience',
                       ),
+                      items: _districtOptions
+                          .map(
+                            (district) => DropdownMenuItem<String>(
+                              value: district,
+                              child: Text(district),
+                            ),
+                          )
+                          .toList(),
+                      onChanged: (value) {
+                        if (value == null) return;
+                        setState(() => _selectedDistrict = value);
+                      },
                       validator: (value) {
-                        final text = value?.trim() ?? '';
-                        if (text.isEmpty) {
+                        if (value == null || value.isEmpty) {
                           return 'District cannot be empty';
-                        }
-                        if (text.length > 60) {
-                          return 'District must be under 60 characters';
                         }
                         return null;
                       },
@@ -587,7 +601,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   bool _hasUnsavedChanges() {
     final newName = _nameController.text.trim();
     final newBio = _bioController.text.trim();
-    final newDistrict = _districtController.text.trim();
+    final newDistrict = _selectedDistrict;
     final newInterests = _selectedInterests.toList()..sort();
     final currentInterests = widget.initialProfile.travelInterests.toList()..sort();
 

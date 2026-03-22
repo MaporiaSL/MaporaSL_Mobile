@@ -74,17 +74,38 @@ async function getUserProfile(req, res) {
       }
     }
 
+    // Calculate exploration level and XP
+    const xpTotal = user.xpTotal || 0;
+    const currentLevel = Math.floor(xpTotal / 100) + 1;
+    const xpToNextLevel = (currentLevel * 100) - xpTotal;
+
     res.status(200).json({
       user: {
         id: user.auth0Id,
         name: user.name,
         email: user.email,
         avatarUrl: user.profilePicture || '',
+        bio: user.bio || '',
+        hometownDistrict: user.hometownDistrict || '',
+        preferredLanguage: user.preferredLanguage || 'English',
+        travelInterests: user.travelInterests || [],
       },
       stats: {
         totalSubmitted,
         approvedCount,
         approvalRate: parseFloat((approvalRate * 100).toFixed(2)),
+        // Exploration stats
+        xpTotal,
+        currentLevel,
+        xpToNextLevel,
+        unlockedDistrictsCount: user.explorationUnlockedDistricts?.length || 0,
+        unlockedProvincesCount: user.explorationUnlockedProvinces?.length || 0,
+        totalAssigned: user.explorationStats?.totalAssigned || 0,
+        totalVisited: user.explorationStats?.totalVisited || 0,
+      },
+      exploration: {
+        unlockedDistricts: user.explorationUnlockedDistricts || [],
+        unlockedProvinces: user.explorationUnlockedProvinces || [],
       },
       badges: badgesList,
       leaderboardRank: leaderboardRank || 0,
@@ -191,6 +212,11 @@ async function updateUserProfile(req, res) {
       }
     });
 
+    // Calculate exploration level and XP
+    const xpTotal = updatedUser.xpTotal || 0;
+    const currentLevel = Math.floor(xpTotal / 100) + 1;
+    const xpToNextLevel = (currentLevel * 100) - xpTotal;
+
     res.status(200).json({
       message: 'Profile updated successfully',
       user: {
@@ -207,6 +233,18 @@ async function updateUserProfile(req, res) {
         totalSubmitted,
         approvedCount,
         approvalRate: parseFloat((approvalRate * 100).toFixed(2)),
+        // Exploration stats
+        xpTotal,
+        currentLevel,
+        xpToNextLevel,
+        unlockedDistrictsCount: updatedUser.explorationUnlockedDistricts?.length || 0,
+        unlockedProvincesCount: updatedUser.explorationUnlockedProvinces?.length || 0,
+        totalAssigned: updatedUser.explorationStats?.totalAssigned || 0,
+        totalVisited: updatedUser.explorationStats?.totalVisited || 0,
+      },
+      exploration: {
+        unlockedDistricts: updatedUser.explorationUnlockedDistricts || [],
+        unlockedProvinces: updatedUser.explorationUnlockedProvinces || [],
       },
       badges: badgesList,
       leaderboardRank: leaderboardRank || 0,
