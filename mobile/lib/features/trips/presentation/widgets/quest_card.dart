@@ -15,7 +15,6 @@ class QuestCard extends ConsumerWidget {
         : 0.0;
     final isCompleted = progress == 1.0;
     final isNew = assignment.visitedCount == 0;
-    final xpReward = assignment.assignedCount * 50;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 20),
@@ -37,20 +36,13 @@ class QuestCard extends ConsumerWidget {
           collapsedShape: const Border(),
           backgroundColor: Colors.white,
           collapsedBackgroundColor: Colors.white,
-          title: Row(
-            children: [
-              Expanded(
-                child: Text(
-                  assignment.district,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w800,
-                    fontSize: 18,
-                    letterSpacing: -0.5,
-                  ),
-                ),
-              ),
-              _buildXPBadge(xpReward, isCompleted),
-            ],
+          title: Text(
+            assignment.district,
+            style: const TextStyle(
+              fontWeight: FontWeight.w800,
+              fontSize: 18,
+              letterSpacing: -0.5,
+            ),
           ),
           subtitle: Padding(
             padding: const EdgeInsets.only(top: 4),
@@ -87,25 +79,6 @@ class QuestCard extends ConsumerWidget {
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildXPBadge(int xp, bool isCompleted) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(
-        color: isCompleted ? Colors.amber[50] : Colors.blue[50],
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: (isCompleted ? Colors.amber[200] : Colors.blue[200])!),
-      ),
-      child: Text(
-        '+$xp XP',
-        style: TextStyle(
-          fontSize: 11,
-          fontWeight: FontWeight.bold,
-          color: isCompleted ? Colors.amber[900] : Colors.blue[900],
         ),
       ),
     );
