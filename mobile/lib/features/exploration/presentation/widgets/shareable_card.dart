@@ -12,17 +12,27 @@ import 'package:share_plus/share_plus.dart';
 import '../../data/models/exploration_models.dart';
 
 class ShareableCard extends StatelessWidget {
-  final DistrictAssignment assignment;
+  final DistrictAssignment? assignment;
+  final ExplorationLocation? location;
   final String? unlockLocationName;
 
   const ShareableCard({
     super.key,
-    required this.assignment,
+    this.assignment,
+    this.location,
     this.unlockLocationName,
-  });
+  }) : assert(assignment != null || location != null);
 
-  List<ExplorationLocation> get _visitedLocations =>
-      assignment.locations.where((location) => location.visited).toList();
+  List<ExplorationLocation> get _displayLocations =>
+      location != null ? [location!] : (assignment?.locations ?? []);
+
+  Set<String> get _visitedIds => location != null
+      ? {location!.id}
+      : (assignment?.locations
+              .where((l) => l.visited)
+              .map((l) => l.id)
+              .toSet() ??
+          {});
 
   @override
   Widget build(BuildContext context) {
@@ -86,7 +96,7 @@ class ShareableCard extends StatelessWidget {
           ),
           const SizedBox(height: 14),
           Text(
-            assignment.district,
+            location?.name ?? assignment?.district ?? 'Unknown Place',
             style: textTheme.headlineMedium?.copyWith(
               color: Colors.white,
               fontWeight: FontWeight.w800,
@@ -94,7 +104,9 @@ class ShareableCard extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           Text(
-            '${assignment.visitedCount}/${assignment.assignedCount} Places Visited in ${assignment.district}',
+            location != null
+                ? '${location!.category ?? 'Destination'} in ${location!.type}'
+                : '${assignment?.visitedCount ?? 0}/${assignment?.assignedCount ?? 0} Places Visited in ${assignment?.district ?? ''}',
             style: textTheme.bodyMedium?.copyWith(
               color: const Color(0xFFE2E8F0),
               fontWeight: FontWeight.w600,
@@ -120,8 +132,8 @@ class ShareableCard extends StatelessWidget {
               border: Border.all(color: Colors.white.withValues(alpha: 0.15)),
             ),
             child: MiniPathMap(
-              points: assignment.locations,
-              visitedIds: _visitedLocations.map((e) => e.id).toSet(),
+              points: _displayLocations,
+              visitedIds: _visitedIds,
             ),
           ),
           const SizedBox(height: 12),
@@ -274,12 +286,14 @@ class _MiniPathMapPainter extends CustomPainter {
 }
 
 class DiscoveryCertificateOverlay extends StatefulWidget {
-  final DistrictAssignment assignment;
+  final DistrictAssignment? assignment;
+  final ExplorationLocation? location;
   final String? unlockLocationName;
 
   const DiscoveryCertificateOverlay({
     super.key,
-    required this.assignment,
+    this.assignment,
+    this.location,
     this.unlockLocationName,
   });
 
@@ -314,17 +328,21 @@ class _DiscoveryCertificateOverlayState
       if (pngBytes == null) return;
 
       final dir = await getTemporaryDirectory();
-      final safeDistrict = widget.assignment.district.toLowerCase().replaceAll(
+      final name = widget.location?.name ?? widget.assignment?.district ?? 'place';
+      final safeName = name.toLowerCase().replaceAll(
         ' ',
         '_',
       );
-      final file = File('${dir.path}/maporia_${safeDistrict}_certificate.png');
+      final file = File('${dir.path}/maporia_${safeName}_discovery.png');
       await file.writeAsBytes(pngBytes, flush: true);
+
+      final shareText = widget.location != null
+          ? 'I discovered ${widget.location!.name} on MAPORIA! #MaporiaDiscovery'
+          : 'I unlocked ${widget.assignment!.district} on MAPORIA. #MaporiaDiscovery';
 
       await Share.shareXFiles(
         [XFile(file.path)],
-        text:
-            'I unlocked ${widget.assignment.district} on MAPORIA. #MaporiaDiscovery',
+        text: shareText,
       );
     } finally {
       if (mounted) {
@@ -356,6 +374,7 @@ class _DiscoveryCertificateOverlayState
                     key: _cardKey,
                     child: ShareableCard(
                       assignment: widget.assignment,
+                      location: widget.location,
                       unlockLocationName: widget.unlockLocationName,
                     ),
                   ),

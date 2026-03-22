@@ -8,6 +8,7 @@ import '../../../../features/exploration/presentation/widgets/satellite_pulse_an
 import '../../../../core/providers/accessibility_provider.dart';
 import '../../providers/visit_provider.dart';
 import './verification_checklist.dart';
+import 'package:confetti/confetti.dart';
 import 'dart:math' as math;
 
 class DynamicVisitSheet extends ConsumerStatefulWidget {
@@ -62,6 +63,7 @@ class _DynamicVisitSheetState extends ConsumerState<DynamicVisitSheet>
   List<VerificationStep> _steps = [];
   int _currentStepIndex = 0;
   late AnimationController _radarController;
+  late ConfettiController _confettiController;
   bool _wasDistrictUnlocked = false;
   bool _certificateShown = false;
   List<VerificationTargetLocation> _targetLocations = [];
@@ -73,6 +75,9 @@ class _DynamicVisitSheetState extends ConsumerState<DynamicVisitSheet>
     _radarController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 2),
+    );
+    _confettiController = ConfettiController(
+      duration: const Duration(seconds: 3),
     );
 
     if (useAnimations) {
@@ -117,13 +122,17 @@ class _DynamicVisitSheetState extends ConsumerState<DynamicVisitSheet>
     return null;
   }
 
-  Future<void> _openCertificateOverlay(DistrictAssignment assignment) async {
+  Future<void> _openCertificateOverlay({
+    DistrictAssignment? assignment,
+    ExplorationLocation? location,
+  }) async {
     await Navigator.of(context).push(
       PageRouteBuilder<void>(
         opaque: false,
         pageBuilder: (_, __, ___) {
           return DiscoveryCertificateOverlay(
             assignment: assignment,
+            location: location,
             unlockLocationName: widget.placeName,
           );
         },
@@ -172,6 +181,7 @@ class _DynamicVisitSheetState extends ConsumerState<DynamicVisitSheet>
   @override
   void dispose() {
     _radarController.dispose();
+    _confettiController.dispose();
     super.dispose();
   }
 
@@ -213,7 +223,17 @@ class _DynamicVisitSheetState extends ConsumerState<DynamicVisitSheet>
     if (districtJustUnlocked && !_certificateShown) {
       _certificateShown = true;
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        _openCertificateOverlay(currentAssignment);
+        _confettiController.play();
+        _openCertificateOverlay(assignment: currentAssignment);
+      });
+    } else if (success &&
+        widget.isExploration &&
+        widget.explorationLocation != null &&
+        !_certificateShown) {
+      _certificateShown = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _confettiController.play();
+        _openCertificateOverlay(location: widget.explorationLocation);
       });
     }
 
@@ -250,29 +270,50 @@ class _DynamicVisitSheetState extends ConsumerState<DynamicVisitSheet>
             ),
           ],
         ),
-        child: Column(
+        child: Stack(
           children: [
-            const SizedBox(height: 12),
-            Container(
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: Colors.grey.withValues(alpha: 0.3),
-                borderRadius: BorderRadius.circular(10),
+            Align(
+              alignment: Alignment.topCenter,
+              child: ConfettiWidget(
+                confettiController: _confettiController,
+                blastDirectionality: BlastDirectionality.explosive,
+                shouldLoop: false,
+                colors: const [
+                  Colors.green,
+                  Colors.blue,
+                  Colors.pink,
+                  Colors.orange,
+                  Colors.purple,
+                  Colors.amber,
+                ],
+                createParticlePath: _drawStar,
               ),
             ),
-            Expanded(
-              child: ClipRRect(
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(20),
+            Column(
+              children: [
+                const SizedBox(height: 12),
+                Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.withValues(alpha: 0.3),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                 ),
-                child: _buildContent(
-                  isVerifying,
-                  success,
-                  error,
-                  verificationStepDesc,
+                Expanded(
+                  child: ClipRRect(
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(20),
+                    ),
+                    child: _buildContent(
+                      isVerifying,
+                      success,
+                      error,
+                      verificationStepDesc,
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
           ],
         ),
@@ -533,7 +574,7 @@ class _DynamicVisitSheetState extends ConsumerState<DynamicVisitSheet>
                 OutlinedButton.icon(
                   onPressed: () {
                     if (currentAssignment == null) return;
-                    _openCertificateOverlay(currentAssignment);
+                    _openCertificateOverlay(assignment: currentAssignment);
                   },
                   icon: const Icon(Icons.card_membership),
                   label: const Text('View Certificate'),
@@ -684,5 +725,33 @@ class _DynamicVisitSheetState extends ConsumerState<DynamicVisitSheet>
         ],
       ),
     );
+  }
+
+  Path _drawStar(Size size) {
+    // Method to draw a star shape
+    double degToRad(double deg) => deg * (math.pi / 180.0);
+
+    const numberOfPoints = 5;
+    final halfWidth = size.width / 2;
+    final externalRadius = halfWidth;
+    final internalRadius = halfWidth / 2.5;
+    final degreesPerStep = degToRad(360 / numberOfPoints);
+    final halfDegreesPerStep = degreesPerStep / 2;
+    final path = Path();
+    final fullAngle = degToRad(360);
+    path.moveTo(size.width, halfWidth);
+
+    for (double step = 0; step < fullAngle; step += degreesPerStep) {
+      path.lineTo(
+        halfWidth + externalRadius * math.cos(step),
+        halfWidth + externalRadius * math.sin(step),
+      );
+      path.lineTo(
+        halfWidth + internalRadius * math.cos(step + halfDegreesPerStep),
+        halfWidth + internalRadius * math.sin(step + halfDegreesPerStep),
+      );
+    }
+    path.close();
+    return path;
   }
 }
