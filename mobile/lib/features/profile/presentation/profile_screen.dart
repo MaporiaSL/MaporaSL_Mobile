@@ -72,10 +72,9 @@ class ProfileScreen extends ConsumerWidget {
                   const SizedBox(height: 16),
                   Text(
                     errorUi.title,
-                    style: Theme.of(context)
-                        .textTheme
-                        .titleLarge
-                        ?.copyWith(color: Colors.red),
+                    style: Theme.of(
+                      context,
+                    ).textTheme.titleLarge?.copyWith(color: Colors.red),
                   ),
                   const SizedBox(height: 8),
                   Text(
@@ -218,10 +217,7 @@ class ProfileScreen extends ConsumerWidget {
     final message = error.toString().isEmpty
         ? 'An unexpected error occurred while loading profile data.'
         : error.toString();
-    return _ErrorUiData(
-      title: 'Error Loading Profile',
-      message: message,
-    );
+    return _ErrorUiData(title: 'Error Loading Profile', message: message);
   }
 
   Widget _buildLoadingSkeleton(BuildContext context) {
@@ -435,18 +431,9 @@ class ProfileScreen extends ConsumerWidget {
             spacing: 8,
             runSpacing: 8,
             children: [
-              _progressChip(
-                'Achievements',
-                profile.badges.length.toString(),
-              ),
-              _progressChip(
-                'Districts',
-                '${profile.unlockedDistrictsCount}',
-              ),
-              _progressChip(
-                'Provinces',
-                '${profile.unlockedProvincesCount}',
-              ),
+              _progressChip('Achievements', profile.badges.length.toString()),
+              _progressChip('Districts', '${profile.unlockedDistrictsCount}'),
+              _progressChip('Provinces', '${profile.unlockedProvincesCount}'),
               _progressChip('Visits', profile.totalVisited.toString()),
             ],
           ),

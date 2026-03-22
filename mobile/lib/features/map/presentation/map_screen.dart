@@ -189,13 +189,11 @@ class _MapScreenState extends ConsumerState<MapScreen>
                     district: selectedDistrict ?? 'District',
                     theme: theme,
                     onClose: () {
-                      _focusAnimationController.reverse().then((_) {
-                        setState(() {
-                          selectedDistrict = null;
-                          selectedProvince = null;
-                          _isDistrictFocused = false;
-                          _selectedLocation = null;
-                        });
+                      setState(() {
+                        selectedDistrict = null;
+                        selectedProvince = null;
+                        _isDistrictFocused = false;
+                        _selectedLocation = null;
                       });
                     },
                   ),
@@ -232,7 +230,8 @@ class _MapScreenState extends ConsumerState<MapScreen>
           ),
         ),
       );
-    }    return Scaffold(
+    }
+    return Scaffold(
       appBar: AppBar(
         title: const Text(
           '🗺️ Discover Sri Lanka',
@@ -284,25 +283,25 @@ class _MapScreenState extends ConsumerState<MapScreen>
                                   return;
                                 }
 
-                            final sameDistrict =
-                                _normalizeKey(selectedDistrict) ==
-                                _normalizeKey(districtName);
-                            if (sameDistrict && _isDistrictFocused) {
-                              selectedDistrict = null;
-                              selectedProvince = null;
-                              _isDistrictFocused = false;
-                              _selectedLocation = null;
-                              return;
-                            }
+                                final sameDistrict =
+                                    _normalizeKey(selectedDistrict) ==
+                                    _normalizeKey(districtName);
+                                if (sameDistrict && _isDistrictFocused) {
+                                  selectedDistrict = null;
+                                  selectedProvince = null;
+                                  _isDistrictFocused = false;
+                                  _selectedLocation = null;
+                                  return;
+                                }
 
-                            selectedDistrict = districtName;
-                            selectedProvince =
-                                (provinceName != null &&
-                                    provinceName.isNotEmpty)
-                                ? provinceName
-                                : null;
-                            _isDistrictFocused = true;
-                            _selectedLocation = null;
+                                selectedDistrict = districtName;
+                                selectedProvince =
+                                    (provinceName != null &&
+                                        provinceName.isNotEmpty)
+                                    ? provinceName
+                                    : null;
+                                _isDistrictFocused = true;
+                                _selectedLocation = null;
                               });
                             },
                       ),
@@ -336,15 +335,7 @@ class _MapScreenState extends ConsumerState<MapScreen>
                       },
                     ),
                   ),
-                // Map legend
-                Positioned(
-                  top: 16,
-                  right: 16,
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 200),
-                    child: MapLegend(),
-                  ),
-                ),
+
               ],
             );
           },
@@ -367,14 +358,8 @@ class _DistrictHeaderBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // The GestureDetector now wraps the whole content, ensuring any tap inside
-    // this header is handled here and not passed to the map below.
-    return GestureDetector(
-      onTap: () {
-        // This empty onTap handler is crucial. It "consumes" the tap event,
-        // preventing it from propagating to widgets lower in the Stack (like the map).
-      },
-      child: Container(
+    // Prevent map tap-through by using a solid container that captures hits.
+    return Container(
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
         decoration: BoxDecoration(
           color: AppColors.secondary.withValues(alpha: 0.9),
@@ -416,7 +401,6 @@ class _DistrictHeaderBar extends StatelessWidget {
             ),
           ],
         ),
-      ),
     );
   }
 }
@@ -1200,7 +1184,7 @@ class _DistrictSatelliteMapState extends State<_DistrictSatelliteMap> {
             location.latitude,
             location.longitude,
           );
-          return distance <= 160;
+          return distance <= 500;
         })
         .toList(growable: false);
 
