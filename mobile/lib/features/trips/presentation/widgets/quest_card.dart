@@ -82,8 +82,8 @@ class QuestCard extends ConsumerWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
-                color: Colors.grey[50].withValues(alpha: 0.8),
-                borderRadius: const BorderRadius.vertical(bottom: BorderRadius.circular(20)),
+                color: Colors.grey[50]!.withValues(alpha: 0.8),
+                borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
               ),
               child: Column(
                 children: [
@@ -291,7 +291,7 @@ class QuestCard extends ConsumerWidget {
                   foregroundColor: Colors.white,
                   elevation: 0,
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
-                  minimumSize: const Offset(60, 28),
+                  minimumSize: const Size(60, 28),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                 ),
                 child: const Text('Visit', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
