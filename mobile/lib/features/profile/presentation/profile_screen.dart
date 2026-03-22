@@ -6,6 +6,7 @@ import '../../settings/presentation/settings_screen.dart';
 import 'providers/profile_providers.dart';
 import '../../../providers/progress_provider.dart';
 import '../../achievements/presentation/achievements_screen.dart';
+import '../../../splash/presentation/splash_screen.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
@@ -31,10 +32,29 @@ class ProfileScreen extends ConsumerWidget {
               );
             },
           ),
-          IconButton(
-            icon: const Icon(Icons.logout),
-            tooltip: 'Logout',
-            onPressed: () => _showLogoutConfirmation(context, ref),
+          PopupMenuButton(
+            itemBuilder: (context) => [
+              PopupMenuItem(
+                child: const Row(
+                  children: [
+                    Icon(Icons.logout, size: 20),
+                    SizedBox(width: 12),
+                    Text('Logout'),
+                  ],
+                ),
+                onTap: () => _showLogoutConfirmation(context, ref),
+              ),
+              PopupMenuItem(
+                child: const Row(
+                  children: [
+                    Icon(Icons.delete, size: 20, color: Colors.red),
+                    SizedBox(width: 12),
+                    Text('Delete Account', style: TextStyle(color: Colors.red)),
+                  ],
+                ),
+                onTap: () => _showDeleteConfirmation(context, ref),
+              ),
+            ],
           ),
         ],
       ),
@@ -582,15 +602,103 @@ class ProfileScreen extends ConsumerWidget {
       await authService.signOut();
 
       if (context.mounted) {
-        Navigator.of(
-          context,
-        ).pushNamedAndRemoveUntil('/login', (route) => false);
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (_) => const SplashScreen()),
+          (route) => false,
+        );
       }
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text('Error: $e')));
+      }
+    }
+  }
+
+  void _showDeleteConfirmation(BuildContext context, WidgetRef ref) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete Account'),
+        content: const Text(
+          'Are you sure you want to delete your account? This action is PERMANENT and cannot be undone.\n\n'
+          '• All your data will be permanently removed from our servers\n'
+          '• Your account will be deleted from Firebase Auth\n'
+          '• You will NOT be able to log back in with these credentials\n'
+          '• This action happens immediately',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              _performDelete(context, ref);
+            },
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: const Text('Delete Permanently'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _performDelete(BuildContext context, WidgetRef ref) async {
+    try {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Deleting account permanently...'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+
+      final authService = ref.read(authServiceProvider);
+      final userId = authService.currentUser?.uid;
+
+      if (userId == null) {
+        throw Exception('User not found');
+      }
+
+      // Get the current user's ID token for authentication
+      final idToken = await authService.getIdToken();
+      if (idToken == null) {
+        throw Exception('Failed to get authentication token');
+      }
+
+      // Call the backend API to delete the account
+      final repository = ref.read(profileRepositoryProvider);
+      await repository.deleteAccount();
+
+      // Sign out the user locally
+      await authService.signOut();
+
+      if (context.mounted) {
+        // Show final confirmation
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Account deleted successfully. You cannot log back in with these credentials.',
+            ),
+            duration: Duration(seconds: 3),
+          ),
+        );
+
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (_) => const SplashScreen()),
+          (route) => false,
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error deleting account: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
       }
     }
   }

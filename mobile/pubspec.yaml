@@ -63,11 +63,13 @@ dependencies:
   flutter_svg: ^2.2.3
   curved_navigation_bar: ^1.0.6
   ionicons: ^0.2.2
+  qr_flutter: ^4.1.0
+  share_plus: ^10.0.2
+  flutter_local_notifications: ^17.0.0
+  confetti: ^0.7.0
 
 dev_dependencies:
   flutter_test:
-    sdk: flutter
-  integration_test:
     sdk: flutter
   mocktail: ^1.0.4
   flutter_lints: ^3.0.1
@@ -81,3 +83,6 @@ flutter:
     - assets/geojson/boundaries/LK-districts.geojson
     - assets/data/
     - assets/images/
+    - assets/images/marker_unvisited.png
+    - assets/images/marker_visited.png
+    - assets/images/marker_failed.png

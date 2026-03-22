@@ -224,8 +224,9 @@ function normalizeSeed(seedData) {
 function getSeedCandidates() {
   return [
     path.resolve(__dirname, '../../../project_resources/places_seed_data_2026.json'),
-    path.resolve(__dirname, '../../../project_resources/places_seed_data.json'),
     path.resolve(__dirname, '../../../project_resources/sri_lanka_real_places_100.json'),
+    path.resolve(__dirname, '../../../project_resources/Placesresorces/final_places_seed.json'),
+    path.resolve(__dirname, '../../../project_resources/places_seed_data.json'),
   ];
 }
 

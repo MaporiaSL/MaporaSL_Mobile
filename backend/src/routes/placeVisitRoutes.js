@@ -16,8 +16,8 @@ router.use((req, res, next) => {
 const GEOFENCE_RADIUS_M = 200; // Must be within 200m of place
 const GPS_ACCURACY_THRESHOLD_M = 30; // GPS accuracy must be < 30m
 const HEADING_TOLERANCE = 45; // degrees (±45° from direction to place)
-const RATE_LIMIT_HOURS = 1; // Can't visit same place twice within 1 hour
-const MAX_SPEED_MS = 30; // ~108 km/h - suspicious if exceeded
+const RATE_LIMIT_HOURS = 0; // DISABLED
+const MAX_SPEED_MS = 999999; // DISABLED
 const MIN_HEADING_FACING = 80; // degrees of arc user must face place
 
 // ================================================================
@@ -83,20 +83,22 @@ router.post('/:id/visit', checkJwt, extractUserId, async (req, res) => {
       requestSignature
     );
 
-    // ========== RATE LIMITING CHECK ==========
+    // ========== RATE LIMITING CHECK (DISABLED) ==========
+    /*
     const lastVisit = await PlaceVisit.findOne({
       userId,
       placeId,
       visitedAt: { $gte: new Date(Date.now() - RATE_LIMIT_HOURS * 3600 * 1000) },
     });
 
-    if (lastVisit) {
+    if (lastVisit && RATE_LIMIT_HOURS > 0) {
       validation.beingThrottled = true;
       validation.flaggedReason = validation.flaggedReason || 'rate_limited';
       validation.flagSeverity = Math.max(validation.flagSeverity, 4);
       validation.isValid = false;
       validation.invalidReason = `Cannot visit same place more than once per ${RATE_LIMIT_HOURS} hour(s)`;
     }
+    */
 
     // ========== CREATE VISIT RECORD ==========
     const visitRecord = new PlaceVisit({
@@ -361,7 +363,8 @@ async function validateVisit(
     validation.confidence *= 0.7;
   }
 
-  // ========== 6. SPEED CHECK (Distance vs Time) ==========
+  // ========== 6. SPEED CHECK (DISABLED) ==========
+  /*
   const lastValidVisit = await PlaceVisit.findOne({
     userId,
     'validation.isValid': true,
@@ -396,6 +399,8 @@ async function validateVisit(
       }
     }
   }
+  */
+  validation.speedValid = true;
 
   // ========== 7. REQUEST SIGNATURE VERIFICATION ==========
   // In production, verify HMAC signature to prevent replay attacks

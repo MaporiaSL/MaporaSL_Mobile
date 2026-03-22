@@ -1,7 +1,7 @@
 const User = require('../models/User');
 const Destination = require('../models/Destination');
 const Session = require('../models/Session');
-const PlaceVisit = require('../models/PlaceVisit');
+const Visit = require('../models/Visit');
 const Album = require('../models/Album');
 
 const authBypassEnabled = process.env.AUTH_BYPASS === 'true';
@@ -313,7 +313,7 @@ async function deleteUser(req, res) {
       User.deleteOne({ auth0Id: userId }),
       Destination.deleteMany({ userId }),
       Session.deleteMany({ userId }),
-      PlaceVisit.deleteMany({ userId }),
+      Visit.deleteMany({ userId }),
       Album.deleteMany({ userId }),
     ]);
 

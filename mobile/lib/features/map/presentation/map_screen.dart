@@ -1,10 +1,10 @@
-﻿import 'dart:async';
+import 'dart:async';
 import 'dart:convert';
 import 'dart:math' as math;
-import 'dart:ui' show ImageFilter;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/services.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart' as mapbox;
 import '../../../core/constants/app_colors.dart';
 import '../data/regions_data.dart';
@@ -14,6 +14,7 @@ import '../../exploration/providers/exploration_provider.dart';
 import '../../../core/providers/theme_provider.dart';
 import '../../exploration/data/models/exploration_models.dart';
 import '../../visits/presentation/widgets/dynamic_visit_sheet.dart';
+import '../providers/user_location_provider.dart';
 
 final districtFocusProvider = StateProvider<bool>((ref) => false);
 
@@ -93,6 +94,8 @@ class _MapScreenState extends ConsumerState<MapScreen>
     Future.microtask(() {
       if (!mounted) return;
       ref.read(explorationProvider.notifier).loadAssignments();
+      // Start user location tracking
+      ref.read(userLocationProvider.notifier).startTracking();
     });
   }
 
@@ -121,13 +124,7 @@ class _MapScreenState extends ConsumerState<MapScreen>
       if (previous?.isVerifying == true &&
           !next.isVerifying &&
           next.error == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('âœ… Location verified successfully!'),
-            backgroundColor: Colors.green,
-            duration: Duration(seconds: 3),
-          ),
-        );
+        // Success visuals are handled in DynamicVisitSheet to avoid duplicate UX.
       }
     });
 
@@ -137,6 +134,9 @@ class _MapScreenState extends ConsumerState<MapScreen>
       assignments,
       selectedDistrict,
     );
+
+    final userLocationState = ref.watch(userLocationProvider);
+    final userLocation = userLocationState.location;
 
     // Calculate district progress (0.0-1.0 for each district)
     final districtProgress = _calculateDistrictProgress(assignments);
@@ -162,24 +162,6 @@ class _MapScreenState extends ConsumerState<MapScreen>
           automaticallyImplyLeading: false,
           actions: const [],
         ),
-        // Close button as FAB - guaranteed to be on top and responsive
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            // Animate focus exit smoothly
-            _focusAnimationController.reverse().then((_) {
-              setState(() {
-                selectedDistrict = null;
-                selectedProvince = null;
-                _isDistrictFocused = false;
-                _selectedLocation = null;
-              });
-            });
-          },
-          backgroundColor: Colors.white.withValues(alpha: 0.25),
-          elevation: 0,
-          child: const Icon(Icons.close, color: Colors.white, size: 28),
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
         body: SafeArea(
           top: false,
           child: Stack(
@@ -196,11 +178,26 @@ class _MapScreenState extends ConsumerState<MapScreen>
                 },
               ),
               Positioned(
-                top: 12,
+                top: 20,
                 left: 16,
-                right: 0,
-                child: _DistrictHeaderBar(
-                  district: selectedDistrict ?? 'District',
+                right: 16,
+                child: GestureDetector(
+                  onTap:
+                      () {}, // Consume tap events to prevent map from intercepting
+                  child: _DistrictHeaderBar(
+                    district: selectedDistrict ?? 'District',
+                    theme: theme,
+                    onClose: () {
+                      _focusAnimationController.reverse().then((_) {
+                        setState(() {
+                          selectedDistrict = null;
+                          selectedProvince = null;
+                          _isDistrictFocused = false;
+                          _selectedLocation = null;
+                        });
+                      });
+                    },
+                  ),
                 ),
               ),
               if (_selectedLocation != null)
@@ -268,6 +265,7 @@ class _MapScreenState extends ConsumerState<MapScreen>
                         focusedDistrictName: selectedDistrict,
                         theme: theme,
                         districtProgress: districtProgress,
+                        userLocation: userLocation,
                         onDistrictSelected:
                             (
                               districtName,
@@ -351,58 +349,65 @@ class _MapScreenState extends ConsumerState<MapScreen>
 
 class _DistrictHeaderBar extends StatelessWidget {
   final String district;
+  final MapVisualTheme theme;
+  final VoidCallback onClose;
 
-  const _DistrictHeaderBar({required this.district});
+  const _DistrictHeaderBar({
+    required this.district,
+    required this.theme,
+    required this.onClose,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(16),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 12.0, sigmaY: 12.0),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                Colors.white.withValues(alpha: 0.18),
-                Colors.white.withValues(alpha: 0.08),
-              ],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+    // The GestureDetector now wraps the whole content, ensuring any tap inside
+    // this header is handled here and not passed to the map below.
+    return GestureDetector(
+      onTap: () {
+        // This empty onTap handler is crucial. It "consumes" the tap event,
+        // preventing it from propagating to widgets lower in the Stack (like the map).
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+        decoration: BoxDecoration(
+          color: AppColors.secondary.withValues(alpha: 0.9),
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.25),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
             ),
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: Colors.white.withValues(alpha: 0.25),
-              width: 1.5,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.1),
-                blurRadius: 20,
-                spreadRadius: 0,
-              ),
-            ],
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Expanded(
-                child: Text(
-                  district,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 20,
-                    letterSpacing: 0.5,
-                  ),
+          ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: Text(
+                district,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 22,
+                  letterSpacing: 0.5,
                 ),
               ),
-              // Close button now handled by FAB above
-              const SizedBox(width: 8),
-            ],
-          ),
+            ),
+            // The Material widget provides the visual "splash" effect on tap
+            // and ensures the IconButton's hit area is correctly defined.
+            Material(
+              color: Colors.transparent,
+              child: IconButton(
+                onPressed: onClose,
+                icon: const Icon(Icons.close, color: Colors.white, size: 26),
+                tooltip: 'Close',
+                splashRadius: 24,
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -538,6 +543,9 @@ class _DistrictSatelliteMapState extends State<_DistrictSatelliteMap> {
 
   mapbox.MapboxMap? _mapboxMap;
   mapbox.PointAnnotationManager? _pointManager;
+  mapbox.PointAnnotationManager? _userPointManager;
+  mapbox.PointAnnotation? _userLocationAnnotation;
+  StreamSubscription<Position>? _positionSubscription;
   mapbox.Cancelable? _tapCancelable;
   String? _selectedDistrictGeoJson;
   String? _outsideMaskGeoJson;
@@ -558,8 +566,12 @@ class _DistrictSatelliteMapState extends State<_DistrictSatelliteMap> {
   void dispose() {
     _tapCancelable?.cancel();
     _tapCancelable = null;
+    _positionSubscription?.cancel();
+    _positionSubscription = null;
     _clearDistrictLayers();
     _pointManager = null;
+    _userPointManager = null;
+    _userLocationAnnotation = null;
     _mapboxMap = null;
     super.dispose();
   }
@@ -1097,6 +1109,69 @@ class _DistrictSatelliteMapState extends State<_DistrictSatelliteMap> {
     );
   }
 
+  Future<void> _startUserLocationTracking(mapbox.MapboxMap map) async {
+    try {
+      final serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) return;
+
+      var permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+      }
+      if (permission == LocationPermission.denied ||
+          permission == LocationPermission.deniedForever) {
+        return;
+      }
+
+      _userPointManager ??= await map.annotations
+          .createPointAnnotationManager();
+
+      final current = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+      await _updateUserLocationMarker(current);
+
+      _positionSubscription?.cancel();
+      _positionSubscription =
+          Geolocator.getPositionStream(
+            locationSettings: const LocationSettings(
+              accuracy: LocationAccuracy.high,
+              distanceFilter: 25,
+            ),
+          ).listen((position) {
+            _updateUserLocationMarker(position);
+          });
+    } catch (_) {
+      // Location display is best-effort and should not block map usage.
+    }
+  }
+
+  Future<void> _updateUserLocationMarker(Position position) async {
+    final manager = _userPointManager;
+    if (manager == null) return;
+
+    final geometry = mapbox.Point(
+      coordinates: mapbox.Position(position.longitude, position.latitude),
+    );
+
+    if (_userLocationAnnotation == null) {
+      _userLocationAnnotation = await manager.create(
+        mapbox.PointAnnotationOptions(
+          geometry: geometry,
+          iconImage: 'marker-15',
+          iconColor: const Color(0xFF2563EB).toARGB32(),
+          iconSize: 2.4,
+          iconOpacity: 1.0,
+        ),
+      );
+      return;
+    }
+
+    final annotation = _userLocationAnnotation!;
+    annotation.geometry = geometry;
+    await manager.update(annotation);
+  }
+
   Future<void> _reloadDistrictData() async {
     final map = _mapboxMap;
     if (map == null) return;
@@ -1104,6 +1179,7 @@ class _DistrictSatelliteMapState extends State<_DistrictSatelliteMap> {
     await _prepareDistrictGeometry();
     await _applyDistrictLayers(map);
     await _applyLocationLayers(map);
+    await _setupMarkers(map);
     await _fitToDistrict(map);
   }
 
@@ -1194,6 +1270,7 @@ class _DistrictSatelliteMapState extends State<_DistrictSatelliteMap> {
         // Interactive zoom and pan are enabled by default in mapbox_maps_flutter
         // Users can pinch-to-zoom and pan within bounds (set by setBounds in _fitToDistrict)
         await _reloadDistrictData();
+        await _startUserLocationTracking(map);
       },
       // Handle taps on map for location marker selection
       onTapListener: _handleMapTap,

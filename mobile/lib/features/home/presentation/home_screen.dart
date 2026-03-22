@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../map/presentation/map_screen.dart';
@@ -53,16 +53,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       }
       final email = user.email ?? 'unknown@local.test';
       final name = user.displayName ?? email.split('@').first;
-      final district = await LocalPrefs.getHometownDistrict();
+      final district = await LocalPrefs.getHometownDistrict() ?? 'Colombo';
       try {
-        if (district != null) {
-          await AuthApi().registerUser(
-            email: email,
-            name: name,
-            hometownDistrict: district,
-          );
-          await LocalPrefs.clearHometownDistrict();
-        }
+        await AuthApi().registerUser(
+          email: email,
+          name: name,
+          hometownDistrict: district,
+        );
+        await LocalPrefs.clearHometownDistrict();
       } catch (_) {
         // Swallow registration errors during dev flow.
       }
@@ -154,6 +152,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       bottomNavigationBar: BottomNavBar(
         currentIndex: _selectedIndex,
         onTap: (index) {
+          if (index == 0 && _selectedIndex == 0) {
+            // Reset district focus if tapping map again while active
+            ref.read(districtFocusProvider.notifier).state = false;
+          }
           setState(() => _selectedIndex = index);
         },
       ),

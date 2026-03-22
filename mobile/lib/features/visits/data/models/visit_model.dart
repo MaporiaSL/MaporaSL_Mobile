@@ -7,6 +7,8 @@ class VisitModel {
   final DateTime visitedAt;
   final bool isVerified;
   final String? rejectionReason;
+  final String? notes;
+  final String? photoUrl;
 
   VisitModel({
     required this.id,
@@ -17,6 +19,8 @@ class VisitModel {
     required this.visitedAt,
     required this.isVerified,
     this.rejectionReason,
+    this.notes,
+    this.photoUrl,
   });
 
   factory VisitModel.fromJson(Map<String, dynamic> json) {
@@ -28,7 +32,9 @@ class VisitModel {
       longitude: (json['coordinates']?['longitude'] ?? 0).toDouble(),
       visitedAt: DateTime.parse(json['visitedAt'] ?? DateTime.now().toIso8601String()),
       isVerified: json['isVerified'] ?? false,
-      rejectionReason: json['rejectionReason'],
+      rejectionReason: json['reasons']?['rejectionReason'] ?? json['rejectionReason'],
+      notes: json['notes'],
+      photoUrl: json['photoUrl'],
     );
   }
 
@@ -39,6 +45,8 @@ class VisitModel {
         'latitude': latitude,
         'longitude': longitude,
       },
+      'notes': notes,
+      'photoUrl': photoUrl,
       'visitedAt': visitedAt.toIso8601String(),
     };
   }

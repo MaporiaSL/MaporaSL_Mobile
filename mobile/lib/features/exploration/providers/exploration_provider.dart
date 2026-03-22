@@ -96,15 +96,39 @@ class ExplorationNotifier extends StateNotifier<ExplorationState> {
 
   Future<void> verifyLocation(ExplorationLocation location) async {
     if (state.isVerifying) return;
+    
+    // Set location status to verifying
+    final initialAssignments = state.assignments.map((a) {
+      if (a.district == location.type) { // This might be wrong, need to find the right assignment
+        // Wait, assignments have lists of locations. I should find the assignment containing the location.
+      }
+      return a;
+    }).toList();
+    
+    // Better way: find the location in assignments and update it
+    List<DistrictAssignment> updatedAssignments = state.assignments.map((assignment) {
+      final updatedLocations = assignment.locations.map((loc) {
+        if (loc.id == location.id) {
+          return loc.copyWith(status: VerificationStatus.verifying);
+        }
+        return loc;
+      }).toList();
+      return assignment.copyWith(locations: updatedLocations);
+    }).toList();
+
     state = state.copyWith(
       isVerifying: true,
       verifyingLocationId: location.id,
       currentStepIndex: 0,
       verificationStep: 'Satellite Signal Strength',
+      assignments: updatedAssignments,
       error: null,
     );
 
     String? errorMessage;
+    VerificationStatus finalStatus = VerificationStatus.passed;
+    String? rejectionReason;
+
     try {
       state = state.copyWith(
         currentStepIndex: 1,
@@ -132,14 +156,41 @@ class ExplorationNotifier extends StateNotifier<ExplorationState> {
 
       state = state.copyWith(
         currentStepIndex: 5,
-        verificationStep: 'Verification complete',
+        verificationStep: 'Verification Successful!',
       );
     } catch (error) {
-      errorMessage = error.toString();
+      final errorStr = error.toString().toLowerCase();
+      if (errorStr.contains('not enough valid gps samples') || errorStr.contains('gps')) {
+        rejectionReason = 'Poor GPS signal. Please try moving to an open area.';
+      } else if (errorStr.contains('too far')) {
+        rejectionReason = 'You are too far from this location.';
+      } else if (errorStr.contains('429') || errorStr.contains('cooldown')) {
+        rejectionReason = 'Verification cooldown active. Please wait 5 minutes.';
+      } else {
+        rejectionReason = 'Verification failed. Please try again.';
+      }
+      errorMessage = rejectionReason;
+      finalStatus = VerificationStatus.failed;
     } finally {
+      // Update the final status of the location
+      updatedAssignments = state.assignments.map((assignment) {
+        final updatedLocations = assignment.locations.map((loc) {
+          if (loc.id == location.id) {
+            return loc.copyWith(
+              status: finalStatus,
+              rejectionReason: rejectionReason,
+              visited: finalStatus == VerificationStatus.passed,
+            );
+          }
+          return loc;
+        }).toList();
+        return assignment.copyWith(locations: updatedLocations);
+      }).toList();
+
       state = state.copyWith(
         isVerifying: false,
         verifyingLocationId: null,
+        assignments: updatedAssignments,
         error: errorMessage,
       );
     }

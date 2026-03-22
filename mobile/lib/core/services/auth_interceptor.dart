@@ -8,7 +8,7 @@ class AuthInterceptor extends Interceptor {
   final FirebaseAuth _auth;
 
   @override
-  void onRequest(
+  Future<void> onRequest(
     RequestOptions options,
     RequestInterceptorHandler handler,
   ) async {
@@ -17,11 +17,15 @@ class AuthInterceptor extends Interceptor {
       try {
         final token = await user.getIdToken();
         options.headers['Authorization'] = 'Bearer $token';
+        debugPrint('✅ Auth token added to request');
       } catch (e) {
-        debugPrint('Error fetching Firebase token: $e');
+        debugPrint('❌ Error fetching Firebase token: $e');
       }
+    } else {
+      debugPrint(
+        '⚠️ No Firebase user logged in - request will be unauthenticated',
+      );
     }
     return handler.next(options);
   }
 }
-

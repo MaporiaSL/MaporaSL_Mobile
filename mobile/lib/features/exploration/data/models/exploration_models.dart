@@ -1,3 +1,10 @@
+enum VerificationStatus {
+  none,
+  verifying,
+  passed,
+  failed,
+}
+
 class ExplorationLocation {
   final String id;
   final String name;
@@ -8,6 +15,8 @@ class ExplorationLocation {
   final String? description;
   final String? category;
   final List<String> photos;
+  final VerificationStatus status;
+  final String? rejectionReason;
 
   ExplorationLocation({
     required this.id,
@@ -19,16 +28,19 @@ class ExplorationLocation {
     this.description,
     this.category,
     this.photos = const [],
+    this.status = VerificationStatus.none,
+    this.rejectionReason,
   });
 
   factory ExplorationLocation.fromJson(Map<String, dynamic> json) {
+    final visited = json['visited'] == true;
     return ExplorationLocation(
       id: json['id']?.toString() ?? '',
       name: json['name']?.toString() ?? '',
       type: json['type']?.toString() ?? '',
       latitude: (json['latitude'] as num?)?.toDouble() ?? 0,
       longitude: (json['longitude'] as num?)?.toDouble() ?? 0,
-      visited: json['visited'] == true,
+      visited: visited,
       description: json['description']?.toString(),
       category: json['category']?.toString(),
       photos:
@@ -36,6 +48,27 @@ class ExplorationLocation {
               ?.map((e) => e.toString())
               .toList() ??
           [],
+      status: visited ? VerificationStatus.passed : VerificationStatus.none,
+    );
+  }
+
+  ExplorationLocation copyWith({
+    VerificationStatus? status,
+    String? rejectionReason,
+    bool? visited,
+  }) {
+    return ExplorationLocation(
+      id: id,
+      name: name,
+      type: type,
+      latitude: latitude,
+      longitude: longitude,
+      visited: visited ?? this.visited,
+      description: description,
+      category: category,
+      photos: photos,
+      status: status ?? this.status,
+      rejectionReason: rejectionReason ?? this.rejectionReason,
     );
   }
 }
@@ -63,6 +96,25 @@ class DistrictAssignment {
     required this.locations,
   });
 
+  DistrictAssignment copyWith({
+    List<ExplorationLocation>? locations,
+    int? visitedCount,
+    DateTime? unlockedAt,
+    bool? isUnlocked,
+  }) {
+    return DistrictAssignment(
+      district: district,
+      province: province,
+      assignedCount: assignedCount,
+      visitedCount: visitedCount ?? this.visitedCount,
+      unlockedAt: unlockedAt ?? this.unlockedAt,
+      isUnlocked: isUnlocked ?? this.isUnlocked,
+      center: center,
+      bounds: bounds,
+      locations: locations ?? this.locations,
+    );
+  }
+
   factory DistrictAssignment.fromJson(Map<String, dynamic> json) {
     final locationsRaw = json['locations'] as List<dynamic>? ?? [];
     return DistrictAssignment(
@@ -87,6 +139,24 @@ class DistrictAssignment {
             ),
           )
           .toList(),
+    );
+  }
+
+  DistrictAssignment updateLocationStatus(String locationId, VerificationStatus status, String? reason) {
+    final updatedLocations = locations.map((loc) {
+      if (loc.id == locationId) {
+        return loc.copyWith(
+          status: status,
+          rejectionReason: reason,
+          visited: status == VerificationStatus.passed,
+        );
+      }
+      return loc;
+    }).toList();
+    
+    return copyWith(
+      locations: updatedLocations,
+      visitedCount: updatedLocations.where((l) => l.visited).length,
     );
   }
 }
