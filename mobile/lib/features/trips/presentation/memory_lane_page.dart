@@ -47,7 +47,6 @@ class _MemoryLanePageState extends ConsumerState<MemoryLanePage>
 
     return Scaffold(
       appBar: AppBar(
-        leading: const Icon(Icons.schedule_rounded),
         title: const Text('Quests & Trips'),
         bottom: TabBar(
           controller: _tabController,
