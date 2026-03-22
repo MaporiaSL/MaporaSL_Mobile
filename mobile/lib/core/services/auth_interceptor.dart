@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 
 class AuthInterceptor extends Interceptor {
   AuthInterceptor({FirebaseAuth? auth, Dio? retryDio})
@@ -18,8 +19,19 @@ class AuthInterceptor extends Interceptor {
   ) async {
     final user = _auth.currentUser;
     if (user != null) {
-      final token = await user.getIdToken();
-      options.headers['Authorization'] = 'Bearer $token';
+      try {
+        final token = await user.getIdToken();
+        if (token != null && token.isNotEmpty) {
+          options.headers['Authorization'] = 'Bearer $token';
+          debugPrint('>>> [AUTH INTERCEPTOR] Attached token for user: ${user.uid}');
+        } else {
+          debugPrint('>>> [AUTH INTERCEPTOR] Warning: getIdToken() returned empty/null');
+        }
+      } catch (e) {
+        debugPrint('>>> [AUTH INTERCEPTOR] ERROR getting token: $e');
+      }
+    } else {
+      debugPrint('>>> [AUTH INTERCEPTOR] Warning: No current Firebase user. Request sent without token.');
     }
     handler.next(options);
   }
