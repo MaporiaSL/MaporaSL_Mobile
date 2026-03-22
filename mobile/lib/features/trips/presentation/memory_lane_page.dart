@@ -242,87 +242,6 @@ class _MemoryLanePageState extends ConsumerState<MemoryLanePage>
     );
   }
 
-  String _statusKey(TripModel trip) {
-    if (trip.status != null) return trip.status!;
-    switch (trip.timelineStatus) {
-      case TripStatus.upcoming:
-        return 'planned';
-      case TripStatus.active:
-        return 'active';
-      case TripStatus.completed:
-        return 'completed';
-    }
-  }
-}
-
-class _StatusSection extends ConsumerWidget {
-  final String label;
-  final Color color;
-  final IconData icon;
-  final List<TripModel> trips;
-  final bool canEdit;
-
-  const _StatusSection({
-    required this.label,
-    required this.color,
-    required this.icon,
-    required this.trips,
-    required this.canEdit,
-  });
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Icon(icon, color: color),
-            const SizedBox(width: 8),
-            Text(
-              label,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                color: color,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(width: 8),
-            Chip(
-              label: Text('${trips.length}'),
-              backgroundColor: color.withValues(alpha: 0.15),
-              labelStyle: TextStyle(color: color, fontWeight: FontWeight.w600),
-            ),
-          ],
-        ),
-        const SizedBox(height: 12),
-        ...trips.map(
-          (trip) => _TripCard(
-            trip: trip,
-            color: color,
-            canEdit: canEdit,
-            onEdit: canEdit
-                ? () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => CreateTripPage(trip: trip),
-                      ),
-                    );
-                  }
-                : null,
-            onView: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => TripDetailPage(trip: trip)),
-              );
-            },
-            onDelete: canEdit ? () => _confirmDelete(context, ref, trip) : null,
-          ),
-        ),
-      ],
-    );
-  }
-
   void _confirmDelete(BuildContext context, WidgetRef ref, TripModel trip) {
     showDialog(
       context: context,
@@ -348,6 +267,18 @@ class _StatusSection extends ConsumerWidget {
         ],
       ),
     );
+  }
+
+  String _statusKey(TripModel trip) {
+    if (trip.status != null) return trip.status!;
+    switch (trip.timelineStatus) {
+      case TripStatus.upcoming:
+        return 'planned';
+      case TripStatus.active:
+        return 'active';
+      case TripStatus.completed:
+        return 'completed';
+    }
   }
 }
 
