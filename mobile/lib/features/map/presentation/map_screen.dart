@@ -337,15 +337,7 @@ class _MapScreenState extends ConsumerState<MapScreen>
                       },
                     ),
                   ),
-                // Map legend
-                Positioned(
-                  top: 16,
-                  right: 16,
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 200),
-                    child: MapLegend(),
-                  ),
-                ),
+
               ],
             );
           },
