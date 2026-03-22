@@ -8,8 +8,8 @@ const { getRadiusConfig } = require('../utils/geofenceUtils');
 // Anti-cheat security constants (Merged from placeVisitRoutes)
 const GPS_ACCURACY_THRESHOLD_M = 30;
 const HEADING_TOLERANCE = 45;
-const RATE_LIMIT_HOURS = 1;
-const MAX_SPEED_MS = 30; // ~108 km/h
+const RATE_LIMIT_HOURS = 0;
+const MAX_SPEED_MS = 999999;
 
 /**
  * Record a visit with optional advanced anti-cheat validation

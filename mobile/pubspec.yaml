@@ -82,3 +82,6 @@ flutter:
     - assets/geojson/boundaries/LK-districts.geojson
     - assets/data/
     - assets/images/
+    - assets/images/marker_unvisited.png
+    - assets/images/marker_visited.png
+    - assets/images/marker_failed.png
