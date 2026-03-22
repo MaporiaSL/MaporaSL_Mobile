@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../data/models/timeline_event.dart';
 import '../providers/timeline_provider.dart';
+import 'widgets/completed_trip_card.dart';
 import 'widgets/timeline_event_card.dart';
 import 'widgets/timeline_line_painter.dart';
 
@@ -187,7 +188,9 @@ class _MemoryLanePageState extends ConsumerState<MemoryLanePage> {
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.only(bottom: 24.0),
-                    child: TimelineEventCard(event: event),
+                    child: event.type == TimelineEventType.completedTrip
+                        ? CompletedTripCard(event: event)
+                        : TimelineEventCard(event: event),
                   ),
                 ),
               ],
@@ -200,6 +203,8 @@ class _MemoryLanePageState extends ConsumerState<MemoryLanePage> {
 
   Color _getEventColor(TimelineEventType type) {
     switch (type) {
+      case TimelineEventType.completedTrip:
+        return AppColors.accent;
       case TimelineEventType.upcoming:
         return const Color(0xFF4CAF50);
       case TimelineEventType.visit:
@@ -215,6 +220,8 @@ class _MemoryLanePageState extends ConsumerState<MemoryLanePage> {
 
   IconData _getEventIcon(TimelineEventType type) {
     switch (type) {
+      case TimelineEventType.completedTrip:
+        return Icons.emoji_events_rounded;
       case TimelineEventType.upcoming:
         return Icons.event_available_rounded;
       case TimelineEventType.visit:

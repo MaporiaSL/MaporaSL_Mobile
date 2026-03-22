@@ -6,7 +6,6 @@ import '../../data/services/timeline_service.dart';
 
 final authServiceProvider = Provider<AuthService>((ref) => AuthService());
 
-
 final timelineProvider = AsyncNotifierProvider<TimelineNotifier, List<TimelineEvent>>(() {
   return TimelineNotifier();
 });
@@ -19,12 +18,15 @@ class TimelineNotifier extends AsyncNotifier<List<TimelineEvent>> {
 
   Future<List<TimelineEvent>> _fetchTimeline() async {
     final user = ref.read(authServiceProvider).currentUser;
+
     if (user == null) {
       return [];
     }
-    
+
     final timelineService = ref.read(timelineServiceProvider);
-    return await timelineService.getUserTimeline(user.uid);
+    final remoteEvents = await timelineService.getUserTimeline(user.uid);
+
+    return remoteEvents;
   }
 
   Future<void> refresh() async {

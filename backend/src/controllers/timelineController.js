@@ -1,6 +1,7 @@
 const User = require('../models/User');
 const Destination = require('../models/Destination');
 const Album = require('../models/Album');
+const Travel = require('../models/Travel');
 
 /**
  * Get unified timeline events for a user
@@ -89,32 +90,62 @@ async function getTimeline(req, res) {
       timelineEvents.push(...achievementEvents);
     }
 
-    // 4. Inject Upcoming Planned Trips
-    const upcomingEvents = [
+    // 4. Fetch User's Real Trips (Only non-completed/upcoming for now)
+    const userTrips = await Travel.find({ userId }).lean();
+    const now = new Date();
+
+    const tripEvents = userTrips
+      .filter(trip => new Date(trip.startDate) > now) // Only upcoming trips
+      .map(trip => {
+        // Construct a short location summary
+        let locationSummary = '';
+        if (trip.locations && trip.locations.length > 0) {
+          locationSummary = trip.locations.slice(0, 2).map(l => l.name || l).join(', ');
+          if (trip.locations.length > 2) locationSummary += '...';
+        }
+
+        return {
+          id: `trip_${trip._id.toString()}`,
+          type: 'UPCOMING',
+          timestamp: trip.startDate,
+          title: trip.title,
+          description: trip.description || `Exploring ${locationSummary || 'Sri Lanka'}`,
+          tripId: trip._id.toString(),
+          metadata: {
+            locations: trip.locations,
+            startDate: trip.startDate,
+            endDate: trip.endDate
+          }
+        };
+      });
+    timelineEvents.push(...tripEvents);
+
+    // 5. Add Hardcoded Upcoming Trip Mocks (for demo until real trips are created)
+    const mockUpcoming = [
       {
-        id: `upcoming_trip_1`,
+        id: 'mock_trip_1',
         type: 'UPCOMING',
-        timestamp: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000),
-        title: 'Galle Fort Heritage Walk',
-        description: 'A weekend getaway walking the cobbled streets of the Dutch Fort. Architecture, cafes, and sunsets.',
+        timestamp: new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
+        title: 'Wonders of Galle Fort',
+        description: 'Exploring the colonial charm and narrow streets of the historic Galle Fort.',
         metadata: {
-          daysRemaining: 10,
-          location: 'Galle Fort'
+          locations: ['Galle Fort', 'Lighthouse', 'Maritime Museum'],
+          startDate: new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000)
         }
       },
       {
-        id: `upcoming_trip_2`,
+        id: 'mock_trip_2',
         type: 'UPCOMING',
-        timestamp: new Date(Date.now() + 18 * 24 * 60 * 60 * 1000),
-        title: 'Hikkaduwa Snorkeling Escape',
-        description: 'A quick dive into vibrant coral reefs and relaxing on the beach.',
+        timestamp: new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
+        title: 'Hill Country Tea Escape',
+        description: 'Breathtaking views of mist-covered mountains and rolling tea estates in Nuwara Eliya.',
         metadata: {
-          daysRemaining: 18,
-          location: 'Hikkaduwa'
+          locations: ['Gregory Lake', 'Tea Factory', 'Victoria Park'],
+          startDate: new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000)
         }
       }
     ];
-    timelineEvents.push(...upcomingEvents);
+    timelineEvents.push(...mockUpcoming);
 
     // Sort all events chronologically (newest first)
     timelineEvents.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));

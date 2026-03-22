@@ -3,6 +3,7 @@ enum TimelineEventType {
   photo,
   achievement,
   upcoming,
+  completedTrip,
   unknown
 }
 
@@ -14,6 +15,12 @@ class TimelineEvent {
   final String description;
   final Map<String, dynamic> metadata;
 
+  // Completed-trip specific fields (non-null only for completedTrip type)
+  final int completionPercentage;
+  final int destinationCount;
+  final int visitedCount;
+  final String? tripId;
+
   TimelineEvent({
     required this.id,
     required this.type,
@@ -21,6 +28,10 @@ class TimelineEvent {
     required this.title,
     required this.description,
     required this.metadata,
+    this.completionPercentage = 0,
+    this.destinationCount = 0,
+    this.visitedCount = 0,
+    this.tripId,
   });
 
   factory TimelineEvent.fromJson(Map<String, dynamic> json) {
@@ -38,6 +49,9 @@ class TimelineEvent {
       case 'ACHIEVEMENT':
         eventType = TimelineEventType.achievement;
         break;
+      case 'COMPLETED_TRIP':
+        eventType = TimelineEventType.completedTrip;
+        break;
       default:
         eventType = TimelineEventType.unknown;
     }
@@ -49,6 +63,10 @@ class TimelineEvent {
       title: json['title'] as String,
       description: json['description'] as String,
       metadata: json['metadata'] as Map<String, dynamic>? ?? {},
+      completionPercentage: json['completionPercentage'] as int? ?? 0,
+      destinationCount: json['destinationCount'] as int? ?? 0,
+      visitedCount: json['visitedCount'] as int? ?? 0,
+      tripId: json['tripId'] as String?,
     );
   }
 }
