@@ -36,6 +36,7 @@ class QuestCard extends ConsumerWidget {
           collapsedShape: const Border(),
           backgroundColor: Colors.white,
           collapsedBackgroundColor: Colors.white,
+          leading: _buildLeadingIndicator(assignment.isUnlocked, isCompleted),
           title: Text(
             assignment.district,
             style: const TextStyle(
@@ -62,7 +63,13 @@ class QuestCard extends ConsumerWidget {
               ],
             ),
           ),
-          trailing: _buildTrailingBadge(isCompleted, isNew, assignment.isUnlocked),
+          trailing: _buildTrailingBadge(
+            isCompleted, 
+            isNew, 
+            assignment.isUnlocked,
+            assignment.visitedCount,
+            assignment.assignedCount,
+          ),
           children: [
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -88,27 +95,14 @@ class QuestCard extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'Quest Progress',
-              style: TextStyle(
-                fontSize: 11,
-                fontWeight: FontWeight.w700,
-                color: Colors.grey[700],
-                letterSpacing: 0.2,
-              ),
-            ),
-            Text(
-              '${assignment.visitedCount}/${assignment.assignedCount}',
-              style: TextStyle(
-                fontSize: 11,
-                fontWeight: FontWeight.w900,
-                color: progress == 1.0 ? Colors.green[700] : Colors.blue[700],
-              ),
-            ),
-          ],
+        const Text(
+          'Quest Progress',
+          style: TextStyle(
+            fontSize: 11,
+            fontWeight: FontWeight.w700,
+            color: Colors.grey[700],
+            letterSpacing: 0.2,
+          ),
         ),
         const SizedBox(height: 6),
         ClipRRect(
@@ -126,18 +120,36 @@ class QuestCard extends ConsumerWidget {
     );
   }
 
-  Widget _buildTrailingBadge(bool isCompleted, bool isNew, bool isUnlocked) {
-    if (!isUnlocked) {
-      return Container(
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: Colors.grey[100],
-          shape: BoxShape.circle,
-        ),
-        child: Icon(Icons.lock_outline, size: 16, color: Colors.grey[400]),
-      );
-    }
+  Widget _buildLeadingIndicator(bool isUnlocked, bool isCompleted) {
+    return Container(
+      width: 48,
+      height: 48,
+      decoration: BoxDecoration(
+        color: isUnlocked 
+            ? (isCompleted ? Colors.green[50] : Colors.blue[50]) 
+            : Colors.grey[200],
+        shape: BoxShape.circle,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.1),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Icon(
+        isUnlocked 
+            ? (isCompleted ? Icons.verified : Icons.explore) 
+            : Icons.lock,
+        color: isUnlocked 
+            ? (isCompleted ? Colors.green[600] : Colors.blue[600]) 
+            : Colors.grey[600],
+        size: 22,
+      ),
+    );
+  }
 
+  Widget _buildTrailingBadge(bool isCompleted, bool isNew, bool isUnlocked, int visited, int total) {
     if (isCompleted) {
       return Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
@@ -157,25 +169,24 @@ class QuestCard extends ConsumerWidget {
       );
     }
 
-    if (isNew) {
-      return const SizedBox.shrink();
-    }
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(
-        color: Colors.orange[50],
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Text(
-        'In Progress',
-        style: TextStyle(
-          color: Colors.orange[700],
-          fontSize: 10,
-          fontWeight: FontWeight.w900,
-          letterSpacing: 0.5,
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Text(
+          '$visited/$total',
+          style: TextStyle(
+            color: Colors.blue[400],
+            fontSize: 14,
+            fontWeight: FontWeight.w900,
+          ),
         ),
-      ),
+        if (!isUnlocked)
+          const Text(
+            'Locked',
+            style: TextStyle(color: Colors.grey, fontSize: 10, fontWeight: FontWeight.bold),
+          ),
+      ],
     );
   }
 
