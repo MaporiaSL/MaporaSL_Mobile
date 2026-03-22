@@ -40,6 +40,7 @@ class _MemoryLanePageState extends ConsumerState<MemoryLanePage>
 
   @override
   Widget build(BuildContext context) {
+    final tripsState = ref.watch(tripsProvider);
     final explorationState = ref.watch(explorationProvider);
     final questCount = explorationState.assignments.length;
     final tripCount = tripsState.trips.length;
