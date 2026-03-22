@@ -62,7 +62,7 @@ class QuestCard extends ConsumerWidget {
               ],
             ),
           ),
-          trailing: _buildTrailingBadge(isCompleted, isNew),
+          trailing: _buildTrailingBadge(isCompleted, isNew, assignment.isUnlocked),
           children: [
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -86,28 +86,16 @@ class QuestCard extends ConsumerWidget {
 
   Widget _buildProgressSection(BuildContext context, double progress) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'Quest Progress',
-              style: TextStyle(
-                fontSize: 11,
-                fontWeight: FontWeight.w700,
-                color: Colors.grey[700],
-                letterSpacing: 0.2,
-              ),
-            ),
-            Text(
-              '${(progress * 100).toInt()}%',
-              style: TextStyle(
-                fontSize: 11,
-                fontWeight: FontWeight.w900,
-                color: progress == 1.0 ? Colors.green[700] : Colors.blue[700],
-              ),
-            ),
-          ],
+        Text(
+          'Quest Progress',
+          style: TextStyle(
+            fontSize: 11,
+            fontWeight: FontWeight.w700,
+            color: Colors.grey[700],
+            letterSpacing: 0.2,
+          ),
         ),
         const SizedBox(height: 6),
         ClipRRect(
@@ -125,25 +113,51 @@ class QuestCard extends ConsumerWidget {
     );
   }
 
-  Widget _buildTrailingBadge(bool isCompleted, bool isNew) {
+  Widget _buildTrailingBadge(bool isCompleted, bool isNew, bool isUnlocked) {
+    if (!isUnlocked) {
+      return Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: Colors.grey[100],
+          shape: BoxShape.circle,
+        ),
+        child: Icon(Icons.lock_outline, size: 16, color: Colors.grey[400]),
+      );
+    }
+
+    if (isCompleted) {
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        decoration: BoxDecoration(
+          color: Colors.green[50],
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Text(
+          'Mastered',
+          style: TextStyle(
+            color: Colors.green[700],
+            fontSize: 10,
+            fontWeight: FontWeight.w900,
+            letterSpacing: 0.5,
+          ),
+        ),
+      );
+    }
+
+    if (isNew) {
+      return const SizedBox.shrink();
+    }
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: isCompleted
-            ? Colors.green[50]
-            : isNew
-                ? Colors.blue[50]
-                : Colors.orange[50],
+        color: Colors.orange[50],
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
-        isCompleted ? 'Mastered' : isNew ? 'New Quest' : 'In Progress',
+        'In Progress',
         style: TextStyle(
-          color: isCompleted
-              ? Colors.green[700]
-              : isNew
-                  ? Colors.blue[700]
-                  : Colors.orange[700],
+          color: Colors.orange[700],
           fontSize: 10,
           fontWeight: FontWeight.w900,
           letterSpacing: 0.5,
