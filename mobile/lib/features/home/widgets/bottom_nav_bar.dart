@@ -29,9 +29,9 @@ class BottomNavBar extends StatelessWidget {
           'Album',
           0,
         ),
-        _buildNavItem(Icons.card_travel, Icons.card_travel, 'Trips', 1),
-        _buildNavItem(Icons.map, Icons.map_outlined, 'Map', 2),
-        _buildNavItem(Icons.timeline, Icons.timeline_outlined, 'Timeline', 3),
+  _buildNavItem(Icons.card_travel, Icons.card_travel, 'Trips', 1),
+  _buildNavItem(Icons.map, Icons.map_outlined, 'Map', 2),
+  _buildNavItem(Icons.timeline, Icons.timeline_outlined, 'Timeline', 3),
         _buildNavItem(
           Icons.shopping_bag,
           Icons.shopping_bag_outlined,

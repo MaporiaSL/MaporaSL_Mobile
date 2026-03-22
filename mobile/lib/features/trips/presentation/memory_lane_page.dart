@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
@@ -8,6 +8,7 @@ import 'widgets/quest_card.dart';
 import 'providers/trips_provider.dart';
 import 'create_trip_page.dart';
 import 'trip_detail_page.dart';
+import '../../../core/constants/app_colors.dart';
 
 /// Memory Lane - timeline of user trips with status-based grouping
 class MemoryLanePage extends ConsumerStatefulWidget {
@@ -93,24 +94,7 @@ class _MemoryLanePageState extends ConsumerState<MemoryLanePage>
     final quests = explorationState.assignments;
 
     if (quests.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.stars, size: 64, color: Colors.orange),
-            const SizedBox(height: 12),
-            const Text(
-              'No timeline available',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Your exploration path will appear here.',
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-          ],
-        ),
-      );
+      return _buildEmptyState(context);
     }
 
     return RefreshIndicator(
@@ -150,48 +134,21 @@ class _MemoryLanePageState extends ConsumerState<MemoryLanePage>
       );
     }
 
-    final trips = tripsState.trips;
-    if (trips.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.travel_explore, size: 64, color: Colors.grey),
-            const SizedBox(height: 12),
-            const Text(
-              'No trips yet',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Start planning your adventure!',
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton.icon(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const CreateTripPage()),
-                );
-              },
-              icon: const Icon(Icons.add),
-              label: const Text('Create Trip'),
-            ),
-          ],
-        ),
-      );
-    }
+    final apiTrips = tripsState.trips;
 
-    // Group trips
-    List<TripModel> byStatus(String key) => trips.where((t) {
+    // Group API trips by status
+    List<TripModel> byStatus(String key) => apiTrips.where((t) {
       final s = _statusKey(t);
       return s == key;
     }).toList();
 
     final scheduled = byStatus('scheduled');
     final planned = byStatus('planned') + byStatus('active');
-    final completed = byStatus('completed');
+    final apiCompleted = byStatus('completed');
+
+    if (apiTrips.isEmpty) {
+      return _buildEmptyState(context);
+    }
 
     return RefreshIndicator(
       onRefresh: () async =>
@@ -217,14 +174,62 @@ class _MemoryLanePageState extends ConsumerState<MemoryLanePage>
               canEdit: true,
             ),
           if (planned.isNotEmpty) const SizedBox(height: 24),
-          if (completed.isNotEmpty)
-            _StatusSection(
-              label: 'Completed',
-              color: Colors.purple,
-              icon: Icons.check_circle,
-              trips: completed,
-              canEdit: false,
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmptyState(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          // The large research/magnifying glass icon from the screenshot
+          Icon(
+            Icons.manage_search_rounded,
+            size: 100,
+            color: Colors.blue.shade700.withOpacity(0.3), // Matches nav bar color
+          ),
+          const SizedBox(height: 16),
+          const Text(
+            'No trips yet',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF424242),
             ),
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            'Start planning your adventure!',
+            style: TextStyle(
+              fontSize: 14,
+              color: Color(0xFF757575),
+            ),
+          ),
+          const SizedBox(height: 24),
+          ElevatedButton.icon(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const CreateTripPage()),
+              );
+            },
+            icon: const Icon(Icons.add, size: 18),
+            label: const Text(
+              'Create Trip',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primary, // Use brand primary color
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              elevation: 0,
+            ),
+          ),
         ],
       ),
     );
@@ -436,31 +441,61 @@ class _TripCard extends StatelessWidget {
                   }).toList(),
                 ),
               ),
+            if (trip.completionPercentage > 0 || !canEdit) ...[
+              const SizedBox(height: 10),
+              _buildProgressBar(context),
+            ],
             const SizedBox(height: 12),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                OutlinedButton.icon(
+            // Completed trips get the prominent detail button
+            if (!canEdit)
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
                   onPressed: onView,
-                  icon: const Icon(Icons.visibility),
-                  label: const Text('View'),
+                  icon: const Icon(Icons.map_rounded, size: 18),
+                  label: const Text(
+                    'See Trip Progress & Details',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 0.2,
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFFFFB020),
+                    foregroundColor: Colors.white,
+                    elevation: 0,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
                 ),
-                if (canEdit) ...[
-                  const SizedBox(width: 8),
+              )
+            else
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
                   OutlinedButton.icon(
-                    onPressed: onEdit,
-                    icon: const Icon(Icons.edit),
-                    label: const Text('Edit'),
+                    onPressed: onView,
+                    icon: const Icon(Icons.visibility),
+                    label: const Text('View'),
                   ),
-                  const SizedBox(width: 8),
-                  OutlinedButton.icon(
-                    onPressed: onDelete,
-                    icon: const Icon(Icons.delete_outline, color: Colors.red),
-                    label: const Text('Delete'),
-                  ),
+                  if (canEdit) ...[
+                    const SizedBox(width: 8),
+                    OutlinedButton.icon(
+                      onPressed: onEdit,
+                      icon: const Icon(Icons.edit),
+                      label: const Text('Edit'),
+                    ),
+                    const SizedBox(width: 8),
+                    OutlinedButton.icon(
+                      onPressed: onDelete,
+                      icon: const Icon(Icons.delete_outline, color: Colors.red),
+                      label: const Text('Delete'),
+                    ),
+                  ],
                 ],
-              ],
-            ),
+              ),
           ],
         ),
       ),
@@ -470,6 +505,69 @@ class _TripCard extends StatelessWidget {
   String _dateRange(DateTime start, DateTime end) {
     final fmt = DateFormat('MMM d, yyyy');
     return '${fmt.format(start)} - ${fmt.format(end)}';
+  }
+
+  Widget _buildProgressBar(BuildContext context) {
+    final pct = trip.completionPercentage;
+    Color barColor;
+    String label;
+    if (pct >= 100) {
+      barColor = const Color(0xFF1F8A70);
+      label = '✅ Fully Completed';
+    } else if (pct >= 75) {
+      barColor = const Color(0xFF00A6B2);
+      label = '🔥 Nearly There';
+    } else if (pct >= 50) {
+      barColor = const Color(0xFFFFB020);
+      label = '⚡ Halfway Done';
+    } else {
+      barColor = const Color(0xFF1F6F8B);
+      label = '🗺️ In Progress';
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                color: barColor,
+              ),
+            ),
+            Text(
+              '$pct%  •  ${trip.visitedCount}/${trip.destinationCount} spots',
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: barColor,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 6),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(6),
+          child: TweenAnimationBuilder<double>(
+            tween: Tween(begin: 0, end: pct / 100.0),
+            duration: const Duration(milliseconds: 900),
+            curve: Curves.easeOutCubic,
+            builder: (context, value, _) {
+              return LinearProgressIndicator(
+                value: value,
+                minHeight: 8,
+                backgroundColor: Colors.black.withOpacity(0.08),
+                valueColor: AlwaysStoppedAnimation<Color>(barColor),
+              );
+            },
+          ),
+        ),
+      ],
+    );
   }
 }
 

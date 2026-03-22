@@ -1,4 +1,5 @@
-﻿import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gemified_travel_portfolio/core/services/api_client.dart';
 import '../models/place.dart';
 
@@ -60,7 +61,7 @@ class PlacesRepository {
       debugPrint('Fetching places with params: $queryParams');
 
       final response = await _apiClient.get(
-        '/places',
+        '/api/places',
         queryParameters: queryParams,
       );
 
@@ -120,7 +121,7 @@ class PlacesRepository {
 
       debugPrint('Submitting place: $payload');
 
-      final response = await _apiClient.post('/places', data: payload);
+      final response = await _apiClient.post('/api/places', data: payload);
 
       if (response.statusCode != 201 && response.statusCode != 200) {
         throw Exception('Failed to submit place: ${response.statusCode}');
@@ -132,4 +133,28 @@ class PlacesRepository {
       throw Exception('Error submitting place: $e');
     }
   }
+
+  Future<List<String>> getCategories() async {
+    try {
+      final response = await _apiClient.get('/api/places/stats');
+      if (response.statusCode == 200) {
+        final data = response.data as Map<String, dynamic>;
+        final List<dynamic> byCategory = data['byCategory'] ?? [];
+        return byCategory
+            .map((c) => (c['_id'] as String?) ?? 'other')
+            .where((c) => c != null)
+            .toSet() // Remove duplicates
+            .toList();
+      }
+      return [];
+    } catch (e) {
+      debugPrint('Error in getCategories: $e');
+      return [];
+    }
+  }
 }
+
+final placesRepositoryProvider = Provider<PlacesRepository>((ref) {
+  final apiClient = ref.watch(apiClientProvider);
+  return PlacesRepository(apiClient: apiClient);
+});
