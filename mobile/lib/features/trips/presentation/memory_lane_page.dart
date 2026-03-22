@@ -44,11 +44,11 @@ class _MemoryLanePageState extends ConsumerState<MemoryLanePage>
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Timeline & Trips'),
+        title: const Text('Quests & Trips'),
         bottom: TabBar(
           controller: _tabController,
           tabs: const [
-            Tab(text: 'Timeline'),
+            Tab(text: 'Quests'),
             Tab(text: 'Trips'),
           ],
         ),
@@ -56,14 +56,14 @@ class _MemoryLanePageState extends ConsumerState<MemoryLanePage>
       body: TabBarView(
         controller: _tabController,
         children: [
-          _buildQuestsTab(context),
+          _buildTimelineTab(context),
           _buildTripsTab(context, tripsState),
         ],
       ),
     );
   }
 
-  Widget _buildQuestsTab(BuildContext context) {
+  Widget _buildTimelineTab(BuildContext context) {
     final explorationState = ref.watch(explorationProvider);
 
     if (explorationState.isLoading && explorationState.assignments.isEmpty) {
@@ -91,9 +91,9 @@ class _MemoryLanePageState extends ConsumerState<MemoryLanePage>
       );
     }
 
-    final quests = explorationState.assignments;
+    final timelineItems = explorationState.assignments;
 
-    if (quests.isEmpty) {
+    if (timelineItems.isEmpty) {
       return _buildEmptyState(context);
     }
 
@@ -101,9 +101,9 @@ class _MemoryLanePageState extends ConsumerState<MemoryLanePage>
       onRefresh: () => ref.read(explorationProvider.notifier).loadAssignments(),
       child: ListView.builder(
         padding: const EdgeInsets.all(16),
-        itemCount: quests.length,
+        itemCount: timelineItems.length,
         itemBuilder: (context, index) {
-          return QuestCard(assignment: quests[index]);
+          return QuestCard(assignment: timelineItems[index]);
         },
       ),
     );
