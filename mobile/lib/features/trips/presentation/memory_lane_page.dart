@@ -40,16 +40,18 @@ class _MemoryLanePageState extends ConsumerState<MemoryLanePage>
 
   @override
   Widget build(BuildContext context) {
-    final tripsState = ref.watch(tripsProvider);
+    final explorationState = ref.watch(explorationProvider);
+    final questCount = explorationState.assignments.length;
+    final tripCount = tripsState.trips.length;
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Quests & Trips'),
         bottom: TabBar(
           controller: _tabController,
-          tabs: const [
-            Tab(text: 'Quests'),
-            Tab(text: 'Trips'),
+          tabs: [
+            Tab(text: questCount > 0 ? 'Quests ($questCount)' : 'Quests'),
+            Tab(text: tripCount > 0 ? 'Trips ($tripCount)' : 'Trips'),
           ],
         ),
       ),
