@@ -88,14 +88,27 @@ class QuestCard extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Quest Progress',
-          style: TextStyle(
-            fontSize: 11,
-            fontWeight: FontWeight.w700,
-            color: Colors.grey[700],
-            letterSpacing: 0.2,
-          ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Quest Progress',
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w700,
+                color: Colors.grey[700],
+                letterSpacing: 0.2,
+              ),
+            ),
+            Text(
+              '${assignment.visitedCount}/${assignment.assignedCount}',
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w900,
+                color: progress == 1.0 ? Colors.green[700] : Colors.blue[700],
+              ),
+            ),
+          ],
         ),
         const SizedBox(height: 6),
         ClipRRect(
