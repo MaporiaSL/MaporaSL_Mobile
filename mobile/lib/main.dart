@@ -58,7 +58,7 @@ class MaporiaApp extends ConsumerWidget {
           ),
         );
       },
-      home: const HomeScreen(),
+      home: const SplashScreen(),
     );
   }
 }
