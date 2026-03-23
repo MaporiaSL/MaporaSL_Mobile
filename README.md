@@ -60,6 +60,7 @@ gemified-travel-portfolio/
 - Current Flutter targets in-repo are mobile-focused.
 - Historical status/planning docs are archived under [docs/_archive/](docs/_archive/).
 - Project onboarding entry: [docs/guides/START_HERE.md](docs/guides/START_HERE.md).
+- Windows helper scripts: [scripts/windows/README.md](scripts/windows/README.md).
 
 ## Contributing
 
