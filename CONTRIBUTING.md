@@ -29,6 +29,14 @@ npm install
 1. Create a branch from your target base branch.
 2. Keep commits focused and reviewable.
 3. Update relevant docs under [docs/](docs/).
+	- Guides: [docs/guides/](docs/guides/)
+	- Checklists: [docs/checklists/](docs/checklists/)
+	- Analysis: [docs/analysis/](docs/analysis/)
+	- Plans: [docs/plans/](docs/plans/)
+	- Status: [docs/status/](docs/status/)
+	- Maps: [docs/maps/](docs/maps/)
+	- Reference: [docs/reference/](docs/reference/)
+	- Archive (historical only): [docs/_archive/](docs/_archive/)
 4. Run local checks before opening a PR.
 
 ## Pull Request Checklist
@@ -37,4 +45,5 @@ npm install
 - Tests (or relevant smoke checks) pass.
 - Documentation is updated when behavior changes.
 - No secrets or generated artifacts are committed.
+	- Use [docs/_archive/](docs/_archive/) only for historical reference; do not add new active docs there.
 
