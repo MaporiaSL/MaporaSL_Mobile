@@ -9,8 +9,10 @@ _gradle_probe/
 .DS_Store
 .atom/
 .buildlog/
+.build/
 .history
 .svn/
+.swiftpm/
 migrate_working_dir/
 
 # Gradle build files (Android)
@@ -41,6 +43,7 @@ node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+logs/
 dist/
 build/
 .cache/
@@ -128,6 +131,8 @@ pubspec.lock
 **/android/app/profile/
 **/android/app/release/
 **/android/.kotlin/
+**/android/.cxx/
+**/android/**/.cxx/
 **/android/**/*.iml
 **/android/.idea/
 **/android/build/
@@ -166,6 +171,13 @@ pubspec.lock
 **/ios/Flutter/flutter_export_environment.sh
 **/ios/ServiceDefinitions.json
 **/ios/Runner/GeneratedPluginRegistrant.*
+**/dgph
+
+# Exceptions to iOS ignore rules (Flutter template defaults)
+!default.mode1v3
+!default.mode2v3
+!default.pbxuser
+!default.perspectivev3
 
 # macOS related
 **/macos/Flutter/GeneratedPluginRegistrant.swift
