@@ -227,6 +227,14 @@ coverage/
 .temp/
 .cache/
 
+# Local mobile analysis outputs (keep archived under docs/_archive/reports)
+mobile/analyze*.txt
+mobile/build_errors*.txt
+mobile/build_output.log
+mobile/git_*.txt
+mobile/staged.txt
+mobile/timeline_analyze.txt
+
 # Generated files
 *.g.dart
 *.freezed.dart

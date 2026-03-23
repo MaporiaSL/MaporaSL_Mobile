@@ -1,0 +1,20 @@
+﻿6ece95b chore(android): update gradle properties
+1f1424f feat(trips): implement interactive share options to community and social media
+a05cc31 feat(timeline): redesign quest cards with gamification and gradient badges
+2f6d756 fix(timeline): resolve incorrect import paths and missing auth provider
+01bbf1e refactor(theme): add accent color for gamified UI
+6ea0725 chore(deps): add share_plus package for social sharing
+28231bf timeline
+b16ba20 Timeline update
+23c685e error handling
+1fa5082 error handling
+165a1f0 quest section
+014acb3 timeline implementation
+19ce510 timline implementation
+0d2cbb5 timeline page
+8c99a58 Merge Places-list-new branch: resolve local.properties conflict
+ecac530 Merge pull request #47 from MaporiaSL/map-places-fetch
+148eb31 main dart fix
+baed4cb map places list fetch from DB and assign for districts
+b82168a Merge branch 'main' of https://github.com/MaporiaSL/MaporaSL_Mobile
+30c828f packege update
