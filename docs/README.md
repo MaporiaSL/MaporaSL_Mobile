@@ -82,4 +82,5 @@ This is the active documentation index for the current repository layout.
 ## Archived Docs
 
 Historical plans, migration notes, and completion reports are in [docs/_archive/](./_archive/).
+- Archive index: [_archive/README.md](_archive/README.md)
 
