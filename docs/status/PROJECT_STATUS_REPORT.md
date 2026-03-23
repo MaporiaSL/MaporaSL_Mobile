@@ -207,7 +207,7 @@ CLIENT_ORIGIN=http://localhost:3000
 
 **Create These Files**:
 
-**A) `MARKING_GUIDE.md`** (20 min)
+**A) `docs/reference/MARKING_GUIDE.md`** (20 min)
 ```markdown
 # Setup Instructions for Markers
 
@@ -221,13 +221,13 @@ CLIENT_ORIGIN=http://localhost:3000
 2. `flutter run` on emulator/device
 
 ## Demo Flow
-[See DEMO_SCRIPT.md]
+See docs/guides/DEMO_SCRIPT.md
 
 ## Features Completed
-[See FEATURES_CHECKLIST.md]
+See docs/checklists/FEATURES_CHECKLIST.md
 ```
 
-**B) `DEMO_SCRIPT.md`** (20 min)
+**B) `docs/guides/DEMO_SCRIPT.md`** (20 min)
 ```markdown
 # Demo Script for Markers (10 minutes)
 
@@ -260,7 +260,7 @@ CLIENT_ORIGIN=http://localhost:3000
    - Show leaderboard
 ```
 
-**C) `FEATURES_CHECKLIST.md`** (15 min)
+**C) `docs/checklists/FEATURES_CHECKLIST.md`** (15 min)
 - Simple table: Feature | Status | Completeness | Endpoint
 - Honest about what's 100% done vs 70% vs future
 
@@ -368,9 +368,7 @@ Total: 36 hours work, 36 hours buffer
 ```
 
 ### If You Have 48 Hours (2 days)
-```
 CRITICAL (8 hours)
-├─ All fixes above
 ├─ Achievement screens (2 hrs)
 └─ Places discovery (2 hrs)
 
@@ -405,48 +403,35 @@ Try to get to: 70% complete minimum
   - Expected: Build succeeds without errors
   
 - [ ] `cd backend && npm install && npm run dev`
-  - Expected: Server starts on port 5000
   
 - [ ] `flutter test` (from mobile/)
-  - Expected: All 238 tests pass
-  
 - [ ] App compiles and runs
   - Expected: No crashes on startup, login works
-  
-- [ ] Test basic flow: Login → Create Trip → Mark Visit → View Profile
-  - Expected: All screens load, no errors
   
 - [ ] Backend API responds
   - Test a few endpoints with Postman:
     - `GET /api/travels` - Should return empty list or user's trips
-    - `GET /api/places` - Should return list of places
     - `GET /api/exploration/assignments` - Should return districts
   
 - [ ] Documentation exists
-  - [ ] README.md updated with setup
-  - [ ] MARKING_GUIDE.md created
-  - [ ] DEMO_SCRIPT.md created
-  - [ ] FEATURES_CHECKLIST.md created
+   - [ ] README.md updated with setup
+   - [ ] docs/reference/MARKING_GUIDE.md created
+   - [ ] docs/guides/DEMO_SCRIPT.md created
+   - [ ] docs/checklists/FEATURES_CHECKLIST.md created
 
-If all above are ✅: **You're ready!**
 
 ---
-
 ## 📈 Success Metrics by Completion Level
 
-| Level | What Markers See | Likely Grade |
 |-------|------------------|--------------|
 | **60% (Minimum)** | App runs, core features work, backend solid, tests pass | C+ / B |
-| **70% (Target)** | Above + Achievement/Places UI + Good documentation | B / B+ |
 | **80% (Great)** | Above + Polish + Error handling + Demo stability | B+ / A- |
 | **90%+ (Excellent)** | All of above + Stretch features + Professional quality | A / A+ |
-
 **Target for Saturday**: 70-75% completion = B+ / A- grade
 
 ---
 
 ## 🎯 RECOMMENDATIONS
-
 ### Do This (Highest ROI)
 1. ✅ Fix progressProvider (already done)
 2. **Achievement display screen** (2 hours, huge impact)
@@ -454,7 +439,6 @@ If all above are ✅: **You're ready!**
 4. **Marking guides** (1.5 hours, shows professionalism)
 
 ### Skip This (Low Priority)
-- Cosmetics shop phase 2
 - Social sharing features
 - Admin dashboard
 - Extensive animations
@@ -467,7 +451,6 @@ If all above are ✅: **You're ready!**
 
 ---
 
-## 📞 Quick Reference Commands
 
 ```bash
 # Backend
@@ -493,10 +476,10 @@ ls -la mobile/lib/providers/progress_provider.dart
 
 ## 📄 Files Created/Updated
 
-✅ `SATURDAY_COMPLETION_CHECKLIST.md` - Detailed checklist  
-✅ `PROJECT_COMPLETION_ANALYSIS.md` - Full project audit  
+✅ docs/checklists/SATURDAY_COMPLETION_CHECKLIST.md - Detailed checklist  
+✅ docs/analysis/PROJECT_COMPLETION_ANALYSIS.md - Full project audit  
 ✅ `mobile/lib/providers/progress_provider.dart` - Fixed empty file  
-✅ `PROJECT_STATUS_REPORT.md` - This file
+✅ docs/status/PROJECT_STATUS_REPORT.md - This file
 
 ---
 

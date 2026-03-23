@@ -51,7 +51,7 @@ These items block successful marking:
   
 - [ ] **All environment variables configured**
   - Effort: 10 min | Priority: 🔴 CRITICAL
-  - Check: `.env` file has all required variables (see PROJECT_COMPLETION_ANALYSIS.md section 8)
+  - Check: `.env` file has all required variables (see [PROJECT_COMPLETION_ANALYSIS.md](../analysis/PROJECT_COMPLETION_ANALYSIS.md) section 8)
 
 ### 2. ✅ AUTHENTICATION (WORKING)
 - [ ] Firebase Auth integrates correctly
@@ -249,7 +249,7 @@ These make the project showcase better features:
 ### 11. 🟡 DOCUMENTATION FOR MARKERS
 Create brief setup guide for markers to understand project:
 
-- [ ] **Create MARKING_GUIDE.md** (15 min)
+- [ ] **Create docs/reference/MARKING_GUIDE.md** (15 min)
   - Purpose: Tell markers what to look at
   - Contents:
     - How to setup backend (npm install, .env)
@@ -259,7 +259,7 @@ Create brief setup guide for markers to understand project:
     - Key files to review
     - Expected test results
 
-- [ ] **Create DEMO_SCRIPT.md** (15 min)
+- [ ] **Create docs/guides/DEMO_SCRIPT.md** (15 min)
   - Step-by-step demo flow for markers
   - Example: 
     1. Start app → See login screen
@@ -269,7 +269,7 @@ Create brief setup guide for markers to understand project:
     5. Check achievements/xp
     6. Browse shop
   
-- [ ] **Create FEATURES_CHECKLIST.md** (10 min)
+- [ ] **Create docs/checklists/FEATURES_CHECKLIST.md** (10 min)
   - Quick table showing what's implemented vs planned
   - Honest about what's 100% done vs 70% vs future work
 
@@ -468,8 +468,8 @@ DEMO SEQUENCE (10 minutes)
 - [ ] Can open shop
 - [ ] All tests pass: `flutter test`
 - [ ] No red console errors
-- [ ] Has marking guide: `MARKING_GUIDE.md`
-- [ ] Has demo script: `DEMO_SCRIPT.md`
+- [ ] Has marking guide: [MARKING_GUIDE.md](../reference/MARKING_GUIDE.md)
+- [ ] Has demo script: [DEMO_SCRIPT.md](../guides/DEMO_SCRIPT.md)
 - [ ] README updated with setup steps
 
 **If everything above is checked** ✅: **You're ready for marking!**

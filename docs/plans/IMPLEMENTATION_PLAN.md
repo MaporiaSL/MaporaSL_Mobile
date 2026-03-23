@@ -357,7 +357,7 @@ Fix edge cases and ensure smooth map interactions
 **What Needs to Happen**:
 Create documentation for markers to understand project
 
-**2.4.1 Create MARKING_GUIDE.md**
+**2.4.1 Create docs/reference/MARKING_GUIDE.md**
 - **Purpose**: Tell markers how to setup and run project
 - **Content**:
   - Backend setup (npm install, .env, npm run dev)
@@ -367,7 +367,7 @@ Create documentation for markers to understand project
   - Known limitations
   - Time estimate: 20 minutes
 
-**2.4.2 Create DEMO_SCRIPT.md**
+**2.4.2 Create docs/guides/DEMO_SCRIPT.md**
 - **Purpose**: Step-by-step demo flow for markers
 - **Content**:
   - 10-minute demonstration walkthrough
@@ -376,7 +376,7 @@ Create documentation for markers to understand project
   - Features to highlight
   - Time estimate: 20 minutes
 
-**2.4.3 Create FEATURES_CHECKLIST.md**
+**2.4.3 Create docs/checklists/FEATURES_CHECKLIST.md**
 - **Purpose**: Quick reference of what's implemented
 - **Content**:
   - Feature | Status | Completeness | Notes table
@@ -386,7 +386,7 @@ Create documentation for markers to understand project
   - Time estimate: 15 minutes
 
 **2.4.4 Update README.md**
-- **File**: `d:\Github_projects\gemified-travel-portfolio\README.md`
+- **File**: [README.md](../../README.md)
 - **Changes**:
   - Add "For Marking" section with quick start
   - Add features overview
@@ -742,9 +742,9 @@ class Place {
   - [ ] Add error handling
   
 - [ ] 2.4 Documentation (1.5 hrs)
-  - [ ] Create MARKING_GUIDE.md
-  - [ ] Create DEMO_SCRIPT.md
-  - [ ] Create FEATURES_CHECKLIST.md
+  - [ ] Create docs/reference/MARKING_GUIDE.md
+  - [ ] Create docs/guides/DEMO_SCRIPT.md
+  - [ ] Create docs/checklists/FEATURES_CHECKLIST.md
   - [ ] Update README.md
 
 ### PHASE 3: POLISH (If Time)

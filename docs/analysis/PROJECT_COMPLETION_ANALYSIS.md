@@ -461,7 +461,7 @@ GET    /api/admin/exploration/pending - Get pending verifications
 | `docs/core/implementation-strategy.md` | ✅ Complete | Phase breakdown, architecture decisions |
 | `docs/core/tech-stack.md` | ✅ Complete | Technology choices and dependencies |
 | `docs/README.md` | ✅ Hub | Entry point for all documentation |
-| `START_HERE.md` | ✅ Quick start | Repository navigation guide |
+| [docs/guides/START_HERE.md](../guides/START_HERE.md) | ✅ Quick start | Repository navigation guide |
 | `CONTRIBUTING.md` | ✅ Workflow | PR process, dev setup |
 | `CHANGELOG.md` | ✅ Updated | Recent changes (Jan 29 - Shop Phase 1, Jan 27 - Places planning) |
 
