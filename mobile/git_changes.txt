@@ -1,5 +1,0 @@
-﻿ M mobile/android/gradle.properties
- M mobile/lib/features/trips/presentation/memory_lane_page.dart
- M mobile/pubspec.lock
- M mobile/pubspec.yaml
-?? mobile/git_changes.txt
