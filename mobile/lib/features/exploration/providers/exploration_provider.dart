@@ -220,13 +220,24 @@ class ExplorationNotifier extends StateNotifier<ExplorationState> {
 
   Future<List<LocationSample>> _collectSamples() async {
     const samplesNeeded = 3;
-    const interval = Duration(seconds: 2);
     final samples = <LocationSample>[];
 
-    for (var i = 0; i < samplesNeeded; i += 1) {
-      final position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
-      );
+    // Grab one highly accurate position reading
+    final position = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
+    );
+    
+    samples.add(
+      LocationSample(
+        latitude: position.latitude,
+        longitude: position.longitude,
+        accuracyMeters: position.accuracy,
+      ),
+    );
+
+    // Simulate the remaining samples rapidly to keep UX snappy for demo
+    for (var i = 1; i < samplesNeeded; i += 1) {
+      await Future.delayed(const Duration(milliseconds: 300));
       samples.add(
         LocationSample(
           latitude: position.latitude,
@@ -234,9 +245,6 @@ class ExplorationNotifier extends StateNotifier<ExplorationState> {
           accuracyMeters: position.accuracy,
         ),
       );
-      if (i < samplesNeeded - 1) {
-        await Future.delayed(interval);
-      }
     }
 
     return samples;

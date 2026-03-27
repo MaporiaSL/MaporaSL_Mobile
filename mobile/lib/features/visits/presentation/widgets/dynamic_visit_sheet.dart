@@ -33,7 +33,7 @@ class DynamicVisitSheet extends ConsumerStatefulWidget {
   @override
   ConsumerState<DynamicVisitSheet> createState() => _DynamicVisitSheetState();
 
-  static void show(
+  static Future<Map<String, dynamic>?> show(
     BuildContext context, {
     required String placeId,
     required String placeName,
@@ -42,7 +42,7 @@ class DynamicVisitSheet extends ConsumerStatefulWidget {
     bool isExploration = false,
     ExplorationLocation? explorationLocation,
   }) {
-    showModalBottomSheet(
+    return showModalBottomSheet<Map<String, dynamic>>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
@@ -220,20 +220,22 @@ class _DynamicVisitSheetState extends ConsumerState<DynamicVisitSheet>
         success &&
         error == null;
 
-    if (districtJustUnlocked && !_certificateShown) {
+    // Celebrations moved to MapScreen. We just check if we need to auto-pop.
+    if (success && widget.isExploration && !_certificateShown) {
       _certificateShown = true;
+      int xpAwarded = districtJustUnlocked ? 25 : 10;
+      xpAwarded += math.Random().nextInt(5);
+      
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        _confettiController.play();
-        _openCertificateOverlay(assignment: currentAssignment);
-      });
-    } else if (success &&
-        widget.isExploration &&
-        widget.explorationLocation != null &&
-        !_certificateShown) {
-      _certificateShown = true;
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _confettiController.play();
-        _openCertificateOverlay(location: widget.explorationLocation);
+        if (mounted && Navigator.of(context).canPop()) {
+          Navigator.of(context).pop({
+            'success': true,
+            'districtJustUnlocked': districtJustUnlocked,
+            'assignment': currentAssignment,
+            'location': widget.explorationLocation,
+            'xpAwarded': xpAwarded,
+          });
+        }
       });
     }
 
@@ -355,10 +357,14 @@ class _DynamicVisitSheetState extends ConsumerState<DynamicVisitSheet>
             _currentStepIndex >= 0)) {
       return _buildVerifyingUI(stepDesc);
     } else if (success) {
-      return _buildSuccessUI(
-        districtJustUnlocked: districtJustUnlocked,
-        currentAssignment: currentAssignment,
-      );
+      if (widget.isExploration) {
+        return const Center(child: CircularProgressIndicator());
+      } else {
+        return _buildSuccessUI(
+          districtJustUnlocked: districtJustUnlocked,
+          currentAssignment: currentAssignment,
+        );
+      }
     } else if (error != null) {
       return _buildErrorUI(error);
     }

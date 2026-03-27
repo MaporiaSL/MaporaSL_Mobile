@@ -14,8 +14,10 @@ import 'theme/map_visual_theme.dart';
 import '../../exploration/providers/exploration_provider.dart';
 import '../../../core/providers/theme_provider.dart';
 import '../../exploration/data/models/exploration_models.dart';
+import '../../exploration/presentation/widgets/shareable_card.dart';
 import '../../visits/presentation/widgets/dynamic_visit_sheet.dart';
 import '../providers/user_location_provider.dart';
+import 'package:confetti/confetti.dart';
 
 final districtFocusProvider = StateProvider<bool>((ref) => false);
 
@@ -37,6 +39,7 @@ class _MapScreenState extends ConsumerState<MapScreen>
   ExplorationLocation? _selectedLocation;
   late AnimationController _focusAnimationController;
   late AnimationController _selectionAnimationController;
+  late ConfettiController _confettiController;
 
   String _normalizeKey(String? value) {
     if (value == null) return '';
@@ -91,6 +94,9 @@ class _MapScreenState extends ConsumerState<MapScreen>
       duration: const Duration(milliseconds: 300),
       vsync: this,
     );
+    _confettiController = ConfettiController(
+      duration: const Duration(seconds: 3),
+    );
 
     Future.microtask(() {
       if (!mounted) return;
@@ -104,7 +110,36 @@ class _MapScreenState extends ConsumerState<MapScreen>
   void dispose() {
     _focusAnimationController.dispose();
     _selectionAnimationController.dispose();
+    _confettiController.dispose();
     super.dispose();
+  }
+
+  void _handleVerificationSuccess(Map<String, dynamic> result) {
+    // Redirect to the MAIN map screen by closing the district focus immediately
+    selectedDistrict = null;
+    selectedProvince = null;
+    _isDistrictFocused = false;
+    _selectedLocation = null;
+
+    // Play confetti explosion
+    _confettiController.play();
+    
+    // Show the certificate overlay
+    Navigator.of(context).push(
+      PageRouteBuilder<void>(
+        opaque: false,
+        pageBuilder: (_, __, ___) {
+          return DiscoveryCertificateOverlay(
+            assignment: result['assignment'],
+            location: result['districtJustUnlocked'] == true ? null : result['location'],
+            unlockLocationName: result['location']?.name ?? 'New Discovery',
+          );
+        },
+      ),
+    );
+    
+    // Force marker refresh
+    setState(() {});
   }
 
   @override
@@ -207,10 +242,10 @@ class _MapScreenState extends ConsumerState<MapScreen>
                         _selectedLocation = null;
                       });
                     },
-                    onVerify: () {
+                    onVerify: () async {
                       final location = _selectedLocation;
                       if (location == null) return;
-                      DynamicVisitSheet.show(
+                      final result = await DynamicVisitSheet.show(
                         context,
                         placeId: location.id,
                         placeName: location.name,
@@ -219,9 +254,33 @@ class _MapScreenState extends ConsumerState<MapScreen>
                         isExploration: true,
                         explorationLocation: location,
                       );
+                      
+                      if (!mounted) return;
+                      if (result != null && result['success'] == true) {
+                        // Immediately close the detail card UI to see the map
+                        setState(() { _selectedLocation = null; });
+                        _handleVerificationSuccess(result);
+                      }
                     },
                   ),
                 ),
+              // Confetti Overlay
+              Align(
+                alignment: Alignment.topCenter,
+                child: ConfettiWidget(
+                  confettiController: _confettiController,
+                  blastDirectionality: BlastDirectionality.explosive,
+                  shouldLoop: false,
+                  colors: const [
+                    Colors.green,
+                    Colors.blue,
+                    Colors.pink,
+                    Colors.orange,
+                    Colors.purple,
+                    Colors.amber,
+                  ],
+                ),
+              ),
             ],
           ),
         ),
@@ -316,10 +375,10 @@ class _MapScreenState extends ConsumerState<MapScreen>
                           _selectedLocation = null;
                         });
                       },
-                      onVerify: () {
+                      onVerify: () async {
                         final location = _selectedLocation;
                         if (location == null) return;
-                        DynamicVisitSheet.show(
+                        final result = await DynamicVisitSheet.show(
                           context,
                           placeId: location.id,
                           placeName: location.name,
@@ -328,10 +387,33 @@ class _MapScreenState extends ConsumerState<MapScreen>
                           isExploration: true,
                           explorationLocation: location,
                         );
+                        
+                        if (!mounted) return;
+                        if (result != null && result['success'] == true) {
+                          setState(() { _selectedLocation = null; });
+                          _handleVerificationSuccess(result);
+                        }
                       },
                     ),
                   ),
-
+                
+                // Confetti Overlay
+                Align(
+                  alignment: Alignment.topCenter,
+                  child: ConfettiWidget(
+                    confettiController: _confettiController,
+                    blastDirectionality: BlastDirectionality.explosive,
+                    shouldLoop: false,
+                    colors: const [
+                      Colors.green,
+                      Colors.blue,
+                      Colors.pink,
+                      Colors.orange,
+                      Colors.purple,
+                      Colors.amber,
+                    ],
+                  ),
+                ),
               ],
             );
           },
