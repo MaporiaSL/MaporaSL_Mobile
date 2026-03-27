@@ -194,6 +194,18 @@ class _MapScreenState extends ConsumerState<MapScreen>
 
   @override
   Widget build(BuildContext context) {
+    // Listen to global district focus reset from navigation bar
+    ref.listen<bool>(districtFocusProvider, (previous, next) {
+      if (previous == true && next == false && _isDistrictFocused) {
+        setState(() {
+          selectedDistrict = null;
+          selectedProvince = null;
+          _isDistrictFocused = false;
+          _selectedLocation = null;
+        });
+      }
+    });
+
     ref.listen<ExplorationState>(explorationProvider, (previous, next) {
       // Show error messages
       if (next.error != null && next.error!.isNotEmpty) {

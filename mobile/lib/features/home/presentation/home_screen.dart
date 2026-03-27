@@ -75,6 +75,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget build(BuildContext context) {
     final isDistrictFocused = ref.watch(districtFocusProvider);
 
+
     return Scaffold(
       body: _isCheckingProfile
           ? const Center(child: CircularProgressIndicator())
@@ -177,7 +178,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       bottomNavigationBar: BottomNavBar(
         currentIndex: _selectedIndex,
         onTap: (index) {
-          if (index == 0 && _selectedIndex == 0) {
+          if (index == 2 && _selectedIndex == 2) {
             // Reset district focus if tapping map again while active
             ref.read(districtFocusProvider.notifier).state = false;
           }

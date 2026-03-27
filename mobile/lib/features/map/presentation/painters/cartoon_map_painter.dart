@@ -142,52 +142,43 @@ class CartoonMapPainter extends CustomPainter {
       final reveal = progress.clamp(0.0, 1.0);
       final isUnlocked = reveal >= 1.0;
 
-      // District-specific base color with vibrant enhancement
-      final districtBaseColor = _districtBaseColor(districtId);
-      final vibranceBoost = HSLColor.fromColor(
-        districtBaseColor,
-      ).withSaturation(0.75).toColor();
+      // MONOLITH DESIGN: Unified base color
+      final monolithBaseColor = theme.lockedColor;
+      
+      // Calculate opacity: 0% -> 0.40, 100% -> 1.0 (Linear crystallization)
+      final baseOpacity = 0.40 + (0.60 * reveal);
 
-      final targetColor =
-          Color.lerp(
-            vibranceBoost,
-            theme.getDistrictProgressColor(progress),
-            0.25,
-          ) ??
-          vibranceBoost;
-
-      // Enhanced color blending
-      var fillColor =
-          Color.lerp(theme.lockedColor, targetColor, 0.18 + (0.82 * reveal)) ??
-          theme.lockedColor;
+      var fillColor = isUnlocked 
+          ? theme.unlockedColor 
+          : monolithBaseColor;
 
       if (isFocusedDistrict && focusMode) {
-        fillColor =
-            Color.lerp(fillColor, theme.selectedDistrictGlassTint, 0.50) ??
-            theme.selectedDistrictGlassTint;
+        fillColor = Color.lerp(fillColor, theme.selectedDistrictGlassTint, 0.30) ?? fillColor;
       }
 
       final opacity = shouldDim
           ? 0.10
           : (isFocusedDistrict && focusMode
                 ? 0.94
-                : (progress >= 1.0 
-                    ? 0.85 // More solid for unlocked
-                    : (progress == 0 ? 0.48 : (0.60 + (0.32 * reveal)))));
+                : baseOpacity);
 
       final fillPaint = Paint()
         ..color = fillColor.withValues(alpha: opacity)
         ..style = PaintingStyle.fill;
 
-      // Special golden glow for 100% districts
-      if (progress >= 1.0 && !shouldDim) {
-        final glowPaint = Paint()
-          ..color = const Color(0xFFFBBF24).withValues(alpha: 0.3)
-          ..maskFilter = const MaskFilter.blur(BlurStyle.outer, 6.0)
+      // Pulse Animation for 100% districts
+      if (isUnlocked && !shouldDim) {
+        final time = DateTime.now().millisecondsSinceEpoch / 1000.0;
+        final pulse = (math.sin(time * 2.0) + 1.0) / 2.0;
+        
+        final pulsePaint = Paint()
+          ..color = theme.unlockedColor.withValues(alpha: 0.1 + (0.15 * pulse))
+          ..maskFilter = MaskFilter.blur(BlurStyle.outer, 4.0 + (8.0 * pulse))
           ..style = PaintingStyle.stroke
-          ..strokeWidth = 2.0;
+          ..strokeWidth = 2.0 + (4.0 * pulse);
+          
         for (final path in districtPathList) {
-          canvas.drawPath(path, glowPaint);
+          canvas.drawPath(path, pulsePaint);
         }
       }
 
@@ -195,16 +186,15 @@ class CartoonMapPainter extends CustomPainter {
         ..color =
             (isFocusedDistrict && focusMode
                     ? theme.selectedDistrictBorderColor
-                    : (progress >= 1.0 ? const Color(0xFFFCD34D) : theme.borderColor))
+                    : (isUnlocked ? theme.unlockedColor : theme.borderColor))
                 .withValues(
                   alpha: shouldDim
                       ? 0.05
-                      : (isFocusedDistrict && focusMode
-                            ? 0.50
-                            : (progress >= 1.0 ? 0.60 : 0.12 + (0.12 * progress))),
+                      : (isUnlocked ? 0.8 : 0.2 + (0.3 * reveal)),
                 )
-        ..strokeWidth = progress >= 1.0 ? 1.0 : 0.6
+        ..strokeWidth = isUnlocked ? 1.2 : 0.6
         ..style = PaintingStyle.stroke;
+
 
       for (final path in districtPathList) {
         Path pathToDraw = path;
@@ -223,14 +213,34 @@ class CartoonMapPainter extends CustomPainter {
         canvas.drawPath(pathToDraw, fillPaint);
         canvas.drawPath(pathToDraw, borderPaint);
 
+        // INNER GLOW for Partially Unlocked (Crystallization)
+        if (reveal > 0.05 && !isUnlocked && !shouldDim) {
+          final innerGlowPaint = Paint()
+            ..color = theme.nearCompleteColor.withValues(alpha: 0.1 * reveal)
+            ..style = PaintingStyle.stroke
+            ..strokeWidth = 1.5 * reveal
+            ..maskFilter = MaskFilter.blur(BlurStyle.normal, 2.0 * reveal);
+          canvas.drawPath(pathToDraw, innerGlowPaint);
+        }
+
+        // ESSENCE PARTICLES for 100% completion
+        if (isUnlocked && !shouldDim) {
+          _drawEssenceParticles(canvas, pathToDraw);
+        }
+
         // Add subtle inner shadow for depth on revealed districts
-        if (reveal > 0.3 && !shouldDim) {
+        if (reveal > 0.3 && !isUnlocked && !shouldDim) {
           final shadowPaint = Paint()
-            ..color = Colors.black.withValues(alpha: 0.08 * reveal)
+            ..color = Colors.black.withValues(alpha: 0.1 * reveal)
             ..style = PaintingStyle.stroke
             ..strokeWidth = 0.8;
           canvas.drawPath(pathToDraw, shadowPaint);
         }
+      }
+
+      // DYNAMIC FOG for 0% progress districts
+      if (reveal < 0.05 && !shouldDim) {
+        _drawDynamicFog(canvas, districtId, districtPathList);
       }
 
       // Draw labels for all districts, but opacity depends on progress
@@ -238,6 +248,9 @@ class CartoonMapPainter extends CustomPainter {
         _drawDistrictLabelFor(canvas, districtId, districtPathList, progress);
       }
     }
+
+    // Draw the ENERGY GRID (Connecting Paths) after all districts are drawn
+    _drawEnergyGrid(canvas);
   }
 
   Color _districtBaseColor(String districtId) {
@@ -624,6 +637,134 @@ class CartoonMapPainter extends CustomPainter {
       ),
       innerHighlightPaint,
     );
+  }
+
+  /// Draw shimmering gold particles that drift upward
+  void _drawEssenceParticles(Canvas canvas, Path districtPath) {
+    final bounds = districtPath.getBounds();
+    final random = math.Random(districtPath.hashCode);
+    final time = DateTime.now().millisecondsSinceEpoch / 2000.0;
+
+    final particlePaint = Paint()
+      ..color = theme.unlockedColor.withValues(alpha: 0.4)
+      ..style = PaintingStyle.fill;
+
+    for (int i = 0; i < 12; i++) {
+      // Procedural drift based on time
+      final xOff = math.sin(time + i) * 10.0;
+      final yOff = -(time * 20.0 + (i * 15.0)) % bounds.height;
+      
+      final pX = bounds.left + (random.nextDouble() * bounds.width) + xOff;
+      final pY = bounds.bottom + yOff;
+      final pPos = Offset(pX, pY);
+
+      if (districtPath.contains(pPos)) {
+        final size = 0.5 + (random.nextDouble() * 1.2);
+        canvas.drawCircle(pPos, size, particlePaint);
+        
+        // Occasional sparkle
+        if (random.nextDouble() > 0.8) {
+          final glowPaint = Paint()
+            ..color = Colors.white.withValues(alpha: 0.3)
+            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 1.0);
+          canvas.drawCircle(pPos, size * 1.5, glowPaint);
+        }
+      }
+    }
+  }
+
+  /// Draw soft cloud-like fog over unexplored areas
+  void _drawDynamicFog(Canvas canvas, String id, List<Path> paths) {
+    final time = DateTime.now().millisecondsSinceEpoch / 5000.0;
+    final random = math.Random(id.hashCode);
+    final isDark = theme.backgroundColor.computeLuminance() < 0.5;
+    
+    for (final path in paths) {
+      final bounds = path.getBounds();
+      final fogPaint = Paint()
+        ..color = theme.fogColor.withValues(alpha: isDark ? 0.15 : 0.45)
+        ..maskFilter = MaskFilter.blur(BlurStyle.normal, isDark ? 12.0 : 18.0);
+
+      // Draw 3-4 drifting "cloud" blobs restricted to district bounds
+      canvas.save();
+      canvas.clipPath(path);
+      
+      for (int i = 0; i < 4; i++) {
+        final driftX = math.sin(time + i) * 20.0;
+        final driftY = math.cos(time * 0.7 + i) * 15.0;
+        
+        final cx = bounds.left + (random.nextDouble() * bounds.width) + driftX;
+        final cy = bounds.top + (random.nextDouble() * bounds.height) + driftY;
+        
+        canvas.drawCircle(
+          Offset(cx, cy), 
+          20.0 + (random.nextDouble() * 30.0), 
+          fogPaint
+        );
+      }
+      canvas.restore();
+    }
+  }
+
+  /// Draw glowing connections between visited district centroids
+  void _drawEnergyGrid(Canvas canvas) {
+    // Collect centroids of visited districts
+    final List<Offset> visitedCentroids = [];
+    
+    // Sort by id for stable journey or use sequence if available
+    final districtKeys = districtPaths.keys.toList()..sort();
+    
+    for (final id in districtKeys) {
+      final progress = districtProgress[id.toLowerCase().trim()] ?? 0.0;
+      if (progress > 0.01) {
+        final paths = districtPaths[id];
+        if (paths != null && paths.isNotEmpty) {
+          visitedCentroids.add(paths.first.getBounds().center);
+        }
+      }
+    }
+
+    if (visitedCentroids.length < 2) return;
+
+    final pathPaint = Paint()
+      ..color = theme.nearCompleteColor.withValues(alpha: 0.3)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 0.8;
+
+    final glowPaint = Paint()
+      ..color = theme.nearCompleteColor.withValues(alpha: 0.1)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.5
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2.0);
+
+    for (int i = 0; i < visitedCentroids.length - 1; i++) {
+      final p1 = visitedCentroids[i];
+      final p2 = visitedCentroids[i+1];
+      
+      // Draw dashed line
+      _drawDashedLine(canvas, p1, p2, pathPaint);
+      _drawDashedLine(canvas, p1, p2, glowPaint);
+    }
+  }
+
+  void _drawDashedLine(Canvas canvas, Offset p1, Offset p2, Paint paint) {
+    const dashWidth = 4.0;
+    const dashSpace = 4.0;
+    
+    final distance = (p2 - p1).distance;
+    final dx = (p2.dx - p1.dx) / distance;
+    final dy = (p2.dy - p1.dy) / distance;
+    
+    double currentDist = 0;
+    while (currentDist < distance) {
+      final start = p1 + Offset(dx * currentDist, dy * currentDist);
+      currentDist += dashWidth;
+      if (currentDist > distance) currentDist = distance;
+      final end = p1 + Offset(dx * currentDist, dy * currentDist);
+      
+      canvas.drawLine(start, end, paint);
+      currentDist += dashSpace;
+    }
   }
 
   @override
