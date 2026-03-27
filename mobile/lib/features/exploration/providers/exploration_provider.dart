@@ -249,6 +249,25 @@ class ExplorationNotifier extends StateNotifier<ExplorationState> {
 
     return samples;
   }
+
+  void addTemporaryGem(ExplorationLocation gem) {
+    // Find the assignment that matches the gem's district (type/district name)
+    final district = gem.type; // Current app logic uses 'type' for district mapping in some places
+    
+    final updatedAssignments = state.assignments.map((assignment) {
+      if (assignment.district.toLowerCase() == district.toLowerCase()) {
+        // Add the gem to this assignment if it's not already there
+        if (!assignment.locations.any((l) => l.name == gem.name)) {
+          return assignment.copyWith(
+            locations: [...assignment.locations, gem],
+          );
+        }
+      }
+      return assignment;
+    }).toList();
+
+    state = state.copyWith(assignments: updatedAssignments);
+  }
 }
 
 final explorationProvider =

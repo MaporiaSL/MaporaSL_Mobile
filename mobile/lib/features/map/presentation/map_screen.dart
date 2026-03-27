@@ -817,6 +817,17 @@ class _PlaceDetailCard extends StatelessWidget {
                       ),
                     ),
                   ),
+                  if (location.introducedBy != null) ...[
+                    const SizedBox(height: 8),
+                    Text(
+                      'Introduced by ${location.introducedBy}',
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontStyle: FontStyle.italic,
+                        color: Colors.blue.shade300,
+                      ),
+                    ),
+                  ],
                   const SizedBox(height: 12),
                   SizedBox(
                     width: double.infinity,
