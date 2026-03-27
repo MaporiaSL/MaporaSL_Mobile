@@ -15,12 +15,18 @@ class ShareableCard extends StatelessWidget {
   final DistrictAssignment? assignment;
   final ExplorationLocation? location;
   final String? unlockLocationName;
+  final int totalXp;
+  final int totalVisited;
+  final int currentLevel;
 
   const ShareableCard({
     super.key,
     this.assignment,
     this.location,
     this.unlockLocationName,
+    this.totalXp = 0,
+    this.totalVisited = 0,
+    this.currentLevel = 1,
   }) : assert(assignment != null || location != null);
 
   List<ExplorationLocation> get _displayLocations =>
@@ -125,18 +131,24 @@ class ShareableCard extends StatelessWidget {
           Container(
             height: 170,
             width: double.infinity,
-            padding: const EdgeInsets.all(10),
+            padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
               color: Colors.black.withValues(alpha: 0.25),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(color: Colors.white.withValues(alpha: 0.15)),
             ),
-            child: MiniPathMap(
-              points: _displayLocations,
-              visitedIds: _visitedIds,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _buildStatRow(Icons.workspace_premium, 'Total Explorer XP', '$totalXp', Colors.amber),
+                const Divider(color: Colors.white24, height: 1),
+                _buildStatRow(Icons.place, 'Places Discovered', '$totalVisited', const Color(0xFF22C55E)),
+                const Divider(color: Colors.white24, height: 1),
+                _buildStatRow(Icons.military_tech, 'Explorer Level', 'Lvl $currentLevel', const Color(0xFF38BDF8)),
+              ],
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 16),
           Row(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
@@ -173,6 +185,44 @@ class ShareableCard extends StatelessWidget {
                 ),
               ),
             ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatRow(IconData icon, String label, String value, Color color) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(icon, color: color, size: 22),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Text(
+              label,
+              style: const TextStyle(
+                color: Color(0xFFE2E8F0),
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+          Text(
+            value,
+            style: TextStyle(
+              color: color,
+              fontSize: 18,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 0.5,
+            ),
           ),
         ],
       ),
@@ -289,12 +339,18 @@ class DiscoveryCertificateOverlay extends StatefulWidget {
   final DistrictAssignment? assignment;
   final ExplorationLocation? location;
   final String? unlockLocationName;
+  final int totalXp;
+  final int totalVisited;
+  final int currentLevel;
 
   const DiscoveryCertificateOverlay({
     super.key,
     this.assignment,
     this.location,
     this.unlockLocationName,
+    this.totalXp = 0,
+    this.totalVisited = 0,
+    this.currentLevel = 1,
   });
 
   @override
@@ -376,6 +432,9 @@ class _DiscoveryCertificateOverlayState
                       assignment: widget.assignment,
                       location: widget.location,
                       unlockLocationName: widget.unlockLocationName,
+                      totalXp: widget.totalXp,
+                      totalVisited: widget.totalVisited,
+                      currentLevel: widget.currentLevel,
                     ),
                   ),
                 ),

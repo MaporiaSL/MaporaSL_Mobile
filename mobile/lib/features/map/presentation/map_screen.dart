@@ -17,6 +17,7 @@ import '../../exploration/data/models/exploration_models.dart';
 import '../../exploration/presentation/widgets/shareable_card.dart';
 import '../../visits/presentation/widgets/dynamic_visit_sheet.dart';
 import '../providers/user_location_provider.dart';
+import '../../profile/presentation/providers/profile_providers.dart';
 import 'package:confetti/confetti.dart';
 
 final districtFocusProvider = StateProvider<bool>((ref) => false);
@@ -124,6 +125,11 @@ class _MapScreenState extends ConsumerState<MapScreen>
     // Play confetti explosion
     _confettiController.play();
     
+    // Calculate projected stats for the shareable card
+    final profileAsync = ref.read(userProfileProvider);
+    final profile = profileAsync.value;
+    final int xpAwarded = result['xpAwarded'] as int? ?? 0;
+    
     // Show the certificate overlay
     Navigator.of(context).push(
       PageRouteBuilder<void>(
@@ -133,6 +139,9 @@ class _MapScreenState extends ConsumerState<MapScreen>
             assignment: result['assignment'],
             location: result['districtJustUnlocked'] == true ? null : result['location'],
             unlockLocationName: result['location']?.name ?? 'New Discovery',
+            totalXp: (profile?.xpTotal ?? 0) + xpAwarded,
+            totalVisited: (profile?.totalVisited ?? 0) + 1,
+            currentLevel: profile?.currentLevel ?? 1,
           );
         },
       ),
