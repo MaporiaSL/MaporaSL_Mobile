@@ -194,18 +194,18 @@ class _DynamicVisitSheetState extends ConsumerState<DynamicVisitSheet>
     final bool isVerifying = widget.isExploration
         ? explorationState.isVerifying
         : visitState.isVerifying;
+        
     final bool success = widget.isExploration
-        ? (explorationState.verifyingLocationId == null &&
-              explorationState.error == null &&
-              !explorationState.isVerifying &&
-              explorationState.currentStepIndex == 5)
+        ? (!explorationState.isVerifying && explorationState.currentStepIndex == _steps.length)
         : visitState.success;
+        
     final String? error = widget.isExploration
         ? explorationState.error
         : visitState.error;
+        
     final int providerStepIndex = widget.isExploration
-        ? explorationState.currentStepIndex
-        : visitState.currentStepIndex;
+        ? (success ? _steps.length : explorationState.currentStepIndex)
+        : (success ? _steps.length : visitState.currentStepIndex);
     final String? verificationStepDesc = widget.isExploration
         ? explorationState.verificationStep
         : visitState.verificationStep;
@@ -350,11 +350,11 @@ class _DynamicVisitSheetState extends ConsumerState<DynamicVisitSheet>
         error == null;
 
     if (isVerifying ||
-        (error == null &&
+        (error == null && !success &&
             _currentStepIndex < _steps.length &&
             _currentStepIndex >= 0)) {
       return _buildVerifyingUI(stepDesc);
-    } else if (success && error == null) {
+    } else if (success) {
       return _buildSuccessUI(
         districtJustUnlocked: districtJustUnlocked,
         currentAssignment: currentAssignment,

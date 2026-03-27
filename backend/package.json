@@ -7,6 +7,7 @@
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
     "dev:bypass": "set AUTH_BYPASS=false&& nodemon src/server.js",
+    "demo:state": "node scripts/dev/set-demo-account-state.js",
     "seed:places": "node scripts/seed/seed-places.js",
     "seed:preplanned": "node scripts/seed/seed-preplanned-trips-json.js",
     "seed:dev-user": "node scripts/seed/seed-dev-user.js",

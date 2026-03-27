@@ -179,24 +179,20 @@ class _MapScreenState extends ConsumerState<MapScreen>
                 },
               ),
               Positioned(
-                top: 20,
+                top: MediaQuery.of(context).padding.top + 16,
                 left: 16,
                 right: 16,
-                child: GestureDetector(
-                  onTap:
-                      () {}, // Consume tap events to prevent map from intercepting
-                  child: _DistrictHeaderBar(
-                    district: selectedDistrict ?? 'District',
-                    theme: theme,
-                    onClose: () {
-                      setState(() {
-                        selectedDistrict = null;
-                        selectedProvince = null;
-                        _isDistrictFocused = false;
-                        _selectedLocation = null;
-                      });
-                    },
-                  ),
+                child: _DistrictHeaderBar(
+                  district: selectedDistrict ?? 'District',
+                  theme: theme,
+                  onClose: () {
+                    setState(() {
+                      selectedDistrict = null;
+                      selectedProvince = null;
+                      _isDistrictFocused = false;
+                      _selectedLocation = null;
+                    });
+                  },
                 ),
               ),
               if (_selectedLocation != null)
@@ -362,13 +358,13 @@ class _DistrictHeaderBar extends StatelessWidget {
     return Container(
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
         decoration: BoxDecoration(
-          color: AppColors.secondary.withValues(alpha: 0.9),
-          borderRadius: BorderRadius.circular(12),
+          color: AppColors.secondary.withValues(alpha: 0.95),
+          borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.25),
-              blurRadius: 12,
-              offset: const Offset(0, 4),
+              color: Colors.black.withValues(alpha: 0.3),
+              blurRadius: 16,
+              offset: const Offset(0, 6),
             ),
           ],
         ),
@@ -548,7 +544,8 @@ class _DistrictSatelliteMapState extends State<_DistrictSatelliteMap> {
     super.didUpdateWidget(oldWidget);
     final oldKey = oldWidget.assignment.district.toLowerCase();
     final newKey = widget.assignment.district.toLowerCase();
-    if (oldKey != newKey) {
+    final visitsChanged = oldWidget.assignment.visitedCount != widget.assignment.visitedCount;
+    if (oldKey != newKey || visitsChanged) {
       _reloadDistrictData();
     }
   }

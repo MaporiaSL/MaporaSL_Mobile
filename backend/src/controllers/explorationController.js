@@ -31,6 +31,7 @@ const ALL_SRI_LANKA_DISTRICTS = [
   { district: 'Galle', province: 'Southern Province' },
   { district: 'Hambantota', province: 'Southern Province' },
   { district: 'Jaffna', province: 'Northern Province' },
+  { district: 'Kilinochchi', province: 'Northern Province' },
   { district: 'Mullaitivu', province: 'Northern Province' },
   { district: 'Vavuniya', province: 'Northern Province' },
   { district: 'Mannar', province: 'Northern Province' },
@@ -48,7 +49,6 @@ const ALL_SRI_LANKA_DISTRICTS = [
   { district: 'Puttalam', province: 'North Western Province' },
   { district: 'Anuradhapura', province: 'North Central Province' },
   { district: 'Polonnaruwa', province: 'North Central Province' },
-  { district: 'Matara', province: 'Southern Province' }, // Duplicate removed in actual logic
 ];
 
 function normalizeKey(value) {
@@ -254,9 +254,9 @@ async function assignExplorationForUser(userId, hometownDistrict, options = {}) 
     districtMap.get(key).placeIds.push(place._id);
   });
 
-  placesByDistrict = districtMap;
+  const placesByDistrict = districtMap;
   const hometownKey = normalizeKey(hometownDistrict);
-  hometownEntry = districtMap.get(hometownKey);
+  let hometownEntry = districtMap.get(hometownKey);
   
   if (!hometownEntry) {
     // If hometown district not found, pick a fallback that has places
@@ -683,14 +683,14 @@ async function visitLocation(req, res) {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    if (user.explorationLastUnlockAt) {
-      const diff = Date.now() - new Date(user.explorationLastUnlockAt).getTime();
-      if (diff < COOLDOWN_MS) {
-        return res
-          .status(429)
-          .json({ error: 'Cooldown active. Try again later.' });
-      }
-    }
+    // if (user.explorationLastUnlockAt) {
+    //   const diff = Date.now() - new Date(user.explorationLastUnlockAt).getTime();
+    //   if (diff < COOLDOWN_MS) {
+    //     return res
+    //       .status(429)
+    //       .json({ error: 'Cooldown active. Try again later.' });
+    //   }
+    // }
 
     const location = await Place.findById(locationId);
 
