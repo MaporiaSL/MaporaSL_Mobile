@@ -33,7 +33,7 @@ class MapVisualTheme {
     this.fogColor = const Color(0xFFF1F5F9), // Soft Cloud White
     this.fogOpacity = 0.6,
     // Discovery / Fog Clearing colors
-    this.unlockedColor = const Color(0xFF10B981), // Emerald - 100%
+    this.unlockedColor = const Color(0xFFF59E0B), // Vibrant Gold - 100%
     this.nearCompleteColor = const Color(0xFF06B6D4), // Cyan - 75%+
     this.halfwayColor = const Color(0xFF6366F1), // indigo - 50%+
     this.quarterColor = const Color(0xFF94A3B8), // Slate - 25%+

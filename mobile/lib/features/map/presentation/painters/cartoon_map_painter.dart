@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
 import 'dart:math' as math;
 import '../../data/regions_data.dart';
@@ -137,9 +137,10 @@ class CartoonMapPainter extends CustomPainter {
           districtId.toLowerCase() == focusedDistrictName!.toLowerCase();
       final shouldDim = focusMode && !isFocusedDistrict;
 
-      // Get progress for this district
-      final progress = districtProgress[districtId] ?? 0.0;
+      // Get progress for this district (case-insensitive key matching)
+      final progress = districtProgress[districtId.toLowerCase().trim()] ?? 0.0;
       final reveal = progress.clamp(0.0, 1.0);
+      final isUnlocked = reveal >= 1.0;
 
       // District-specific base color with vibrant enhancement
       final districtBaseColor = _districtBaseColor(districtId);
@@ -170,30 +171,57 @@ class CartoonMapPainter extends CustomPainter {
           ? 0.10
           : (isFocusedDistrict && focusMode
                 ? 0.94
-                : (progress == 0 ? 0.48 : (0.60 + (0.32 * reveal))));
+                : (progress >= 1.0 
+                    ? 0.85 // More solid for unlocked
+                    : (progress == 0 ? 0.48 : (0.60 + (0.32 * reveal)))));
 
       final fillPaint = Paint()
         ..color = fillColor.withValues(alpha: opacity)
         ..style = PaintingStyle.fill;
 
+      // Special golden glow for 100% districts
+      if (progress >= 1.0 && !shouldDim) {
+        final glowPaint = Paint()
+          ..color = const Color(0xFFFBBF24).withValues(alpha: 0.3)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.outer, 6.0)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 2.0;
+        for (final path in districtPathList) {
+          canvas.drawPath(path, glowPaint);
+        }
+      }
+
       final borderPaint = Paint()
         ..color =
             (isFocusedDistrict && focusMode
                     ? theme.selectedDistrictBorderColor
-                    : theme.borderColor)
+                    : (progress >= 1.0 ? const Color(0xFFFCD34D) : theme.borderColor))
                 .withValues(
                   alpha: shouldDim
                       ? 0.05
                       : (isFocusedDistrict && focusMode
                             ? 0.50
-                            : 0.12 + (0.12 * progress)),
+                            : (progress >= 1.0 ? 0.60 : 0.12 + (0.12 * progress))),
                 )
-        ..strokeWidth = 0.6
+        ..strokeWidth = progress >= 1.0 ? 1.0 : 0.6
         ..style = PaintingStyle.stroke;
 
       for (final path in districtPathList) {
-        canvas.drawPath(path, fillPaint);
-        canvas.drawPath(path, borderPaint);
+        Path pathToDraw = path;
+
+        // Make unlocked districts "a little bigger" (1.04x scale)
+        if (isUnlocked && !shouldDim) {
+          final bounds = path.getBounds();
+          final center = bounds.center;
+          final matrix = Matrix4.identity()
+            ..translate(center.dx, center.dy)
+            ..scale(1.04)
+            ..translate(-center.dx, -center.dy);
+          pathToDraw = path.transform(matrix.storage);
+        }
+
+        canvas.drawPath(pathToDraw, fillPaint);
+        canvas.drawPath(pathToDraw, borderPaint);
 
         // Add subtle inner shadow for depth on revealed districts
         if (reveal > 0.3 && !shouldDim) {
@@ -201,7 +229,7 @@ class CartoonMapPainter extends CustomPainter {
             ..color = Colors.black.withValues(alpha: 0.08 * reveal)
             ..style = PaintingStyle.stroke
             ..strokeWidth = 0.8;
-          canvas.drawPath(path, shadowPaint);
+          canvas.drawPath(pathToDraw, shadowPaint);
         }
       }
 
@@ -236,17 +264,35 @@ class CartoonMapPainter extends CustomPainter {
 
     // Label becomes clearer as fog clears
     final labelOpacity = (0.3 + (0.65 * progress)).clamp(0.0, 1.0);
-    final labelScale = 0.9 + (0.15 * progress); // Grow as revealed
+    final isUnlocked = progress >= 1.0;
+    
+    final labelScale = isUnlocked ? 1.15 : (0.9 + (0.15 * progress));
 
     // Draw subtle background for better readability
     final textPainter = TextPainter(
       text: TextSpan(
-        text: districtId,
-        style: theme.labelStyle.copyWith(
-          color: Colors.white.withValues(alpha: labelOpacity),
-          fontSize: 8,
-          fontWeight: progress > 0.5 ? FontWeight.bold : FontWeight.normal,
-        ),
+        children: [
+          if (isUnlocked)
+            const TextSpan(
+              text: '🏅 ',
+              style: TextStyle(fontSize: 10),
+            ),
+          TextSpan(
+            text: districtId,
+            style: theme.labelStyle.copyWith(
+              color: isUnlocked ? const Color(0xFFFFF7ED) : Colors.white.withValues(alpha: labelOpacity),
+              fontSize: isUnlocked ? 8.5 : 8,
+              fontWeight: progress > 0.5 ? FontWeight.bold : FontWeight.normal,
+              shadows: isUnlocked ? [
+                const Shadow(
+                  color: Color(0xFF92400E),
+                  offset: Offset(0, 1),
+                  blurRadius: 2,
+                )
+              ] : null,
+            ),
+          ),
+        ],
       ),
       textDirection: TextDirection.ltr,
     );
