@@ -41,6 +41,11 @@ class _MapScreenState extends ConsumerState<MapScreen>
   late AnimationController _focusAnimationController;
   late AnimationController _selectionAnimationController;
   late ConfettiController _confettiController;
+  
+  // Playback state for history mode
+  bool _isPlaybackMode = false;
+  int _playbackStep = 0;
+  Timer? _playbackTimer;
 
   String _normalizeKey(String? value) {
     if (value == null) return '';
@@ -112,7 +117,56 @@ class _MapScreenState extends ConsumerState<MapScreen>
     _focusAnimationController.dispose();
     _selectionAnimationController.dispose();
     _confettiController.dispose();
+    _playbackTimer?.cancel();
     super.dispose();
+  }
+
+  void _startJourneyPlayback(List<DistrictAssignment> assignments) {
+    if (_isPlaybackMode) return;
+
+    // Filter only visited districts and sort them
+    final visitedDistricts = assignments
+        .where((a) => a.visitedCount > 0)
+        .toList()
+        ..sort((a, b) => a.district.compareTo(b.district));
+    
+    if (visitedDistricts.isEmpty) return;
+
+    setState(() {
+      _isPlaybackMode = true;
+      _playbackStep = 0;
+    });
+
+    _playbackTimer?.cancel();
+    _playbackTimer = Timer.periodic(const Duration(milliseconds: 1200), (timer) {
+      if (!mounted) {
+        timer.cancel();
+        return;
+      }
+
+      if (_playbackStep >= visitedDistricts.length - 1) {
+        timer.cancel();
+        // Stay on the final step for a bit before closing
+        Future.delayed(const Duration(seconds: 3), () {
+          if (mounted) {
+            setState(() {
+              _isPlaybackMode = false;
+            });
+          }
+        });
+      } else {
+        setState(() {
+          _playbackStep++;
+        });
+      }
+    });
+  }
+
+  void _stopJourneyPlayback() {
+    _playbackTimer?.cancel();
+    setState(() {
+      _isPlaybackMode = false;
+    });
   }
 
   void _handleVerificationSuccess(Map<String, dynamic> result) {
@@ -417,6 +471,8 @@ class _MapScreenState extends ConsumerState<MapScreen>
                         theme: theme,
                         districtProgress: districtProgress,
                         userLocation: userLocation,
+                        playbackStep: _playbackStep,
+                        isPlaybackMode: _isPlaybackMode,
                         onDistrictSelected:
                             (
                               districtName,
@@ -517,6 +573,53 @@ class _MapScreenState extends ConsumerState<MapScreen>
                     ],
                   ),
                 ),
+
+                // Playback controls overlay
+                if (_isPlaybackMode)
+                  Positioned(
+                    top: 100,
+                    left: 16,
+                    right: 16,
+                    child: Center(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withOpacity(0.7),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(Icons.history, color: Colors.amber, size: 20),
+                            const SizedBox(width: 8),
+                            Text(
+                              'Journey Playback: Step ${_playbackStep + 1}',
+                              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(width: 12),
+                            GestureDetector(
+                              onTap: _stopJourneyPlayback,
+                              child: const Icon(Icons.close, color: Colors.white70, size: 20),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+
+                // Play Journey Button (only on main map)
+                if (!_isDistrictFocused && !_isPlaybackMode && assignments.any((a) => a.visitedCount > 0))
+                  Positioned(
+                    right: 16,
+                    bottom: 160,
+                    child: FloatingActionButton.small(
+                      heroTag: 'play_journey_btn',
+                      backgroundColor: Colors.amber.shade700,
+                      foregroundColor: Colors.white,
+                      onPressed: () => _startJourneyPlayback(assignments),
+                      child: const Icon(Icons.play_arrow),
+                    ),
+                  ),
               ],
             );
           },

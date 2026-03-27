@@ -24,6 +24,10 @@ class CartoonMapPainter extends CustomPainter {
   /// User's current location to display on map
   final UserLocation? userLocation;
 
+  /// Playback state for history mode
+  final int? playbackStep;
+  final bool isPlaybackMode;
+
   CartoonMapPainter({
     required this.regions,
     this.selectedRegionId,
@@ -36,6 +40,8 @@ class CartoonMapPainter extends CustomPainter {
     required this.theme,
     this.districtProgress = const <String, double>{},
     this.userLocation,
+    this.playbackStep,
+    this.isPlaybackMode = false,
   });
 
   @override
@@ -129,9 +135,30 @@ class CartoonMapPainter extends CustomPainter {
 
   /// Draw all districts with progressive unlock colors and enhanced visual effects
   void _drawDistrictsFilled(Canvas canvas) {
-    for (final entry in districtPaths.entries) {
+    // Sort districts for stable playback sequence (ideally chronological, but alphabetical is stable for now)
+    final entries = districtPaths.entries.toList()..sort((a, b) => a.key.compareTo(b.key));
+    
+    // Filter visited districts for playback
+    final visitedKeys = entries
+        .where((e) => (districtProgress[e.key.toLowerCase().trim()] ?? 0.0) > 0.01)
+        .map((e) => e.key)
+        .toList();
+
+    for (int i = 0; i < entries.length; i++) {
+      final entry = entries[i];
       final districtId = entry.key;
       final districtPathList = entry.value;
+
+      // In Playback Mode: Only show visited districts up to the current step
+      if (isPlaybackMode) {
+        final visitedIndex = visitedKeys.indexOf(districtId);
+        if (visitedIndex == -1 || visitedIndex > (playbackStep ?? 0)) {
+          // Keep as "locked" look for playback
+          _drawDistrictLocked(canvas, districtId, districtPathList);
+          continue;
+        }
+      }
+
       final isFocusedDistrict =
           focusedDistrictName != null &&
           districtId.toLowerCase() == focusedDistrictName!.toLowerCase();
@@ -639,6 +666,24 @@ class CartoonMapPainter extends CustomPainter {
     );
   }
 
+  /// Helper to draw a district in its "Locked" state (used for playback)
+  void _drawDistrictLocked(Canvas canvas, String id, List<Path> paths) {
+    final fillPaint = Paint()
+      ..color = theme.lockedColor.withValues(alpha: 0.40)
+      ..style = PaintingStyle.fill;
+    
+    final borderPaint = Paint()
+      ..color = theme.borderColor.withValues(alpha: 0.2)
+      ..strokeWidth = 0.6
+      ..style = PaintingStyle.stroke;
+
+    for (final path in paths) {
+      canvas.drawPath(path, fillPaint);
+      canvas.drawPath(path, borderPaint);
+    }
+    _drawDynamicFog(canvas, id, paths);
+  }
+
   /// Draw shimmering gold particles that drift upward
   void _drawEssenceParticles(Canvas canvas, Path districtPath) {
     final bounds = districtPath.getBounds();
@@ -717,6 +762,15 @@ class CartoonMapPainter extends CustomPainter {
     for (final id in districtKeys) {
       final progress = districtProgress[id.toLowerCase().trim()] ?? 0.0;
       if (progress > 0.01) {
+        // In playback mode, only show up to current step
+        if (isPlaybackMode) {
+          final visitedKeys = districtKeys
+              .where((k) => (districtProgress[k.toLowerCase().trim()] ?? 0.0) > 0.01)
+              .toList();
+          final index = visitedKeys.indexOf(id);
+          if (index == -1 || index > (playbackStep ?? 0)) continue;
+        }
+        
         final paths = districtPaths[id];
         if (paths != null && paths.isNotEmpty) {
           visitedCentroids.add(paths.first.getBounds().center);
