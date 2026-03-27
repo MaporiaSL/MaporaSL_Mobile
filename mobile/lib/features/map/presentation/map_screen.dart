@@ -151,6 +151,47 @@ class _MapScreenState extends ConsumerState<MapScreen>
     setState(() {});
   }
 
+  void _showDistrictShareOverlay(DistrictAssignment assignment) {
+    final profileAsync = ref.read(userProfileProvider);
+    final profile = profileAsync.value;
+
+    Navigator.of(context).push(
+      PageRouteBuilder<void>(
+        opaque: false,
+        pageBuilder: (_, __, ___) {
+          return DiscoveryCertificateOverlay(
+            assignment: assignment,
+            location: null,
+            totalXp: profile?.xpTotal ?? 0,
+            totalVisited: profile?.totalVisited ?? 0,
+            currentLevel: profile?.currentLevel ?? 1,
+          );
+        },
+      ),
+    );
+  }
+
+  void _showPlaceShareOverlay(ExplorationLocation location) {
+    final profileAsync = ref.read(userProfileProvider);
+    final profile = profileAsync.value;
+
+    Navigator.of(context).push(
+      PageRouteBuilder<void>(
+        opaque: false,
+        pageBuilder: (_, __, ___) {
+          return DiscoveryCertificateOverlay(
+            assignment: null,
+            location: location,
+            unlockLocationName: location.name,
+            totalXp: profile?.xpTotal ?? 0,
+            totalVisited: profile?.totalVisited ?? 0,
+            currentLevel: profile?.currentLevel ?? 1,
+          );
+        },
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     ref.listen<ExplorationState>(explorationProvider, (previous, next) {
@@ -229,6 +270,7 @@ class _MapScreenState extends ConsumerState<MapScreen>
                 child: _DistrictHeaderBar(
                   district: selectedDistrict ?? 'District',
                   theme: theme,
+                  isUnlocked: selectedAssignment.visitedCount >= selectedAssignment.assignedCount && selectedAssignment.assignedCount > 0,
                   onClose: () {
                     setState(() {
                       selectedDistrict = null;
@@ -236,6 +278,11 @@ class _MapScreenState extends ConsumerState<MapScreen>
                       _isDistrictFocused = false;
                       _selectedLocation = null;
                     });
+                  },
+                  onShare: () {
+                    if (selectedAssignment != null) {
+                      _showDistrictShareOverlay(selectedAssignment);
+                    }
                   },
                 ),
               ),
@@ -271,6 +318,36 @@ class _MapScreenState extends ConsumerState<MapScreen>
                         _handleVerificationSuccess(result);
                       }
                     },
+                    onShare: () {
+                      if (_selectedLocation != null) {
+                        _showPlaceShareOverlay(_selectedLocation!);
+                      }
+                    },
+                  ),
+                ),
+              if (_selectedLocation == null && selectedAssignment.visitedCount >= selectedAssignment.assignedCount && selectedAssignment.assignedCount > 0)
+                Positioned(
+                  left: 32,
+                  right: 32,
+                  bottom: 32,
+                  child: Center(
+                    child: ElevatedButton.icon(
+                      onPressed: () => _showDistrictShareOverlay(selectedAssignment),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.amber.shade700,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        elevation: 6,
+                      ),
+                      icon: const Icon(Icons.workspace_premium),
+                      label: const Text(
+                        'Share District Achievement',
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                    ),
                   ),
                 ),
               // Confetti Overlay
@@ -403,6 +480,11 @@ class _MapScreenState extends ConsumerState<MapScreen>
                           _handleVerificationSuccess(result);
                         }
                       },
+                      onShare: () {
+                        if (_selectedLocation != null) {
+                          _showPlaceShareOverlay(_selectedLocation!);
+                        }
+                      },
                     ),
                   ),
                 
@@ -435,12 +517,16 @@ class _MapScreenState extends ConsumerState<MapScreen>
 class _DistrictHeaderBar extends StatelessWidget {
   final String district;
   final MapVisualTheme theme;
+  final bool isUnlocked;
   final VoidCallback onClose;
+  final VoidCallback onShare;
 
   const _DistrictHeaderBar({
     required this.district,
     required this.theme,
+    this.isUnlocked = false,
     required this.onClose,
+    required this.onShare,
   });
 
   @override
@@ -475,16 +561,34 @@ class _DistrictHeaderBar extends StatelessWidget {
             ),
             // The Material widget provides the visual "splash" effect on tap
             // and ensures the IconButton's hit area is correctly defined.
-            Material(
-              color: Colors.transparent,
-              child: IconButton(
-                onPressed: onClose,
-                icon: const Icon(Icons.close, color: Colors.white, size: 26),
-                tooltip: 'Close',
-                splashRadius: 24,
-                padding: EdgeInsets.zero,
-                constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
-              ),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (isUnlocked)
+                  Material(
+                    color: Colors.transparent,
+                    child: IconButton(
+                      onPressed: onShare,
+                      icon: const Icon(Icons.share, color: Colors.white, size: 24),
+                      tooltip: 'Share Achievement',
+                      splashRadius: 24,
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+                    ),
+                  ),
+                if (isUnlocked) const SizedBox(width: 8),
+                Material(
+                  color: Colors.transparent,
+                  child: IconButton(
+                    onPressed: onClose,
+                    icon: const Icon(Icons.close, color: Colors.white, size: 26),
+                    tooltip: 'Close',
+                    splashRadius: 24,
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+                  ),
+                ),
+              ],
             ),
           ],
         ),
@@ -496,11 +600,13 @@ class _PlaceDetailCard extends StatelessWidget {
   final ExplorationLocation location;
   final VoidCallback onClose;
   final VoidCallback onVerify;
+  final VoidCallback onShare;
 
   const _PlaceDetailCard({
     required this.location,
     required this.onClose,
     required this.onVerify,
+    required this.onShare,
   });
 
   @override
@@ -562,13 +668,19 @@ class _PlaceDetailCard extends StatelessWidget {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton.icon(
-                      onPressed: location.visited ? null : onVerify,
-                      icon: const Icon(Icons.verified),
+                      onPressed: location.visited ? onShare : onVerify,
+                      icon: Icon(location.visited ? Icons.share : Icons.verified),
                       label: Text(
                         location.visited
-                            ? 'Already Verified'
+                            ? 'Share Discovery'
                             : 'Verify This Place',
                       ),
+                      style: location.visited 
+                        ? ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue.shade700,
+                            foregroundColor: Colors.white,
+                          ) 
+                        : null,
                     ),
                   ),
                 ],
