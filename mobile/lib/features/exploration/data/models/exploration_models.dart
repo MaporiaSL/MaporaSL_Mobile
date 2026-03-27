@@ -17,6 +17,8 @@ class ExplorationLocation {
   final List<String> photos;
   final VerificationStatus status;
   final String? rejectionReason;
+  final bool isUserGem;
+  final String? submissionStatus; // 'pending', 'approved', 'official'
 
   ExplorationLocation({
     required this.id,
@@ -30,6 +32,8 @@ class ExplorationLocation {
     this.photos = const [],
     this.status = VerificationStatus.none,
     this.rejectionReason,
+    this.isUserGem = false,
+    this.submissionStatus,
   });
 
   factory ExplorationLocation.fromJson(Map<String, dynamic> json) {
@@ -49,6 +53,8 @@ class ExplorationLocation {
               .toList() ??
           [],
       status: visited ? VerificationStatus.passed : VerificationStatus.none,
+      isUserGem: json['isUserGem'] == true,
+      submissionStatus: json['submissionStatus']?.toString(),
     );
   }
 
@@ -56,6 +62,8 @@ class ExplorationLocation {
     VerificationStatus? status,
     String? rejectionReason,
     bool? visited,
+    bool? isUserGem,
+    String? submissionStatus,
   }) {
     return ExplorationLocation(
       id: id,
@@ -69,6 +77,8 @@ class ExplorationLocation {
       photos: photos,
       status: status ?? this.status,
       rejectionReason: rejectionReason ?? this.rejectionReason,
+      isUserGem: isUserGem ?? this.isUserGem,
+      submissionStatus: submissionStatus ?? this.submissionStatus,
     );
   }
 }

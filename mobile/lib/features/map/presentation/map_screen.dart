@@ -772,7 +772,40 @@ class _PlaceDetailCard extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 4),
-                  Text(location.type.isEmpty ? 'Attraction' : location.type),
+                   Row(
+                    children: [
+                      Text(location.type.isEmpty ? 'Attraction' : location.type),
+                      if (location.isUserGem) ...[
+                        const SizedBox(width: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: Colors.purple.shade700,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: const Text(
+                            'HIDDEN GEM',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        if (location.submissionStatus == 'pending') ...[
+                          const SizedBox(width: 4),
+                          Text(
+                            '(In Review)',
+                            style: TextStyle(
+                              color: Colors.amber.shade700,
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ],
+                    ],
+                  ),
                   const SizedBox(height: 8),
                   Text(
                     location.description?.isNotEmpty == true
@@ -1384,15 +1417,14 @@ class _DistrictSatelliteMapState extends State<_DistrictSatelliteMap> {
             // Visited markers are larger and more opaque (fully revealed)
             // Unvisited markers are smaller and more transparent (foggy)
             iconSize: location.visited ? 2.2 : 1.5,
-            iconColor: location.visited
-                ? const Color(0xFF10B981)
-                      .toARGB32() // Emerald green for visited
-                : const Color(
-                    0xFFDC2626,
-                  ).toARGB32(), // Bright red for unvisited
-            iconOpacity: location.visited
+            iconColor: location.isUserGem
+                ? const Color(0xFFD946EF).toARGB32() // Vibrant Magenta
+                : location.visited
+                    ? const Color(0xFF10B981).toARGB32() // Emerald green
+                    : const Color(0xFFDC2626).toARGB32(), // Bright red
+            iconOpacity: location.visited || location.isUserGem
                 ? 1.0
-                : 0.75, // Visited: fully visible, Unvisited: 75% visible
+                : 0.75,
           ),
         )
         .toList(growable: false);
