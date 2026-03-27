@@ -47,8 +47,11 @@ class ShareableCard extends StatelessWidget {
       'dd MMM yyyy, HH:mm',
     ).format(DateTime.now());
 
+    final screenWidth = MediaQuery.of(context).size.width;
+    final cardWidth = (screenWidth * 0.9).clamp(320.0, 420.0);
+
     return Container(
-      width: 360,
+      width: cardWidth,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(24),
@@ -410,56 +413,83 @@ class _DiscoveryCertificateOverlayState
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Colors.black.withValues(alpha: 0.8),
-      child: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(18),
-          child: Column(
-            children: [
-              Align(
-                alignment: Alignment.centerRight,
-                child: IconButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  icon: const Icon(Icons.close, color: Colors.white),
-                ),
-              ),
-              const SizedBox(height: 8),
-              Expanded(
-                child: Center(
-                  child: RepaintBoundary(
-                    key: _cardKey,
-                    child: ShareableCard(
-                      assignment: widget.assignment,
-                      location: widget.location,
-                      unlockLocationName: widget.unlockLocationName,
-                      totalXp: widget.totalXp,
-                      totalVisited: widget.totalVisited,
-                      currentLevel: widget.currentLevel,
+      color: Colors.black.withValues(alpha: 0.85),
+      child: Stack(
+        children: [
+          // Background Tap-to-Close
+          Positioned.fill(
+            child: GestureDetector(
+              onTap: () => Navigator.of(context).pop(),
+              behavior: HitTestBehavior.opaque,
+            ),
+          ),
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+              child: Column(
+                children: [
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: IconButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      icon: const Icon(Icons.close, color: Colors.white, size: 28),
                     ),
                   ),
-                ),
-              ),
-              const SizedBox(height: 14),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton.icon(
-                  onPressed: _isSharing ? null : _shareCard,
-                  icon: _isSharing
-                      ? const SizedBox(
-                          width: 16,
-                          height: 16,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : const Icon(Icons.share),
-                  label: Text(
-                    _isSharing ? 'Generating image...' : 'Share Certificate',
+                  const SizedBox(height: 8),
+                  Expanded(
+                    child: Center(
+                      child: GestureDetector(
+                        onTap: () {}, // Prevent tap-through to background
+                        child: RepaintBoundary(
+                          key: _cardKey,
+                          child: ShareableCard(
+                            assignment: widget.assignment,
+                            location: widget.location,
+                            unlockLocationName: widget.unlockLocationName,
+                            totalXp: widget.totalXp,
+                            totalVisited: widget.totalVisited,
+                            currentLevel: widget.currentLevel,
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
-                ),
+                  const SizedBox(height: 20),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton.icon(
+                        onPressed: _isSharing ? null : _shareCard,
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        icon: _isSharing
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: Colors.white,
+                                ),
+                              )
+                            : const Icon(Icons.share),
+                        label: Text(
+                          _isSharing ? 'Generating image...' : 'Share Certificate',
+                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                ],
               ),
-              const SizedBox(height: 8),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
