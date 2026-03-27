@@ -157,12 +157,16 @@ class _AddDestinationPageState extends State<AddDestinationPage>
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final textTheme = theme.textTheme;
+
     return Scaffold(
-      backgroundColor: const Color(0xFF0F172A), // Slate 900
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           'DISCOVERY MISSION',
-          style: TextStyle(
+          style: textTheme.labelLarge?.copyWith(
             fontWeight: FontWeight.w900,
             letterSpacing: 2.0,
             fontSize: 16,
@@ -173,7 +177,7 @@ class _AddDestinationPageState extends State<AddDestinationPage>
         centerTitle: true,
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator(color: Colors.blue))
+          ? Center(child: CircularProgressIndicator(color: colorScheme.primary))
           : SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16),
               child: Form(
@@ -198,6 +202,7 @@ class _AddDestinationPageState extends State<AddDestinationPage>
                                       painter: _SatelliteScanner(
                                         _scanController.value,
                                         _latitude != null,
+                                        colorScheme.primary,
                                       ),
                                       size: const Size(120, 120),
                                     );
@@ -205,7 +210,7 @@ class _AddDestinationPageState extends State<AddDestinationPage>
                                 ),
                                 Icon(
                                   _latitude != null ? Icons.gps_fixed : Icons.satellite_alt,
-                                  color: _latitude != null ? Colors.green.shade400 : Colors.blue.shade400,
+                                  color: _latitude != null ? Colors.green.shade400 : colorScheme.primary,
                                   size: 32,
                                 ),
                               ],
@@ -217,7 +222,7 @@ class _AddDestinationPageState extends State<AddDestinationPage>
                                 ? '🛰️ SATELLITE UPLINK: ESTABLISHED'
                                 : '📡 SEARCHING FOR SIGNAL...',
                             style: TextStyle(
-                              color: _latitude != null ? Colors.green.shade400 : Colors.blue.shade400,
+                              color: _latitude != null ? Colors.green.shade400 : colorScheme.primary,
                               fontWeight: FontWeight.bold,
                               fontSize: 12,
                               letterSpacing: 1.2,
@@ -228,8 +233,8 @@ class _AddDestinationPageState extends State<AddDestinationPage>
                               padding: const EdgeInsets.only(top: 4),
                               child: Text(
                                 '${_latitude!.toStringAsFixed(5)}, ${_longitude!.toStringAsFixed(5)}',
-                                style: const TextStyle(
-                                  color: Colors.white54,
+                                style: textTheme.bodySmall?.copyWith(
+                                  color: theme.hintColor,
                                   fontSize: 10,
                                   fontFamily: 'Courier',
                                 ),
@@ -241,7 +246,7 @@ class _AddDestinationPageState extends State<AddDestinationPage>
                     const SizedBox(height: 32),
 
                     // --- IMAGE UPLOAD BOX ---
-                    _buildSectionHeader('VISUAL INTEL (OPTIONAL)'),
+                    _buildSectionHeader(context, 'VISUAL INTEL (OPTIONAL)'),
                     const SizedBox(height: 12),
                     GestureDetector(
                       onTap: _pickImage,
@@ -249,9 +254,9 @@ class _AddDestinationPageState extends State<AddDestinationPage>
                         height: 160,
                         width: double.infinity,
                         decoration: BoxDecoration(
-                          color: const Color(0xFF1E293B),
+                          color: theme.inputDecorationTheme.fillColor ?? theme.cardColor,
                           border: Border.all(
-                            color: _selectedImage != null ? Colors.blue.shade400 : Colors.white.withOpacity(0.1),
+                            color: _selectedImage != null ? colorScheme.primary : theme.dividerColor.withOpacity(0.1),
                             width: 1.5,
                           ),
                           borderRadius: BorderRadius.circular(16),
@@ -269,13 +274,13 @@ class _AddDestinationPageState extends State<AddDestinationPage>
                                   Icon(
                                     Icons.add_a_photo_outlined,
                                     size: 32,
-                                    color: Colors.blue.shade400,
+                                    color: colorScheme.primary,
                                   ),
                                   const SizedBox(height: 8),
                                   Text(
                                     'UPLOAD PHOTO',
-                                    style: TextStyle(
-                                      color: Colors.blue.shade200,
+                                    style: textTheme.labelSmall?.copyWith(
+                                      color: colorScheme.primary,
                                       fontWeight: FontWeight.w900,
                                       fontSize: 11,
                                       letterSpacing: 1.2,
@@ -288,10 +293,11 @@ class _AddDestinationPageState extends State<AddDestinationPage>
                     ),
                     const SizedBox(height: 32),
 
-                    _buildSectionHeader('MISSION ASSET DETAILS'),
+                    _buildSectionHeader(context, 'MISSION ASSET DETAILS'),
                     const SizedBox(height: 16),
 
                     _buildTextField(
+                      context: context,
                       controller: _nameCtrl,
                       label: 'Place Name',
                       icon: Icons.landscape,
@@ -300,9 +306,9 @@ class _AddDestinationPageState extends State<AddDestinationPage>
                     const SizedBox(height: 16),
 
                     DropdownButtonFormField<String>(
-                      dropdownColor: const Color(0xFF1E293B),
-                      style: const TextStyle(color: Colors.white),
-                      decoration: _inputDecoration('Category', Icons.category),
+                      dropdownColor: theme.cardColor,
+                      style: textTheme.bodyMedium,
+                      decoration: _inputDecoration(context, 'Category', Icons.category),
                       items: _categories
                           .map((cat) => DropdownMenuItem(
                               value: cat, child: Text(cat)))
@@ -313,6 +319,7 @@ class _AddDestinationPageState extends State<AddDestinationPage>
                     const SizedBox(height: 16),
 
                     _buildTextField(
+                      context: context,
                       controller: _locationCtrl,
                       label: 'District',
                       icon: Icons.pin_drop,
@@ -321,6 +328,7 @@ class _AddDestinationPageState extends State<AddDestinationPage>
                     const SizedBox(height: 16),
 
                     _buildTextField(
+                      context: context,
                       controller: _descriptionCtrl,
                       label: 'Discovery intel & tips',
                       maxLines: 4,
@@ -328,14 +336,14 @@ class _AddDestinationPageState extends State<AddDestinationPage>
                     ),
                     const SizedBox(height: 24),
 
-                    _buildSectionHeader('ADDITIONAL ANALYTICS'),
+                    _buildSectionHeader(context, 'ADDITIONAL ANALYTICS'),
                     const SizedBox(height: 16),
 
                     Row(
                       children: [
-                        Expanded(child: _buildTextField(controller: _difficultyCtrl, label: 'Difficulty')),
+                        Expanded(child: _buildTextField(context: context, controller: _difficultyCtrl, label: 'Difficulty')),
                         const SizedBox(width: 16),
-                        Expanded(child: _buildTextField(controller: _feeCtrl, label: 'Fee', keyboardType: TextInputType.number)),
+                        Expanded(child: _buildTextField(context: context, controller: _feeCtrl, label: 'Fee', keyboardType: TextInputType.number)),
                       ],
                     ),
                     const SizedBox(height: 48),
@@ -343,15 +351,15 @@ class _AddDestinationPageState extends State<AddDestinationPage>
                     // --- SUBMIT BUTTON ---
                     Container(
                       width: double.infinity,
-                      height: 64,
+                      padding: const EdgeInsets.symmetric(vertical: 4),
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
-                          colors: [Colors.blue.shade700, Colors.indigo.shade900],
+                          colors: [colorScheme.primary, colorScheme.secondary],
                         ),
                         borderRadius: BorderRadius.circular(12),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.blue.withOpacity(0.3),
+                            color: colorScheme.primary.withOpacity(0.3),
                             blurRadius: 12,
                             offset: const Offset(0, 4),
                           ),
@@ -363,17 +371,18 @@ class _AddDestinationPageState extends State<AddDestinationPage>
                         label: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Text(
+                            Text(
                               'TRANSMIT DISCOVERY',
-                              style: TextStyle(
+                              style: textTheme.labelLarge?.copyWith(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w900,
                                 letterSpacing: 1.5,
+                                color: colorScheme.onPrimary,
                               ),
                             ),
                             Text(
                               '+50 XP DISCOVERY BONUS',
-                              style: TextStyle(
+                              style: textTheme.labelSmall?.copyWith(
                                 fontSize: 10,
                                 color: Colors.amber.shade400,
                                 fontWeight: FontWeight.bold,
@@ -385,7 +394,7 @@ class _AddDestinationPageState extends State<AddDestinationPage>
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.transparent,
                           shadowColor: Colors.transparent,
-                          foregroundColor: Colors.white,
+                          foregroundColor: colorScheme.onPrimary,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -393,12 +402,12 @@ class _AddDestinationPageState extends State<AddDestinationPage>
                       ),
                     ),
                     const SizedBox(height: 24),
-                    const Opacity(
+                    Opacity(
                       opacity: 0.6,
                       child: Text(
                         'Your submission will be analyzed by the Grid review team before publication.',
                         textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.white, fontSize: 11),
+                        style: textTheme.bodySmall?.copyWith(fontSize: 11),
                       ),
                     ),
                     const SizedBox(height: 32),
@@ -409,11 +418,12 @@ class _AddDestinationPageState extends State<AddDestinationPage>
     );
   }
 
-  Widget _buildSectionHeader(String title) {
+  Widget _buildSectionHeader(BuildContext context, String title) {
+    final theme = Theme.of(context);
     return Text(
       title,
       style: TextStyle(
-        color: Colors.blue.shade400,
+        color: theme.colorScheme.primary,
         fontSize: 12,
         fontWeight: FontWeight.w900,
         letterSpacing: 1.5,
@@ -421,29 +431,36 @@ class _AddDestinationPageState extends State<AddDestinationPage>
     );
   }
 
-  InputDecoration _inputDecoration(String label, [IconData? icon]) {
+  InputDecoration _inputDecoration(BuildContext context, String label, [IconData? icon]) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return InputDecoration(
       labelText: label,
-      labelStyle: const TextStyle(color: Colors.white60, fontSize: 13),
-      prefixIcon: icon != null ? Icon(icon, color: Colors.blue.shade400, size: 20) : null,
+      labelStyle: TextStyle(
+        color: theme.hintColor,
+        fontSize: 13,
+      ),
+      prefixIcon: icon != null ? Icon(icon, color: colorScheme.primary, size: 20) : null,
       filled: true,
-      fillColor: const Color(0xFF1E293B),
+      fillColor: theme.inputDecorationTheme.fillColor ?? theme.cardColor,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
         borderSide: BorderSide.none,
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: Colors.white.withOpacity(0.05)),
+        borderSide: BorderSide(color: theme.dividerColor.withOpacity(0.1)),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: Colors.blue.shade700, width: 2),
+        borderSide: BorderSide(color: colorScheme.primary, width: 2),
       ),
     );
   }
 
   Widget _buildTextField({
+    required BuildContext context,
     required TextEditingController controller,
     required String label,
     IconData? icon,
@@ -451,13 +468,14 @@ class _AddDestinationPageState extends State<AddDestinationPage>
     String? Function(String?)? validator,
     TextInputType? keyboardType,
   }) {
+    final theme = Theme.of(context);
     return TextFormField(
       controller: controller,
       maxLines: maxLines,
       validator: validator,
       keyboardType: keyboardType,
-      style: const TextStyle(color: Colors.white),
-      decoration: _inputDecoration(label, icon),
+      style: theme.textTheme.bodyMedium,
+      decoration: _inputDecoration(context, label, icon),
     );
   }
 }
@@ -465,8 +483,9 @@ class _AddDestinationPageState extends State<AddDestinationPage>
 class _SatelliteScanner extends CustomPainter {
   final double progress;
   final bool isFixed;
+  final Color primaryColor;
 
-  _SatelliteScanner(this.progress, this.isFixed);
+  _SatelliteScanner(this.progress, this.isFixed, this.primaryColor);
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -477,7 +496,7 @@ class _SatelliteScanner extends CustomPainter {
 
     // Rings
     for (int i = 1; i <= 3; i++) {
-      paint.color = (isFixed ? Colors.green : Colors.blue).withOpacity(0.1 + (i * 0.1));
+      paint.color = (isFixed ? Colors.green : primaryColor).withOpacity(0.1 + (i * 0.1));
       canvas.drawCircle(center, (size.width / 3) * (i / 1.5), paint);
     }
 
@@ -488,8 +507,8 @@ class _SatelliteScanner extends CustomPainter {
         ..strokeWidth = 3.0
         ..shader = SweepGradient(
           colors: [
-            Colors.blue.withOpacity(0),
-            Colors.blue.shade400,
+            primaryColor.withOpacity(0),
+            primaryColor,
           ],
           stops: const [0.7, 1.0],
           transform: GradientRotation(progress * 2 * 3.1415),

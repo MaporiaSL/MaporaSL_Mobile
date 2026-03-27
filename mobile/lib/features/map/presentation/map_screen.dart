@@ -807,10 +807,15 @@ class _PlaceDetailCard extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 8),
-                  Text(
-                    location.description?.isNotEmpty == true
-                        ? location.description!
-                        : 'No description available yet. Visit this location to contribute better details.',
+                  LimitedBox(
+                    maxHeight: 120,
+                    child: SingleChildScrollView(
+                      child: Text(
+                        location.description?.isNotEmpty == true
+                            ? location.description!
+                            : 'No description available yet. Visit this location to contribute better details.',
+                      ),
+                    ),
                   ),
                   const SizedBox(height: 12),
                   SizedBox(
