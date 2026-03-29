@@ -439,32 +439,27 @@ class ProfileScreen extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          GestureDetector(
-            onLongPress: () {
-              _showDemoSeederDialog(context, ref);
-            },
-            child: Row(
-              children: [
-                Icon(Icons.workspace_premium, color: isDark ? colorScheme.primary : Colors.indigo),
-                const SizedBox(width: 8),
-                Text(
-                  'Explorer Level $displayLevel',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 16,
-                    color: isDark ? Colors.white.withOpacity(0.9) : Colors.black87,
-                  ),
+          Row(
+            children: [
+              Icon(Icons.workspace_premium, color: isDark ? colorScheme.primary : Colors.indigo),
+              const SizedBox(width: 8),
+              Text(
+                'Explorer Level $displayLevel',
+                style: TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 16,
+                  color: isDark ? Colors.white.withOpacity(0.9) : Colors.black87,
                 ),
-                const Spacer(),
-                Text(
-                  '$displayXP XP',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    color: isDark ? colorScheme.primary.withOpacity(0.8) : Colors.blueGrey.shade700,
-                  ),
+              ),
+              const Spacer(),
+              Text(
+                '$displayXP XP',
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  color: isDark ? colorScheme.primary.withOpacity(0.8) : Colors.blueGrey.shade700,
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
           const SizedBox(height: 10),
           ClipRRect(
@@ -829,52 +824,6 @@ class ProfileScreen extends ConsumerWidget {
     }
   }
 
-  void _showDemoSeederDialog(BuildContext context, WidgetRef ref) {
-    final userEmail = ref.read(authServiceProvider).currentUser?.email;
-    if (userEmail != 'anuja.20231258@iit.ac.lk') return;
-
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Initialize Hero Account?'),
-        content: const Text(
-          'This will reset your local progress and inject high-fidelity demo data (trips, XP, districts) into your account.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Seeding Hero Data...')),
-              );
-              try {
-                await ref.read(demoSeederProvider).seedHeroAccount();
-                if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Hero Account Ready! Refreshing...'),
-                    ),
-                  );
-                  _retryAll(ref);
-                }
-              } catch (e) {
-                if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Seeding failed: $e')),
-                  );
-                }
-              }
-            },
-            child: const Text('Confirm Seed'),
-          ),
-        ],
-      ),
-    );
-  }
 
   void _retryAll(WidgetRef ref) {
     ref.invalidate(userProfileProvider);

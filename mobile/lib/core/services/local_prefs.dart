@@ -23,4 +23,17 @@ class LocalPrefs {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_keyHometownDistrict);
   }
+
+  // --- Demo Seeding State ---
+  static const _keyIsDemoSeeded = 'is_demo_seeded';
+
+  static Future<bool> isDemoSeeded() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(_keyIsDemoSeeded) ?? false;
+  }
+
+  static Future<void> setDemoSeeded(bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_keyIsDemoSeeded, value);
+  }
 }

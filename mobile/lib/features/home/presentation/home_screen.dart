@@ -11,6 +11,7 @@ import '../../places/presentation/add_destination_page.dart';
 import '../widgets/bottom_nav_bar.dart';
 import '../../../core/services/auth_api.dart';
 import '../../../core/services/local_prefs.dart';
+import '../../../core/utils/demo_seeder_service.dart';
 import 'providers/home_providers.dart';
 import '../../profile/presentation/providers/profile_providers.dart';
 
@@ -59,10 +60,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Future<void> _checkProfile() async {
     try {
       await AuthApi().getMe();
-      if (!mounted) return;
-      setState(() {
-        _isCheckingProfile = false;
-      });
     } catch (_) {
       final user = FirebaseAuth.instance.currentUser;
       if (user == null) {
@@ -83,10 +80,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       } catch (_) {
         // Swallow registration errors during dev flow.
       }
-      if (!mounted) return;
-      setState(() {
-        _isCheckingProfile = false;
-      });
+    } finally {
+      // 🚀 Auto-seed Professional Demo if required
+      try {
+        await ref.read(demoInitializerProvider).initializeIfNeeded();
+      } catch (e) {
+        debugPrint('Failed to run demo initializer: $e');
+      }
+
+      if (mounted) {
+        setState(() {
+          _isCheckingProfile = false;
+        });
+      }
     }
   }
 
