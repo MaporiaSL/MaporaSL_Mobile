@@ -26,7 +26,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   final List<String> _labels = [
     'Album',
-    'Missions',
+    'Trips',
     'Explore',
     'Expedition',
     'Shop',

@@ -35,7 +35,7 @@ class BottomNavBar extends StatelessWidget {
         height: 70, // Slightly reduced height to keep it elegant
         items: <Widget>[
           _buildNavItem(Icons.photo_album, Icons.photo_album_outlined, 'Album', 0),
-          _buildNavItem(Icons.rocket_launch, Icons.rocket_launch_outlined, 'Missions', 1),
+          _buildNavItem(Icons.rocket_launch, Icons.rocket_launch_outlined, 'Trips', 1),
           _buildNavItem(Icons.map, Icons.map_outlined, 'Explore', 2),
           _buildNavItem(Icons.auto_stories, Icons.auto_stories_outlined, 'Expedition', 3),
           _buildNavItem(Icons.shopping_bag, Icons.shopping_bag_outlined, 'Shop', 4),

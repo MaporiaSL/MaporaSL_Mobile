@@ -65,7 +65,7 @@ class _TripsPageState extends ConsumerState<TripsPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('EXPLORER DASHBOARD', style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 2, fontSize: 18, color: isDark ? Colors.white : Colors.black87)),
+                          Text('TRIPS DASHBOARD', style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 2, fontSize: 18, color: isDark ? Colors.white : Colors.black87)),
                           const SizedBox(height: 16),
                           statsAsync.when(
                             data: (stats) => _buildStatsHero(context, stats),
