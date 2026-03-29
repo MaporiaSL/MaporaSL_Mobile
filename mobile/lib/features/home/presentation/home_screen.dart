@@ -12,6 +12,7 @@ import '../widgets/bottom_nav_bar.dart';
 import '../../../core/services/auth_api.dart';
 import '../../../core/services/local_prefs.dart';
 import 'providers/home_providers.dart';
+import '../../profile/presentation/providers/profile_providers.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -130,31 +131,53 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             );
                           },
                           borderRadius: BorderRadius.circular(25),
-                          child: Container(
-                            width: 50,
-                            height: 50,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.white,
-                              boxShadow: const [
-                                BoxShadow(
-                                  color: Colors.black38,
-                                  blurRadius: 12,
-                                  offset: Offset(0, 4),
+                          child: Consumer(
+                            builder: (context, ref, _) {
+                              final profile = ref.watch(userProfileProvider).valueOrNull;
+                              final avatarUrl = profile?.avatarUrl ?? '';
+                              final isDark = Theme.of(context).brightness == Brightness.dark;
+                              
+                              return Container(
+                                width: 52,
+                                height: 52,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: isDark ? Colors.black45 : Colors.white,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: isDark ? Colors.black54 : Colors.black26,
+                                      blurRadius: 10,
+                                      spreadRadius: 1,
+                                    ),
+                                  ],
+                                  border: Border.all(
+                                    color: isDark ? Colors.white10 : Colors.blue.shade100,
+                                    width: 2,
+                                  ),
                                 ),
-                              ],
-                              border: Border.all(
-                                color: Colors.blue.shade700.withValues(alpha: 0.3),
-                                width: 2,
-                              ),
-                            ),
-                            child: const Center(
-                              child: Icon(
-                                Icons.person,
-                                color: Colors.black87,
-                                size: 28,
-                              ),
-                            ),
+                                child: ClipOval(
+                                  child: avatarUrl.isNotEmpty
+                                      ? Image.network(
+                                          avatarUrl,
+                                          fit: BoxFit.cover,
+                                          loadingBuilder: (context, child, progress) {
+                                            if (progress == null) return child;
+                                            return const Center(child: CircularProgressIndicator(strokeWidth: 2));
+                                          },
+                                          errorBuilder: (context, _, __) => Icon(
+                                            Icons.person_rounded,
+                                            color: isDark ? Colors.white38 : Colors.grey.shade400,
+                                            size: 32,
+                                          ),
+                                        )
+                                      : Icon(
+                                          Icons.person_rounded,
+                                          color: isDark ? Colors.white38 : Colors.grey.shade400,
+                                          size: 32,
+                                        ),
+                                ),
+                              );
+                            },
                           ),
                         ),
                       ),

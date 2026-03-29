@@ -139,7 +139,7 @@ class ProfileScreen extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Header: Avatar, Name, Email
-                _buildProfileHeader(profile),
+                _buildProfileHeader(profile, context),
                 const SizedBox(height: 24),
 
                 // Contribution Stats
@@ -270,17 +270,51 @@ class ProfileScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildProfileHeader(profile_model.UserProfile profile) {
+  Widget _buildProfileHeader(profile_model.UserProfile profile, BuildContext context) {
+    final avatarUrl = profile.avatarUrl;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Row(
       children: [
-        CircleAvatar(
-          radius: 40,
-          backgroundImage: profile.avatarUrl.isNotEmpty
-              ? NetworkImage(profile.avatarUrl)
-              : null,
-          child: profile.avatarUrl.isEmpty
-              ? const Icon(Icons.person, size: 40)
-              : null,
+        Container(
+          width: 80,
+          height: 80,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: isDark ? Colors.white.withOpacity(0.05) : Colors.blueGrey.shade50,
+            boxShadow: [
+              BoxShadow(
+                color: isDark ? Colors.black45 : Colors.black12,
+                blurRadius: 15,
+                spreadRadius: 2,
+              ),
+            ],
+            border: Border.all(
+              color: isDark ? Colors.white10 : Colors.blue.shade100,
+              width: 3,
+            ),
+          ),
+          child: ClipOval(
+            child: avatarUrl.isNotEmpty
+                ? Image.network(
+                    avatarUrl,
+                    fit: BoxFit.cover,
+                    loadingBuilder: (context, child, progress) {
+                      if (progress == null) return child;
+                      return const Center(child: CircularProgressIndicator(strokeWidth: 2));
+                    },
+                    errorBuilder: (context, _, __) => Icon(
+                      Icons.person_rounded,
+                      color: isDark ? Colors.white24 : Colors.grey.shade300,
+                      size: 40,
+                    ),
+                  )
+                : Icon(
+                    Icons.person_rounded,
+                    color: isDark ? Colors.white24 : Colors.grey.shade300,
+                    size: 40,
+                  ),
+          ),
         ),
         const SizedBox(width: 16),
         Expanded(
