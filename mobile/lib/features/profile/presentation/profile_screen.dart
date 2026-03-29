@@ -376,29 +376,32 @@ class ProfileScreen extends ConsumerWidget {
     BuildContext context,
     profile_model.UserProfile profile,
   ) {
-    // Level up logic is now handled on the backend
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final colorScheme = theme.colorScheme;
     final percentage = (profile.xpTotal % 100 / 100).clamp(0.0, 1.0);
 
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: Colors.blueGrey.shade50,
+        color: isDark ? Colors.white.withOpacity(0.03) : Colors.blueGrey.shade50,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.blueGrey.shade100),
+        border: Border.all(color: isDark ? Colors.white.withOpacity(0.05) : Colors.blueGrey.shade100),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              const Icon(Icons.workspace_premium, color: Colors.indigo),
+              Icon(Icons.workspace_premium, color: isDark ? colorScheme.primary : Colors.indigo),
               const SizedBox(width: 8),
               Text(
                 'Explorer Level ${profile.currentLevel}',
-                style: const TextStyle(
+                style: TextStyle(
                   fontWeight: FontWeight.w700,
                   fontSize: 16,
+                  color: isDark ? Colors.white.withOpacity(0.9) : Colors.black87,
                 ),
               ),
               const Spacer(),
@@ -406,7 +409,7 @@ class ProfileScreen extends ConsumerWidget {
                 '${profile.xpTotal} XP',
                 style: TextStyle(
                   fontWeight: FontWeight.w600,
-                  color: Colors.blueGrey.shade700,
+                  color: isDark ? colorScheme.primary.withOpacity(0.8) : Colors.blueGrey.shade700,
                 ),
               ),
             ],
@@ -417,27 +420,27 @@ class ProfileScreen extends ConsumerWidget {
             child: LinearProgressIndicator(
               minHeight: 10,
               value: percentage,
-              backgroundColor: Colors.blueGrey.shade100,
-              valueColor: const AlwaysStoppedAnimation<Color>(Colors.indigo),
+              backgroundColor: isDark ? Colors.white.withOpacity(0.05) : Colors.blueGrey.shade100,
+              valueColor: AlwaysStoppedAnimation<Color>(isDark ? colorScheme.primary : Colors.indigo),
             ),
           ),
           const SizedBox(height: 8),
           Text(
             '${profile.xpToNextLevel} XP to next level',
-            style: TextStyle(color: Colors.blueGrey.shade700),
+            style: TextStyle(color: isDark ? Colors.white38 : Colors.blueGrey.shade700, fontSize: 11, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 10),
           Wrap(
             spacing: 8,
             runSpacing: 8,
             children: [
-              _progressChip('Achievements', profile.badges.length.toString()),
-              _progressChip('Districts', '${profile.unlockedDistrictsCount}'),
-              _progressChip('Provinces', '${profile.unlockedProvincesCount}'),
-              _progressChip('Visits', profile.totalVisited.toString()),
+              _progressChip(context, 'Achievements', profile.badges.length.toString()),
+              _progressChip(context, 'Districts', '${profile.unlockedDistrictsCount}'),
+              _progressChip(context, 'Provinces', '${profile.unlockedProvincesCount}'),
+              _progressChip(context, 'Visits', profile.totalVisited.toString()),
             ],
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 16),
           Align(
             alignment: Alignment.centerLeft,
             child: OutlinedButton.icon(
@@ -447,8 +450,12 @@ class ProfileScreen extends ConsumerWidget {
                   MaterialPageRoute(builder: (_) => const AchievementsScreen()),
                 );
               },
-              icon: const Icon(Icons.emoji_events_outlined),
-              label: const Text('View achievements'),
+              style: OutlinedButton.styleFrom(
+                side: BorderSide(color: isDark ? Colors.white10 : Colors.blueGrey.shade200),
+                foregroundColor: isDark ? Colors.white70 : Colors.indigo,
+              ),
+              icon: const Icon(Icons.emoji_events_outlined, size: 18),
+              label: const Text('View achievements', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
             ),
           ),
         ],
@@ -456,17 +463,23 @@ class ProfileScreen extends ConsumerWidget {
     );
   }
 
-  Widget _progressChip(String label, String value) {
+  Widget _progressChip(BuildContext context, String label, String value) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? Colors.white.withOpacity(0.03) : Colors.white,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.blueGrey.shade100),
+        border: Border.all(color: isDark ? Colors.white.withOpacity(0.05) : Colors.blueGrey.shade100),
       ),
       child: Text(
         '$label: $value',
-        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+        style: TextStyle(
+          fontSize: 10, 
+          fontWeight: FontWeight.bold, 
+          color: isDark ? Colors.white38 : Colors.black54,
+          letterSpacing: 0.5,
+        ),
       ),
     );
   }
