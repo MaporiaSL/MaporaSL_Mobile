@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:ionicons/ionicons.dart';
+import 'dart:ui';
 
 import '../data/models/trip_model.dart';
 import '../data/models/trip_dto.dart';
 import 'providers/trips_provider.dart';
 import '../../places/data/places_repository.dart';
-import 'widgets/category_filtered_place_picker.dart';
 
-/// Create/Edit custom trip page
 class CreateTripPage extends ConsumerStatefulWidget {
-  final TripModel? trip; // null = create, non-null = edit
+  final TripModel? trip; 
   final List<String> initialDestinations;
 
   const CreateTripPage({
@@ -32,33 +32,25 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage> {
   late List<String> _places;
   String? _selectedCategory;
   String? _selectedPlace;
-  String? _tripType = 'Adventure'; // Default trip type
-  List<String> _categories = ['all', 'historical', 'beach', 'adventure', 'nature', 'temple', 'cultural', 'city', 'other'];
+  List<String> _categories = ['all', 'nature', 'historic', 'beach', 'temple', 'forest', 'waterfall', 'other'];
   List<String> _availablePlaces = [];
   bool _isFetchingPlaces = false;
-
+  bool _isSaving = false;
 
   @override
   void initState() {
     super.initState();
     _titleCtrl = TextEditingController(text: widget.trip?.title ?? '');
-    _descriptionCtrl = TextEditingController(
-      text: widget.trip?.description ?? '',
-    );
+    _descriptionCtrl = TextEditingController(text: widget.trip?.description ?? '');
     _startingLocationCtrl = TextEditingController(
-      text:
-          (widget.trip?.locations != null &&
-              (widget.trip!.locations?.isNotEmpty ?? false))
-          ? widget.trip!.locations!.first.name
-          : '',
+      text: widget.trip?.startingPoint ?? '',
     );
     _startDate = widget.trip?.startDate ?? DateTime.now();
-    _endDate =
-        widget.trip?.endDate ?? DateTime.now().add(const Duration(days: 1));
-    _places = widget.trip?.locations?.map((l) => l.name).toList() ?? [];
-    for (final place in widget.initialDestinations) {
-      if (!_places.contains(place)) {
-        _places.add(place);
+    _endDate = widget.trip?.endDate ?? DateTime.now().add(const Duration(days: 1));
+    _places = List.from(widget.initialDestinations);
+    if (widget.trip?.locations != null) {
+      for (final loc in widget.trip!.locations!) {
+        if (!_places.contains(loc.name)) _places.add(loc.name);
       }
     }
     _loadCategories();
@@ -70,8 +62,7 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage> {
       final categories = await placesRepo.getCategories();
       if (mounted) {
         setState(() {
-          // Merge dynamic categories with our core display list to keep UI rich
-          final Set<String> merged = {'all', 'historical', 'beach', 'adventure', 'nature', 'temple', 'cultural', 'city', 'other'};
+          final Set<String> merged = {'all', 'nature', 'historic', 'beach', 'temple', 'forest', 'waterfall', 'other'};
           merged.addAll(categories.map((c) => c.toLowerCase()));
           _categories = merged.toList();
           _selectedCategory = 'all';
@@ -111,286 +102,268 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage> {
     super.dispose();
   }
 
-  Future<void> _pickStartDate() async {
-    final picked = await showDatePicker(
-      context: context,
-      initialDate: _startDate,
-      firstDate: DateTime.now().subtract(const Duration(days: 1)),
-      lastDate: DateTime.now().add(const Duration(days: 365)),
-    );
-    if (picked != null) {
-      setState(() => _startDate = picked);
-    }
-  }
-
-  Future<void> _pickEndDate() async {
-    final picked = await showDatePicker(
-      context: context,
-      initialDate: _endDate,
-      firstDate: _startDate,
-      lastDate: DateTime.now().add(const Duration(days: 365)),
-    );
-    if (picked != null) {
-      setState(() => _endDate = picked);
-    }
-  }
-
   Future<void> _saveTrip() async {
     if (_titleCtrl.text.isEmpty) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Trip title is required')));
+      _showError('Trip Title is required');
       return;
     }
-
     if (_places.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Add at least one destination')),
-      );
+      _showError('Add at least one place to your trip');
       return;
     }
 
-    if (_endDate.isBefore(_startDate)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('End date must be after start date')),
-      );
-      return;
-    }
-
-    final locations = _places
-        .map((p) => TripLocation(name: p, day: 1))
-        .toList();
-
+    setState(() => _isSaving = true);
     try {
-      if (widget.trip == null) {
+      final locations = _places.map((p) => TripLocation(name: p, day: 1)).toList();
+      // If trip has an empty ID, it's a "Create" flow from a template or a new trip
+      if (widget.trip == null || widget.trip!.id.isEmpty) {
         final dto = CreateTripDto(
           title: _titleCtrl.text,
-          description: _descriptionCtrl.text.isEmpty
-              ? null
-              : _descriptionCtrl.text,
+          description: _descriptionCtrl.text,
           startDate: _startDate,
           endDate: _endDate,
           locations: locations,
-          tripType: _tripType,
-          startingPoint: _startingLocationCtrl.text.isEmpty ? null : _startingLocationCtrl.text,
+          startingPoint: _startingLocationCtrl.text,
+          status: 'planned', // Default status for new trips
         );
         await ref.read(tripsProvider.notifier).createTrip(dto);
       } else {
         final dto = UpdateTripDto(
           title: _titleCtrl.text,
-          description: _descriptionCtrl.text.isEmpty
-              ? null
-              : _descriptionCtrl.text,
+          description: _descriptionCtrl.text,
           startDate: _startDate,
           endDate: _endDate,
           locations: locations,
         );
         await ref.read(tripsProvider.notifier).updateTrip(widget.trip!.id, dto);
       }
-
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            widget.trip == null ? 'Trip created!' : 'Trip updated!',
-          ),
-        ),
-      );
-      Navigator.pop(context);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Trip Saved Successfully!')));
+        Navigator.pop(context);
+      }
     } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Error: $e')));
+      if (mounted) _showError('Could not save trip: $e');
+    } finally {
+      if (mounted) setState(() => _isSaving = false);
     }
+  }
+
+  void _showError(String msg) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg), backgroundColor: Colors.red.shade900));
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final isNew = widget.trip == null || widget.trip!.id.isEmpty;
+
     return Scaffold(
+      backgroundColor: const Color(0xFF0A0A0A),
       appBar: AppBar(
-        title: Text(widget.trip == null ? 'Create Trip' : 'Edit Trip'),
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        title: Text(
+          isNew ? 'PLAN NEW TRIP' : 'EDIT TRIP DETAILS',
+          style: const TextStyle(fontWeight: FontWeight.w900, letterSpacing: 2, fontSize: 13),
+        ),
+        leading: IconButton(
+          icon: const Icon(Ionicons.chevron_back),
+          onPressed: () => Navigator.pop(context),
+        ),
       ),
       body: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(24),
         children: [
-          // Basic Info Section
-          TextField(
-            controller: _titleCtrl,
-            decoration: const InputDecoration(
-              labelText: 'Trip Title',
-              border: OutlineInputBorder(),
-            ),
-          ),
+          _buildSectionHeader('BASIC INFO'),
           const SizedBox(height: 16),
-          TextField(
-            controller: _descriptionCtrl,
-            decoration: const InputDecoration(
-              labelText: 'Journal Description',
-              border: OutlineInputBorder(),
-            ),
-            maxLines: 2,
-          ),
+          _buildThemedField(controller: _titleCtrl, label: 'TRIP NAME', icon: Ionicons.trail_sign_outline),
           const SizedBox(height: 16),
-          TextField(
-            controller: _startingLocationCtrl,
-            decoration: const InputDecoration(
-              labelText: 'Starting Point',
-              prefixIcon: Icon(Icons.location_on_outlined),
-              border: OutlineInputBorder(),
-            ),
-          ),
+          _buildThemedField(controller: _descriptionCtrl, label: 'DESCRIPTION', icon: Ionicons.document_text_outline, maxLines: 2),
           const SizedBox(height: 16),
+          _buildThemedField(controller: _startingLocationCtrl, label: 'STARTING POINT', icon: Ionicons.navigate_outline),
           
-          // Dates Section
+          const SizedBox(height: 32),
+          _buildSectionHeader('SELECT DATES'),
+          const SizedBox(height: 16),
           Row(
             children: [
-              Expanded(
-                child: ListTile(
-                  title: const Text('From', style: TextStyle(fontSize: 12)),
-                  subtitle: Text(DateFormat('MMM dd').format(_startDate)),
-                  onTap: _pickStartDate,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    side: BorderSide(color: Colors.grey.shade300),
-                  ),
-                ),
+              Expanded(child: _buildDateTile('START DATE', _startDate, () async {
+                final picked = await showDatePicker(context: context, initialDate: _startDate, firstDate: DateTime.now().subtract(const Duration(days: 1)), lastDate: DateTime.now().add(const Duration(days: 365)));
+                if (picked != null) setState(() => _startDate = picked);
+              })),
+              const SizedBox(width: 12),
+              Expanded(child: _buildDateTile('END DATE', _endDate, () async {
+                final picked = await showDatePicker(context: context, initialDate: _endDate, firstDate: _startDate, lastDate: DateTime.now().add(const Duration(days: 365)));
+                if (picked != null) setState(() => _endDate = picked);
+              })),
+            ],
+          ),
+
+          const SizedBox(height: 32),
+          _buildSectionHeader('ADD PLACES'),
+          const SizedBox(height: 16),
+          _buildPlacePicker(),
+
+          const SizedBox(height: 32),
+          _buildSectionHeader('YOUR ROUTE'),
+          const SizedBox(height: 16),
+          _buildItineraryList(),
+
+          const SizedBox(height: 48),
+          SizedBox(
+            height: 60,
+            child: ElevatedButton(
+              onPressed: _isSaving ? null : _saveTrip,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: colorScheme.primary,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                elevation: 10,
+                shadowColor: colorScheme.primary.withOpacity(0.5),
               ),
-              const SizedBox(width: 8),
+              child: _isSaving 
+                ? const CircularProgressIndicator(color: Colors.white)
+                : const Text('SAVE TRIP TO TIMELINE', style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1.5)),
+            ),
+          ),
+          const SizedBox(height: 40),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSectionHeader(String title) {
+    return Text(title, style: const TextStyle(color: Colors.white38, fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1.5));
+  }
+
+  Widget _buildThemedField({required TextEditingController controller, required String label, IconData? icon, int maxLines = 1}) {
+    return Container(
+      decoration: BoxDecoration(color: Colors.white.withOpacity(0.05), borderRadius: BorderRadius.circular(12)),
+      child: TextField(
+        controller: controller,
+        maxLines: maxLines,
+        style: const TextStyle(color: Colors.white, fontSize: 14),
+        decoration: InputDecoration(
+          labelText: label,
+          labelStyle: const TextStyle(color: Colors.white38, fontSize: 11, fontWeight: FontWeight.bold),
+          prefixIcon: icon != null ? Icon(icon, color: Colors.white24, size: 18) : null,
+          border: InputBorder.none,
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDateTile(String label, DateTime date, VoidCallback onTap) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(color: Colors.white.withOpacity(0.05), borderRadius: BorderRadius.circular(12), border: Border.all(color: Colors.white.withOpacity(0.1))),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(label, style: const TextStyle(color: Colors.white38, fontSize: 9, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 4),
+            Text(DateFormat('MMM dd').format(date), style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPlacePicker() {
+    final colorScheme = Theme.of(context).colorScheme;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: _categories.map((cat) {
+              final isSelected = _selectedCategory == cat;
+              return Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: FilterChip(
+                  label: Text(cat.toUpperCase(), style: TextStyle(fontSize: 10, fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)),
+                  selected: isSelected,
+                  onSelected: (s) {
+                    setState(() => _selectedCategory = cat);
+                    _loadPlacesBySelectedCategory();
+                  },
+                  backgroundColor: Colors.white.withOpacity(0.05),
+                  selectedColor: colorScheme.primary.withOpacity(0.2),
+                  checkmarkColor: colorScheme.primary,
+                  labelStyle: TextStyle(color: isSelected ? colorScheme.primary : Colors.white60),
+                ),
+              );
+            }).toList(),
+          ),
+        ),
+        const SizedBox(height: 12),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          decoration: BoxDecoration(color: Colors.white.withOpacity(0.05), borderRadius: BorderRadius.circular(12)),
+          child: DropdownButtonHideUnderline(
+            child: DropdownButton<String>(
+              value: _selectedPlace,
+              isExpanded: true,
+              dropdownColor: const Color(0xFF1A1A1A),
+              hint: _isFetchingPlaces ? const Text('SEARCHING...', style: TextStyle(color: Colors.white38, fontSize: 13)) : const Text('SELECT PLACE', style: TextStyle(color: Colors.white38, fontSize: 13)),
+              items: _availablePlaces.map((p) => DropdownMenuItem(value: p, child: Text(p, style: const TextStyle(color: Colors.white, fontSize: 14)))).toList(),
+              onChanged: (val) {
+                setState(() => _selectedPlace = val);
+                if (val != null && !_places.contains(val)) {
+                  setState(() { _places.add(val); _selectedPlace = null; });
+                }
+              },
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildItineraryList() {
+    if (_places.isEmpty) {
+      return Container(
+        height: 100,
+        decoration: BoxDecoration(color: Colors.white.withOpacity(0.02), borderRadius: BorderRadius.circular(12), border: Border.all(color: Colors.white.withOpacity(0.05), style: BorderStyle.solid)),
+        child: const Center(child: Text('NO PLACES ADDED', style: TextStyle(color: Colors.white12, fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 1))),
+      );
+    }
+    return Column(
+      children: _places.asMap().entries.map((entry) {
+        final i = entry.key;
+        final p = entry.value;
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: Row(
+            children: [
+              Column(
+                children: [
+                  Container(width: 24, height: 24, decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: Colors.white24)), child: Center(child: Text('${i + 1}', style: const TextStyle(color: Colors.white60, fontSize: 10)))),
+                  if (i < _places.length - 1) Container(width: 1, height: 30, color: Colors.white12),
+                ],
+              ),
+              const SizedBox(width: 16),
               Expanded(
-                child: ListTile(
-                  title: const Text('To', style: TextStyle(fontSize: 12)),
-                  subtitle: Text(DateFormat('MMM dd').format(_endDate)),
-                  onTap: _pickEndDate,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    side: BorderSide(color: Colors.grey.shade300),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  decoration: BoxDecoration(color: Colors.white.withOpacity(0.03), borderRadius: BorderRadius.circular(10)),
+                  child: Row(
+                    children: [
+                      Expanded(child: Text(p, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13))),
+                      IconButton(icon: const Icon(Ionicons.close_circle_outline, color: Colors.white24, size: 18), onPressed: () => setState(() => _places.removeAt(i))),
+                    ],
                   ),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 24),
-
-          
-          // ==========================================
-          // CATEGORY SELECTION (CHIPS)
-          // ==========================================
-          const Text(
-            'Explore Places from Database',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-          ),
-          const SizedBox(height: 12),
-          
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: _categories.map((category) {
-                final isSelected = _selectedCategory == category;
-                return Padding(
-                  padding: const EdgeInsets.only(right: 8.0),
-                  child: FilterChip(
-                    label: Text(category == 'all' ? 'All' : category[0].toUpperCase() + category.substring(1)),
-                    selected: isSelected,
-                    onSelected: (bool selected) {
-                      setState(() {
-                        _selectedCategory = category;
-                        _selectedPlace = null;
-                      });
-                      _loadPlacesBySelectedCategory();
-                    },
-                    selectedColor: Colors.blue.withOpacity(0.2),
-                    checkmarkColor: Colors.blue,
-                  ),
-                );
-              }).toList(),
-            ),
-          ),
-          const SizedBox(height: 16),
-
-          // Place Dropdown
-          DropdownButtonFormField<String>(
-            value: _selectedPlace,
-            isExpanded: true,
-            decoration: InputDecoration(
-              labelText: 'Place',
-              border: const OutlineInputBorder(),
-              suffixIcon: _isFetchingPlaces 
-                ? const SizedBox(width: 20, height: 20, child: Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  ))
-                : null,
-            ),
-            items: _availablePlaces.map((name) => DropdownMenuItem(
-              value: name,
-              child: Text(name, overflow: TextOverflow.ellipsis),
-            )).toList(),
-            onChanged: (val) => setState(() => _selectedPlace = val),
-          ),
-          const SizedBox(height: 12),
-          
-          ElevatedButton.icon(
-            onPressed: _selectedPlace == null ? null : () {
-              setState(() {
-                if (!_places.contains(_selectedPlace)) {
-                  _places.add(_selectedPlace!);
-                  _selectedPlace = null;
-                }
-              });
-            },
-            icon: const Icon(Icons.add_location_alt),
-            label: const Text('Add to Itinerary'),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blue.shade50,
-              foregroundColor: Colors.blue.shade900,
-            ),
-          ),
-          
-          const Divider(height: 48),
-
-          // ==========================================
-          // ITINERARY LIST
-          // ==========================================
-          Text(
-            'Your Itinerary (${_places.length})',
-            style: const TextStyle(fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 12),
-
-          if (_places.isEmpty)
-            const Padding(
-              padding: EdgeInsets.all(32.0),
-              child: Center(child: Text('Add places above to see them here', style: TextStyle(color: Colors.grey))),
-            )
-          else
-            ..._places.asMap().entries.map((entry) {
-              final index = entry.key;
-              final place = entry.value;
-              return ListTile(
-                leading: CircleAvatar(child: Text('${index + 1}')),
-                title: Text(place),
-                trailing: IconButton(
-                  icon: const Icon(Icons.delete_outline, color: Colors.red),
-                  onPressed: () => setState(() => _places.removeAt(index)),
-                ),
-              );
-            }),
-
-          const SizedBox(height: 40),
-          
-          // Final Submit
-          ElevatedButton(
-            onPressed: _saveTrip,
-            style: ElevatedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 18),
-              backgroundColor: Colors.blue.shade700,
-              foregroundColor: Colors.white,
-            ),
-            child: Text(widget.trip == null ? 'Confirm Trip' : 'Save Changes'),
-          ),
-        ],
-      ),
+        );
+      }).toList(),
     );
   }
 }

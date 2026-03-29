@@ -152,6 +152,23 @@ class TripsNotifier extends StateNotifier<TripsState> {
     }
   }
 
+  /// Update trip status (e.g., 'planned' -> 'completed')
+  Future<void> updateStatus(String id, String status) async {
+    try {
+      final updatedTrip = await _repository.updateTrip(id, UpdateTripDto(status: status));
+      
+      // Update trip in list
+      final updatedTrips = state.trips.map((trip) {
+        return trip.id == id ? updatedTrip : trip;
+      }).toList();
+
+      state = state.copyWith(trips: updatedTrips);
+    } catch (e) {
+      state = state.copyWith(error: e.toString());
+      rethrow;
+    }
+  }
+
   /// Clear error message
   void clearError() {
     state = state.copyWith(error: null);

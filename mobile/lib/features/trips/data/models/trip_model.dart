@@ -118,6 +118,9 @@ class TripModel {
   String get objectivesText =>
       '$destinationCount Objectives • $visitedCount Cleared';
 
+  /// Potential essence reward for completing mission (50 essence per node)
+  int get essenceReward => visitedCount * 50;
+
   factory TripModel.fromJson(Map<String, dynamic> json) =>
       _$TripModelFromJson(json);
 
