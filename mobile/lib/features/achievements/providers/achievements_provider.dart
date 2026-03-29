@@ -7,19 +7,17 @@ import 'package:gemified_travel_portfolio/providers/progress_provider.dart';
 
 class AchievementsViewData {
   final int totalXp;
-  final int totalVisits;
-  final List<AchievementProgress> achievements;
+  final int totalTrophyPoints;
+  final Map<String, List<AchievementProgress>> tracks;
 
   const AchievementsViewData({
     required this.totalXp,
-    required this.totalVisits,
-    required this.achievements,
+    required this.totalTrophyPoints,
+    required this.tracks,
   });
 }
 
-final achievementsViewProvider = FutureProvider<AchievementsViewData>((
-  ref,
-) async {
+final achievementsViewProvider = FutureProvider<AchievementsViewData>((ref) async {
   final localProgress = ref.watch(progressProvider);
   final userId = ref.watch(currentUserIdProvider);
   final apiClient = ref.watch(apiClientProvider);
@@ -27,47 +25,36 @@ final achievementsViewProvider = FutureProvider<AchievementsViewData>((
   var totalVisits = localProgress.totalVisits;
   var unlockedDistrictsCount = localProgress.unlockedDistricts.length;
   var totalXp = localProgress.totalXP;
-
-  Map<String, int> visitsByCategory = const {};
+  Map<String, int> visitsByCategory = {};
 
   if (userId != null && userId.isNotEmpty) {
     try {
       final progressRes = await apiClient.get('/users/$userId/progress');
       final data = progressRes.data as Map<String, dynamic>;
-
-      totalVisits =
-          (data['totalPlacesVisited'] as num?)?.toInt() ?? totalVisits;
-      unlockedDistrictsCount =
-          (data['unlockedDistricts'] as List?)?.length ??
-          unlockedDistrictsCount;
-
-      // Keep local XP as primary fallback, but use server value when present.
+      totalVisits = (data['totalPlacesVisited'] as num?)?.toInt() ?? totalVisits;
+      unlockedDistrictsCount = (data['unlockedDistricts'] as List?)?.length ?? unlockedDistrictsCount;
       totalXp = (data['xpTotal'] as num?)?.toInt() ?? totalXp;
-    } catch (e) {
-      debugPrint('Failed to sync /users/:id/progress for achievements: $e');
-    }
+    } catch (_) {}
 
-    // This endpoint exists in some backend variants. Keep it optional.
     try {
       final statsRes = await apiClient.get('/places/users/$userId/stats');
       final stats = statsRes.data as Map<String, dynamic>;
-
-      totalVisits = (stats['totalVisits'] as num?)?.toInt() ?? totalVisits;
-      unlockedDistrictsCount =
-          (stats['uniqueDistricts'] as num?)?.toInt() ?? unlockedDistrictsCount;
-
       final rawCategories = stats['visitsByCategory'];
       if (rawCategories is Map<String, dynamic>) {
-        visitsByCategory = rawCategories.map(
-          (key, value) => MapEntry(key, (value as num).toInt()),
-        );
+        visitsByCategory = rawCategories.map((key, value) => MapEntry(key, (value as num).toInt()));
       }
-    } catch (e) {
-      debugPrint('Optional /places/users/:id/stats unavailable: $e');
-    }
+    } catch (_) {}
   }
 
-  final achievements = PlaceAchievements.definitions.map((definition) {
+  int totalTrophyPoints = 0;
+  final Map<String, List<AchievementProgress>> tracksData = {
+    'Pioneer': [],
+    'Naturalist': [],
+    'Devotee': [],
+    'Chronicler': [],
+  };
+
+  for (final definition in PlaceAchievements.definitions) {
     final currentProgress = _progressForDefinition(
       definition,
       totalVisits: totalVisits,
@@ -76,18 +63,32 @@ final achievementsViewProvider = FutureProvider<AchievementsViewData>((
       fallbackContributions: localProgress.totalPlacesContributed,
     );
 
-    return AchievementProgress(
+    int currentTier = -1;
+    for (int i = 0; i < definition.tiers.length; i++) {
+      if (currentProgress >= definition.tiers[i]) {
+        currentTier = i;
+        totalTrophyPoints += definition.tierRewards[i];
+      } else {
+        break;
+      }
+    }
+
+    final ap = AchievementProgress(
       id: definition.id,
       definition: definition,
       currentProgress: currentProgress,
-      isUnlocked: currentProgress >= definition.threshold,
+      currentTier: currentTier,
     );
-  }).toList();
+
+    if (tracksData.containsKey(definition.track)) {
+      tracksData[definition.track]!.add(ap);
+    }
+  }
 
   return AchievementsViewData(
     totalXp: totalXp,
-    totalVisits: totalVisits,
-    achievements: achievements,
+    totalTrophyPoints: totalTrophyPoints,
+    tracks: tracksData,
   );
 });
 
@@ -99,13 +100,9 @@ int _progressForDefinition(
   required int fallbackContributions,
 }) {
   switch (definition.category) {
-    case 'visit_count':
-      return totalVisits;
-    case 'all_districts':
-      return unlockedDistrictsCount;
-    case 'photos':
-      return fallbackContributions;
-    default:
-      return visitsByCategory[definition.category] ?? 0;
+    case 'visit_count': return totalVisits;
+    case 'all_districts': return unlockedDistrictsCount;
+    case 'photos': return fallbackContributions;
+    default: return visitsByCategory[definition.category] ?? 0;
   }
 }
