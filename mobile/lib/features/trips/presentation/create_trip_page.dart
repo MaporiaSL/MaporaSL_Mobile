@@ -31,10 +31,11 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage> {
   late DateTime _startDate;
   late DateTime _endDate;
   late List<String> _places;
+  late final TextEditingController _searchCtrl;
   String? _selectedCategory;
-  String? _selectedPlace;
   List<String> _categories = ['all', 'nature', 'historic', 'beach', 'temple', 'forest', 'waterfall', 'other'];
   List<String> _availablePlaces = [];
+  List<String> _filteredPlaces = [];
   bool _isFetchingPlaces = false;
   bool _isSaving = false;
 
@@ -49,6 +50,7 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage> {
     _startDate = widget.trip?.startDate ?? DateTime.now();
     _endDate = widget.trip?.endDate ?? DateTime.now().add(const Duration(days: 1));
     _places = List.from(widget.initialDestinations);
+    _searchCtrl = TextEditingController();
     if (widget.trip?.locations != null) {
       for (final loc in widget.trip!.locations!) {
         if (!_places.contains(loc.name)) _places.add(loc.name);
@@ -86,6 +88,7 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage> {
       if (mounted) {
         setState(() {
           _availablePlaces = list.map((p) => p.name).toList();
+          _filteredPlaces = _availablePlaces;
           _isFetchingPlaces = false;
         });
       }
@@ -100,6 +103,7 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage> {
     _titleCtrl.dispose();
     _descriptionCtrl.dispose();
     _startingLocationCtrl.dispose();
+    _searchCtrl.dispose();
     super.dispose();
   }
 
@@ -317,30 +321,80 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage> {
           ),
         ),
         const SizedBox(height: 12),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          decoration: BoxDecoration(
-            color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.03), 
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05)),
-          ),
-          child: DropdownButtonHideUnderline(
-            child: DropdownButton<String>(
-              value: _selectedPlace,
-              isExpanded: true,
-              dropdownColor: isDark ? const Color(0xFF1A1A1A) : Colors.white,
-              hint: Text(_isFetchingPlaces ? 'SEARCHING...' : 'SELECT PLACE', style: TextStyle(color: isDark ? Colors.white38 : Colors.black38, fontSize: 13)),
-              items: _availablePlaces.map((p) => DropdownMenuItem(value: p, child: Text(p, style: TextStyle(color: isDark ? Colors.white : Colors.black87, fontSize: 14)))).toList(),
-              onChanged: (val) {
-                setState(() => _selectedPlace = val);
-                if (val != null && !_places.contains(val)) {
-                  setState(() { _places.add(val); _selectedPlace = null; });
-                }
-              },
-            ),
-          ),
-        ),
+        const SizedBox(height: 12),
+        _buildSearchField(context),
+        if (_filteredPlaces.isNotEmpty && _searchCtrl.text.isNotEmpty)
+          _buildSearchResults(context),
       ],
+    );
+  }
+
+  Widget _buildSearchField(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    return Container(
+      decoration: BoxDecoration(
+        color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.03), 
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05)),
+      ),
+      child: TextField(
+        controller: _searchCtrl,
+        onChanged: (val) {
+          setState(() {
+            _filteredPlaces = _availablePlaces.where((p) => p.toLowerCase().contains(val.toLowerCase())).toList();
+          });
+        },
+        style: TextStyle(color: isDark ? Colors.white : Colors.black87, fontSize: 13),
+        decoration: InputDecoration(
+          hintText: 'SEARCH PLACES...',
+          hintStyle: TextStyle(color: isDark ? Colors.white24 : Colors.black26, fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1),
+          prefixIcon: Icon(Ionicons.search_outline, color: isDark ? Colors.white24 : Colors.black26, size: 18),
+          suffixIcon: _searchCtrl.text.isNotEmpty 
+            ? IconButton(icon: const Icon(Ionicons.close_circle, size: 18), onPressed: () => setState(() { _searchCtrl.clear(); _filteredPlaces = _availablePlaces; })) 
+            : null,
+          border: InputBorder.none,
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSearchResults(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    return Container(
+      margin: const EdgeInsets.only(top: 8),
+      constraints: const BoxConstraints(maxHeight: 200),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF1F1F1F) : Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: isDark ? Colors.white.withOpacity(0.1) : Colors.black.withOpacity(0.05)),
+        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 10, offset: const Offset(0, 4))],
+      ),
+      child: ListView.builder(
+        shrinkWrap: true,
+        padding: EdgeInsets.zero,
+        itemCount: _filteredPlaces.length,
+        itemBuilder: (context, index) {
+          final p = _filteredPlaces[index];
+          final isAdded = _places.contains(p);
+          return ListTile(
+            dense: true,
+            title: Text(p, style: TextStyle(color: isDark ? Colors.white70 : Colors.black87, fontWeight: isAdded ? FontWeight.bold : FontWeight.normal)),
+            trailing: Icon(isAdded ? Ionicons.checkmark_circle : Ionicons.add_circle_outline, color: isAdded ? Colors.green : (isDark ? Colors.white24 : Colors.black26), size: 18),
+            onTap: () {
+              if (!isAdded) {
+                setState(() {
+                  _places.add(p);
+                  _searchCtrl.clear();
+                  _filteredPlaces = _availablePlaces;
+                });
+              }
+            },
+          );
+        },
+      ),
     );
   }
 
