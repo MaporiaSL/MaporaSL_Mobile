@@ -12,9 +12,9 @@ MAPORIA turns real-world travel into progression: users explore districts, verif
 - Common docs: [docs/common/README.md](docs/common/README.md)
 - Backend docs: [docs/backend/README.md](docs/backend/README.md)
 - Frontend docs: [docs/frontend/README.md](docs/frontend/README.md)
-- Marking guide: [MARKING_GUIDE.md](MARKING_GUIDE.md)
-- Demo script: [DEMO_SCRIPT.md](DEMO_SCRIPT.md)
-- Feature checklist: [FEATURES_CHECKLIST.md](FEATURES_CHECKLIST.md)
+- Marking guide: [docs/reference/MARKING_GUIDE.md](docs/reference/MARKING_GUIDE.md)
+- Demo script: [docs/guides/DEMO_SCRIPT.md](docs/guides/DEMO_SCRIPT.md)
+- Feature checklist: [docs/checklists/FEATURES_CHECKLIST.md](docs/checklists/FEATURES_CHECKLIST.md)
 
 ## Tech Stack (Current)
 
@@ -59,7 +59,8 @@ gemified-travel-portfolio/
 
 - Current Flutter targets in-repo are mobile-focused.
 - Historical status/planning docs are archived under [docs/_archive/](docs/_archive/).
-- Project onboarding entry: [START_HERE.md](START_HERE.md).
+- Project onboarding entry: [docs/guides/START_HERE.md](docs/guides/START_HERE.md).
+- Windows helper scripts: [scripts/windows/README.md](scripts/windows/README.md).
 
 ## Contributing
 

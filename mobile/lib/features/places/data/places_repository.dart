@@ -58,33 +58,48 @@ class PlacesRepository {
         if (district != null && district.isNotEmpty) 'district': district,
       };
 
-      debugPrint('Fetching places with params: $queryParams');
+      print('------------------------------------------------------------');
+      print(r'$$$ [PLACES REPO] FETCHING PLACES...');
+      print(r'$$$ [PLACES REPO] PARAMS: ' + queryParams.toString());
 
       final response = await _apiClient.get(
         '/api/places',
         queryParameters: queryParams,
       );
 
-      debugPrint('Response status: ${response.statusCode}');
+      print(r'$$$ [PLACES REPO] REQUEST URI: ' + response.requestOptions.uri.toString());
+      print(r'$$$ [PLACES REPO] RESPONSE STATUS: ' + response.statusCode.toString());
 
       if (response.statusCode == 200) {
         final data = response.data as Map<String, dynamic>;
+        print(r'$$$ [PLACES REPO] RAW API DATA: ' + data.toString());
+        
         final List<dynamic> placesJson = data['places'] ?? [];
+        print(r'$$$ [PLACES REPO] MAPPED ' + placesJson.length.toString() + ' PLACES FROM JSON.');
+        print('------------------------------------------------------------');
+        
         final places = placesJson
             .map((json) => Place.fromJson(json as Map<String, dynamic>))
             .toList();
 
+        int parseInt(dynamic value, int fallback) {
+          if (value == null) return fallback;
+          if (value is num) return value.toInt();
+          if (value is String) return int.tryParse(value) ?? fallback;
+          return fallback;
+        }
+
         return PlacesPage(
           places: places,
-          currentPage: (data['currentPage'] as num?)?.toInt() ?? page,
-          totalPages: (data['totalPages'] as num?)?.toInt() ?? page,
-          totalPlaces: (data['totalPlaces'] as num?)?.toInt() ?? places.length,
+          currentPage: parseInt(data['currentPage'], page),
+          totalPages: parseInt(data['totalPages'], page),
+          totalPlaces: parseInt(data['totalPlaces'], places.length),
         );
       }
 
       throw Exception('Failed to load places: ${response.statusCode}');
     } catch (e) {
-      debugPrint('Error in getPlacesPage: $e');
+      print(r'$$$ [PLACES REPO] ERROR IN getPlacesPage: ' + e.toString());
       throw Exception('Error fetching places: $e');
     }
   }

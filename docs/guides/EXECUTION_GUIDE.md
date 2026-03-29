@@ -588,7 +588,7 @@ flutter run
 **What you're creating**: Guides for markers to understand your project
 
 ### File 1: MARKING_GUIDE.md
-**Location**: Root directory  
+**Location**: docs/reference  
 **Time**: 20 minutes  
 
 **Content outline**:
@@ -601,14 +601,14 @@ flutter run
 - Known limitations and what's planned
 - Estimated team size, timeline, effort
 
-**Start**: Open root directory, create new file `MARKING_GUIDE.md`
+**Start**: Open docs/reference, create new file `MARKING_GUIDE.md`
 
 **Status**: ___
 
 ---
 
 ### File 2: DEMO_SCRIPT.md
-**Location**: Root directory  
+**Location**: docs/guides  
 **Time**: 20 minutes  
 
 **Content outline**:
@@ -636,14 +636,14 @@ flutter run
 [Continue for 10 min total]
 ```
 
-**Start**: Create `DEMO_SCRIPT.md` in root
+**Start**: Create `DEMO_SCRIPT.md` in docs/guides
 
 **Status**: ___
 
 ---
 
 ### File 3: FEATURES_CHECKLIST.md
-**Location**: Root directory  
+**Location**: docs/checklists  
 **Time**: 15 minutes  
 
 **Content**:
@@ -662,7 +662,7 @@ flutter run
 | Social Sharing | ❌ Planned | 0% | Buttons ready, integration pending |
 ```
 
-**Start**: Create `FEATURES_CHECKLIST.md` in root
+**Start**: Create `FEATURES_CHECKLIST.md` in docs/checklists
 
 **Status**: ___
 
@@ -670,7 +670,7 @@ flutter run
 
 ### File 4: Update README.md
 **Location**: Root directory  
-**File**: [README.md](README.md)  
+**File**: [README.md](../../README.md)  
 **Time**: 15 minutes  
 
 **Changes to add**:
@@ -683,10 +683,10 @@ flutter run
 1. Backend: `cd backend && npm run dev`
 2. Mobile: `cd mobile && flutter run`
 3. Test: `flutter test`
-4. See: MARKING_GUIDE.md for detailed setup
+4. See: [MARKING_GUIDE.md](../reference/MARKING_GUIDE.md) for detailed setup
 
 ### Demo Flow
-See DEMO_SCRIPT.md for 10-minute walkthrough
+See [DEMO_SCRIPT.md](DEMO_SCRIPT.md) for 10-minute walkthrough
 ```
 
 2. Add section "Features Overview":

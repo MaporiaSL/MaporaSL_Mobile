@@ -17,6 +17,9 @@ class ExplorationLocation {
   final List<String> photos;
   final VerificationStatus status;
   final String? rejectionReason;
+  final bool isUserGem;
+  final String? submissionStatus; // 'pending', 'approved', 'official'
+  final String? introducedBy;
 
   ExplorationLocation({
     required this.id,
@@ -30,6 +33,9 @@ class ExplorationLocation {
     this.photos = const [],
     this.status = VerificationStatus.none,
     this.rejectionReason,
+    this.isUserGem = false,
+    this.submissionStatus,
+    this.introducedBy,
   });
 
   factory ExplorationLocation.fromJson(Map<String, dynamic> json) {
@@ -49,26 +55,43 @@ class ExplorationLocation {
               .toList() ??
           [],
       status: visited ? VerificationStatus.passed : VerificationStatus.none,
+      isUserGem: json['isUserGem'] == true,
+      submissionStatus: json['submissionStatus']?.toString(),
+      introducedBy: json['introducedBy']?.toString(),
     );
   }
 
   ExplorationLocation copyWith({
+    String? id,
+    String? name,
+    String? type,
+    double? latitude,
+    double? longitude,
+    bool? visited,
+    String? description,
+    String? category,
+    List<String>? photos,
     VerificationStatus? status,
     String? rejectionReason,
-    bool? visited,
+    bool? isUserGem,
+    String? submissionStatus,
+    String? introducedBy,
   }) {
     return ExplorationLocation(
-      id: id,
-      name: name,
-      type: type,
-      latitude: latitude,
-      longitude: longitude,
+      id: id ?? this.id,
+      name: name ?? this.name,
+      type: type ?? this.type,
+      latitude: latitude ?? this.latitude,
+      longitude: longitude ?? this.longitude,
       visited: visited ?? this.visited,
-      description: description,
-      category: category,
-      photos: photos,
+      description: description ?? this.description,
+      category: category ?? this.category,
+      photos: photos ?? this.photos,
       status: status ?? this.status,
       rejectionReason: rejectionReason ?? this.rejectionReason,
+      isUserGem: isUserGem ?? this.isUserGem,
+      submissionStatus: submissionStatus ?? this.submissionStatus,
+      introducedBy: introducedBy ?? this.introducedBy,
     );
   }
 }

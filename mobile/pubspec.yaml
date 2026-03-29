@@ -85,6 +85,7 @@ flutter_launcher_icons:
 flutter:
   uses-material-design: true
   assets:
+    - .env
     - assets/geojson/boundaries/LK-provinces.geojson
     - assets/geojson/boundaries/LK-districts.geojson
     - assets/data/

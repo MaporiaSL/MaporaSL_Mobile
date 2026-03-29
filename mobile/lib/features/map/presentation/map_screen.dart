@@ -14,8 +14,11 @@ import 'theme/map_visual_theme.dart';
 import '../../exploration/providers/exploration_provider.dart';
 import '../../../core/providers/theme_provider.dart';
 import '../../exploration/data/models/exploration_models.dart';
+import '../../exploration/presentation/widgets/shareable_card.dart';
 import '../../visits/presentation/widgets/dynamic_visit_sheet.dart';
 import '../providers/user_location_provider.dart';
+import '../../profile/presentation/providers/profile_providers.dart';
+import 'package:confetti/confetti.dart';
 
 final districtFocusProvider = StateProvider<bool>((ref) => false);
 
@@ -37,6 +40,12 @@ class _MapScreenState extends ConsumerState<MapScreen>
   ExplorationLocation? _selectedLocation;
   late AnimationController _focusAnimationController;
   late AnimationController _selectionAnimationController;
+  late ConfettiController _confettiController;
+  
+  // Playback state for history mode
+  bool _isPlaybackMode = false;
+  int _playbackStep = 0;
+  Timer? _playbackTimer;
 
   String _normalizeKey(String? value) {
     if (value == null) return '';
@@ -91,6 +100,9 @@ class _MapScreenState extends ConsumerState<MapScreen>
       duration: const Duration(milliseconds: 300),
       vsync: this,
     );
+    _confettiController = ConfettiController(
+      duration: const Duration(seconds: 3),
+    );
 
     Future.microtask(() {
       if (!mounted) return;
@@ -104,11 +116,150 @@ class _MapScreenState extends ConsumerState<MapScreen>
   void dispose() {
     _focusAnimationController.dispose();
     _selectionAnimationController.dispose();
+    _confettiController.dispose();
+    _playbackTimer?.cancel();
     super.dispose();
+  }
+
+  void _startJourneyPlayback(List<DistrictAssignment> assignments) {
+    if (_isPlaybackMode) return;
+
+    // Filter only visited districts and sort them
+    final visitedDistricts = assignments
+        .where((a) => a.visitedCount > 0)
+        .toList()
+        ..sort((a, b) => a.district.compareTo(b.district));
+    
+    if (visitedDistricts.isEmpty) return;
+
+    setState(() {
+      _isPlaybackMode = true;
+      _playbackStep = 0;
+    });
+
+    _playbackTimer?.cancel();
+    _playbackTimer = Timer.periodic(const Duration(milliseconds: 1200), (timer) {
+      if (!mounted) {
+        timer.cancel();
+        return;
+      }
+
+      if (_playbackStep >= visitedDistricts.length - 1) {
+        timer.cancel();
+        // Stay on the final step for a bit before closing
+        Future.delayed(const Duration(seconds: 3), () {
+          if (mounted) {
+            setState(() {
+              _isPlaybackMode = false;
+            });
+          }
+        });
+      } else {
+        setState(() {
+          _playbackStep++;
+        });
+      }
+    });
+  }
+
+  void _stopJourneyPlayback() {
+    _playbackTimer?.cancel();
+    setState(() {
+      _isPlaybackMode = false;
+    });
+  }
+
+  void _handleVerificationSuccess(Map<String, dynamic> result) {
+    // Redirect to the MAIN map screen by closing the district focus immediately
+    selectedDistrict = null;
+    selectedProvince = null;
+    _isDistrictFocused = false;
+    _selectedLocation = null;
+
+    // Play confetti explosion
+    _confettiController.play();
+    
+    // Calculate projected stats for the shareable card
+    final profileAsync = ref.read(userProfileProvider);
+    final profile = profileAsync.value;
+    final int xpAwarded = result['xpAwarded'] as int? ?? 0;
+    
+    // Show the certificate overlay
+    Navigator.of(context).push(
+      PageRouteBuilder<void>(
+        opaque: false,
+        pageBuilder: (_, __, ___) {
+          return DiscoveryCertificateOverlay(
+            assignment: result['assignment'],
+            location: result['districtJustUnlocked'] == true ? null : result['location'],
+            unlockLocationName: result['location']?.name ?? 'New Discovery',
+            totalXp: (profile?.xpTotal ?? 0) + xpAwarded,
+            totalVisited: (profile?.totalVisited ?? 0) + 1,
+            currentLevel: profile?.currentLevel ?? 1,
+          );
+        },
+      ),
+    );
+    
+    // Force marker refresh
+    setState(() {});
+  }
+
+  void _showDistrictShareOverlay(DistrictAssignment assignment) {
+    final profileAsync = ref.read(userProfileProvider);
+    final profile = profileAsync.value;
+
+    Navigator.of(context).push(
+      PageRouteBuilder<void>(
+        opaque: false,
+        pageBuilder: (_, __, ___) {
+          return DiscoveryCertificateOverlay(
+            assignment: assignment,
+            location: null,
+            totalXp: profile?.xpTotal ?? 0,
+            totalVisited: profile?.totalVisited ?? 0,
+            currentLevel: profile?.currentLevel ?? 1,
+          );
+        },
+      ),
+    );
+  }
+
+  void _showPlaceShareOverlay(ExplorationLocation location) {
+    final profileAsync = ref.read(userProfileProvider);
+    final profile = profileAsync.value;
+
+    Navigator.of(context).push(
+      PageRouteBuilder<void>(
+        opaque: false,
+        pageBuilder: (_, __, ___) {
+          return DiscoveryCertificateOverlay(
+            assignment: null,
+            location: location,
+            unlockLocationName: location.name,
+            totalXp: profile?.xpTotal ?? 0,
+            totalVisited: profile?.totalVisited ?? 0,
+            currentLevel: profile?.currentLevel ?? 1,
+          );
+        },
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    // Listen to global district focus reset from navigation bar
+    ref.listen<bool>(districtFocusProvider, (previous, next) {
+      if (previous == true && next == false && _isDistrictFocused) {
+        setState(() {
+          selectedDistrict = null;
+          selectedProvince = null;
+          _isDistrictFocused = false;
+          _selectedLocation = null;
+        });
+      }
+    });
+
     ref.listen<ExplorationState>(explorationProvider, (previous, next) {
       // Show error messages
       if (next.error != null && next.error!.isNotEmpty) {
@@ -179,24 +330,26 @@ class _MapScreenState extends ConsumerState<MapScreen>
                 },
               ),
               Positioned(
-                top: 20,
+                top: MediaQuery.of(context).padding.top + 16,
                 left: 16,
                 right: 16,
-                child: GestureDetector(
-                  onTap:
-                      () {}, // Consume tap events to prevent map from intercepting
-                  child: _DistrictHeaderBar(
-                    district: selectedDistrict ?? 'District',
-                    theme: theme,
-                    onClose: () {
-                      setState(() {
-                        selectedDistrict = null;
-                        selectedProvince = null;
-                        _isDistrictFocused = false;
-                        _selectedLocation = null;
-                      });
-                    },
-                  ),
+                child: _DistrictHeaderBar(
+                  district: selectedDistrict ?? 'District',
+                  theme: theme,
+                  isUnlocked: selectedAssignment.visitedCount >= selectedAssignment.assignedCount && selectedAssignment.assignedCount > 0,
+                  onClose: () {
+                    setState(() {
+                      selectedDistrict = null;
+                      selectedProvince = null;
+                      _isDistrictFocused = false;
+                      _selectedLocation = null;
+                    });
+                  },
+                  onShare: () {
+                    if (selectedAssignment != null) {
+                      _showDistrictShareOverlay(selectedAssignment);
+                    }
+                  },
                 ),
               ),
               if (_selectedLocation != null)
@@ -211,10 +364,10 @@ class _MapScreenState extends ConsumerState<MapScreen>
                         _selectedLocation = null;
                       });
                     },
-                    onVerify: () {
+                    onVerify: () async {
                       final location = _selectedLocation;
                       if (location == null) return;
-                      DynamicVisitSheet.show(
+                      final result = await DynamicVisitSheet.show(
                         context,
                         placeId: location.id,
                         placeName: location.name,
@@ -223,9 +376,63 @@ class _MapScreenState extends ConsumerState<MapScreen>
                         isExploration: true,
                         explorationLocation: location,
                       );
+                      
+                      if (!mounted) return;
+                      if (result != null && result['success'] == true) {
+                        // Immediately close the detail card UI to see the map
+                        setState(() { _selectedLocation = null; });
+                        _handleVerificationSuccess(result);
+                      }
+                    },
+                    onShare: () {
+                      if (_selectedLocation != null) {
+                        _showPlaceShareOverlay(_selectedLocation!);
+                      }
                     },
                   ),
                 ),
+              if (_selectedLocation == null && selectedAssignment.visitedCount >= selectedAssignment.assignedCount && selectedAssignment.assignedCount > 0)
+                Positioned(
+                  left: 32,
+                  right: 32,
+                  bottom: 32,
+                  child: Center(
+                    child: ElevatedButton.icon(
+                      onPressed: () => _showDistrictShareOverlay(selectedAssignment),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.amber.shade700,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        elevation: 6,
+                      ),
+                      icon: const Icon(Icons.workspace_premium),
+                      label: const Text(
+                        'Share District Achievement',
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                ),
+              // Confetti Overlay
+              Align(
+                alignment: Alignment.topCenter,
+                child: ConfettiWidget(
+                  confettiController: _confettiController,
+                  blastDirectionality: BlastDirectionality.explosive,
+                  shouldLoop: false,
+                  colors: const [
+                    Colors.green,
+                    Colors.blue,
+                    Colors.pink,
+                    Colors.orange,
+                    Colors.purple,
+                    Colors.amber,
+                  ],
+                ),
+              ),
             ],
           ),
         ),
@@ -264,6 +471,8 @@ class _MapScreenState extends ConsumerState<MapScreen>
                         theme: theme,
                         districtProgress: districtProgress,
                         userLocation: userLocation,
+                        playbackStep: _playbackStep,
+                        isPlaybackMode: _isPlaybackMode,
                         onDistrictSelected:
                             (
                               districtName,
@@ -320,10 +529,10 @@ class _MapScreenState extends ConsumerState<MapScreen>
                           _selectedLocation = null;
                         });
                       },
-                      onVerify: () {
+                      onVerify: () async {
                         final location = _selectedLocation;
                         if (location == null) return;
-                        DynamicVisitSheet.show(
+                        final result = await DynamicVisitSheet.show(
                           context,
                           placeId: location.id,
                           placeName: location.name,
@@ -332,10 +541,85 @@ class _MapScreenState extends ConsumerState<MapScreen>
                           isExploration: true,
                           explorationLocation: location,
                         );
+                        
+                        if (!mounted) return;
+                        if (result != null && result['success'] == true) {
+                          setState(() { _selectedLocation = null; });
+                          _handleVerificationSuccess(result);
+                        }
+                      },
+                      onShare: () {
+                        if (_selectedLocation != null) {
+                          _showPlaceShareOverlay(_selectedLocation!);
+                        }
                       },
                     ),
                   ),
+                
+                // Confetti Overlay
+                Align(
+                  alignment: Alignment.topCenter,
+                  child: ConfettiWidget(
+                    confettiController: _confettiController,
+                    blastDirectionality: BlastDirectionality.explosive,
+                    shouldLoop: false,
+                    colors: const [
+                      Colors.green,
+                      Colors.blue,
+                      Colors.pink,
+                      Colors.orange,
+                      Colors.purple,
+                      Colors.amber,
+                    ],
+                  ),
+                ),
 
+                // Playback controls overlay
+                if (_isPlaybackMode)
+                  Positioned(
+                    top: 100,
+                    left: 16,
+                    right: 16,
+                    child: Center(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withOpacity(0.7),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(Icons.history, color: Colors.amber, size: 20),
+                            const SizedBox(width: 8),
+                            Text(
+                              'Journey Playback: Step ${_playbackStep + 1}',
+                              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(width: 12),
+                            GestureDetector(
+                              onTap: _stopJourneyPlayback,
+                              child: const Icon(Icons.close, color: Colors.white70, size: 20),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+
+                // Play Journey Button (only on main map)
+                if (!_isDistrictFocused && !_isPlaybackMode && assignments.any((a) => a.visitedCount > 0))
+                  Positioned(
+                    right: 16,
+                    bottom: 160,
+                    child: FloatingActionButton.small(
+                      heroTag: 'play_journey_btn',
+                      backgroundColor: Colors.amber.shade700,
+                      foregroundColor: Colors.white,
+                      onPressed: () => _startJourneyPlayback(assignments),
+                      child: const Icon(Icons.play_arrow),
+                    ),
+                  ),
               ],
             );
           },
@@ -348,12 +632,16 @@ class _MapScreenState extends ConsumerState<MapScreen>
 class _DistrictHeaderBar extends StatelessWidget {
   final String district;
   final MapVisualTheme theme;
+  final bool isUnlocked;
   final VoidCallback onClose;
+  final VoidCallback onShare;
 
   const _DistrictHeaderBar({
     required this.district,
     required this.theme,
+    this.isUnlocked = false,
     required this.onClose,
+    required this.onShare,
   });
 
   @override
@@ -362,13 +650,13 @@ class _DistrictHeaderBar extends StatelessWidget {
     return Container(
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
         decoration: BoxDecoration(
-          color: AppColors.secondary.withValues(alpha: 0.9),
-          borderRadius: BorderRadius.circular(12),
+          color: AppColors.secondary.withValues(alpha: 0.95),
+          borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.25),
-              blurRadius: 12,
-              offset: const Offset(0, 4),
+              color: Colors.black.withValues(alpha: 0.3),
+              blurRadius: 16,
+              offset: const Offset(0, 6),
             ),
           ],
         ),
@@ -388,16 +676,34 @@ class _DistrictHeaderBar extends StatelessWidget {
             ),
             // The Material widget provides the visual "splash" effect on tap
             // and ensures the IconButton's hit area is correctly defined.
-            Material(
-              color: Colors.transparent,
-              child: IconButton(
-                onPressed: onClose,
-                icon: const Icon(Icons.close, color: Colors.white, size: 26),
-                tooltip: 'Close',
-                splashRadius: 24,
-                padding: EdgeInsets.zero,
-                constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
-              ),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (isUnlocked)
+                  Material(
+                    color: Colors.transparent,
+                    child: IconButton(
+                      onPressed: onShare,
+                      icon: const Icon(Icons.share, color: Colors.white, size: 24),
+                      tooltip: 'Share Achievement',
+                      splashRadius: 24,
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+                    ),
+                  ),
+                if (isUnlocked) const SizedBox(width: 8),
+                Material(
+                  color: Colors.transparent,
+                  child: IconButton(
+                    onPressed: onClose,
+                    icon: const Icon(Icons.close, color: Colors.white, size: 26),
+                    tooltip: 'Close',
+                    splashRadius: 24,
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+                  ),
+                ),
+              ],
             ),
           ],
         ),
@@ -409,11 +715,13 @@ class _PlaceDetailCard extends StatelessWidget {
   final ExplorationLocation location;
   final VoidCallback onClose;
   final VoidCallback onVerify;
+  final VoidCallback onShare;
 
   const _PlaceDetailCard({
     required this.location,
     required this.onClose,
     required this.onVerify,
+    required this.onShare,
   });
 
   @override
@@ -464,24 +772,79 @@ class _PlaceDetailCard extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 4),
-                  Text(location.type.isEmpty ? 'Attraction' : location.type),
-                  const SizedBox(height: 8),
-                  Text(
-                    location.description?.isNotEmpty == true
-                        ? location.description!
-                        : 'No description available yet. Visit this location to contribute better details.',
+                   Row(
+                    children: [
+                      Text(location.type.isEmpty ? 'Attraction' : location.type),
+                      if (location.isUserGem) ...[
+                        const SizedBox(width: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: Colors.purple.shade700,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: const Text(
+                            'HIDDEN GEM',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        if (location.submissionStatus == 'pending') ...[
+                          const SizedBox(width: 4),
+                          Text(
+                            '(In Review)',
+                            style: TextStyle(
+                              color: Colors.amber.shade700,
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ],
+                    ],
                   ),
+                  const SizedBox(height: 8),
+                  LimitedBox(
+                    maxHeight: 120,
+                    child: SingleChildScrollView(
+                      child: Text(
+                        location.description?.isNotEmpty == true
+                            ? location.description!
+                            : 'No description available yet. Visit this location to contribute better details.',
+                      ),
+                    ),
+                  ),
+                  if (location.introducedBy != null) ...[
+                    const SizedBox(height: 8),
+                    Text(
+                      'Introduced by ${location.introducedBy}',
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontStyle: FontStyle.italic,
+                        color: Colors.blue.shade300,
+                      ),
+                    ),
+                  ],
                   const SizedBox(height: 12),
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton.icon(
-                      onPressed: location.visited ? null : onVerify,
-                      icon: const Icon(Icons.verified),
+                      onPressed: location.visited ? onShare : onVerify,
+                      icon: Icon(location.visited ? Icons.share : Icons.verified),
                       label: Text(
                         location.visited
-                            ? 'Already Verified'
+                            ? 'Share Discovery'
                             : 'Verify This Place',
                       ),
+                      style: location.visited 
+                        ? ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue.shade700,
+                            foregroundColor: Colors.white,
+                          ) 
+                        : null,
                     ),
                   ),
                 ],
@@ -548,7 +911,8 @@ class _DistrictSatelliteMapState extends State<_DistrictSatelliteMap> {
     super.didUpdateWidget(oldWidget);
     final oldKey = oldWidget.assignment.district.toLowerCase();
     final newKey = widget.assignment.district.toLowerCase();
-    if (oldKey != newKey) {
+    final visitsChanged = oldWidget.assignment.visitedCount != widget.assignment.visitedCount;
+    if (oldKey != newKey || visitsChanged) {
       _reloadDistrictData();
     }
   }
@@ -1069,15 +1433,14 @@ class _DistrictSatelliteMapState extends State<_DistrictSatelliteMap> {
             // Visited markers are larger and more opaque (fully revealed)
             // Unvisited markers are smaller and more transparent (foggy)
             iconSize: location.visited ? 2.2 : 1.5,
-            iconColor: location.visited
-                ? const Color(0xFF10B981)
-                      .toARGB32() // Emerald green for visited
-                : const Color(
-                    0xFFDC2626,
-                  ).toARGB32(), // Bright red for unvisited
-            iconOpacity: location.visited
+            iconColor: location.isUserGem
+                ? const Color(0xFFD946EF).toARGB32() // Vibrant Magenta
+                : location.visited
+                    ? const Color(0xFF10B981).toARGB32() // Emerald green
+                    : const Color(0xFFDC2626).toARGB32(), // Bright red
+            iconOpacity: location.visited || location.isUserGem
                 ? 1.0
-                : 0.75, // Visited: fully visible, Unvisited: 75% visible
+                : 0.75,
           ),
         )
         .toList(growable: false);

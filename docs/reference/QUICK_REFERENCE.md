@@ -66,9 +66,9 @@
 
 #### 3. Documentation for Markers (1.5 hours)
 **Files to Create**:
-- [ ] `MARKING_GUIDE.md` - Setup instructions (20 min)
-- [ ] `DEMO_SCRIPT.md` - Demo flow (20 min)
-- [ ] `FEATURES_CHECKLIST.md` - What's done (15 min)
+- [ ] [MARKING_GUIDE.md](MARKING_GUIDE.md) - Setup instructions (20 min)
+- [ ] [DEMO_SCRIPT.md](../guides/DEMO_SCRIPT.md) - Demo flow (20 min)
+- [ ] [FEATURES_CHECKLIST.md](../checklists/FEATURES_CHECKLIST.md) - What's done (15 min)
 - [ ] Update `README.md` - Quick start (15 min)
 
 **Effort**: 1.5 hours | **Value**: MEDIUM (Shows professionalism)
@@ -224,9 +224,9 @@ cd mobile && flutter analyze --no-preamble
 
 ✅ **Created/Fixed Today**:
 - `mobile/lib/providers/progress_provider.dart` - Fixed!
-- `SATURDAY_COMPLETION_CHECKLIST.md` - Full detailed checklist
-- `PROJECT_COMPLETION_ANALYSIS.md` - Full project audit
-- `PROJECT_STATUS_REPORT.md` - Complete status & recommendations
+- [SATURDAY_COMPLETION_CHECKLIST.md](../checklists/SATURDAY_COMPLETION_CHECKLIST.md) - Full detailed checklist
+- [PROJECT_COMPLETION_ANALYSIS.md](../analysis/PROJECT_COMPLETION_ANALYSIS.md) - Full project audit
+- [PROJECT_STATUS_REPORT.md](../status/PROJECT_STATUS_REPORT.md) - Complete status & recommendations
 
 ✅ **Already Great**:
 - `mobile/lib/features/...` - All feature screens working

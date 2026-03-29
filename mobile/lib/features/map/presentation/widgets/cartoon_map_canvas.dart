@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import '../../data/regions_data.dart';
 import '../../data/geojson_parser.dart';
 import '../painters/cartoon_map_painter.dart';
@@ -40,6 +40,10 @@ class CartoonMapCanvas extends StatefulWidget {
   /// User's current location for display on map
   final UserLocation? userLocation;
 
+  /// Playback state for history mode
+  final int? playbackStep;
+  final bool isPlaybackMode;
+
   const CartoonMapCanvas({
     super.key,
     required this.regions,
@@ -53,6 +57,8 @@ class CartoonMapCanvas extends StatefulWidget {
     this.focusedDistrictName,
     this.districtProgress = const <String, double>{},
     this.userLocation,
+    this.playbackStep,
+    this.isPlaybackMode = false,
   });
 
   @override
@@ -365,6 +371,8 @@ class _CartoonMapCanvasState extends State<CartoonMapCanvas> {
                 theme: widget.theme,
                 districtProgress: widget.districtProgress,
                 userLocation: widget.userLocation,
+                playbackStep: widget.playbackStep,
+                isPlaybackMode: widget.isPlaybackMode,
               ),
               child: Container(),
             ),

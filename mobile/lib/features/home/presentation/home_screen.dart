@@ -75,6 +75,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget build(BuildContext context) {
     final isDistrictFocused = ref.watch(districtFocusProvider);
 
+
     return Scaffold(
       body: _isCheckingProfile
           ? const Center(child: CircularProgressIndicator())
@@ -105,7 +106,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ),
                 if (!isDistrictFocused)
                   Positioned(
-                    top: 10, // Moved profile icon down to make room for FAB
+                    top: 10,
                     right: 16,
                     child: SafeArea(
                       child: Material(
@@ -119,29 +120,54 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               ),
                             );
                           },
-                          borderRadius: BorderRadius.circular(20),
+                          borderRadius: BorderRadius.circular(25),
                           child: Container(
-                            width: 40,
-                            height: 40,
+                            width: 50,
+                            height: 50,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: Colors.white.withValues(alpha: 0.9),
-                              border: Border.all(
-                                color: Colors.white.withValues(alpha: 0.7),
-                                width: 1.5,
-                              ),
+                              color: Colors.white,
                               boxShadow: const [
                                 BoxShadow(
-                                  color: Colors.black26,
-                                  blurRadius: 6,
-                                  offset: Offset(0, 2),
+                                  color: Colors.black38,
+                                  blurRadius: 12,
+                                  offset: Offset(0, 4),
                                 ),
                               ],
+                              border: Border.all(
+                                color: Colors.blue.shade700.withValues(alpha: 0.3),
+                                width: 2,
+                              ),
                             ),
-                            child: const CircleAvatar(
-                              backgroundColor: Colors.transparent,
-                              child: Icon(Icons.person, color: Colors.black87),
+                            child: const Center(
+                              child: Icon(
+                                Icons.person,
+                                color: Colors.black87,
+                                size: 28,
+                              ),
                             ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                // Bottom gradient for navigation bar separation
+                if (!isDistrictFocused)
+                  Positioned(
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    height: 120,
+                    child: IgnorePointer(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Colors.transparent,
+                              Colors.black.withValues(alpha: 0.3),
+                            ],
                           ),
                         ),
                       ),
@@ -152,7 +178,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       bottomNavigationBar: BottomNavBar(
         currentIndex: _selectedIndex,
         onTap: (index) {
-          if (index == 0 && _selectedIndex == 0) {
+          if (index == 2 && _selectedIndex == 2) {
             // Reset district focus if tapping map again while active
             ref.read(districtFocusProvider.notifier).state = false;
           }

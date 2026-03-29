@@ -27,26 +27,24 @@ class MapVisualTheme {
   final Map<String, Color> regionFillOverrides;
 
   const MapVisualTheme({
-    this.backgroundColor = const Color(0xFFF3F4F6), // Neutral atlas background
-    this.borderColor = const Color(0xFF94A3B8), // Muted Slate
+    this.backgroundColor = const Color(0xFFF1F5F9), // Cool Slate Atlas
+    this.borderColor = const Color(0xFFCBD5E1), // Soft Slate Border
     this.borderWidth = 1.0,
-    this.fogColor = const Color(0xFFF1F5F9), // Soft Cloud White
-    this.fogOpacity = 0.6,
+    this.fogColor = const Color(0xFFFFFFFF), // Pure White Fog (Clouds)
+    this.fogOpacity = 0.8,
     // Discovery / Fog Clearing colors
-    this.unlockedColor = const Color(0xFF10B981), // Emerald - 100%
-    this.nearCompleteColor = const Color(0xFF06B6D4), // Cyan - 75%+
-    this.halfwayColor = const Color(0xFF6366F1), // indigo - 50%+
-    this.quarterColor = const Color(0xFF94A3B8), // Slate - 25%+
-    this.lockedColor = const Color(0xFFCBD5E1), // Light Slate (Fog) - <25%
-    this.selectedDistrictBorderColor = const Color(
-      0xFF0EA5E9,
-    ), // Blue highlight
+    this.unlockedColor = const Color(0xFFF59E0B), // Radiant Gold - 100%
+    this.nearCompleteColor = const Color(0xFF0EA5E9), // Sky Blue - Progress Inner Glow
+    this.halfwayColor = const Color(0xFF38BDF8), // Sky/Azure
+    this.quarterColor = const Color(0xFF94A3B8), // Muted Slate
+    this.lockedColor = const Color(0xFFCBD5E1), // Soft Slate Monolith - Locked (0%)
+    this.selectedDistrictBorderColor = const Color(0xFFF59E0B), // Gold match
     this.selectedDistrictBorderWidth = 2.0,
-    this.selectedDistrictGlassTint = const Color(0xFFBDE7F7),
-    this.selectedDistrictGlowColor = const Color(0xFFE9D5FF),
+    this.selectedDistrictGlassTint = const Color(0xFFCBD5E1),
+    this.selectedDistrictGlowColor = const Color(0xFFFDE68A),
     this.lockedDistrictIds = const <String>{},
     this.labelStyle = const TextStyle(
-      color: Color(0xFF334155), // Dark Slate Text
+      color: Color(0xFF334155), // Dark Slate for readability
       fontSize: 10,
       fontWeight: FontWeight.w500,
     ),
@@ -55,19 +53,19 @@ class MapVisualTheme {
 
   factory MapVisualTheme.dark() {
     return const MapVisualTheme(
-      backgroundColor: Color(0xFF111827), // Neutral dark atlas background
-      borderColor: Color(0xFF334155), // Dark slate
-      fogColor: Color(0xFF1E293B), // Dark slate blue
-      fogOpacity: 0.8,
-      unlockedColor: Color(0xFF10B981),
-      nearCompleteColor: Color(0xFF0EA5E9),
-      halfwayColor: Color(0xFF6366F1),
-      quarterColor: Color(0xFF64748B),
-      lockedColor: Color(0xFF334155),
-      selectedDistrictGlassTint: Color(0xFF334155),
-      selectedDistrictGlowColor: Color(0xFF67E8F9),
+      backgroundColor: Color(0xFF020617), // Black Pearl Atlas
+      borderColor: Color(0xFF1E293B), 
+      fogColor: Color(0xFF0F172A),
+      fogOpacity: 0.9,
+      unlockedColor: Color(0xFFF59E0B),
+      nearCompleteColor: Color(0xFF22D3EE),
+      halfwayColor: Color(0xFF38BDF8),
+      quarterColor: Color(0xFF475569),
+      lockedColor: Color(0xFF0F172A),
+      selectedDistrictGlassTint: Color(0xFF0F172A),
+      selectedDistrictGlowColor: Color(0xFFF59E0B),
       labelStyle: TextStyle(
-        color: Color(0xFFF8FAFC), // Light text
+        color: Color(0xFFF1F5F9),
         fontSize: 10,
         fontWeight: FontWeight.w500,
       ),

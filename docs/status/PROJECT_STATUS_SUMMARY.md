@@ -100,8 +100,8 @@
 - **Impact**: Shows places system complete
 
 **Option C: Documentation (1.5 hours)** ⭐⭐
-- Create MARKING_GUIDE.md (setup instructions)
-- Create DEMO_SCRIPT.md (demo flow)
+- Create docs/reference/MARKING_GUIDE.md (setup instructions)
+- Create docs/guides/DEMO_SCRIPT.md (demo flow)
 - Update README.md with quick start
 - **Impact**: Shows professionalism
 
@@ -199,11 +199,11 @@ Result: 70% complete (B grade - acceptable)
 ## 📁 FILES I'VE CREATED FOR YOU
 
 **Main Documents**:
-1. **`QUICK_REFERENCE.md`** ← START HERE (Quick checklist)
-2. **`SATURDAY_COMPLETION_CHECKLIST.md`** ← Detailed checklist
-3. **`PROJECT_COMPLETION_ANALYSIS.md`** ← Full project audit
-4. **`PROJECT_STATUS_REPORT.md`** ← Comprehensive report
-5. **`PROJECT_STATUS_SUMMARY.md`** ← This file
+1. **[reference/QUICK_REFERENCE.md](../reference/QUICK_REFERENCE.md)** ← START HERE (Quick checklist)
+2. **[checklists/SATURDAY_COMPLETION_CHECKLIST.md](../checklists/SATURDAY_COMPLETION_CHECKLIST.md)** ← Detailed checklist
+3. **[analysis/PROJECT_COMPLETION_ANALYSIS.md](../analysis/PROJECT_COMPLETION_ANALYSIS.md)** ← Full project audit
+4. **[status/PROJECT_STATUS_REPORT.md](PROJECT_STATUS_REPORT.md)** ← Comprehensive report
+5. **[status/PROJECT_STATUS_SUMMARY.md](PROJECT_STATUS_SUMMARY.md)** ← This file
 
 **Code Fixed**:
 - ✅ `mobile/lib/providers/progress_provider.dart` - Now implemented!
@@ -211,11 +211,13 @@ Result: 70% complete (B grade - acceptable)
 **All Documents Exist In Root**:
 ```
 gemified-travel-portfolio/
-├── QUICK_REFERENCE.md                      📍 START HERE
-├── SATURDAY_COMPLETION_CHECKLIST.md        📋 Detailed tasks
-├── PROJECT_COMPLETION_ANALYSIS.md          🔍 Full audit
-├── PROJECT_STATUS_REPORT.md                📊 Recommendations
-└── PROJECT_STATUS_SUMMARY.md               ✅ This file
+docs/
+├── reference/QUICK_REFERENCE.md            📍 START HERE
+├── checklists/SATURDAY_COMPLETION_CHECKLIST.md  📋 Detailed tasks
+├── analysis/PROJECT_COMPLETION_ANALYSIS.md  🔍 Full audit
+└── status/
+   ├── PROJECT_STATUS_REPORT.md            📊 Recommendations
+   └── PROJECT_STATUS_SUMMARY.md           ✅ This file
 ```
 
 ---
@@ -353,7 +355,7 @@ The remaining 20-30% is mostly UI for features whose backends are 100% complete.
 
 ## 📞 Next Steps
 
-1. **Read**: `QUICK_REFERENCE.md` (5 min read)
+1. **Read**: [QUICK_REFERENCE.md](../reference/QUICK_REFERENCE.md) (5 min read)
 2. **Decide**: Pick 2-3 high priority items you want to complete
 3. **Execute**: Start with Achievement UI (2 hrs, biggest impact)
 4. **Verify**: Run checklist before submission
