@@ -7,6 +7,7 @@ import 'providers/profile_providers.dart';
 import '../../../providers/progress_provider.dart';
 import '../../achievements/presentation/achievements_screen.dart';
 import '../../../splash/presentation/splash_screen.dart';
+import '../../../core/utils/demo_seeder_service.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
@@ -139,7 +140,7 @@ class ProfileScreen extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Header: Avatar, Name, Email
-                _buildProfileHeader(profile, context),
+                _buildProfileHeader(profile, context, ref),
                 const SizedBox(height: 24),
 
                 // Contribution Stats
@@ -147,7 +148,7 @@ class ProfileScreen extends ConsumerWidget {
                 const SizedBox(height: 24),
 
                 // Gamification Progress
-                _buildExplorerProgressSection(context, profile),
+                _buildExplorerProgressSection(context, profile, ref),
                 const SizedBox(height: 24),
 
                 // Badges
@@ -270,7 +271,7 @@ class ProfileScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildProfileHeader(profile_model.UserProfile profile, BuildContext context) {
+  Widget _buildProfileHeader(profile_model.UserProfile profile, BuildContext context, WidgetRef ref) {
     final avatarUrl = profile.avatarUrl;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     
@@ -409,6 +410,7 @@ class ProfileScreen extends ConsumerWidget {
   Widget _buildExplorerProgressSection(
     BuildContext context,
     profile_model.UserProfile profile,
+    WidgetRef ref,
   ) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
@@ -426,27 +428,32 @@ class ProfileScreen extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Icon(Icons.workspace_premium, color: isDark ? colorScheme.primary : Colors.indigo),
-              const SizedBox(width: 8),
-              Text(
-                'Explorer Level ${profile.currentLevel}',
-                style: TextStyle(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 16,
-                  color: isDark ? Colors.white.withOpacity(0.9) : Colors.black87,
+          GestureDetector(
+            onLongPress: () {
+              _showDemoSeederDialog(context, ref);
+            },
+            child: Row(
+              children: [
+                Icon(Icons.workspace_premium, color: isDark ? colorScheme.primary : Colors.indigo),
+                const SizedBox(width: 8),
+                Text(
+                  'Explorer Level ${profile.currentLevel}',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 16,
+                    color: isDark ? Colors.white.withOpacity(0.9) : Colors.black87,
+                  ),
                 ),
-              ),
-              const Spacer(),
-              Text(
-                '${profile.xpTotal} XP',
-                style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  color: isDark ? colorScheme.primary.withOpacity(0.8) : Colors.blueGrey.shade700,
+                const Spacer(),
+                Text(
+                  '${profile.xpTotal} XP',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    color: isDark ? colorScheme.primary.withOpacity(0.8) : Colors.blueGrey.shade700,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
           const SizedBox(height: 10),
           ClipRRect(
@@ -809,6 +816,53 @@ class ProfileScreen extends ConsumerWidget {
         );
       }
     }
+  }
+
+  void _showDemoSeederDialog(BuildContext context, WidgetRef ref) {
+    final userEmail = ref.read(authServiceProvider).currentUser?.email;
+    if (userEmail != 'anuja.20231258@iit.ac.lk') return;
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Initialize Hero Account?'),
+        content: const Text(
+          'This will reset your local progress and inject high-fidelity demo data (trips, XP, districts) into your account.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Seeding Hero Data...')),
+              );
+              try {
+                await ref.read(demoSeederProvider).seedHeroAccount();
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Hero Account Ready! Refreshing...'),
+                    ),
+                  );
+                  _retryAll(ref);
+                }
+              } catch (e) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Seeding failed: $e')),
+                  );
+                }
+              }
+            },
+            child: const Text('Confirm Seed'),
+          ),
+        ],
+      ),
+    );
   }
 }
 
