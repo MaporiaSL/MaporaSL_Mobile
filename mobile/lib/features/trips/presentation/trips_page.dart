@@ -41,9 +41,10 @@ class _TripsPageState extends ConsumerState<TripsPage> with SingleTickerProvider
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final statsAsync = ref.watch(tripsStatsProvider);
+    final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0A0A0A),
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: NestedScrollView(
         headerSliverBuilder: (context, innerBoxIsScrolled) => [
           SliverAppBar(
@@ -51,7 +52,7 @@ class _TripsPageState extends ConsumerState<TripsPage> with SingleTickerProvider
             floating: false,
             pinned: true,
             elevation: 0,
-            backgroundColor: const Color(0xFF0A0A0A),
+            backgroundColor: theme.scaffoldBackgroundColor,
             flexibleSpace: FlexibleSpaceBar(
               background: Stack(
                 children: [
@@ -62,8 +63,14 @@ class _TripsPageState extends ConsumerState<TripsPage> with SingleTickerProvider
                     child: Container(
                       width: 200,
                       height: 200,
-                      decoration: BoxDecoration(shape: BoxShape.circle, color: colorScheme.primary.withOpacity(0.1)),
-                      child: BackdropFilter(filter: ImageFilter.blur(sigmaX: 50, sigmaY: 50), child: Container(color: Colors.transparent)),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle, 
+                        color: colorScheme.primary.withOpacity(0.08)
+                      ),
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 50, sigmaY: 50), 
+                        child: Container(color: Colors.transparent)
+                      ),
                     ),
                   ),
                   SafeArea(
@@ -72,10 +79,17 @@ class _TripsPageState extends ConsumerState<TripsPage> with SingleTickerProvider
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text('YOUR ADVENTURES', style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.w900, letterSpacing: 1)),
+                          Text(
+                            'YOUR ADVENTURES', 
+                            style: theme.textTheme.headlineSmall?.copyWith(
+                              fontWeight: FontWeight.w900, 
+                              letterSpacing: 1,
+                              color: isDark ? Colors.white : Colors.black87,
+                            )
+                          ),
                           const SizedBox(height: 16),
                           statsAsync.when(
-                            data: (stats) => _buildMiniStats(stats),
+                            data: (stats) => _buildStatsHero(context, stats),
                             loading: () => const SizedBox(height: 60, child: Center(child: CircularProgressIndicator(strokeWidth: 2))),
                             error: (_, __) => const SizedBox.shrink(),
                           ),
@@ -90,8 +104,8 @@ class _TripsPageState extends ConsumerState<TripsPage> with SingleTickerProvider
               controller: _tabController,
               indicatorColor: colorScheme.primary,
               indicatorWeight: 3,
-              labelColor: Colors.white,
-              unselectedLabelColor: Colors.white38,
+              labelColor: colorScheme.primary,
+              unselectedLabelColor: isDark ? Colors.white38 : Colors.black38,
               labelStyle: const TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1.2, fontSize: 12),
               tabs: const [
                 Tab(text: 'MY TRIPS'),
@@ -113,32 +127,40 @@ class _TripsPageState extends ConsumerState<TripsPage> with SingleTickerProvider
         icon: const Icon(Ionicons.add),
         label: const Text('PLAN TRIP', style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1)),
         backgroundColor: colorScheme.primary,
-        foregroundColor: Colors.white,
+        foregroundColor: colorScheme.onPrimary,
       ),
     );
   }
 
-  Widget _buildMiniStats(dynamic stats) {
+  Widget _buildStatsHero(BuildContext context, dynamic stats) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(color: Colors.white.withOpacity(0.05), borderRadius: BorderRadius.circular(16), border: Border.all(color: Colors.white.withOpacity(0.1))),
+      decoration: BoxDecoration(
+        color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.03), 
+        borderRadius: BorderRadius.circular(16), 
+        border: Border.all(color: isDark ? Colors.white.withOpacity(0.1) : Colors.black.withOpacity(0.05))
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _StatBlock('VISITS', stats.totalVisited.toString(), Colors.cyan),
-          _StatBlock('CONNECT', '${stats.completionPercentage}%', Colors.orange),
-          _StatBlock('RANK', stats.levelTitle.split(' ')[0], Colors.purple),
+          _StatBlock(context, 'VISITS', stats.totalVisited.toString(), Colors.cyan),
+          _StatBlock(context, 'CONNECT', '${stats.completionPercentage}%', Colors.orange),
+          _StatBlock(context, 'RANK', stats.levelTitle.split(' ')[0], Colors.purple),
         ],
       ),
     );
   }
 
-  Widget _StatBlock(String label, String value, Color color) {
+  Widget _StatBlock(BuildContext context, String label, String value, Color color) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Column(
       children: [
-        Text(value, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
+        Text(value, style: TextStyle(color: isDark ? Colors.white : Colors.black87, fontWeight: FontWeight.bold, fontSize: 16)),
         const SizedBox(height: 2),
-        Text(label, style: TextStyle(color: color.withOpacity(0.7), fontSize: 9, fontWeight: FontWeight.bold, letterSpacing: 1)),
+        Text(label, style: TextStyle(color: color.withOpacity(0.8), fontSize: 9, fontWeight: FontWeight.bold, letterSpacing: 1)),
       ],
     );
   }
@@ -148,6 +170,7 @@ class _MyTripsTab extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final tripsState = ref.watch(tripsProvider);
+    final theme = Theme.of(context);
 
     if (tripsState.isLoading && tripsState.trips.isEmpty) {
       return const Center(child: CircularProgressIndicator());
@@ -168,17 +191,18 @@ class _MyTripsTab extends ConsumerWidget {
   }
 
   Widget _buildEmptyState(BuildContext context, String title, String sub) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Ionicons.trail_sign_outline, size: 64, color: Colors.white10),
+          Icon(Ionicons.trail_sign_outline, size: 64, color: isDark ? Colors.white10 : Colors.black12),
           const SizedBox(height: 16),
-          Text(title, style: const TextStyle(color: Colors.white38, fontWeight: FontWeight.bold)),
+          Text(title, style: TextStyle(color: isDark ? Colors.white38 : Colors.black38, fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 40),
-            child: Text(sub, textAlign: TextAlign.center, style: const TextStyle(color: Colors.white24, fontSize: 12)),
+            child: Text(sub, textAlign: TextAlign.center, style: TextStyle(color: isDark ? Colors.white24 : Colors.black26, fontSize: 12)),
           ),
         ],
       ),
@@ -192,21 +216,24 @@ class _TripCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     final isDone = trip.status == 'completed';
+    final isDark = theme.brightness == Brightness.dark;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.03),
+        color: isDark ? Colors.white.withOpacity(0.03) : Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: isDone ? Colors.green.withOpacity(0.3) : Colors.white.withOpacity(0.05)),
+        border: Border.all(color: isDone ? Colors.green.withOpacity(0.3) : (isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05))),
+        boxShadow: isDark ? null : [BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 10, offset: const Offset(0, 4))],
       ),
       child: Column(
         children: [
           ListTile(
             contentPadding: const EdgeInsets.all(16),
-            title: Text(trip.title.toUpperCase(), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, letterSpacing: 1)),
+            title: Text(trip.title.toUpperCase(), style: TextStyle(color: isDark ? Colors.white : Colors.black87, fontWeight: FontWeight.bold, letterSpacing: 1)),
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -223,16 +250,16 @@ class _TripCard extends ConsumerWidget {
                       child: Text(isDone ? 'COMPLETED' : 'PLANNED', style: TextStyle(color: isDone ? Colors.green : Colors.blue, fontSize: 8, fontWeight: FontWeight.bold)),
                     ),
                     const SizedBox(width: 12),
-                    Icon(Ionicons.calendar_outline, color: Colors.white38, size: 12),
+                    Icon(Ionicons.calendar_outline, color: isDark ? Colors.white38 : Colors.black38, size: 12),
                     const SizedBox(width: 4),
-                    Text('${DateFormat('MMM dd').format(trip.startDate)}', style: const TextStyle(color: Colors.white38, fontSize: 11)),
+                    Text('${DateFormat('MMM dd').format(trip.startDate)}', style: TextStyle(color: isDark ? Colors.white38 : Colors.black38, fontSize: 11)),
                   ],
                 ),
               ],
             ),
-            trailing: IconButton(icon: const Icon(Ionicons.create_outline, color: Colors.white30), onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => CreateTripPage(trip: trip)))),
+            trailing: IconButton(icon: Icon(Ionicons.create_outline, color: isDark ? Colors.white.withOpacity(0.3) : Colors.black.withOpacity(0.3)), onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => CreateTripPage(trip: trip)))),
           ),
-          const Divider(height: 1, color: Colors.white10),
+          Divider(height: 1, color: isDark ? Colors.white10 : Colors.black.withOpacity(0.05)),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             child: Row(
@@ -244,8 +271,8 @@ class _TripCard extends ConsumerWidget {
                     await ref.read(tripsProvider.notifier).updateStatus(trip.id, newStatus);
                     ref.invalidate(tripsStatsProvider);
                   },
-                  icon: Icon(isDone ? Ionicons.refresh_outline : Ionicons.checkmark_circle, size: 16, color: isDone ? Colors.white38 : Colors.green),
-                  label: Text(isDone ? 'REOPEN TRIP' : 'MARK AS DONE', style: TextStyle(color: isDone ? Colors.white38 : Colors.green, fontSize: 11, fontWeight: FontWeight.bold)),
+                  icon: Icon(isDone ? Ionicons.refresh_outline : Ionicons.checkmark_circle, size: 16, color: isDone ? (isDark ? Colors.white38 : Colors.black38) : Colors.green),
+                  label: Text(isDone ? 'REOPEN TRIP' : 'MARK AS DONE', style: TextStyle(color: isDone ? (isDark ? Colors.white38 : Colors.black38) : Colors.green, fontSize: 11, fontWeight: FontWeight.bold)),
                 ),
                 IconButton(icon: const Icon(Ionicons.trash_outline, size: 16, color: Colors.redAccent), onPressed: () => ref.read(tripsProvider.notifier).deleteTrip(trip.id)),
               ],
@@ -283,14 +310,18 @@ class _TemplateCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
+        color: isDark ? Colors.white.withOpacity(0.05) : Colors.white,
         borderRadius: BorderRadius.circular(20),
-        image: template.imageUrl != null ? DecorationImage(image: NetworkImage(template.imageUrl!), fit: BoxFit.cover, opacity: 0.2) : null,
+        border: isDark ? null : Border.all(color: Colors.black.withOpacity(0.05)),
+        boxShadow: isDark ? null : [BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 10, offset: const Offset(0, 4))],
+        image: template.imageUrl != null ? DecorationImage(image: NetworkImage(template.imageUrl!), fit: BoxFit.cover, opacity: 0.1) : null,
       ),
       child: InkWell(
         onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => CreateTripPage(initialDestinations: template.placeIds, trip: TripModel(
@@ -307,20 +338,20 @@ class _TemplateCard extends StatelessWidget {
                 children: [
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(color: colorScheme.primary.withOpacity(0.2), borderRadius: BorderRadius.circular(8)),
+                    decoration: BoxDecoration(color: colorScheme.primary.withOpacity(0.1), borderRadius: BorderRadius.circular(8)),
                     child: Text('${template.durationDays} DAYS', style: TextStyle(color: colorScheme.primary, fontSize: 10, fontWeight: FontWeight.bold)),
                   ),
                   Text('${template.xpReward} XP', style: const TextStyle(color: Colors.amber, fontSize: 10, fontWeight: FontWeight.bold)),
                 ],
               ),
               const SizedBox(height: 12),
-              Text(template.title.toUpperCase(), style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w900, letterSpacing: 1)),
+              Text(template.title.toUpperCase(), style: TextStyle(color: isDark ? Colors.white : Colors.black87, fontSize: 18, fontWeight: FontWeight.w900, letterSpacing: 1)),
               const SizedBox(height: 4),
-              Text(template.description, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(color: Colors.white60, fontSize: 12)),
+              Text(template.description, maxLines: 2, overflow: TextOverflow.ellipsis, style: TextStyle(color: isDark ? Colors.white60 : Colors.black54, fontSize: 12)),
               const SizedBox(height: 16),
               Row(
                 children: [
-                  const Text('GET THIS PLAN', style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1)),
+                  Text('GET THIS PLAN', style: TextStyle(color: colorScheme.primary, fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1)),
                   const SizedBox(width: 8),
                   Icon(Ionicons.arrow_forward, size: 14, color: colorScheme.primary),
                 ],

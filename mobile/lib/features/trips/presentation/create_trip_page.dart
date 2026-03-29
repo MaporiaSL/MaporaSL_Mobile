@@ -7,6 +7,7 @@ import 'dart:ui';
 import '../data/models/trip_model.dart';
 import '../data/models/trip_dto.dart';
 import 'providers/trips_provider.dart';
+import 'providers/trips_stats_provider.dart';
 import '../../places/data/places_repository.dart';
 
 class CreateTripPage extends ConsumerStatefulWidget {
@@ -104,7 +105,7 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage> {
 
   Future<void> _saveTrip() async {
     if (_titleCtrl.text.isEmpty) {
-      _showError('Trip Title is required');
+      _showError('Trip Name is required');
       return;
     }
     if (_places.isEmpty) {
@@ -115,7 +116,6 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage> {
     setState(() => _isSaving = true);
     try {
       final locations = _places.map((p) => TripLocation(name: p, day: 1)).toList();
-      // If trip has an empty ID, it's a "Create" flow from a template or a new trip
       if (widget.trip == null || widget.trip!.id.isEmpty) {
         final dto = CreateTripDto(
           title: _titleCtrl.text,
@@ -124,7 +124,7 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage> {
           endDate: _endDate,
           locations: locations,
           startingPoint: _startingLocationCtrl.text,
-          status: 'planned', // Default status for new trips
+          status: 'planned',
         );
         await ref.read(tripsProvider.notifier).createTrip(dto);
       } else {
@@ -137,6 +137,7 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage> {
         );
         await ref.read(tripsProvider.notifier).updateTrip(widget.trip!.id, dto);
       }
+      ref.invalidate(tripsStatsProvider);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Trip Saved Successfully!')));
         Navigator.pop(context);
@@ -157,58 +158,59 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage> {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final isNew = widget.trip == null || widget.trip!.id.isEmpty;
+    final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0A0A0A),
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.transparent,
         title: Text(
           isNew ? 'PLAN NEW TRIP' : 'EDIT TRIP DETAILS',
-          style: const TextStyle(fontWeight: FontWeight.w900, letterSpacing: 2, fontSize: 13),
+          style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 2, fontSize: 13, color: isDark ? Colors.white : Colors.black87),
         ),
         leading: IconButton(
-          icon: const Icon(Ionicons.chevron_back),
+          icon: Icon(Ionicons.chevron_back, color: isDark ? Colors.white : Colors.black87),
           onPressed: () => Navigator.pop(context),
         ),
       ),
       body: ListView(
         padding: const EdgeInsets.all(24),
         children: [
-          _buildSectionHeader('BASIC INFO'),
+          _buildSectionHeader(context, 'BASIC INFO'),
           const SizedBox(height: 16),
-          _buildThemedField(controller: _titleCtrl, label: 'TRIP NAME', icon: Ionicons.trail_sign_outline),
+          _buildThemedField(context, controller: _titleCtrl, label: 'TRIP NAME', icon: Ionicons.trail_sign_outline),
           const SizedBox(height: 16),
-          _buildThemedField(controller: _descriptionCtrl, label: 'DESCRIPTION', icon: Ionicons.document_text_outline, maxLines: 2),
+          _buildThemedField(context, controller: _descriptionCtrl, label: 'DESCRIPTION', icon: Ionicons.document_text_outline, maxLines: 2),
           const SizedBox(height: 16),
-          _buildThemedField(controller: _startingLocationCtrl, label: 'STARTING POINT', icon: Ionicons.navigate_outline),
+          _buildThemedField(context, controller: _startingLocationCtrl, label: 'STARTING POINT', icon: Ionicons.navigate_outline),
           
           const SizedBox(height: 32),
-          _buildSectionHeader('SELECT DATES'),
+          _buildSectionHeader(context, 'SELECT DATES'),
           const SizedBox(height: 16),
           Row(
             children: [
-              Expanded(child: _buildDateTile('START DATE', _startDate, () async {
-                final picked = await showDatePicker(context: context, initialDate: _startDate, firstDate: DateTime.now().subtract(const Duration(days: 1)), lastDate: DateTime.now().add(const Duration(days: 365)));
+              Expanded(child: _buildDateTile(context, 'START DATE', _startDate, () async {
+                final picked = await showDatePicker(context: context, initialDate: _startDate, firstDate: DateTime.now().subtract(const Duration(days: 365)), lastDate: DateTime.now().add(const Duration(days: 730)));
                 if (picked != null) setState(() => _startDate = picked);
               })),
               const SizedBox(width: 12),
-              Expanded(child: _buildDateTile('END DATE', _endDate, () async {
-                final picked = await showDatePicker(context: context, initialDate: _endDate, firstDate: _startDate, lastDate: DateTime.now().add(const Duration(days: 365)));
+              Expanded(child: _buildDateTile(context, 'END DATE', _endDate, () async {
+                final picked = await showDatePicker(context: context, initialDate: _endDate, firstDate: _startDate, lastDate: DateTime.now().add(const Duration(days: 730)));
                 if (picked != null) setState(() => _endDate = picked);
               })),
             ],
           ),
 
           const SizedBox(height: 32),
-          _buildSectionHeader('ADD PLACES'),
+          _buildSectionHeader(context, 'ADD PLACES'),
           const SizedBox(height: 16),
-          _buildPlacePicker(),
+          _buildPlacePicker(context),
 
           const SizedBox(height: 32),
-          _buildSectionHeader('YOUR ROUTE'),
+          _buildSectionHeader(context, 'YOUR ROUTE'),
           const SizedBox(height: 16),
-          _buildItineraryList(),
+          _buildItineraryList(context),
 
           const SizedBox(height: 48),
           SizedBox(
@@ -217,10 +219,9 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage> {
               onPressed: _isSaving ? null : _saveTrip,
               style: ElevatedButton.styleFrom(
                 backgroundColor: colorScheme.primary,
-                foregroundColor: Colors.white,
+                foregroundColor: colorScheme.onPrimary,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-                elevation: 10,
-                shadowColor: colorScheme.primary.withOpacity(0.5),
+                elevation: isDark ? 0 : 4,
               ),
               child: _isSaving 
                 ? const CircularProgressIndicator(color: Colors.white)
@@ -233,21 +234,28 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage> {
     );
   }
 
-  Widget _buildSectionHeader(String title) {
-    return Text(title, style: const TextStyle(color: Colors.white38, fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1.5));
+  Widget _buildSectionHeader(BuildContext context, String title) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Text(title, style: TextStyle(color: isDark ? Colors.white38 : Colors.black38, fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1.5));
   }
 
-  Widget _buildThemedField({required TextEditingController controller, required String label, IconData? icon, int maxLines = 1}) {
+  Widget _buildThemedField(BuildContext context, {required TextEditingController controller, required String label, IconData? icon, int maxLines = 1}) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     return Container(
-      decoration: BoxDecoration(color: Colors.white.withOpacity(0.05), borderRadius: BorderRadius.circular(12)),
+      decoration: BoxDecoration(
+        color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.03), 
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05)),
+      ),
       child: TextField(
         controller: controller,
         maxLines: maxLines,
-        style: const TextStyle(color: Colors.white, fontSize: 14),
+        style: TextStyle(color: isDark ? Colors.white : Colors.black87, fontSize: 14),
         decoration: InputDecoration(
           labelText: label,
-          labelStyle: const TextStyle(color: Colors.white38, fontSize: 11, fontWeight: FontWeight.bold),
-          prefixIcon: icon != null ? Icon(icon, color: Colors.white24, size: 18) : null,
+          labelStyle: TextStyle(color: isDark ? Colors.white38 : Colors.black38, fontSize: 11, fontWeight: FontWeight.bold),
+          prefixIcon: icon != null ? Icon(icon, color: isDark ? Colors.white24 : Colors.black26, size: 18) : null,
           border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         ),
@@ -255,26 +263,33 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage> {
     );
   }
 
-  Widget _buildDateTile(String label, DateTime date, VoidCallback onTap) {
+  Widget _buildDateTile(BuildContext context, String label, DateTime date, VoidCallback onTap) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return InkWell(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(color: Colors.white.withOpacity(0.05), borderRadius: BorderRadius.circular(12), border: Border.all(color: Colors.white.withOpacity(0.1))),
+        decoration: BoxDecoration(
+          color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.03), 
+          borderRadius: BorderRadius.circular(12), 
+          border: Border.all(color: isDark ? Colors.white.withOpacity(0.1) : Colors.black.withOpacity(0.05))
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(label, style: const TextStyle(color: Colors.white38, fontSize: 9, fontWeight: FontWeight.bold)),
+            Text(label, style: TextStyle(color: isDark ? Colors.white38 : Colors.black38, fontSize: 9, fontWeight: FontWeight.bold)),
             const SizedBox(height: 4),
-            Text(DateFormat('MMM dd').format(date), style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold)),
+            Text(DateFormat('MMM dd').format(date), style: TextStyle(color: isDark ? Colors.white : Colors.black87, fontSize: 13, fontWeight: FontWeight.bold)),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildPlacePicker() {
-    final colorScheme = Theme.of(context).colorScheme;
+  Widget _buildPlacePicker(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -292,10 +307,10 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage> {
                     setState(() => _selectedCategory = cat);
                     _loadPlacesBySelectedCategory();
                   },
-                  backgroundColor: Colors.white.withOpacity(0.05),
+                  backgroundColor: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.03),
                   selectedColor: colorScheme.primary.withOpacity(0.2),
                   checkmarkColor: colorScheme.primary,
-                  labelStyle: TextStyle(color: isSelected ? colorScheme.primary : Colors.white60),
+                  labelStyle: TextStyle(color: isSelected ? colorScheme.primary : (isDark ? Colors.white60 : Colors.black54)),
                 ),
               );
             }).toList(),
@@ -304,14 +319,18 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage> {
         const SizedBox(height: 12),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12),
-          decoration: BoxDecoration(color: Colors.white.withOpacity(0.05), borderRadius: BorderRadius.circular(12)),
+          decoration: BoxDecoration(
+            color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.03), 
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05)),
+          ),
           child: DropdownButtonHideUnderline(
             child: DropdownButton<String>(
               value: _selectedPlace,
               isExpanded: true,
-              dropdownColor: const Color(0xFF1A1A1A),
-              hint: _isFetchingPlaces ? const Text('SEARCHING...', style: TextStyle(color: Colors.white38, fontSize: 13)) : const Text('SELECT PLACE', style: TextStyle(color: Colors.white38, fontSize: 13)),
-              items: _availablePlaces.map((p) => DropdownMenuItem(value: p, child: Text(p, style: const TextStyle(color: Colors.white, fontSize: 14)))).toList(),
+              dropdownColor: isDark ? const Color(0xFF1A1A1A) : Colors.white,
+              hint: Text(_isFetchingPlaces ? 'SEARCHING...' : 'SELECT PLACE', style: TextStyle(color: isDark ? Colors.white38 : Colors.black38, fontSize: 13)),
+              items: _availablePlaces.map((p) => DropdownMenuItem(value: p, child: Text(p, style: TextStyle(color: isDark ? Colors.white : Colors.black87, fontSize: 14)))).toList(),
               onChanged: (val) {
                 setState(() => _selectedPlace = val);
                 if (val != null && !_places.contains(val)) {
@@ -325,12 +344,17 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage> {
     );
   }
 
-  Widget _buildItineraryList() {
+  Widget _buildItineraryList(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     if (_places.isEmpty) {
       return Container(
         height: 100,
-        decoration: BoxDecoration(color: Colors.white.withOpacity(0.02), borderRadius: BorderRadius.circular(12), border: Border.all(color: Colors.white.withOpacity(0.05), style: BorderStyle.solid)),
-        child: const Center(child: Text('NO PLACES ADDED', style: TextStyle(color: Colors.white12, fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 1))),
+        decoration: BoxDecoration(
+          color: isDark ? Colors.white.withOpacity(0.02) : Colors.black.withOpacity(0.01), 
+          borderRadius: BorderRadius.circular(12), 
+          border: Border.all(color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05), style: BorderStyle.solid)
+        ),
+        child: Center(child: Text('NO PLACES ADDED', style: TextStyle(color: isDark ? Colors.white12 : Colors.black12, fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 1))),
       );
     }
     return Column(
@@ -343,19 +367,28 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage> {
             children: [
               Column(
                 children: [
-                  Container(width: 24, height: 24, decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: Colors.white24)), child: Center(child: Text('${i + 1}', style: const TextStyle(color: Colors.white60, fontSize: 10)))),
-                  if (i < _places.length - 1) Container(width: 1, height: 30, color: Colors.white12),
+                  Container(
+                    width: 24, 
+                    height: 24, 
+                    decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: isDark ? Colors.white24 : Colors.black26)), 
+                    child: Center(child: Text('${i + 1}', style: TextStyle(color: isDark ? Colors.white60 : Colors.black54, fontSize: 10)))
+                  ),
+                  if (i < _places.length - 1) Container(width: 1, height: 30, color: isDark ? Colors.white12 : Colors.black12),
                 ],
               ),
               const SizedBox(width: 16),
               Expanded(
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  decoration: BoxDecoration(color: Colors.white.withOpacity(0.03), borderRadius: BorderRadius.circular(10)),
+                  decoration: BoxDecoration(
+                    color: isDark ? Colors.white.withOpacity(0.03) : Colors.white, 
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05)),
+                  ),
                   child: Row(
                     children: [
-                      Expanded(child: Text(p, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13))),
-                      IconButton(icon: const Icon(Ionicons.close_circle_outline, color: Colors.white24, size: 18), onPressed: () => setState(() => _places.removeAt(i))),
+                      Expanded(child: Text(p, style: TextStyle(color: isDark ? Colors.white : Colors.black87, fontWeight: FontWeight.bold, fontSize: 13))),
+                      IconButton(icon: Icon(Ionicons.close_circle_outline, color: isDark ? Colors.white24 : Colors.black26, size: 18), onPressed: () => setState(() => _places.removeAt(i))),
                     ],
                   ),
                 ),
