@@ -17,9 +17,9 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
 
-  // Load environment variables from root directory
+  // Load environment variables from assets
   try {
-    await dotenv.load(fileName: "../.env");
+    await dotenv.load(fileName: ".env");
   } catch (e) {
     // .env file is optional
     debugPrint('Note: .env file not found, using default config');
