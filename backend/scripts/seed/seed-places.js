@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const mongoose = require('mongoose');
 
-require('dotenv').config({ path: path.resolve(__dirname, '../../.env') });
+require('dotenv').config({ path: path.resolve(__dirname, '../../../.env') });
 
 const Place = require('../../src/models/Place');
 const Destination = require('../../src/models/Destination');
@@ -232,7 +232,7 @@ function getSeedCandidates() {
 
 async function connectDb() {
   if (!process.env.MONGODB_URI) {
-    throw new Error('MONGODB_URI is missing. Add it to backend/.env');
+    throw new Error('MONGODB_URI is missing. Add it to the project root .env');
   }
   await mongoose.connect(process.env.MONGODB_URI);
 }
