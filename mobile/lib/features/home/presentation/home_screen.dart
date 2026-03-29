@@ -74,15 +74,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final isDistrictFocused = ref.watch(districtFocusProvider);
-
+    final selectedIndex = ref.watch(homeSelectedIndexProvider);
 
     return Scaffold(
       body: _isCheckingProfile
           ? const Center(child: CircularProgressIndicator())
           : Stack(
               children: [
-                _screens[_selectedIndex],
-                if (_selectedIndex == 2)
+                _screens[selectedIndex],
+                if (selectedIndex == 2)
                   Positioned(
                     right: 16,
                     bottom: 96,
@@ -176,13 +176,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ],
             ),
       bottomNavigationBar: BottomNavBar(
-        currentIndex: _selectedIndex,
+        currentIndex: selectedIndex,
         onTap: (index) {
-          if (index == 2 && _selectedIndex == 2) {
+          if (index == 2 && selectedIndex == 2) {
             // Reset district focus if tapping map again while active
             ref.read(districtFocusProvider.notifier).state = false;
           }
-          setState(() => _selectedIndex = index);
+          ref.read(homeSelectedIndexProvider.notifier).state = index;
         },
       ),
     );

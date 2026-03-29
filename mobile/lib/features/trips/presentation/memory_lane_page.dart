@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:ionicons/ionicons.dart';
+import 'dart:ui';
 
 import '../data/models/trip_model.dart';
 import '../../exploration/providers/exploration_provider.dart';
-import 'widgets/quest_card.dart';
 import 'providers/trips_provider.dart';
+import 'providers/trips_stats_provider.dart';
 import 'create_trip_page.dart';
-import 'trip_detail_page.dart';
-import '../../../core/constants/app_colors.dart';
 
-/// Memory Lane - timeline of user trips with status-based grouping
 class MemoryLanePage extends ConsumerStatefulWidget {
   const MemoryLanePage({super.key});
 
@@ -18,14 +17,13 @@ class MemoryLanePage extends ConsumerStatefulWidget {
   ConsumerState<MemoryLanePage> createState() => _MemoryLanePageState();
 }
 
-class _MemoryLanePageState extends ConsumerState<MemoryLanePage>
-    with SingleTickerProviderStateMixin {
-  late final TabController _tabController;
+class _MemoryLanePageState extends ConsumerState<MemoryLanePage> with SingleTickerProviderStateMixin {
+  late TabController _tabController;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, initialIndex: 0, vsync: this);
+    _tabController = TabController(length: 2, vsync: this);
     Future.microtask(() {
       ref.read(tripsProvider.notifier).loadTrips();
       ref.read(explorationProvider.notifier).loadAssignments();
@@ -40,379 +38,272 @@ class _MemoryLanePageState extends ConsumerState<MemoryLanePage>
 
   @override
   Widget build(BuildContext context) {
-    final tripsState = ref.watch(tripsProvider);
-    final explorationState = ref.watch(explorationProvider);
-    final questCount = explorationState.assignments.length;
-    final tripCount = tripsState.trips.length;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text('Quests & Trips'),
+        toolbarHeight: 80,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        centerTitle: false,
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('JOURNEY TIMELINE', style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 2, fontSize: 18, color: isDark ? Colors.white : Colors.black87)),
+            Text('Your past and future adventures', style: TextStyle(color: isDark ? Colors.white38 : Colors.black38, fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 0.5)),
+          ],
+        ),
         bottom: TabBar(
           controller: _tabController,
-          tabs: [
-            Tab(text: questCount > 0 ? 'Quests ($questCount)' : 'Quests'),
-            Tab(text: tripCount > 0 ? 'Trips ($tripCount)' : 'Trips'),
+          indicatorColor: colorScheme.primary,
+          indicatorPadding: const EdgeInsets.symmetric(horizontal: 40),
+          labelColor: colorScheme.primary,
+          unselectedLabelColor: isDark ? Colors.white24 : Colors.black26,
+          labelStyle: const TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1.5, fontSize: 11),
+          tabs: const [
+            Tab(text: 'MY TRIPS'),
+            Tab(text: 'QUEST LOG'),
           ],
         ),
       ),
       body: TabBarView(
         controller: _tabController,
         children: [
-          _buildTimelineTab(context),
-          _buildTripsTab(context, tripsState),
+          const _TripsTimelineView(),
+          const _QuestLogView(),
         ],
       ),
     );
   }
+}
 
-  Widget _buildTimelineTab(BuildContext context) {
+class _TripsTimelineView extends ConsumerWidget {
+  const _TripsTimelineView();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final tripsState = ref.watch(tripsProvider);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    if (tripsState.isLoading && tripsState.trips.isEmpty) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (tripsState.trips.isEmpty) {
+      return _buildEmptyState(context, Ionicons.trail_sign_outline, 'No trips in your timeline', 'Start your story by mapping a plan!');
+    }
+
+    final sortedTrips = List<TripModel>.from(tripsState.trips);
+    sortedTrips.sort((a, b) => b.startDate.compareTo(a.startDate));
+
+    return ListView.builder(
+      padding: const EdgeInsets.fromLTRB(20, 20, 20, 100),
+      itemCount: sortedTrips.length,
+      itemBuilder: (context, index) {
+        final trip = sortedTrips[index];
+        return _TimelineItem(trip: trip, isLast: index == sortedTrips.length - 1);
+      },
+    );
+  }
+
+  Widget _buildEmptyState(BuildContext context, IconData icon, String title, String sub) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon, size: 64, color: isDark ? Colors.white10 : Colors.black12),
+          const SizedBox(height: 16),
+          Text(title, style: TextStyle(color: isDark ? Colors.white38 : Colors.black38, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 8),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 40),
+            child: Text(sub, textAlign: TextAlign.center, style: TextStyle(color: isDark ? Colors.white24 : Colors.black26, fontSize: 12)),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _TimelineItem extends ConsumerWidget {
+  final TripModel trip;
+  final bool isLast;
+  const _TimelineItem({required this.trip, required this.isLast});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    final isDone = trip.status == 'completed';
+    final isDark = theme.brightness == Brightness.dark;
+    final dotColor = isDone ? Colors.green : theme.colorScheme.primary;
+
+    return IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Column(
+            children: [
+              Container(
+                width: 12, height: 12,
+                decoration: BoxDecoration(shape: BoxShape.circle, color: dotColor, border: Border.all(color: dotColor.withOpacity(0.3), width: 4)),
+              ),
+              if (!isLast) Expanded(child: Container(width: 2, color: dotColor.withOpacity(0.15))),
+            ],
+          ),
+          const SizedBox(width: 20),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 24),
+              child: InkWell(
+                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => CreateTripPage(trip: trip))),
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: isDark ? Colors.white.withOpacity(0.04) : Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05)),
+                    boxShadow: isDark ? null : [BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 10, offset: const Offset(0, 4))],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(child: Text(trip.title.toUpperCase(), style: TextStyle(fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black87, letterSpacing: 1))),
+                          _StatusBadge(isDone: isDone),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          Icon(Ionicons.calendar_outline, size: 12, color: isDark ? Colors.white24 : Colors.black26),
+                          const SizedBox(width: 4),
+                          Text(DateFormat('MMM dd, yyyy').format(trip.startDate), style: TextStyle(color: isDark ? Colors.white24 : Colors.black26, fontSize: 11, fontWeight: FontWeight.bold)),
+                        ],
+                      ),
+                      if (trip.locations != null && trip.locations!.isNotEmpty) ...[
+                        const SizedBox(height: 12),
+                        Wrap(
+                          spacing: 8,
+                          children: trip.locations!.take(3).map((l) => Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.03), borderRadius: BorderRadius.circular(4)),
+                            child: Text(l.name, style: TextStyle(fontSize: 9, color: isDark ? Colors.white38 : Colors.black38, fontWeight: FontWeight.bold)),
+                          )).toList(),
+                        ),
+                      ],
+                      const SizedBox(height: 16),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          TextButton(
+                            onPressed: () async {
+                              final newStatus = isDone ? 'planned' : 'completed';
+                              await ref.read(tripsProvider.notifier).updateStatus(trip.id, newStatus);
+                              ref.invalidate(tripsStatsProvider);
+                            },
+                            // FIXED: black30/white30 -> withOpacity(0.3)
+                            child: Text(isDone ? 'REOPEN' : 'MARK DONE', style: TextStyle(color: isDone ? (isDark ? Colors.white.withOpacity(0.3) : Colors.black.withOpacity(0.3)) : Colors.green, fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1)),
+                          ),
+                          IconButton(icon: const Icon(Ionicons.trash_outline, size: 16, color: Colors.redAccent), onPressed: () => ref.read(tripsProvider.notifier).deleteTrip(trip.id)),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _StatusBadge extends StatelessWidget {
+  final bool isDone;
+  const _StatusBadge({required this.isDone});
+
+  @override
+  Widget build(BuildContext context) {
+    final color = isDone ? Colors.green : Colors.blue;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      decoration: BoxDecoration(color: color.withOpacity(0.1), borderRadius: BorderRadius.circular(6), border: Border.all(color: color.withOpacity(0.2))),
+      child: Text(isDone ? 'COMPLETED' : 'PLANNED', style: TextStyle(color: color, fontSize: 8, fontWeight: FontWeight.bold, letterSpacing: 1)),
+    );
+  }
+}
+
+class _QuestLogView extends ConsumerWidget {
+  const _QuestLogView();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
     final explorationState = ref.watch(explorationProvider);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     if (explorationState.isLoading && explorationState.assignments.isEmpty) {
       return const Center(child: CircularProgressIndicator());
     }
 
-    if (explorationState.error != null &&
-        explorationState.assignments.isEmpty) {
+    // FIXED: Flattening district assignments into individual quests
+    final allQuests = explorationState.assignments.expand((a) => a.locations.map((l) => (location: l, district: a.district))).toList();
+
+    if (allQuests.isEmpty) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.error_outline, size: 48, color: Colors.red),
-            const SizedBox(height: 12),
-            Text(explorationState.error!, textAlign: TextAlign.center),
-            const SizedBox(height: 12),
-            ElevatedButton.icon(
-              onPressed: () =>
-                  ref.read(explorationProvider.notifier).loadAssignments(),
-              icon: const Icon(Icons.refresh),
-              label: const Text('Retry'),
-            ),
+             Icon(Ionicons.sparkles_outline, size: 48, color: isDark ? Colors.white10 : Colors.black12),
+             const SizedBox(height: 16),
+             Text('No active quests', style: TextStyle(color: isDark ? Colors.white38 : Colors.black38, fontWeight: FontWeight.bold)),
           ],
         ),
       );
     }
 
-    final assignments = explorationState.assignments;
-
-    if (assignments.isEmpty) {
-      return _buildEmptyState(context);
-    }
-
-    return Container(
-      decoration: BoxDecoration(
-        color: const Color(0xFFF8FAFC),
-        image: DecorationImage(
-          image: const NetworkImage('https://www.transparenttextures.com/patterns/cubes.png'),
-          opacity: 0.03,
-          repeat: ImageRepeat.repeat,
-        ),
-      ),
-      child: RefreshIndicator(
-        onRefresh: () => ref.read(explorationProvider.notifier).loadAssignments(),
-        child: ListView.builder(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-          itemCount: assignments.length,
-          itemBuilder: (context, index) {
-            return QuestCard(assignment: assignments[index]);
-          },
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTripsTab(BuildContext context, TripsState tripsState) {
-    if (tripsState.isLoading && tripsState.trips.isEmpty) {
-      return const Center(child: CircularProgressIndicator());
-    }
-
-    if (tripsState.error != null && tripsState.trips.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.error_outline, size: 48, color: Colors.red),
-            const SizedBox(height: 12),
-            Text(tripsState.error!, textAlign: TextAlign.center),
-            const SizedBox(height: 12),
-            ElevatedButton.icon(
-              onPressed: () =>
-                  ref.read(tripsProvider.notifier).loadTrips(refresh: true),
-              icon: const Icon(Icons.refresh),
-              label: const Text('Retry'),
-            ),
-          ],
-        ),
-      );
-    }
-
-    final trips = tripsState.trips;
-
-    if (trips.isEmpty) {
-      return _buildEmptyState(context);
-    }
-
-    return RefreshIndicator(
-      onRefresh: () async =>
-          ref.read(tripsProvider.notifier).loadTrips(refresh: true),
-      child: ListView.builder(
-        padding: const EdgeInsets.all(16),
-        itemCount: trips.length,
-        itemBuilder: (context, index) {
-          final trip = trips[index];
-          return _TripCard(
-            trip: trip,
-            color: Colors.blue,
-            canEdit: true,
-            onEdit: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => CreateTripPage(trip: trip),
+    return ListView.builder(
+      padding: const EdgeInsets.all(20),
+      itemCount: allQuests.length,
+      itemBuilder: (context, index) {
+        final q = allQuests[index];
+        final quest = q.location;
+        final district = q.district;
+        
+        return Container(
+          margin: const EdgeInsets.only(bottom: 12),
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: isDark ? Colors.white.withOpacity(0.04) : Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05)),
+          ),
+          child: Row(
+            children: [
+              Container(width: 40, height: 40, decoration: BoxDecoration(color: Colors.amber.withOpacity(0.1), shape: BoxShape.circle), child: const Icon(Ionicons.map, color: Colors.amber, size: 20)),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // FIXED: placeName -> name
+                    Text(quest.name.toUpperCase(), style: TextStyle(fontWeight: FontWeight.bold, color: isDark ? Colors.white70 : Colors.black87, fontSize: 13)),
+                    Text(district, style: TextStyle(color: isDark ? Colors.white24 : Colors.black26, fontSize: 10, fontWeight: FontWeight.bold)),
+                  ],
                 ),
-              );
-            },
-            onView: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => TripDetailPage(trip: trip)),
-              );
-            },
-            onDelete: () => _confirmDelete(context, ref, trip),
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _buildEmptyState(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // The large research/magnifying glass icon from the screenshot
-          Icon(
-            Icons.manage_search_rounded,
-            size: 100,
-            color: Colors.blue.shade700.withOpacity(0.3), // Matches nav bar color
-          ),
-          const SizedBox(height: 16),
-          const Text(
-            'No trips yet',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF424242),
-            ),
-          ),
-          const SizedBox(height: 8),
-          const Text(
-            'Start planning your adventure!',
-            style: TextStyle(
-              fontSize: 14,
-              color: Color(0xFF757575),
-            ),
-          ),
-          const SizedBox(height: 24),
-          ElevatedButton.icon(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const CreateTripPage()),
-              );
-            },
-            icon: const Icon(Icons.add, size: 18),
-            label: const Text(
-              'Create Trip',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primary, // Use brand primary color
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
               ),
-              elevation: 0,
-            ),
+              // FIXED: isCompleted -> visited
+              Text(quest.visited ? 'VERIFIED' : 'ACTIVE', style: TextStyle(color: quest.visited ? Colors.green : Colors.blue, fontSize: 9, fontWeight: FontWeight.bold)),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
-  }
-
-  void _confirmDelete(BuildContext context, WidgetRef ref, TripModel trip) {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Delete trip?'),
-        content: Text('Are you sure you want to delete "${trip.title}"?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel'),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            onPressed: () {
-              ref.read(tripsProvider.notifier).deleteTrip(trip.id);
-              Navigator.pop(ctx);
-              ScaffoldMessenger.of(
-                context,
-              ).showSnackBar(const SnackBar(content: Text('Trip deleted')));
-            },
-            child: const Text('Delete'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  String _statusKey(TripModel trip) {
-    if (trip.status != null) return trip.status!;
-    switch (trip.timelineStatus) {
-      case TripStatus.upcoming:
-        return 'planned';
-      case TripStatus.active:
-        return 'active';
-      case TripStatus.completed:
-        return 'completed';
-    }
   }
 }
-
-class _TripCard extends StatelessWidget {
-  final TripModel trip;
-  final Color color;
-  final bool canEdit;
-  final VoidCallback? onEdit;
-  final VoidCallback onView;
-  final VoidCallback? onDelete;
-
-  const _TripCard({
-    required this.trip,
-    required this.color,
-    required this.canEdit,
-    required this.onView,
-    this.onEdit,
-    this.onDelete,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final durationDays =
-        trip.endDate.difference(trip.startDate).inDays.clamp(0, 999) + 1;
-
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        trip.title,
-                        style: Theme.of(context).textTheme.titleMedium
-                            ?.copyWith(fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        _dateRange(trip.startDate, trip.endDate),
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 8,
-                  ),
-                  decoration: BoxDecoration(
-                    color: color.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Column(
-                    children: [
-                      Text(
-                        '$durationDays',
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                      ),
-                      Text(
-                        'days',
-                        style: Theme.of(context).textTheme.labelSmall,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            if (trip.description != null && trip.description!.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.only(top: 8),
-                child: Text(
-                  trip.description!,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
-              ),
-            if (trip.locations != null && trip.locations!.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.only(top: 8),
-                child: Wrap(
-                  spacing: 6,
-                  runSpacing: 6,
-                  children: trip.locations!.take(3).map((loc) {
-                    return Chip(label: Text(loc.name));
-                  }).toList(),
-                ),
-              ),
-            const SizedBox(height: 12),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                OutlinedButton.icon(
-                  onPressed: onView,
-                  icon: const Icon(Icons.visibility),
-                  label: const Text('View'),
-                ),
-                if (canEdit) ...[
-                  const SizedBox(width: 8),
-                  OutlinedButton.icon(
-                    onPressed: onEdit,
-                    icon: const Icon(Icons.edit),
-                    label: const Text('Edit'),
-                  ),
-                  const SizedBox(width: 8),
-                  OutlinedButton.icon(
-                    onPressed: onDelete,
-                    icon: const Icon(Icons.delete_outline, color: Colors.red),
-                    label: const Text('Delete'),
-                  ),
-                ],
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  String _dateRange(DateTime start, DateTime end) {
-    final fmt = DateFormat('MMM d, yyyy');
-    return '${fmt.format(start)} - ${fmt.format(end)}';
-  }
-}
-

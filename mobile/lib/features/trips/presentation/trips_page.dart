@@ -8,8 +8,9 @@ import 'create_trip_page.dart';
 import 'providers/trips_provider.dart';
 import 'providers/trips_stats_provider.dart';
 import 'providers/preplanned_trips_provider.dart';
-import '../data/models/trip_model.dart';
-import '../data/models/preplanned_trip_model.dart';
+import '../../places/data/places_repository.dart';
+import '../../places/presentation/add_destination_page.dart';
+import '../presentation/providers/home_providers.dart';
 
 class TripsPage extends ConsumerStatefulWidget {
   const TripsPage({super.key});
@@ -18,22 +19,13 @@ class TripsPage extends ConsumerStatefulWidget {
   ConsumerState<TripsPage> createState() => _TripsPageState();
 }
 
-class _TripsPageState extends ConsumerState<TripsPage> with SingleTickerProviderStateMixin {
-  late TabController _tabController;
-
+class _TripsPageState extends ConsumerState<TripsPage> {
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
     Future.microtask(() {
       ref.read(tripsProvider.notifier).loadTrips();
     });
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
   }
 
   @override
@@ -45,8 +37,8 @@ class _TripsPageState extends ConsumerState<TripsPage> with SingleTickerProvider
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
-      body: NestedScrollView(
-        headerSliverBuilder: (context, innerBoxIsScrolled) => [
+      body: CustomScrollView(
+        slivers: [
           SliverAppBar(
             expandedHeight: 220,
             floating: false,
@@ -56,21 +48,15 @@ class _TripsPageState extends ConsumerState<TripsPage> with SingleTickerProvider
             flexibleSpace: FlexibleSpaceBar(
               background: Stack(
                 children: [
-                   // Background Glow
+                  // Background Glow
                   Positioned(
                     top: -50,
                     right: -50,
                     child: Container(
                       width: 200,
                       height: 200,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle, 
-                        color: colorScheme.primary.withOpacity(0.08)
-                      ),
-                      child: BackdropFilter(
-                        filter: ImageFilter.blur(sigmaX: 50, sigmaY: 50), 
-                        child: Container(color: Colors.transparent)
-                      ),
+                      decoration: BoxDecoration(shape: BoxShape.circle, color: colorScheme.primary.withOpacity(0.08)),
+                      child: BackdropFilter(filter: ImageFilter.blur(sigmaX: 50, sigmaY: 50), child: Container(color: Colors.transparent)),
                     ),
                   ),
                   SafeArea(
@@ -79,14 +65,7 @@ class _TripsPageState extends ConsumerState<TripsPage> with SingleTickerProvider
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            'YOUR ADVENTURES', 
-                            style: theme.textTheme.headlineSmall?.copyWith(
-                              fontWeight: FontWeight.w900, 
-                              letterSpacing: 1,
-                              color: isDark ? Colors.white : Colors.black87,
-                            )
-                          ),
+                          Text('EXPLORER DASHBOARD', style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 2, fontSize: 18, color: isDark ? Colors.white : Colors.black87)),
                           const SizedBox(height: 16),
                           statsAsync.when(
                             data: (stats) => _buildStatsHero(context, stats),
@@ -100,42 +79,39 @@ class _TripsPageState extends ConsumerState<TripsPage> with SingleTickerProvider
                 ],
               ),
             ),
-            bottom: TabBar(
-              controller: _tabController,
-              indicatorColor: colorScheme.primary,
-              indicatorWeight: 3,
-              labelColor: colorScheme.primary,
-              unselectedLabelColor: isDark ? Colors.white38 : Colors.black38,
-              labelStyle: const TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1.2, fontSize: 12),
-              tabs: const [
-                Tab(text: 'MY TRIPS'),
-                Tab(text: 'DISCOVER'),
-              ],
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                   _buildSectionTitle(context, 'QUICK MISSION TOOLS'),
+                   const SizedBox(height: 16),
+                   _buildToolsGrid(context),
+                   const SizedBox(height: 32),
+                   _buildSectionTitle(context, 'INSPIRED DISCOVERY'),
+                ],
+              ),
             ),
           ),
+          const SliverPadding(
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            sliver: _DiscoverList(),
+          ),
+          const SliverToBoxAdapter(child: SizedBox(height: 100)),
         ],
-        body: TabBarView(
-          controller: _tabController,
-          children: [
-            _MyTripsTab(),
-            _DiscoverTab(),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const CreateTripPage())),
-        icon: const Icon(Ionicons.add),
-        label: const Text('PLAN TRIP', style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1)),
-        backgroundColor: colorScheme.primary,
-        foregroundColor: colorScheme.onPrimary,
       ),
     );
   }
 
+  Widget _buildSectionTitle(BuildContext context, String title) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Text(title, style: TextStyle(color: isDark ? Colors.white38 : Colors.black38, fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1.5));
+  }
+
   Widget _buildStatsHero(BuildContext context, dynamic stats) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -164,148 +140,70 @@ class _TripsPageState extends ConsumerState<TripsPage> with SingleTickerProvider
       ],
     );
   }
-}
 
-class _MyTripsTab extends ConsumerWidget {
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final tripsState = ref.watch(tripsProvider);
-    final theme = Theme.of(context);
-
-    if (tripsState.isLoading && tripsState.trips.isEmpty) {
-      return const Center(child: CircularProgressIndicator());
-    }
-
-    if (tripsState.trips.isEmpty) {
-      return _buildEmptyState(context, 'No trips planned yet.', 'Start by creating your own or discovering a plan.');
-    }
-
-    return ListView.builder(
-      padding: const EdgeInsets.fromLTRB(20, 20, 20, 100),
-      itemCount: tripsState.trips.length,
-      itemBuilder: (context, index) {
-        final trip = tripsState.trips[index];
-        return _TripCard(trip: trip);
-      },
+  Widget _buildToolsGrid(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(child: _ToolCard(context, 'PLAN NEW', Ionicons.add_circle_outline, Colors.blue, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CreateTripPage())))),
+        const SizedBox(width: 12),
+        Expanded(child: _ToolCard(context, 'BROWSE GEMS', Ionicons.search_outline, Colors.teal, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AddDestinationPage())))),
+        const SizedBox(width: 12),
+        // FIXED: Use homeSelectedIndexProvider instead of DefaultTabController
+        Expanded(child: _ToolCard(context, 'ACTIVE MAP', Ionicons.map_outline, Colors.orange, () => ref.read(homeSelectedIndexProvider.notifier).state = 2)),
+      ],
     );
   }
 
-  Widget _buildEmptyState(BuildContext context, String title, String sub) {
+  Widget _ToolCard(BuildContext context, String label, IconData icon, Color color, VoidCallback onTap) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Ionicons.trail_sign_outline, size: 64, color: isDark ? Colors.white10 : Colors.black12),
-          const SizedBox(height: 16),
-          Text(title, style: TextStyle(color: isDark ? Colors.white38 : Colors.black38, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 8),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 40),
-            child: Text(sub, textAlign: TextAlign.center, style: TextStyle(color: isDark ? Colors.white24 : Colors.black26, fontSize: 12)),
-          ),
-        ],
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 20),
+        decoration: BoxDecoration(
+          color: isDark ? Colors.white.withOpacity(0.03) : Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05)),
+          boxShadow: isDark ? null : [BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 10, offset: const Offset(0, 4))],
+        ),
+        child: Column(
+          children: [
+            Icon(icon, color: color, size: 28),
+            const SizedBox(height: 12),
+            Text(label, style: TextStyle(color: isDark ? Colors.white54 : Colors.black54, fontSize: 9, fontWeight: FontWeight.bold, letterSpacing: 0.5)),
+          ],
+        ),
       ),
     );
   }
 }
 
-class _TripCard extends ConsumerWidget {
-  final TripModel trip;
-  const _TripCard({required this.trip});
+class _DiscoverList extends ConsumerWidget {
+  const _DiscoverList();
 
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    final isDone = trip.status == 'completed';
-    final isDark = theme.brightness == Brightness.dark;
-
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      decoration: BoxDecoration(
-        color: isDark ? Colors.white.withOpacity(0.03) : Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: isDone ? Colors.green.withOpacity(0.3) : (isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05))),
-        boxShadow: isDark ? null : [BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 10, offset: const Offset(0, 4))],
-      ),
-      child: Column(
-        children: [
-          ListTile(
-            contentPadding: const EdgeInsets.all(16),
-            title: Text(trip.title.toUpperCase(), style: TextStyle(color: isDark ? Colors.white : Colors.black87, fontWeight: FontWeight.bold, letterSpacing: 1)),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: (isDone ? Colors.green : Colors.blue).withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(4),
-                        border: Border.all(color: (isDone ? Colors.green : Colors.blue).withOpacity(0.3)),
-                      ),
-                      child: Text(isDone ? 'COMPLETED' : 'PLANNED', style: TextStyle(color: isDone ? Colors.green : Colors.blue, fontSize: 8, fontWeight: FontWeight.bold)),
-                    ),
-                    const SizedBox(width: 12),
-                    Icon(Ionicons.calendar_outline, color: isDark ? Colors.white38 : Colors.black38, size: 12),
-                    const SizedBox(width: 4),
-                    Text('${DateFormat('MMM dd').format(trip.startDate)}', style: TextStyle(color: isDark ? Colors.white38 : Colors.black38, fontSize: 11)),
-                  ],
-                ),
-              ],
-            ),
-            trailing: IconButton(icon: Icon(Ionicons.create_outline, color: isDark ? Colors.white.withOpacity(0.3) : Colors.black.withOpacity(0.3)), onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => CreateTripPage(trip: trip)))),
-          ),
-          Divider(height: 1, color: isDark ? Colors.white10 : Colors.black.withOpacity(0.05)),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                TextButton.icon(
-                  onPressed: () async {
-                    final newStatus = isDone ? 'planned' : 'completed';
-                    await ref.read(tripsProvider.notifier).updateStatus(trip.id, newStatus);
-                    ref.invalidate(tripsStatsProvider);
-                  },
-                  icon: Icon(isDone ? Ionicons.refresh_outline : Ionicons.checkmark_circle, size: 16, color: isDone ? (isDark ? Colors.white38 : Colors.black38) : Colors.green),
-                  label: Text(isDone ? 'REOPEN TRIP' : 'MARK AS DONE', style: TextStyle(color: isDone ? (isDark ? Colors.white38 : Colors.black38) : Colors.green, fontSize: 11, fontWeight: FontWeight.bold)),
-                ),
-                IconButton(icon: const Icon(Ionicons.trash_outline, size: 16, color: Colors.redAccent), onPressed: () => ref.read(tripsProvider.notifier).deleteTrip(trip.id)),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _DiscoverTab extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final preplannedAsync = ref.watch(preplannedTripsFutureProvider);
 
     return preplannedAsync.when(
-      data: (templates) => ListView.builder(
-        padding: const EdgeInsets.fromLTRB(20, 20, 20, 100),
-        itemCount: templates.length,
-        itemBuilder: (context, index) {
-          final template = templates[index];
-          return _TemplateCard(template: template);
-        },
+      data: (templates) => SliverList(
+        delegate: SliverChildBuilderDelegate(
+          (context, index) {
+            final template = templates[index];
+            return _TemplateCard(template: template);
+          },
+          childCount: templates.length,
+        ),
       ),
-      loading: () => const Center(child: CircularProgressIndicator()),
-      error: (e, _) => Center(child: Text('Error loading plans: $e', style: const TextStyle(color: Colors.red))),
+      loading: () => const SliverToBoxAdapter(child: Center(child: CircularProgressIndicator())),
+      error: (e, _) => SliverToBoxAdapter(child: Center(child: Text('Error loading plans: $e', style: const TextStyle(color: Colors.red)))),
     );
   }
 }
 
 class _TemplateCard extends StatelessWidget {
-  final PrePlannedTripModel template;
+  final dynamic template;
   const _TemplateCard({required this.template});
 
   @override
@@ -324,9 +222,7 @@ class _TemplateCard extends StatelessWidget {
         image: template.imageUrl != null ? DecorationImage(image: NetworkImage(template.imageUrl!), fit: BoxFit.cover, opacity: 0.1) : null,
       ),
       child: InkWell(
-        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => CreateTripPage(initialDestinations: template.placeIds, trip: TripModel(
-          id: '', userId: '', title: template.title, description: template.description, startDate: DateTime.now(), endDate: DateTime.now().add(Duration(days: template.durationDays)), createdAt: DateTime.now(), updatedAt: DateTime.now(),
-        )))),
+        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => CreateTripPage(initialDestinations: template.placeIds, trip: null))),
         borderRadius: BorderRadius.circular(20),
         child: Padding(
           padding: const EdgeInsets.all(20.0),
@@ -351,9 +247,9 @@ class _TemplateCard extends StatelessWidget {
               const SizedBox(height: 16),
               Row(
                 children: [
-                  Text('GET THIS PLAN', style: TextStyle(color: colorScheme.primary, fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1)),
+                  Text('LAUNCH MISSION', style: TextStyle(color: colorScheme.primary, fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1)),
                   const SizedBox(width: 8),
-                  Icon(Ionicons.arrow_forward, size: 14, color: colorScheme.primary),
+                  Icon(Ionicons.rocket_outline, size: 14, color: colorScheme.primary),
                 ],
               ),
             ],
