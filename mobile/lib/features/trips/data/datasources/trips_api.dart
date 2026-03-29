@@ -32,10 +32,9 @@ class TripsApi {
 
       final travels = response.data['travels'] as List;
       return travels.map((json) {
-        // Convert MongoDB _id to id field
         final map = Map<String, dynamic>.from(json as Map<String, dynamic>);
         if (map.containsKey('_id')) {
-          map['id'] = map['_id'].toString();
+          map['id'] = _parseId(map['_id']);
         }
         return TripModel.fromJson(map);
       }).toList();
@@ -54,7 +53,7 @@ class TripsApi {
         response.data['travel'] as Map<String, dynamic>,
       );
       if (map.containsKey('_id')) {
-        map['id'] = map['_id'].toString();
+        map['id'] = _parseId(map['_id']);
       }
       return TripModel.fromJson(map);
     } on DioException catch (e) {
@@ -89,7 +88,7 @@ class TripsApi {
         map = Map<String, dynamic>.from(travelData as Map);
       }
       if (map.containsKey('_id')) {
-        map['id'] = map['_id'].toString();
+        map['id'] = _parseId(map['_id']);
       }
       return TripModel.fromJson(map);
     } on DioException catch (e) {
@@ -123,7 +122,7 @@ class TripsApi {
         map = Map<String, dynamic>.from(travelData as Map);
       }
       if (map.containsKey('_id')) {
-        map['id'] = map['_id'].toString();
+        map['id'] = _parseId(map['_id']);
       }
       return TripModel.fromJson(map);
     } on DioException catch (e) {
@@ -169,6 +168,21 @@ class TripsApi {
     } on DioException catch (e) {
       throw _handleError(e);
     }
+  }
+
+  /// Robustly parse MongoDB _id which can be a String or {$oid: String}
+  String _parseId(dynamic jsonId) {
+    if (jsonId == null) return '';
+    if (jsonId is String) return jsonId;
+    if (jsonId is Map && jsonId.containsKey('\$date')) {
+      // Sometimes MongoDB Extended JSON uses $date mistakenly for ID in some contexts, 
+      // but usually it's $oid. Adding safety.
+      return jsonId['\$date'].toString();
+    }
+    if (jsonId is Map && jsonId.containsKey('\$oid')) {
+      return jsonId['\$oid'].toString();
+    }
+    return jsonId.toString();
   }
 
   /// Handle Dio errors and convert to user-friendly messages

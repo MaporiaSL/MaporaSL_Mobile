@@ -108,8 +108,8 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage> {
   }
 
   Future<void> _saveTrip() async {
-    if (_titleCtrl.text.isEmpty) {
-      _showError('Trip Name is required');
+    if (_titleCtrl.text.trim().length < 3) {
+      _showError('Trip Name must be at least 3 characters');
       return;
     }
     if (_places.isEmpty) {
@@ -141,7 +141,12 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage> {
         );
         await ref.read(tripsProvider.notifier).updateTrip(widget.trip!.id, dto);
       }
+      
+      // Force refresh of the global trips state to ensure timeline visibility
+      ref.invalidate(tripsProvider);
+      await ref.read(tripsProvider.notifier).loadTrips(refresh: true);
       ref.invalidate(tripsStatsProvider);
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Trip Saved Successfully!')));
         Navigator.pop(context);
