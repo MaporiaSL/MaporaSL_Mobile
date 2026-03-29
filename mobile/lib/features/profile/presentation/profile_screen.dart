@@ -8,6 +8,8 @@ import '../../../providers/progress_provider.dart';
 import '../../achievements/presentation/achievements_screen.dart';
 import '../../../splash/presentation/splash_screen.dart';
 import '../../../core/utils/demo_seeder_service.dart';
+import '../../trips/presentation/providers/trips_provider.dart';
+import '../../achievements/providers/achievements_provider.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
@@ -140,7 +142,7 @@ class ProfileScreen extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Header: Avatar, Name, Email
-                _buildProfileHeader(profile, context, ref),
+                _buildProfileHeader(profile, context, ref, progress.currentLevel),
                 const SizedBox(height: 24),
 
                 // Contribution Stats
@@ -207,12 +209,6 @@ class ProfileScreen extends ConsumerWidget {
     );
   }
 
-  void _retryAll(WidgetRef ref) {
-    ref.refresh(userProfileProvider);
-    ref.refresh(userContributionsProvider);
-    ref.refresh(topContributorsProvider);
-    ref.refresh(progressProvider);
-  }
 
   _ErrorUiData _buildErrorUi(Object error) {
     final message = error.toString().isEmpty
@@ -271,9 +267,15 @@ class ProfileScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildProfileHeader(profile_model.UserProfile profile, BuildContext context, WidgetRef ref) {
+  Widget _buildProfileHeader(
+    profile_model.UserProfile profile,
+    BuildContext context,
+    WidgetRef ref,
+    int? localLevel,
+  ) {
     final avatarUrl = profile.avatarUrl;
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final displayLevel = (localLevel ?? 0) > profile.currentLevel ? localLevel : profile.currentLevel;
     
     return Row(
       children: [
@@ -324,15 +326,20 @@ class ProfileScreen extends ConsumerWidget {
             children: [
               Text(
                 profile.name,
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 4),
+              Row(
+                children: [
+                  Text(
+                    'Explorer Level $displayLevel',
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
               Text(
                 profile.email,
-                style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                style: TextStyle(color: isDark ? Colors.white70 : Colors.black54),
               ),
             ],
           ),
@@ -415,7 +422,11 @@ class ProfileScreen extends ConsumerWidget {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final colorScheme = theme.colorScheme;
-    final percentage = (profile.xpTotal % 100 / 100).clamp(0.0, 1.0);
+    
+    final progress = ref.watch(progressProvider);
+    final displayLevel = progress.currentLevel > profile.currentLevel ? progress.currentLevel : profile.currentLevel;
+    final displayXP = progress.totalXP > profile.xpTotal ? progress.totalXP : profile.xpTotal;
+    final percentage = (displayXP % 100 / 100).clamp(0.0, 1.0);
 
     return Container(
       width: double.infinity,
@@ -437,7 +448,7 @@ class ProfileScreen extends ConsumerWidget {
                 Icon(Icons.workspace_premium, color: isDark ? colorScheme.primary : Colors.indigo),
                 const SizedBox(width: 8),
                 Text(
-                  'Explorer Level ${profile.currentLevel}',
+                  'Explorer Level $displayLevel',
                   style: TextStyle(
                     fontWeight: FontWeight.w700,
                     fontSize: 16,
@@ -446,7 +457,7 @@ class ProfileScreen extends ConsumerWidget {
                 ),
                 const Spacer(),
                 Text(
-                  '${profile.xpTotal} XP',
+                  '$displayXP XP',
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
                     color: isDark ? colorScheme.primary.withOpacity(0.8) : Colors.blueGrey.shade700,
@@ -863,6 +874,15 @@ class ProfileScreen extends ConsumerWidget {
         ],
       ),
     );
+  }
+
+  void _retryAll(WidgetRef ref) {
+    ref.invalidate(userProfileProvider);
+    ref.invalidate(userContributionsProvider);
+    ref.invalidate(topContributorsProvider);
+    ref.invalidate(progressProvider);
+    ref.invalidate(tripsProvider);
+    ref.invalidate(achievementsViewProvider);
   }
 }
 
