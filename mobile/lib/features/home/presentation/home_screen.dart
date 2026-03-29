@@ -24,11 +24,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   int _selectedIndex = 2;
   bool _isCheckingProfile = true;
 
+  final List<String> _labels = [
+    'Album',
+    'Missions',
+    'Explore',
+    'Expedition',
+    'Shop',
+  ];
+
   final List<Widget> _screens = const [
     AlbumPage(), // 0 Album
     TripsPage(), // 1 Trips
     MapScreen(travelId: 'default'), // 2 Map
-    MemoryLanePage(), // 3 Timeline
+    MemoryLanePage(), // 3 Expedition Hub
     ShopPage(), // 4 Shop
   ];
 
