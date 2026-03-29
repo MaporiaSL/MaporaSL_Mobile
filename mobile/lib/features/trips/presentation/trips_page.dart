@@ -10,7 +10,7 @@ import 'providers/trips_stats_provider.dart';
 import 'providers/preplanned_trips_provider.dart';
 import '../../places/data/places_repository.dart';
 import '../../places/presentation/add_destination_page.dart';
-import '../presentation/providers/home_providers.dart';
+import '../../home/presentation/providers/home_providers.dart';
 
 class TripsPage extends ConsumerStatefulWidget {
   const TripsPage({super.key});

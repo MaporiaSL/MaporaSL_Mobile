@@ -11,6 +11,7 @@ import '../../places/presentation/add_destination_page.dart';
 import '../widgets/bottom_nav_bar.dart';
 import '../../../core/services/auth_api.dart';
 import '../../../core/services/local_prefs.dart';
+import 'providers/home_providers.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
