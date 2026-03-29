@@ -73,8 +73,13 @@ class TripModel {
       ? completionPercentageCached
       : (completionRate * 100).round();
 
-  /// Trip status based on current date
+  /// Trip status based on current date AND explicit status field
   TripStatus get timelineStatus {
+    // Check explicit status first
+    if (status == 'canceled') return TripStatus.canceled;
+    if (status == 'completed') return TripStatus.completed;
+    if (status == 'active') return TripStatus.active;
+
     final now = DateTime.now();
     if (now.isBefore(startDate)) return TripStatus.upcoming;
     if (now.isAfter(endDate)) return TripStatus.completed;
@@ -90,6 +95,8 @@ class TripModel {
         return 'Active Quest';
       case TripStatus.completed:
         return 'Completed';
+      case TripStatus.canceled:
+        return 'Canceled';
     }
   }
 
@@ -102,6 +109,8 @@ class TripModel {
         return '⚡';
       case TripStatus.completed:
         return '✅';
+      case TripStatus.canceled:
+        return '❌';
     }
   }
 

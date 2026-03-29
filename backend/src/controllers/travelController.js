@@ -27,12 +27,11 @@ async function createTravel(req, res) {
   }
 }
 
-// List travels for current user
+// List travels for current user with aggregated destination counts
 async function listTravels(req, res) {
   try {
     const { sortBy = 'startDate', limit = 20, skip = 0 } = req.query;
 
-    const query = Travel.find({ userId: req.userId });
     const total = await Travel.countDocuments({ userId: req.userId });
 
     const sortOptions = {
@@ -40,11 +39,42 @@ async function listTravels(req, res) {
       createdAt: { createdAt: -1 }
     };
 
-    if (sortOptions[sortBy]) {
-      query.sort(sortOptions[sortBy]);
-    }
+    const sortOrder = sortOptions[sortBy] || { startDate: 1 };
 
-    const travels = await query.limit(Number(limit)).skip(Number(skip));
+    // Use aggregation to count destinations and visited ones
+    const travels = await Travel.aggregate([
+      { $match: { userId: req.userId } },
+      { $sort: sortOrder },
+      { $skip: Number(skip) },
+      { $limit: Number(limit) },
+      {
+        $lookup: {
+          from: 'destinations',
+          localField: '_id',
+          foreignField: 'travelId',
+          as: 'destinations'
+        }
+      },
+      {
+        $addFields: {
+          destinationCount: { $size: '$destinations' },
+          visitedCount: {
+            $size: {
+              $filter: {
+                input: '$destinations',
+                as: 'dest',
+                cond: { $eq: ['$$dest.visited', true] }
+              }
+            }
+          }
+        }
+      },
+      {
+        $project: {
+          destinations: 0 // Don't return all destination objects to keep response light
+        }
+      }
+    ]);
 
     res.json({
       travels,
