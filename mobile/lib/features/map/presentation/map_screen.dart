@@ -358,14 +358,22 @@ class _MapScreenState extends ConsumerState<MapScreen>
                   left: 16,
                   right: 16,
                   bottom: 24,
-                  child: _PlaceDetailCard(
-                    location: _selectedLocation!,
-                    onClose: () {
-                      setState(() {
-                        _selectedLocation = null;
-                      });
+                  child: GestureDetector(
+                    onVerticalDragEnd: (details) {
+                      if (details.primaryVelocity! > 500) {
+                        setState(() {
+                          _selectedLocation = null;
+                        });
+                      }
                     },
-                    onVerify: () async {
+                    child: _PlaceDetailCard(
+                      location: _selectedLocation!,
+                      onClose: () {
+                        setState(() {
+                          _selectedLocation = null;
+                        });
+                      },
+                      onVerify: () async {
                       final location = _selectedLocation;
                       if (location == null) return;
                       final result = await DynamicVisitSheet.show(
@@ -392,6 +400,7 @@ class _MapScreenState extends ConsumerState<MapScreen>
                     },
                   ),
                 ),
+              ),
               if (_selectedLocation == null && selectedAssignment.visitedCount >= selectedAssignment.assignedCount && selectedAssignment.assignedCount > 0)
                 Positioned(
                   left: 32,

@@ -22,7 +22,7 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
-  int _selectedIndex = 2;
+  late PageController _pageController;
   bool _isCheckingProfile = true;
 
   final List<String> _labels = [
@@ -44,7 +44,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    // Use the provider's initial value for the controller
+    final initialIndex = ref.read(homeSelectedIndexProvider);
+    _pageController = PageController(initialPage: initialIndex);
     _checkProfile();
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
   }
 
   Future<void> _checkProfile() async {
@@ -91,7 +100,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ? const Center(child: CircularProgressIndicator())
           : Stack(
               children: [
-                _screens[selectedIndex],
+                PageView(
+                  controller: _pageController,
+                  onPageChanged: (index) {
+                    ref.read(homeSelectedIndexProvider.notifier).state = index;
+                  },
+                  children: _screens,
+                ),
                 if (selectedIndex == 2)
                   Positioned(
                     right: 16,
@@ -214,6 +229,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             // Reset district focus if tapping map again while active
             ref.read(districtFocusProvider.notifier).state = false;
           }
+          _pageController.animateToPage(
+            index,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+          );
           ref.read(homeSelectedIndexProvider.notifier).state = index;
         },
       ),

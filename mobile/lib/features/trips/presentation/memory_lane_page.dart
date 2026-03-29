@@ -237,48 +237,76 @@ class _TimelineItem extends ConsumerWidget {
           Expanded(
             child: Padding(
               padding: const EdgeInsets.only(bottom: 24),
-              child: InkWell(
-                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => CreateTripPage(trip: trip))),
-                child: Container(
-                  padding: const EdgeInsets.all(20),
+              child: Dismissible(
+                key: Key('trip_${trip.id}'),
+                direction: DismissDirection.endToStart,
+                onDismissed: (_) {
+                  ref.read(tripsProvider.notifier).deleteTrip(trip.id);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('JOURNEY "${trip.title.toUpperCase()}" DELETED'),
+                      action: SnackBarAction(
+                        label: 'UNDO',
+                        onPressed: () {
+                          // Undo logic if needed
+                        },
+                      ),
+                    ),
+                  );
+                },
+                background: Container(
+                  alignment: Alignment.centerRight,
+                  padding: const EdgeInsets.only(right: 20),
                   decoration: BoxDecoration(
-                    color: isDark ? Colors.white.withOpacity(0.04) : Colors.white,
+                    color: Colors.redAccent.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05)),
-                    boxShadow: isDark ? null : [BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 10, offset: const Offset(0, 4))],
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(child: Text(trip.title.toUpperCase(), style: TextStyle(fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black87, letterSpacing: 1.5, fontSize: 13))),
-                          _StatusBadge(isDone: isDone),
-                        ],
-                      ),
-                      const SizedBox(height: 4),
-                      Text(DateFormat('MMMM yyyy').format(trip.startDate).toUpperCase(), style: TextStyle(color: isDark ? Colors.white24 : Colors.black26, fontSize: 9, fontWeight: FontWeight.bold, letterSpacing: 1)),
-                      const SizedBox(height: 16),
-                      if (trip.locations != null && trip.locations!.isNotEmpty)
-                        _buildNodeSummary(context, trip.locations!),
-                      const SizedBox(height: 20),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          TextButton(
-                            onPressed: () async {
-                              final newStatus = isDone ? 'planned' : 'completed';
-                              await ref.read(tripsProvider.notifier).updateStatus(trip.id, newStatus);
-                              ref.invalidate(tripsStatsProvider);
-                            },
-                            child: Text(isDone ? 'REOPEN MISSION' : 'FINALIZE JOURNEY', style: TextStyle(color: isDone ? (isDark ? Colors.white24 : Colors.black26) : Colors.green, fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 1)),
-                          ),
-                          const SizedBox(width: 8),
-                          IconButton(icon: const Icon(Ionicons.trash_outline, size: 14, color: Colors.redAccent), onPressed: () => ref.read(tripsProvider.notifier).deleteTrip(trip.id)),
-                        ],
-                      ),
-                    ],
+                  child: const Icon(Ionicons.trash_outline, color: Colors.redAccent, size: 20),
+                ),
+                child: InkWell(
+                  onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => CreateTripPage(trip: trip))),
+                  borderRadius: BorderRadius.circular(20),
+                  child: Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: isDark ? Colors.white.withOpacity(0.04) : Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05)),
+                      boxShadow: isDark ? null : [BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 10, offset: const Offset(0, 4))],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(child: Text(trip.title.toUpperCase(), style: TextStyle(fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black87, letterSpacing: 1.5, fontSize: 13))),
+                            _StatusBadge(isDone: isDone),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        Text(DateFormat('MMMM yyyy').format(trip.startDate).toUpperCase(), style: TextStyle(color: isDark ? Colors.white24 : Colors.black26, fontSize: 9, fontWeight: FontWeight.bold, letterSpacing: 1)),
+                        const SizedBox(height: 16),
+                        if (trip.locations != null && trip.locations!.isNotEmpty)
+                          _buildNodeSummary(context, trip.locations!),
+                        const SizedBox(height: 20),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            TextButton(
+                              onPressed: () async {
+                                final newStatus = isDone ? 'planned' : 'completed';
+                                await ref.read(tripsProvider.notifier).updateStatus(trip.id, newStatus);
+                                ref.invalidate(tripsStatsProvider);
+                              },
+                              child: Text(isDone ? 'REOPEN MISSION' : 'FINALIZE JOURNEY', style: TextStyle(color: isDone ? (isDark ? Colors.white24 : Colors.black26) : Colors.green, fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 1)),
+                            ),
+                            const SizedBox(width: 8),
+                            IconButton(icon: const Icon(Ionicons.trash_outline, size: 14, color: Colors.redAccent), onPressed: () => ref.read(tripsProvider.notifier).deleteTrip(trip.id)),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),

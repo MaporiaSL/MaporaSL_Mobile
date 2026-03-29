@@ -12,6 +12,19 @@ class AchievementsScreen extends ConsumerStatefulWidget {
 
 class _AchievementsScreenState extends ConsumerState<AchievementsScreen> {
   String _selectedTrack = 'ALL';
+  late PageController _pageController;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController();
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,16 +42,8 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen> {
             _selectedTrack = availableTracks.first;
           }
 
-          final List<AchievementProgress> trackItems;
-          if (_selectedTrack == 'ALL') {
-            trackItems = data.achievements;
-          } else {
-            trackItems = data.tracks[_selectedTrack] ?? [];
-          }
-          
-          return CustomScrollView(
-            physics: const BouncingScrollPhysics(),
-            slivers: [
+          return NestedScrollView(
+            headerSliverBuilder: (context, innerBoxIsScrolled) => [
               _buildSliverAppBar(context, data, isDark),
               SliverToBoxAdapter(
                 child: Padding(
@@ -61,9 +66,28 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen> {
                   ),
                 ),
               ),
-              _buildAchievementsGrid(trackItems),
-              const SliverPadding(padding: EdgeInsets.only(bottom: 40)),
             ],
+            body: PageView.builder(
+              controller: _pageController,
+              itemCount: availableTracks.length,
+              onPageChanged: (index) {
+                setState(() => _selectedTrack = availableTracks[index]);
+              },
+              itemBuilder: (context, index) {
+                final track = availableTracks[index];
+                final List<AchievementProgress> trackItems = (track == 'ALL') 
+                    ? data.achievements 
+                    : (data.tracks[track] ?? []);
+                
+                return CustomScrollView(
+                  key: PageStorageKey('track_$track'),
+                  slivers: [
+                    _buildAchievementsGrid(trackItems),
+                    const SliverPadding(padding: EdgeInsets.only(bottom: 40)),
+                  ],
+                );
+              },
+            ),
           );
         },
       ),
@@ -75,10 +99,10 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen> {
       expandedHeight: 240,
       pinned: true,
       stretch: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: isDark ? Colors.black : Colors.indigo.shade800,
       elevation: 0,
       leading: IconButton(
-        icon: const Icon(Icons.arrow_back_ios_new, size: 20),
+        icon: const Icon(Icons.arrow_back_ios_new, size: 20, color: Colors.white),
         onPressed: () => Navigator.pop(context),
       ),
       flexibleSpace: FlexibleSpaceBar(
@@ -154,13 +178,21 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen> {
       child: Row(
         children: availableTracks.map((track) {
           final isSelected = _selectedTrack == track;
+          final index = availableTracks.indexOf(track);
           return Padding(
             padding: const EdgeInsets.only(right: 12),
             child: ChoiceChip(
               label: Text(track.toUpperCase()),
               selected: isSelected,
               onSelected: (val) {
-                if (val) setState(() => _selectedTrack = track);
+                if (val) {
+                  setState(() => _selectedTrack = track);
+                  _pageController.animateToPage(
+                    index,
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                  );
+                }
               },
               labelStyle: TextStyle(
                 fontSize: 10,

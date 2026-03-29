@@ -151,7 +151,7 @@ class _AlbumPageState extends State<AlbumPage> {
     }
   }
 
-  Future<void> _deleteAlbum(AlbumModel album) async {
+  Future<bool> _deleteAlbum(AlbumModel album) async {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
@@ -176,10 +176,13 @@ class _AlbumPageState extends State<AlbumPage> {
         await _service.deleteAlbum(album.id);
         _loadAlbums();
         _showMessage('Album deleted');
+        return true;
       } catch (e) {
         _showMessage('Failed to delete: $e');
+        return false;
       }
     }
+    return false;
   }
 
   void _openAlbum(AlbumModel album) {
@@ -298,10 +301,23 @@ class _AlbumPageState extends State<AlbumPage> {
         itemCount: _albums.length,
         itemBuilder: (_, index) {
           final album = _albums[index];
-          return AlbumCard(
-            album: album,
-            onTap: () => _openAlbum(album),
-            onLongPress: () => _deleteAlbum(album),
+          return Dismissible(
+            key: Key('album_${album.id}'),
+            direction: DismissDirection.endToStart,
+            confirmDismiss: (direction) => _deleteAlbum(album),
+            background: Container(
+              alignment: Alignment.centerRight,
+              padding: const EdgeInsets.only(right: 20),
+              decoration: BoxDecoration(
+                color: Colors.redAccent.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Icon(Icons.delete_outline, color: Colors.redAccent),
+            ),
+            child: AlbumCard(
+              album: album,
+              onTap: () => _openAlbum(album),
+            ),
           );
         },
       ),
