@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-require('dotenv').config({ path: path.resolve(__dirname, '../../.env') });
+require('dotenv').config({ path: path.resolve(__dirname, '../../../../.env') });
 const mongoose = require('mongoose');
 const PrePlannedTrip = require('../../src/models/PrePlannedTrip');
 
@@ -24,7 +24,7 @@ function buildTags(district, itineraryValues) {
 async function seedPreplannedTripsFromJson() {
     try {
         if (!process.env.MONGODB_URI) {
-            throw new Error('MONGODB_URI is not defined in backend/.env');
+            throw new Error('MONGODB_URI is not defined in the project root .env');
         }
 
         await mongoose.connect(process.env.MONGODB_URI);

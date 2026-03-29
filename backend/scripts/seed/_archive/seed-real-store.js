@@ -1,6 +1,6 @@
 const path = require('path');
-// Load root-level .env (one directory above /backend)
-require('dotenv').config({ path: path.resolve(__dirname, '../../../.env') });
+// Load root-level .env from the project root.
+require('dotenv').config({ path: path.resolve(__dirname, '../../../../.env') });
 const mongoose = require('mongoose');
 const connectDB = require('../../src/config/db');
 const RealStoreItem = require('../../src/models/RealStoreItem');

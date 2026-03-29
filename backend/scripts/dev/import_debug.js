@@ -6,7 +6,7 @@ try {
     console.log(' - OK');
 
     console.log('2. dotenv');
-    require('dotenv').config();
+    require('dotenv').config({ path: nodePath.resolve(__dirname, '../../../.env') });
     console.log(' - OK');
 
     console.log('3. express');

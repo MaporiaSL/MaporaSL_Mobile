@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
 
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'core/theme/app_theme.dart';
@@ -16,14 +15,6 @@ import 'features/home/presentation/home_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-
-  // Load environment variables from assets
-  try {
-    await dotenv.load(fileName: ".env");
-  } catch (e) {
-    // .env file is optional
-    debugPrint('Note: .env file not found, using default config');
-  }
 
   // Initialize Mapbox access token
   MapboxOptions.setAccessToken(
