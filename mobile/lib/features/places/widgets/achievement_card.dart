@@ -1,126 +1,116 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 
 /// Predefined achievements for place visits
 class PlaceAchievements {
   static const List<AchievementDefinition> definitions = [
-    // Category-based achievements
+    // Pioneer Track (Overall exploration)
     AchievementDefinition(
-      id: 'temple_explorer',
-      title: 'Temple Explorer',
-      description: 'Visit 10 temples',
-      badgeEmoji: 'ðŸ•‰ï¸',
-      category: 'temples',
-      threshold: 10,
-      rewards: 100,
-      color: Color(0xFFFFA500),
+      id: 'prolific_visitor',
+      title: 'Prolific Visitor',
+      description: 'Record visits to hidden gems',
+      badgeEmoji: '🎯',
+      category: 'visit_count',
+      track: 'Pioneer',
+      tiers: [5, 25, 50, 100],
+      tierRewards: [50, 150, 300, 500],
     ),
     AchievementDefinition(
-      id: 'beach_bum',
-      title: 'Beach Bum',
-      description: 'Visit 10 beaches',
-      badgeEmoji: 'ðŸ–ï¸',
-      category: 'beaches',
-      threshold: 10,
-      rewards: 100,
-      color: Color(0xFF00CED1),
+      id: 'village_explorer',
+      title: 'Village Explorer',
+      description: 'Discover the heart of rural Sri Lanka',
+      badgeEmoji: '🏘️',
+      category: 'villages',
+      track: 'Pioneer',
+      tiers: [2, 5, 12, 25],
+      tierRewards: [50, 150, 300, 600],
     ),
+
+    // Naturalist Track (Nature & Adventure)
     AchievementDefinition(
       id: 'mountain_climber',
       title: 'Mountain Climber',
-      description: 'Visit 10 mountains',
-      badgeEmoji: 'â›°ï¸',
+      description: 'Conquer the peaks and misty hills',
+      badgeEmoji: '⛰️',
       category: 'mountains',
-      threshold: 10,
-      rewards: 100,
-      color: Color(0xFF8B4513),
+      track: 'Naturalist',
+      tiers: [2, 5, 15, 30],
+      tierRewards: [100, 200, 500, 1000],
     ),
     AchievementDefinition(
-      id: 'historic_hunter',
-      title: 'Historic Hunter',
-      description: 'Visit 10 historical sites',
-      badgeEmoji: 'ðŸ›ï¸',
-      category: 'historical',
-      threshold: 10,
-      rewards: 100,
-      color: Color(0xFFBFA76A),
+      id: 'beach_master',
+      title: 'Beach Master',
+      description: 'Visit tropical coastal gems',
+      badgeEmoji: '🏖️',
+      category: 'beaches',
+      track: 'Naturalist',
+      tiers: [3, 10, 25, 50],
+      tierRewards: [50, 150, 400, 800],
     ),
     AchievementDefinition(
       id: 'wildlife_watcher',
       title: 'Wildlife Watcher',
-      description: 'Visit 10 wildlife locations',
-      badgeEmoji: 'ðŸ¦',
+      description: 'Visit national parks and wildlife spots',
+      badgeEmoji: '🐆',
       category: 'wildlife',
-      threshold: 10,
-      rewards: 100,
-      color: Color(0xFF228B22),
+      track: 'Naturalist',
+      tiers: [2, 10, 25, 50],
+      tierRewards: [50, 150, 400, 800],
     ),
 
-    // District-based achievements
+    // Devotee Track (Culture & History)
     AchievementDefinition(
-      id: 'all_districts',
-      title: 'All Districts Explorer',
-      description: 'Visit places in all 25 districts',
-      badgeEmoji: 'ðŸ—ºï¸',
-      category: 'all_districts',
-      threshold: 25,
-      rewards: 500,
-      color: Color(0xFF4169E1),
+      id: 'temple_curator',
+      title: 'Temple Curator',
+      description: 'Visit sacred temples and shrines',
+      badgeEmoji: '🛕',
+      category: 'temples',
+      track: 'Devotee',
+      tiers: [3, 10, 25, 50],
+      tierRewards: [50, 150, 400, 800],
+    ),
+    AchievementDefinition(
+      id: 'historic_hunter',
+      title: 'Historic Hunter',
+      description: 'Visit ancient ruins and heritage sites',
+      badgeEmoji: '🏛️',
+      category: 'historical',
+      track: 'Devotee',
+      tiers: [3, 10, 25, 50],
+      tierRewards: [50, 150, 400, 800],
     ),
 
-    // Visit count achievements
+    // Chronicler Track (Contributions)
     AchievementDefinition(
-      id: 'prolific_visitor_25',
-      title: 'Prolific Visitor',
-      description: 'Record 25 visits',
-      badgeEmoji: 'ðŸŽ¯',
-      category: 'visit_count',
-      threshold: 25,
-      rewards: 150,
-      color: Color(0xFFDC143C),
-    ),
-    AchievementDefinition(
-      id: 'prolific_visitor_50',
-      title: 'Legendary Traveler',
-      description: 'Record 50 visits',
-      badgeEmoji: 'ðŸ‘‘',
-      category: 'visit_count',
-      threshold: 50,
-      rewards: 300,
-      color: Color(0xFFFFD700),
-    ),
-    AchievementDefinition(
-      id: 'prolific_visitor_100',
-      title: 'Master of Exploration',
-      description: 'Record 100 visits',
-      badgeEmoji: 'ðŸŒŸ',
-      category: 'visit_count',
-      threshold: 100,
-      rewards: 500,
-      color: Color(0xFFFF69B4),
-    ),
-
-    // Photo achievements
-    AchievementDefinition(
-      id: 'photo_collector_10',
+      id: 'photo_collector',
       title: 'Photo Collector',
-      description: 'Upload 10 photos with visits',
-      badgeEmoji: 'ðŸ“·',
+      description: 'Visualize your journey with photos',
+      badgeEmoji: '📸',
       category: 'photos',
-      threshold: 10,
-      rewards: 100,
-      color: Color(0xFF4B0082),
+      track: 'Chronicler',
+      tiers: [5, 25, 100, 250],
+      tierRewards: [50, 150, 500, 1200],
+    ),
+    AchievementDefinition(
+      id: 'grand_reviewer',
+      title: 'Grand Reviewer',
+      description: 'Guide others with your insights',
+      badgeEmoji: '✍️',
+      category: 'reviews',
+      track: 'Chronicler',
+      tiers: [3, 10, 25, 50],
+      tierRewards: [50, 120, 300, 600],
     ),
 
-    // Streak achievements
+    // Social Track (Identity & Connection)
     AchievementDefinition(
-      id: 'on_a_roll_7',
-      title: 'On a Roll',
-      description: 'Visit a place every day for 7 days',
-      badgeEmoji: 'ðŸ”¥',
-      category: 'streak',
-      threshold: 7,
-      rewards: 200,
-      color: Color(0xFFFF4500),
+      id: 'social_butterfly',
+      title: 'Social Butterfly',
+      description: 'Connect and share your discoveries',
+      badgeEmoji: '🦋',
+      category: 'social',
+      track: 'Social',
+      tiers: [5, 15, 30, 60],
+      tierRewards: [40, 100, 250, 500],
     ),
   ];
 
@@ -146,9 +136,25 @@ class AchievementDefinition {
   final String description;
   final String badgeEmoji;
   final String category;
-  final int threshold;
-  final int rewards;
-  final Color color;
+  final String track;
+  final List<int> tiers;
+  final List<int> tierRewards;
+
+  static List<AchievementDefinition> get all => PlaceAchievements.definitions;
+
+  static const List<Color> tierColors = [
+    Color(0xFFCD7F32), // Bronze
+    Color(0xFFC0C0C0), // Silver
+    Color(0xFFFFD700), // Gold
+    Color(0xFFE5E4E2), // Platinum
+  ];
+
+  static const List<String> tierNames = [
+    'Bronze',
+    'Silver',
+    'Gold',
+    'Platinum',
+  ];
 
   const AchievementDefinition({
     required this.id,
@@ -156,10 +162,13 @@ class AchievementDefinition {
     required this.description,
     required this.badgeEmoji,
     required this.category,
-    required this.threshold,
-    required this.rewards,
-    required this.color,
+    required this.track,
+    required this.tiers,
+    required this.tierRewards,
   });
+
+  int getThreshold(int tierIndex) => tiers[tierIndex.clamp(0, tiers.length - 1)];
+  int getReward(int tierIndex) => tierRewards[tierIndex.clamp(0, tierRewards.length - 1)];
 }
 
 /// Achievement progress tracker
@@ -167,113 +176,148 @@ class AchievementProgress {
   final String id;
   final AchievementDefinition definition;
   final int currentProgress;
-  final bool isUnlocked;
+  final int currentTier; // -1 = Locked, 0 = Bronze, 1 = Silver, 2 = Gold, 3 = Platinum
   final DateTime? unlockedAt;
 
   AchievementProgress({
     required this.id,
     required this.definition,
     required this.currentProgress,
-    required this.isUnlocked,
+    required this.currentTier,
     this.unlockedAt,
   });
 
-  /// Progress as percentage (0.0-1.0)
-  double get progressPercent =>
-      (currentProgress / definition.threshold).clamp(0, 1).toDouble();
+  /// Factory to create progress from current count
+  factory AchievementProgress.fromProgress(AchievementDefinition definition, int currentProgress) {
+    int currentTier = -1;
+    for (int i = 0; i < definition.tiers.length; i++) {
+      if (currentProgress >= definition.tiers[i]) {
+        currentTier = i;
+      } else {
+        break;
+      }
+    }
+    return AchievementProgress(
+      id: definition.id,
+      definition: definition,
+      currentProgress: currentProgress,
+      currentTier: currentTier,
+    );
+  }
 
-  /// Check if achievement is close to unlocking
-  bool get isNearlyUnlocked => progressPercent >= 0.8 && !isUnlocked;
+  bool get isUnlocked => currentTier >= 0;
 
-  /// Human-readable progress text
-  String get progressText => '$currentProgress / ${definition.threshold}';
+  /// Total points earned across all completed tiers
+  int get totalEarnedPoints {
+    if (currentTier == -1) return 0;
+    int total = 0;
+    for (int i = 0; i <= currentTier; i++) {
+      total += definition.tierRewards[i];
+    }
+    return total;
+  }
+
+  double get progressPercent {
+    if (currentTier >= definition.tiers.length - 1) return 1.0;
+    final nextThreshold = definition.getThreshold(currentTier + 1);
+    final prevThreshold = currentTier == -1 ? 0 : definition.getThreshold(currentTier);
+    return ((currentProgress - prevThreshold) / (nextThreshold - prevThreshold)).clamp(0, 1).toDouble();
+  }
+
+  String get tierName => currentTier == -1 ? 'Locked' : AchievementDefinition.tierNames[currentTier];
+  Color get tierColor => currentTier == -1 ? Colors.grey : AchievementDefinition.tierColors[currentTier];
+  
+  String get progressText {
+    if (currentTier >= definition.tiers.length - 1) return 'MAXED';
+    return '$currentProgress / ${definition.getThreshold(currentTier + 1)}';
+  }
 }
 
 /// Widget to display achievement card
 class AchievementCard extends StatelessWidget {
   final AchievementProgress achievement;
   final VoidCallback? onTap;
-  final bool showProgress;
 
   const AchievementCard({
     super.key,
     required this.achievement,
     this.onTap,
-    this.showProgress = true,
   });
 
   @override
   Widget build(BuildContext context) {
     final def = achievement.definition;
     final isUnlocked = achievement.isUnlocked;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final tierColor = achievement.tierColor;
 
     return GestureDetector(
       onTap: onTap,
-      child: Card(
-        color: isUnlocked
-            ? def.color.withValues(alpha: 0.15)
-            : Colors.grey.withValues(alpha: 0.05),
-        child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Opacity(
-                opacity: isUnlocked ? 1 : 0.4,
-                child: Text(
-                  def.badgeEmoji,
-                  style: const TextStyle(fontSize: 40),
-                ),
-              ),
-              if (isUnlocked)
-                Positioned(
-                  top: 0,
-                  right: 0,
-                  child: Container(
-                    padding: const EdgeInsets.all(2),
-                    decoration: const BoxDecoration(
-                      color: Colors.amber,
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(
-                      Icons.star,
-                      color: Colors.white,
-                      size: 12,
-                    ),
-                  ),
-                ),
-              const SizedBox(height: 8),
-              Text(
-                def.title,
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: isUnlocked ? def.color : Colors.grey,
-                ),
-              ),
-              const SizedBox(height: 4),
-              if (showProgress)
-                Column(
-                  children: [
-                    LinearProgressIndicator(
-                      value: achievement.progressPercent,
-                      backgroundColor: Colors.grey.withValues(alpha: 0.2),
-                      valueColor: AlwaysStoppedAnimation(
-                        isUnlocked ? def.color : Colors.grey,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      achievement.progressText,
-                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        color: Colors.grey,
-                        fontSize: 10,
-                      ),
-                    ),
-                  ],
-                ),
-            ],
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: isUnlocked ? tierColor.withOpacity(0.08) : (isDark ? Colors.white.withOpacity(0.02) : Colors.grey.shade50),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: isUnlocked ? tierColor.withOpacity(0.3) : (isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05)),
+            width: isUnlocked ? 2 : 1,
           ),
+          boxShadow: isUnlocked ? [BoxShadow(color: tierColor.withOpacity(0.1), blurRadius: 8, spreadRadius: 1)] : null,
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Stack(
+              alignment: Alignment.center,
+              children: [
+                Opacity(
+                  opacity: isUnlocked ? 1.0 : 0.2,
+                  child: Text(def.badgeEmoji, style: const TextStyle(fontSize: 32)),
+                ),
+                if (isUnlocked)
+                  Positioned(
+                    bottom: -2, right: -2,
+                    child: Icon(Icons.verified, color: tierColor, size: 14),
+                  ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Text(
+              def.title.toUpperCase(),
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontWeight: FontWeight.w900,
+                fontSize: 10,
+                letterSpacing: 1,
+                color: isUnlocked ? (isDark ? Colors.white : Colors.black87) : Colors.grey,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              achievement.tierName.toUpperCase(),
+              style: TextStyle(
+                fontWeight: FontWeight.w900,
+                fontSize: 8,
+                color: tierColor,
+                letterSpacing: 1,
+              ),
+            ),
+            const SizedBox(height: 12),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(4),
+              child: LinearProgressIndicator(
+                value: achievement.progressPercent,
+                minHeight: 4,
+                backgroundColor: isDark ? Colors.white.withOpacity(0.05) : Colors.grey.shade200,
+                valueColor: AlwaysStoppedAnimation(tierColor),
+              ),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              achievement.progressText,
+              style: TextStyle(fontSize: 8, color: isDark ? Colors.white24 : Colors.black26, fontWeight: FontWeight.bold),
+            ),
+          ],
         ),
       ),
     );
@@ -283,11 +327,13 @@ class AchievementCard extends StatelessWidget {
 /// Widget to display achievement unlock animation
 class AchievementUnlockAlert extends StatefulWidget {
   final AchievementDefinition achievement;
+  final int tierIndex;
   final VoidCallback? onDismiss;
 
   const AchievementUnlockAlert({
     super.key,
     required this.achievement,
+    required this.tierIndex,
     this.onDismiss,
   });
 
@@ -314,7 +360,6 @@ class _AchievementUnlockAlertState extends State<AchievementUnlockAlert>
 
     _scaleController.forward();
 
-    // Auto-dismiss
     Future.delayed(const Duration(seconds: 4), () {
       if (mounted) {
         widget.onDismiss?.call();
@@ -330,64 +375,90 @@ class _AchievementUnlockAlertState extends State<AchievementUnlockAlert>
 
   @override
   Widget build(BuildContext context) {
+    final tierColor = AchievementDefinition.tierColors[widget.tierIndex];
+    final tierName = AchievementDefinition.tierNames[widget.tierIndex];
+    final reward = widget.achievement.getReward(widget.tierIndex);
+
     return ScaleTransition(
       scale: _scaleAnimation,
-      child: AlertDialog(
-        backgroundColor: widget.achievement.color.withValues(alpha: 0.95),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              widget.achievement.badgeEmoji,
-              style: const TextStyle(fontSize: 64),
+      child: Center(
+        child: Container(
+          margin: const EdgeInsets.symmetric(horizontal: 40),
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [tierColor.withOpacity(0.9), tierColor.withOpacity(0.7)],
             ),
-            const SizedBox(height: 16),
-            const Text(
-              'ACHIEVEMENT UNLOCKED!',
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 14,
-                letterSpacing: 2,
+            borderRadius: BorderRadius.circular(30),
+            boxShadow: [
+              BoxShadow(color: tierColor.withOpacity(0.4), blurRadius: 20, spreadRadius: 5),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                widget.achievement.badgeEmoji,
+                style: const TextStyle(fontSize: 80),
               ),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              widget.achievement.title,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              widget.achievement.description,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.9),
-                fontSize: 14,
-              ),
-            ),
-            const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(Icons.card_giftcard, color: Colors.white, size: 16),
-                const SizedBox(width: 4),
-                Text(
-                  '+${widget.achievement.rewards} points',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 12,
-                  ),
+              const SizedBox(height: 16),
+              Text(
+                '$tierName Achievement!'.toUpperCase(),
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w900,
+                  fontSize: 12,
+                  letterSpacing: 2,
                 ),
-              ],
-            ),
-          ],
+              ),
+              const SizedBox(height: 8),
+              Text(
+                widget.achievement.title,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w900,
+                  fontSize: 24,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                widget.achievement.description,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.white.withOpacity(0.9),
+                  fontSize: 14,
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+              const SizedBox(height: 24),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.card_giftcard, color: Colors.white, size: 16),
+                    const SizedBox(width: 8),
+                    Text(
+                      '+$reward TROPHY POINTS',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w900,
+                        fontSize: 11,
+                        letterSpacing: 1,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

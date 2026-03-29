@@ -5,13 +5,13 @@ import 'package:gemified_travel_portfolio/features/album/data/models/album_model
 class AlbumCard extends StatelessWidget {
   final AlbumModel album;
   final VoidCallback onTap;
-  final VoidCallback onLongPress;
+  final VoidCallback? onLongPress;
 
   const AlbumCard({
     super.key,
     required this.album,
     required this.onTap,
-    required this.onLongPress,
+    this.onLongPress,
   });
 
   @override

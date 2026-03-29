@@ -23,8 +23,16 @@ const travelSchema = new mongoose.Schema({
     type: Date,
     required: true
   },
+  status: {
+    type: String,
+    enum: ['planned', 'active', 'completed', 'canceled'],
+    default: 'planned'
+  },
   locations: {
-    type: [String],
+    type: [{
+      name: String,
+      day: Number
+    }],
     default: []
   },
   itinerary: {

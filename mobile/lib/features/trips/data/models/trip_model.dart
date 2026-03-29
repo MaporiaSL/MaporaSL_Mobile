@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'trip_model.g.dart';
 
-enum TripStatus { upcoming, active, completed }
+enum TripStatus { upcoming, active, completed, canceled }
 
 /// Trip model representing a user's travel adventure
 @JsonSerializable()
@@ -11,11 +11,17 @@ class TripModel {
   final String userId;
   final String title; // Changed from 'name' to match backend 'title' field
   final String? description;
+  @JsonKey(fromJson: _parseDate)
   final DateTime startDate;
+  @JsonKey(fromJson: _parseDate)
   final DateTime endDate;
+  
+  @JsonKey(fromJson: _robustLocationParsing)
   final List<TripLocation>? locations;
   final String? status; // 'scheduled', 'planned', 'completed', etc.
+  @JsonKey(fromJson: _parseDate)
   final DateTime createdAt;
+  @JsonKey(fromJson: _parseDate)
   final DateTime updatedAt;
 
   /// Optional metadata for planning/clone flows
@@ -73,8 +79,13 @@ class TripModel {
       ? completionPercentageCached
       : (completionRate * 100).round();
 
-  /// Trip status based on current date
+  /// Trip status based on current date AND explicit status field
   TripStatus get timelineStatus {
+    // Check explicit status first
+    if (status == 'canceled') return TripStatus.canceled;
+    if (status == 'completed') return TripStatus.completed;
+    if (status == 'active') return TripStatus.active;
+
     final now = DateTime.now();
     if (now.isBefore(startDate)) return TripStatus.upcoming;
     if (now.isAfter(endDate)) return TripStatus.completed;
@@ -90,6 +101,8 @@ class TripModel {
         return 'Active Quest';
       case TripStatus.completed:
         return 'Completed';
+      case TripStatus.canceled:
+        return 'Canceled';
     }
   }
 
@@ -102,6 +115,8 @@ class TripModel {
         return '⚡';
       case TripStatus.completed:
         return '✅';
+      case TripStatus.canceled:
+        return '❌';
     }
   }
 
@@ -117,6 +132,9 @@ class TripModel {
   /// Objectives/cleared text for gamified UI
   String get objectivesText =>
       '$destinationCount Objectives • $visitedCount Cleared';
+
+  /// Potential essence reward for completing mission (50 essence per node)
+  int get essenceReward => visitedCount * 50;
 
   factory TripModel.fromJson(Map<String, dynamic> json) =>
       _$TripModelFromJson(json);
@@ -200,4 +218,27 @@ class TripLocation {
       _$TripLocationFromJson(json);
 
   Map<String, dynamic> toJson() => _$TripLocationToJson(this);
+}
+
+List<TripLocation>? _robustLocationParsing(dynamic json) {
+  if (json == null) return null;
+  if (json is! List) return null;
+
+  return json.map((item) {
+    if (item is String) {
+      return TripLocation(name: item, day: 1);
+    } else if (item is Map) {
+      return TripLocation.fromJson(Map<String, dynamic>.from(item));
+    }
+    return const TripLocation(name: 'Unknown', day: 1);
+  }).toList();
+}
+
+DateTime _parseDate(dynamic json) {
+  if (json == null) return DateTime.now();
+  if (json is String) return DateTime.parse(json);
+  if (json is Map && json.containsKey('\$date')) {
+    return DateTime.parse(json['\$date'] as String);
+  }
+  return DateTime.now(); // Safety fallback
 }

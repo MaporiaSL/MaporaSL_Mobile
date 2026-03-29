@@ -26,6 +26,8 @@ class MapVisualTheme {
   /// Optional region fill overrides by region id.
   final Map<String, Color> regionFillOverrides;
 
+  bool get isDark => backgroundColor.computeLuminance() < 0.5;
+
   const MapVisualTheme({
     this.backgroundColor = const Color(0xFFF1F5F9), // Cool Slate Atlas
     this.borderColor = const Color(0xFFCBD5E1), // Soft Slate Border
@@ -53,15 +55,15 @@ class MapVisualTheme {
 
   factory MapVisualTheme.dark() {
     return const MapVisualTheme(
-      backgroundColor: Color(0xFF020617), // Black Pearl Atlas
-      borderColor: Color(0xFF1E293B), 
+      backgroundColor: Color(0xFF030712), // Deeper Midnight Ocean
+      borderColor: Color(0xFF334155), // Refined Slate Border
       fogColor: Color(0xFF0F172A),
       fogOpacity: 0.9,
       unlockedColor: Color(0xFFF59E0B),
       nearCompleteColor: Color(0xFF22D3EE),
       halfwayColor: Color(0xFF38BDF8),
       quarterColor: Color(0xFF475569),
-      lockedColor: Color(0xFF0F172A),
+      lockedColor: Color(0xFF1E293B), // Higher Contrast Land (Slate)
       selectedDistrictGlassTint: Color(0xFF0F172A),
       selectedDistrictGlowColor: Color(0xFFF59E0B),
       labelStyle: TextStyle(

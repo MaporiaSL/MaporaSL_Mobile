@@ -11,6 +11,9 @@ import '../../places/presentation/add_destination_page.dart';
 import '../widgets/bottom_nav_bar.dart';
 import '../../../core/services/auth_api.dart';
 import '../../../core/services/local_prefs.dart';
+import '../../../core/utils/demo_seeder_service.dart';
+import 'providers/home_providers.dart';
+import '../../profile/presentation/providers/profile_providers.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -20,30 +23,43 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
-  int _selectedIndex = 2;
+  late PageController _pageController;
   bool _isCheckingProfile = true;
+
+  final List<String> _labels = [
+    'Album',
+    'Trips',
+    'Explore',
+    'Expedition',
+    'Shop',
+  ];
 
   final List<Widget> _screens = const [
     AlbumPage(), // 0 Album
     TripsPage(), // 1 Trips
     MapScreen(travelId: 'default'), // 2 Map
-    MemoryLanePage(), // 3 Timeline
+    MemoryLanePage(), // 3 Expedition Hub
     ShopPage(), // 4 Shop
   ];
 
   @override
   void initState() {
     super.initState();
+    // Use the provider's initial value for the controller
+    final initialIndex = ref.read(homeSelectedIndexProvider);
+    _pageController = PageController(initialPage: initialIndex);
     _checkProfile();
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
   }
 
   Future<void> _checkProfile() async {
     try {
       await AuthApi().getMe();
-      if (!mounted) return;
-      setState(() {
-        _isCheckingProfile = false;
-      });
     } catch (_) {
       final user = FirebaseAuth.instance.currentUser;
       if (user == null) {
@@ -64,25 +80,40 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       } catch (_) {
         // Swallow registration errors during dev flow.
       }
-      if (!mounted) return;
-      setState(() {
-        _isCheckingProfile = false;
-      });
+    } finally {
+      // 🚀 Auto-seed Professional Demo if required
+      try {
+        await ref.read(demoInitializerProvider).initializeIfNeeded();
+      } catch (e) {
+        debugPrint('Failed to run demo initializer: $e');
+      }
+
+      if (mounted) {
+        setState(() {
+          _isCheckingProfile = false;
+        });
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final isDistrictFocused = ref.watch(districtFocusProvider);
-
+    final selectedIndex = ref.watch(homeSelectedIndexProvider);
 
     return Scaffold(
       body: _isCheckingProfile
           ? const Center(child: CircularProgressIndicator())
           : Stack(
               children: [
-                _screens[_selectedIndex],
-                if (_selectedIndex == 2)
+                PageView(
+                  controller: _pageController,
+                  onPageChanged: (index) {
+                    ref.read(homeSelectedIndexProvider.notifier).state = index;
+                  },
+                  children: _screens,
+                ),
+                if (selectedIndex == 2)
                   Positioned(
                     right: 16,
                     bottom: 96,
@@ -121,31 +152,53 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             );
                           },
                           borderRadius: BorderRadius.circular(25),
-                          child: Container(
-                            width: 50,
-                            height: 50,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.white,
-                              boxShadow: const [
-                                BoxShadow(
-                                  color: Colors.black38,
-                                  blurRadius: 12,
-                                  offset: Offset(0, 4),
+                          child: Consumer(
+                            builder: (context, ref, _) {
+                              final profile = ref.watch(userProfileProvider).valueOrNull;
+                              final avatarUrl = profile?.avatarUrl ?? '';
+                              final isDark = Theme.of(context).brightness == Brightness.dark;
+                              
+                              return Container(
+                                width: 52,
+                                height: 52,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: isDark ? Colors.black45 : Colors.white,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: isDark ? Colors.black54 : Colors.black26,
+                                      blurRadius: 10,
+                                      spreadRadius: 1,
+                                    ),
+                                  ],
+                                  border: Border.all(
+                                    color: isDark ? Colors.white10 : Colors.blue.shade100,
+                                    width: 2,
+                                  ),
                                 ),
-                              ],
-                              border: Border.all(
-                                color: Colors.blue.shade700.withValues(alpha: 0.3),
-                                width: 2,
-                              ),
-                            ),
-                            child: const Center(
-                              child: Icon(
-                                Icons.person,
-                                color: Colors.black87,
-                                size: 28,
-                              ),
-                            ),
+                                child: ClipOval(
+                                  child: avatarUrl.isNotEmpty
+                                      ? Image.network(
+                                          avatarUrl,
+                                          fit: BoxFit.cover,
+                                          loadingBuilder: (context, child, progress) {
+                                            if (progress == null) return child;
+                                            return const Center(child: CircularProgressIndicator(strokeWidth: 2));
+                                          },
+                                          errorBuilder: (context, _, __) => Icon(
+                                            Icons.person_rounded,
+                                            color: isDark ? Colors.white38 : Colors.grey.shade400,
+                                            size: 32,
+                                          ),
+                                        )
+                                      : Icon(
+                                          Icons.person_rounded,
+                                          color: isDark ? Colors.white38 : Colors.grey.shade400,
+                                          size: 32,
+                                        ),
+                                ),
+                              );
+                            },
                           ),
                         ),
                       ),
@@ -176,13 +229,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ],
             ),
       bottomNavigationBar: BottomNavBar(
-        currentIndex: _selectedIndex,
+        currentIndex: selectedIndex,
         onTap: (index) {
-          if (index == 2 && _selectedIndex == 2) {
+          if (index == 2 && selectedIndex == 2) {
             // Reset district focus if tapping map again while active
             ref.read(districtFocusProvider.notifier).state = false;
           }
-          setState(() => _selectedIndex = index);
+          _pageController.animateToPage(
+            index,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+          );
+          ref.read(homeSelectedIndexProvider.notifier).state = index;
         },
       ),
     );

@@ -39,8 +39,12 @@ const validateCreateTravel = [
     .optional()
     .isArray().withMessage('Locations must be an array')
     .custom(arr => {
-      if (arr && arr.some(loc => typeof loc !== 'string')) {
-        throw new Error('All locations must be strings');
+      if (arr && arr.some(loc => {
+        if (typeof loc === 'string') return false;
+        if (typeof loc === 'object' && loc !== null && typeof loc.name === 'string') return false;
+        return true;
+      })) {
+        throw new Error('All locations must be strings or valid location objects');
       }
       return true;
     }),

@@ -34,21 +34,11 @@ class BottomNavBar extends StatelessWidget {
         onTap: onTap,
         height: 70, // Slightly reduced height to keep it elegant
         items: <Widget>[
-          _buildNavItem(
-            Icons.photo_album,
-            Icons.photo_album_outlined,
-            'Album',
-            0,
-          ),
-          _buildNavItem(Icons.card_travel, Icons.card_travel, 'Trips', 1),
-          _buildNavItem(Icons.map, Icons.map_outlined, 'Map', 2),
-          _buildNavItem(Icons.history, Icons.history_outlined, 'Timeline', 3),
-          _buildNavItem(
-            Icons.shopping_bag,
-            Icons.shopping_bag_outlined,
-            'Shop',
-            4,
-          ),
+          _buildNavItem(Icons.photo_album, Icons.photo_album_outlined, 'Album', 0),
+          _buildNavItem(Icons.rocket_launch, Icons.rocket_launch_outlined, 'Trips', 1),
+          _buildNavItem(Icons.map, Icons.map_outlined, 'Explore', 2),
+          _buildNavItem(Icons.auto_stories, Icons.auto_stories_outlined, 'Expedition', 3),
+          _buildNavItem(Icons.shopping_bag, Icons.shopping_bag_outlined, 'Shop', 4),
         ],
       ),
     );

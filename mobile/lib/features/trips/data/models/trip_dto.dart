@@ -9,6 +9,7 @@ class CreateTripDto {
   final List<TripLocation>? locations;
   final String? tripType;
   final String? startingPoint;
+  final String? status;
 
   const CreateTripDto({
     required this.title,
@@ -18,6 +19,7 @@ class CreateTripDto {
     this.locations,
     this.tripType,
     this.startingPoint,
+    this.status,
   });
 
   Map<String, dynamic> toJson() {
@@ -26,9 +28,11 @@ class CreateTripDto {
       if (description != null) 'description': description,
       'startDate': startDate.toIso8601String(),
       'endDate': endDate.toIso8601String(),
-      if (locations != null && locations!.isNotEmpty) 'locations': locations,
+      if (locations != null && locations!.isNotEmpty) 
+        'locations': locations!.map((l) => l.name).toList(),
       if (tripType != null) 'tripType': tripType,
       if (startingPoint != null) 'startingPoint': startingPoint,
+      if (status != null) 'status': status,
     };
   }
 }
@@ -40,6 +44,7 @@ class UpdateTripDto {
   final DateTime? startDate;
   final DateTime? endDate;
   final List<TripLocation>? locations;
+  final String? status;
 
   const UpdateTripDto({
     this.title,
@@ -47,6 +52,7 @@ class UpdateTripDto {
     this.startDate,
     this.endDate,
     this.locations,
+    this.status,
   });
 
   Map<String, dynamic> toJson() {
@@ -55,7 +61,9 @@ class UpdateTripDto {
     if (description != null) map['description'] = description;
     if (startDate != null) map['startDate'] = startDate!.toIso8601String();
     if (endDate != null) map['endDate'] = endDate!.toIso8601String();
-    if (locations != null) map['locations'] = locations;
+    if (locations != null) 
+      map['locations'] = locations!.map((l) => l.name).toList();
+    if (status != null) map['status'] = status;
     return map;
   }
 

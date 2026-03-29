@@ -7,6 +7,9 @@ import 'providers/profile_providers.dart';
 import '../../../providers/progress_provider.dart';
 import '../../achievements/presentation/achievements_screen.dart';
 import '../../../splash/presentation/splash_screen.dart';
+import '../../../core/utils/demo_seeder_service.dart';
+import '../../trips/presentation/providers/trips_provider.dart';
+import '../../achievements/providers/achievements_provider.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
@@ -139,7 +142,7 @@ class ProfileScreen extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Header: Avatar, Name, Email
-                _buildProfileHeader(profile),
+                _buildProfileHeader(profile, context, ref, progress.currentLevel),
                 const SizedBox(height: 24),
 
                 // Contribution Stats
@@ -147,7 +150,7 @@ class ProfileScreen extends ConsumerWidget {
                 const SizedBox(height: 24),
 
                 // Gamification Progress
-                _buildExplorerProgressSection(context, profile),
+                _buildExplorerProgressSection(context, profile, ref),
                 const SizedBox(height: 24),
 
                 // Badges
@@ -206,12 +209,6 @@ class ProfileScreen extends ConsumerWidget {
     );
   }
 
-  void _retryAll(WidgetRef ref) {
-    ref.refresh(userProfileProvider);
-    ref.refresh(userContributionsProvider);
-    ref.refresh(topContributorsProvider);
-    ref.refresh(progressProvider);
-  }
 
   _ErrorUiData _buildErrorUi(Object error) {
     final message = error.toString().isEmpty
@@ -270,17 +267,57 @@ class ProfileScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildProfileHeader(profile_model.UserProfile profile) {
+  Widget _buildProfileHeader(
+    profile_model.UserProfile profile,
+    BuildContext context,
+    WidgetRef ref,
+    int? localLevel,
+  ) {
+    final avatarUrl = profile.avatarUrl;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final displayLevel = (localLevel ?? 0) > profile.currentLevel ? localLevel : profile.currentLevel;
+    
     return Row(
       children: [
-        CircleAvatar(
-          radius: 40,
-          backgroundImage: profile.avatarUrl.isNotEmpty
-              ? NetworkImage(profile.avatarUrl)
-              : null,
-          child: profile.avatarUrl.isEmpty
-              ? const Icon(Icons.person, size: 40)
-              : null,
+        Container(
+          width: 80,
+          height: 80,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: isDark ? Colors.white.withOpacity(0.05) : Colors.blueGrey.shade50,
+            boxShadow: [
+              BoxShadow(
+                color: isDark ? Colors.black45 : Colors.black12,
+                blurRadius: 15,
+                spreadRadius: 2,
+              ),
+            ],
+            border: Border.all(
+              color: isDark ? Colors.white10 : Colors.blue.shade100,
+              width: 3,
+            ),
+          ),
+          child: ClipOval(
+            child: avatarUrl.isNotEmpty
+                ? Image.network(
+                    avatarUrl,
+                    fit: BoxFit.cover,
+                    loadingBuilder: (context, child, progress) {
+                      if (progress == null) return child;
+                      return const Center(child: CircularProgressIndicator(strokeWidth: 2));
+                    },
+                    errorBuilder: (context, _, __) => Icon(
+                      Icons.person_rounded,
+                      color: isDark ? Colors.white24 : Colors.grey.shade300,
+                      size: 40,
+                    ),
+                  )
+                : Icon(
+                    Icons.person_rounded,
+                    color: isDark ? Colors.white24 : Colors.grey.shade300,
+                    size: 40,
+                  ),
+          ),
         ),
         const SizedBox(width: 16),
         Expanded(
@@ -289,15 +326,20 @@ class ProfileScreen extends ConsumerWidget {
             children: [
               Text(
                 profile.name,
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 4),
+              Row(
+                children: [
+                  Text(
+                    'Explorer Level $displayLevel',
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
               Text(
                 profile.email,
-                style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                style: TextStyle(color: isDark ? Colors.white70 : Colors.black54),
               ),
             ],
           ),
@@ -375,38 +417,46 @@ class ProfileScreen extends ConsumerWidget {
   Widget _buildExplorerProgressSection(
     BuildContext context,
     profile_model.UserProfile profile,
+    WidgetRef ref,
   ) {
-    // Level up logic is now handled on the backend
-    final percentage = (profile.xpTotal % 100 / 100).clamp(0.0, 1.0);
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final colorScheme = theme.colorScheme;
+    
+    final progress = ref.watch(progressProvider);
+    final displayLevel = progress.currentLevel > profile.currentLevel ? progress.currentLevel : profile.currentLevel;
+    final displayXP = progress.totalXP > profile.xpTotal ? progress.totalXP : profile.xpTotal;
+    final percentage = (displayXP % 100 / 100).clamp(0.0, 1.0);
 
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: Colors.blueGrey.shade50,
+        color: isDark ? Colors.white.withOpacity(0.03) : Colors.blueGrey.shade50,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.blueGrey.shade100),
+        border: Border.all(color: isDark ? Colors.white.withOpacity(0.05) : Colors.blueGrey.shade100),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              const Icon(Icons.workspace_premium, color: Colors.indigo),
+              Icon(Icons.workspace_premium, color: isDark ? colorScheme.primary : Colors.indigo),
               const SizedBox(width: 8),
               Text(
-                'Explorer Level ${profile.currentLevel}',
-                style: const TextStyle(
+                'Explorer Level $displayLevel',
+                style: TextStyle(
                   fontWeight: FontWeight.w700,
                   fontSize: 16,
+                  color: isDark ? Colors.white.withOpacity(0.9) : Colors.black87,
                 ),
               ),
               const Spacer(),
               Text(
-                '${profile.xpTotal} XP',
+                '$displayXP XP',
                 style: TextStyle(
                   fontWeight: FontWeight.w600,
-                  color: Colors.blueGrey.shade700,
+                  color: isDark ? colorScheme.primary.withOpacity(0.8) : Colors.blueGrey.shade700,
                 ),
               ),
             ],
@@ -417,27 +467,27 @@ class ProfileScreen extends ConsumerWidget {
             child: LinearProgressIndicator(
               minHeight: 10,
               value: percentage,
-              backgroundColor: Colors.blueGrey.shade100,
-              valueColor: const AlwaysStoppedAnimation<Color>(Colors.indigo),
+              backgroundColor: isDark ? Colors.white.withOpacity(0.05) : Colors.blueGrey.shade100,
+              valueColor: AlwaysStoppedAnimation<Color>(isDark ? colorScheme.primary : Colors.indigo),
             ),
           ),
           const SizedBox(height: 8),
           Text(
             '${profile.xpToNextLevel} XP to next level',
-            style: TextStyle(color: Colors.blueGrey.shade700),
+            style: TextStyle(color: isDark ? Colors.white38 : Colors.blueGrey.shade700, fontSize: 11, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 10),
           Wrap(
             spacing: 8,
             runSpacing: 8,
             children: [
-              _progressChip('Achievements', profile.badges.length.toString()),
-              _progressChip('Districts', '${profile.unlockedDistrictsCount}'),
-              _progressChip('Provinces', '${profile.unlockedProvincesCount}'),
-              _progressChip('Visits', profile.totalVisited.toString()),
+              _progressChip(context, 'Achievements', profile.badges.length.toString()),
+              _progressChip(context, 'Districts', '${profile.unlockedDistrictsCount}'),
+              _progressChip(context, 'Provinces', '${profile.unlockedProvincesCount}'),
+              _progressChip(context, 'Visits', profile.totalVisited.toString()),
             ],
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 16),
           Align(
             alignment: Alignment.centerLeft,
             child: OutlinedButton.icon(
@@ -447,8 +497,12 @@ class ProfileScreen extends ConsumerWidget {
                   MaterialPageRoute(builder: (_) => const AchievementsScreen()),
                 );
               },
-              icon: const Icon(Icons.emoji_events_outlined),
-              label: const Text('View achievements'),
+              style: OutlinedButton.styleFrom(
+                side: BorderSide(color: isDark ? Colors.white10 : Colors.blueGrey.shade200),
+                foregroundColor: isDark ? Colors.white70 : Colors.indigo,
+              ),
+              icon: const Icon(Icons.emoji_events_outlined, size: 18),
+              label: const Text('View achievements', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
             ),
           ),
         ],
@@ -456,17 +510,23 @@ class ProfileScreen extends ConsumerWidget {
     );
   }
 
-  Widget _progressChip(String label, String value) {
+  Widget _progressChip(BuildContext context, String label, String value) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? Colors.white.withOpacity(0.03) : Colors.white,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.blueGrey.shade100),
+        border: Border.all(color: isDark ? Colors.white.withOpacity(0.05) : Colors.blueGrey.shade100),
       ),
       child: Text(
         '$label: $value',
-        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+        style: TextStyle(
+          fontSize: 10, 
+          fontWeight: FontWeight.bold, 
+          color: isDark ? Colors.white38 : Colors.black54,
+          letterSpacing: 0.5,
+        ),
       ),
     );
   }
@@ -762,6 +822,16 @@ class ProfileScreen extends ConsumerWidget {
         );
       }
     }
+  }
+
+
+  void _retryAll(WidgetRef ref) {
+    ref.invalidate(userProfileProvider);
+    ref.invalidate(userContributionsProvider);
+    ref.invalidate(topContributorsProvider);
+    ref.invalidate(progressProvider);
+    ref.invalidate(tripsProvider);
+    ref.invalidate(achievementsViewProvider);
   }
 }
 

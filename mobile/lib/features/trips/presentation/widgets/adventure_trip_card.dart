@@ -274,4 +274,3 @@ class _SegmentedProgressBar extends StatelessWidget {
     );
   }
 }
-
