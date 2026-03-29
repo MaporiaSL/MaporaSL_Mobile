@@ -112,9 +112,9 @@
       "sold": 0
     },
     "images": [
-      "/uploads/products/Arugam_Bay_Wave_Key_Tag.png"
+      "/uploads/products/Negombo_Fishing_Keytag.png"
     ],
-    "thumbnail": "/uploads/products/Arugam_Bay_Wave_Key_Tag.png",
+    "thumbnail": "/uploads/products/Negombo_Fishing_Keytag.png",
     "weight": 45,
     "dimensions": {
       "length": 5,
@@ -658,9 +658,9 @@
       "sold": 0
     },
     "images": [
-      "/uploads/products/Galle_Face_Sunset_Postcard_Set.png"
+      "/uploads/products/Iranamadu_Sunset.png"
     ],
-    "thumbnail": "/uploads/products/Galle_Face_Sunset_Postcard_Set.png",
+    "thumbnail": "/uploads/products/Iranamadu_Sunset.png",
     "weight": 15,
     "dimensions": {
       "length": 15,
@@ -1042,9 +1042,9 @@
       "sold": 0
     },
     "images": [
-      "/uploads/products/Kelaniya_Temple_Fridge_Magnet.png"
+      "/uploads/products/Koneswaram_Temple_Sunrise_Poster.png"
     ],
-    "thumbnail": "/uploads/products/Kelaniya_Temple_Fridge_Magnet.png",
+    "thumbnail": "/uploads/products/Koneswaram_Temple_Sunrise_Poster.png",
     "weight": 260,
     "dimensions": {
       "length": 42,
@@ -1074,9 +1074,9 @@
       "sold": 0
     },
     "images": [
-      "/uploads/products/Kalutara_Bridge_Sketch_Notebook.png"
+      "/uploads/products/Pigeon_Island_Coral_Sketch_Notebook.png"
     ],
-    "thumbnail": "/uploads/products/Kalutara_Bridge_Sketch_Notebook.png",
+    "thumbnail": "/uploads/products/Pigeon_Island_Coral_Sketch_Notebook.png",
     "weight": 190,
     "dimensions": {
       "length": 21,
@@ -1106,9 +1106,9 @@
       "sold": 0
     },
     "images": [
-      "/uploads/products/Galle_Fort_Street_Art_Frame.png"
+      "/uploads/products/Kurunegala_Rock_Elephant_Silhouette_Frame.png"
     ],
-    "thumbnail": "/uploads/products/Galle_Fort_Street_Art_Frame.png",
+    "thumbnail": "/uploads/products/Kurunegala_Rock_Elephant_Silhouette_Frame.png",
     "weight": 260,
     "dimensions": {
       "length": 32,
@@ -1138,9 +1138,9 @@
       "sold": 0
     },
     "images": [
-      "/uploads/products/Arugam_Bay_Wave_Key_Tag.png"
+      "/uploads/products/Kurunegala_Coconut_Belt_Key_Tag.png"
     ],
-    "thumbnail": "/uploads/products/Arugam_Bay_Wave_Key_Tag.png",
+    "thumbnail": "/uploads/products/Kurunegala_Coconut_Belt_Key_Tag.png",
     "weight": 35,
     "dimensions": {
       "length": 5,
@@ -1170,9 +1170,9 @@
       "sold": 0
     },
     "images": [
-      "/uploads/products/Galle_Face_Sunset_Postcard_Set.png"
+      "/uploads/products/Kalpitiya_Kite_Surf_Coaster_Set.png"
     ],
-    "thumbnail": "/uploads/products/Galle_Face_Sunset_Postcard_Set.png",
+    "thumbnail": "/uploads/products/Kalpitiya_Kite_Surf_Coaster_Set.png",
     "weight": 230,
     "dimensions": {
       "length": 10,
@@ -1202,9 +1202,9 @@
       "sold": 0
     },
     "images": [
-      "/uploads/products/Galle_Fort_Street_Art_Frame.png"
+      "/uploads/products/Puttalam_Salt_Fields_Wall_Art.png"
     ],
-    "thumbnail": "/uploads/products/Galle_Fort_Street_Art_Frame.png",
+    "thumbnail": "/uploads/products/Puttalam_Salt_Fields_Wall_Art.png",
     "weight": 340,
     "dimensions": {
       "length": 40,
@@ -1234,9 +1234,9 @@
       "sold": 0
     },
     "images": [
-      "https://cdn.example.com/shop/anuradhapura-ruwanwelisaya-mini.jpg"
+      "/uploads/products/Ruwanwelisaya_Stupa_Miniature.png"
     ],
-    "thumbnail": "https://cdn.example.com/shop/anuradhapura-ruwanwelisaya-mini-thumb.jpg",
+    "thumbnail": "/uploads/products/Ruwanwelisaya_Stupa_Miniature.png",
     "weight": 420,
     "dimensions": {
       "length": 14,
@@ -1266,9 +1266,9 @@
       "sold": 0
     },
     "images": [
-      "/uploads/products/Palmayrah_Weave_Bookmark.png"
+      "/uploads/products/Sri_Maha_Bodhi_Leaf_Bookmark.png"
     ],
-    "thumbnail": "/uploads/products/Palmayrah_Weave_Bookmark.png",
+    "thumbnail": "/uploads/products/Sri_Maha_Bodhi_Leaf_Bookmark.png",
     "weight": 8,
     "dimensions": {
       "length": 14,
@@ -1298,9 +1298,9 @@
       "sold": 0
     },
     "images": [
-      "/uploads/products/Nalanda_Gedige_Stone_Carving_Replica.png"
+      "/uploads/products/Gal_Viharaya_Stone_Relief_Poster.png"
     ],
-    "thumbnail": "/uploads/products/Nalanda_Gedige_Stone_Carving_Replica.png",
+    "thumbnail": "/uploads/products/Gal_Viharaya_Stone_Relief_Poster.png",
     "weight": 260,
     "dimensions": {
       "length": 32,
@@ -1330,9 +1330,9 @@
       "sold": 0
     },
     "images": [
-      "/uploads/products/Salt_Pan_Coaster.png"
+      "/uploads/products/Polonnaruwa_Moonstone_Coaster.png"
     ],
-    "thumbnail": "/uploads/products/Salt_Pan_Coaster.png",
+    "thumbnail": "/uploads/products/Polonnaruwa_Moonstone_Coaster.png",
     "weight": 180,
     "dimensions": {
       "length": 10,
@@ -1362,9 +1362,9 @@
       "sold": 0
     },
     "images": [
-      "/uploads/products/Kalutara_Bridge_Sketch_Notebook.png"
+      "/uploads/products/Nine_Arches_Bridge_Wooden_Model.png"
     ],
-    "thumbnail": "/uploads/products/Kalutara_Bridge_Sketch_Notebook.png",
+    "thumbnail": "/uploads/products/Nine_Arches_Bridge_Wooden_Model.png",
     "weight": 380,
     "dimensions": {
       "length": 20,
@@ -1394,9 +1394,9 @@
       "sold": 0
     },
     "images": [
-      "/uploads/products/Kelaniya_Temple_Fridge_Magnet.png"
+      "/uploads/products/Ella_Gap_Panorama_Magnet.png"
     ],
-    "thumbnail": "/uploads/products/Kelaniya_Temple_Fridge_Magnet.png",
+    "thumbnail": "/uploads/products/Ella_Gap_Panorama_Magnet.png",
     "weight": 40,
     "dimensions": {
       "length": 8,
@@ -1426,9 +1426,9 @@
       "sold": 0
     },
     "images": [
-      "/uploads/products/Arugam_Bay_Wave_Key_Tag.png"
+      "/uploads/products/Yala_Safari_Jeep_Key_Tag.png"
     ],
-    "thumbnail": "/uploads/products/Arugam_Bay_Wave_Key_Tag.png",
+    "thumbnail": "/uploads/products/Yala_Safari_Jeep_Key_Tag.png",
     "weight": 35,
     "dimensions": {
       "length": 5,
@@ -1458,9 +1458,9 @@
       "sold": 0
     },
     "images": [
-      "https://cdn.example.com/shop/monaragala-buttala-art.jpg"
+      "/uploads/products/Buttala_Rock_Paint_Illustration.png"
     ],
-    "thumbnail": "https://cdn.example.com/shop/monaragala-buttala-art-thumb.jpg",
+    "thumbnail": "/uploads/products/Buttala_Rock_Paint_Illustration.png",
     "weight": 250,
     "dimensions": {
       "length": 30,
@@ -1490,9 +1490,9 @@
       "sold": 0
     },
     "images": [
-      "https://cdn.example.com/shop/ratnapura-gem-map.jpg"
+      "/uploads/products/Ratnapura_Gemstone_Map_Poster.png"
     ],
-    "thumbnail": "https://cdn.example.com/shop/ratnapura-gem-map-thumb.jpg",
+    "thumbnail": "/uploads/products/Ratnapura_Gemstone_Map_Poster.png",
     "weight": 260,
     "dimensions": {
       "length": 32,
@@ -1522,9 +1522,9 @@
       "sold": 0
     },
     "images": [
-      "/uploads/products/Arugam_Bay_Wave_Key_Tag.png"
+      "/uploads/products/Gem_City_Crystal_Key_Tag.png"
     ],
-    "thumbnail": "/uploads/products/Arugam_Bay_Wave_Key_Tag.png",
+    "thumbnail": "/uploads/products/Gem_City_Crystal_Key_Tag.png",
     "weight": 40,
     "dimensions": {
       "length": 4,
@@ -1554,9 +1554,9 @@
       "sold": 0
     },
     "images": [
-      "/uploads/products/Galle_Fort_Street_Art_Frame.png"
+      "/uploads/products/Pinnawala_Elephant_Line_Drawing_Frame.png"
     ],
-    "thumbnail": "/uploads/products/Galle_Fort_Street_Art_Frame.png",
+    "thumbnail": "/uploads/products/Pinnawala_Elephant_Line_Drawing_Frame.png",
     "weight": 260,
     "dimensions": {
       "length": 32,
@@ -1586,9 +1586,9 @@
       "sold": 0
     },
     "images": [
-      "/uploads/products/Kalutara_Bridge_Sketch_Notebook.png"
+      "/uploads/products/Kegalle_Rubber_Leaf_Notebook.png"
     ],
-    "thumbnail": "/uploads/products/Kalutara_Bridge_Sketch_Notebook.png",
+    "thumbnail": "/uploads/products/Kegalle_Rubber_Leaf_Notebook.png",
     "weight": 190,
     "dimensions": {
       "length": 21,
@@ -1618,9 +1618,9 @@
       "sold": 0
     },
     "images": [
-      "/uploads/products/Nuwara_Eliya_Tea_Estate_Canvas_Tote.png"
+      "/uploads/products/Maporia_Logo_Tote_Bag.png"
     ],
-    "thumbnail": "/uploads/products/Nuwara_Eliya_Tea_Estate_Canvas_Tote.png",
+    "thumbnail": "/uploads/products/Maporia_Logo_Tote_Bag.png",
     "weight": 220,
     "dimensions": {
       "length": 38,
@@ -1651,9 +1651,9 @@
       "sold": 0
     },
     "images": [
-      "/uploads/products/Matale_Spice_Garden_Sachet_Pack.png"
+      "/uploads/products/Ceylon_Spice_Tea_Sampler.png"
     ],
-    "thumbnail": "/uploads/products/Matale_Spice_Garden_Sachet_Pack.png",
+    "thumbnail": "/uploads/products/Ceylon_Spice_Tea_Sampler.png",
     "weight": 180,
     "dimensions": {
       "length": 18,
@@ -1684,9 +1684,9 @@
       "sold": 0
     },
     "images": [
-      "/uploads/products/Galle_Face_Sunset_Postcard_Set.png"
+      "/uploads/products/Galle_Fort_Sunset_Cap.png"
     ],
-    "thumbnail": "/uploads/products/Galle_Face_Sunset_Postcard_Set.png",
+    "thumbnail": "/uploads/products/Galle_Fort_Sunset_Cap.png",
     "weight": 120,
     "dimensions": {
       "length": 28,
@@ -1717,9 +1717,9 @@
       "sold": 0
     },
     "images": [
-      "https://cdn.example.com/shop/nuwara-eliya-map.jpg"
+      "/uploads/products/Hill_Country_Trekking_Map.png"
     ],
-    "thumbnail": "https://cdn.example.com/shop/nuwara-eliya-map-thumb.jpg",
+    "thumbnail": "/uploads/products/Hill_Country_Trekking_Map.png",
     "weight": 80,
     "dimensions": {
       "length": 22,
@@ -1750,9 +1750,9 @@
       "sold": 0
     },
     "images": [
-      "/uploads/products/Jaffna_Palm_Pot.png"
+      "/uploads/products/Jaffna_Heritage_Guidebook.png"
     ],
-    "thumbnail": "/uploads/products/Jaffna_Palm_Pot.png",
+    "thumbnail": "/uploads/products/Jaffna_Heritage_Guidebook.png",
     "weight": 350,
     "dimensions": {
       "length": 21,

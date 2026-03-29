@@ -335,7 +335,9 @@ class ShoppingCartPage extends ConsumerWidget {
                   children: [
                     Text(
                       'Subtotal: ${CurrencyFormatter.formatLkr(cart.subtotal)}',
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const SizedBox(height: 12),
                     ElevatedButton(
