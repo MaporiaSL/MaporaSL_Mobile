@@ -305,8 +305,9 @@ class _MapScreenState extends ConsumerState<MapScreen>
     });
 
     if (_isDistrictFocused && selectedAssignment != null) {
+      final isDark = theme.isDark;
       return Scaffold(
-        backgroundColor: Colors.black.withValues(alpha: 0.02),
+        backgroundColor: isDark ? const Color(0xFF0B0F14) : Colors.black.withValues(alpha: 0.02),
         extendBodyBehindAppBar: true,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
@@ -438,17 +439,29 @@ class _MapScreenState extends ConsumerState<MapScreen>
         ),
       );
     }
+    final isDark = theme.isDark;
+    
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          '🗺️ Discover Sri Lanka',
-          style: TextStyle(fontWeight: FontWeight.bold),
+        title: Row(
+          children: [
+            Icon(
+              Icons.explore_rounded,
+              color: isDark ? Colors.amber.shade400 : Colors.indigo.shade700,
+              size: 24,
+            ),
+            const SizedBox(width: 10),
+            const Text(
+              'Discover Sri Lanka',
+              style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 0.5),
+            ),
+          ],
         ),
         elevation: 0,
-        backgroundColor: AppColors.background,
-        foregroundColor: AppColors.textDark,
+        backgroundColor: isDark ? const Color(0xFF0B0F14) : AppColors.background,
+        foregroundColor: isDark ? Colors.white : AppColors.textDark,
       ),
-      backgroundColor: AppColors.background,
+      backgroundColor: isDark ? const Color(0xFF0B0F14) : AppColors.background,
       body: SafeArea(
         top: false,
         child: LayoutBuilder(
@@ -664,14 +677,27 @@ class _DistrictHeaderBar extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Expanded(
-              child: Text(
-                district,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w700,
-                  fontSize: 22,
-                  letterSpacing: 0.5,
-                ),
+              child: Row(
+                children: [
+                   Icon(
+                    Icons.location_on_rounded,
+                    color: theme.isDark ? Colors.amber.shade400 : Colors.indigo.shade300,
+                    size: 24,
+                  ),
+                  const SizedBox(width: 12),
+                  Flexible(
+                    child: Text(
+                      district,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 22,
+                        letterSpacing: 0.5,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
               ),
             ),
             // The Material widget provides the visual "splash" effect on tap

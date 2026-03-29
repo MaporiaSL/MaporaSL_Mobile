@@ -26,6 +26,8 @@ class MapVisualTheme {
   /// Optional region fill overrides by region id.
   final Map<String, Color> regionFillOverrides;
 
+  bool get isDark => backgroundColor.computeLuminance() < 0.5;
+
   const MapVisualTheme({
     this.backgroundColor = const Color(0xFFF1F5F9), // Cool Slate Atlas
     this.borderColor = const Color(0xFFCBD5E1), // Soft Slate Border
