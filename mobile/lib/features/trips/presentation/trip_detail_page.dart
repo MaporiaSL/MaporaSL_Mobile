@@ -204,8 +204,6 @@ class _StatusChip extends StatelessWidget {
         return Colors.orange;
       case TripStatus.completed:
         return Colors.green;
-      case TripStatus.canceled:
-        return Colors.red;
     }
   }
 

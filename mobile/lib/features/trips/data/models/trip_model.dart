@@ -11,11 +11,17 @@ class TripModel {
   final String userId;
   final String title; // Changed from 'name' to match backend 'title' field
   final String? description;
+  @JsonKey(fromJson: _parseDate)
   final DateTime startDate;
+  @JsonKey(fromJson: _parseDate)
   final DateTime endDate;
+  
+  @JsonKey(fromJson: _robustLocationParsing)
   final List<TripLocation>? locations;
   final String? status; // 'scheduled', 'planned', 'completed', etc.
+  @JsonKey(fromJson: _parseDate)
   final DateTime createdAt;
+  @JsonKey(fromJson: _parseDate)
   final DateTime updatedAt;
 
   /// Optional metadata for planning/clone flows
@@ -212,4 +218,27 @@ class TripLocation {
       _$TripLocationFromJson(json);
 
   Map<String, dynamic> toJson() => _$TripLocationToJson(this);
+}
+
+List<TripLocation>? _robustLocationParsing(dynamic json) {
+  if (json == null) return null;
+  if (json is! List) return null;
+
+  return json.map((item) {
+    if (item is String) {
+      return TripLocation(name: item, day: 1);
+    } else if (item is Map) {
+      return TripLocation.fromJson(Map<String, dynamic>.from(item));
+    }
+    return const TripLocation(name: 'Unknown', day: 1);
+  }).toList();
+}
+
+DateTime _parseDate(dynamic json) {
+  if (json == null) return DateTime.now();
+  if (json is String) return DateTime.parse(json);
+  if (json is Map && json.containsKey('\$date')) {
+    return DateTime.parse(json['\$date'] as String);
+  }
+  return DateTime.now(); // Safety fallback
 }

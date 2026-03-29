@@ -275,6 +275,10 @@ class _TripsTimelineViewState extends State<_TripsTimelineView> {
                 return const Center(child: CircularProgressIndicator());
               }
 
+              if (tripsState.error != null && tripsState.trips.isEmpty) {
+                return _buildErrorState(context, ref, tripsState.error!);
+              }
+
               final filteredTrips = _filterTrips(tripsState.trips);
 
               if (filteredTrips.isEmpty) {
@@ -367,6 +371,63 @@ class _TripsTimelineViewState extends State<_TripsTimelineView> {
           return true;
       }
     }).toList();
+  }
+
+  Widget _buildErrorState(BuildContext context, WidgetRef ref, String error) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(40),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.red.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.cloud_off_rounded, color: Colors.redAccent, size: 40),
+            ),
+            const SizedBox(height: 24),
+            Text(
+              'SYNC INTERRUPTED',
+              style: TextStyle(
+                fontWeight: FontWeight.w900,
+                letterSpacing: 2,
+                fontSize: 14,
+                color: isDark ? Colors.white : Colors.black87,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              error,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: isDark ? Colors.white38 : Colors.black38,
+                fontSize: 11,
+                height: 1.5,
+              ),
+            ),
+            const SizedBox(height: 32),
+            SizedBox(
+              width: 160,
+              height: 48,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+                onPressed: () => ref.read(tripsProvider.notifier).loadTrips(refresh: true),
+                child: const Text('RECONNECT', style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 1)),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildEmptyState(BuildContext context, WidgetRef ref, String filter) {

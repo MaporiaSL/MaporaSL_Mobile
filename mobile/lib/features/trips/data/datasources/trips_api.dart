@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import '../../../../core/config/app_config.dart';
 import '../models/trip_model.dart';
 import '../models/trip_stats_model.dart';
@@ -27,6 +28,7 @@ class TripsApi {
         '$baseUrl/api/travel',
         queryParameters: {'skip': skip, 'limit': limit},
       );
+      debugPrint('>>> [TRIPS API] RECEIVED DATA: ${response.data}');
 
       final travels = response.data['travels'] as List;
       return travels.map((json) {
@@ -47,6 +49,7 @@ class TripsApi {
   Future<TripModel> fetchTripById(String id) async {
     try {
       final response = await _dio.get('$baseUrl/api/travel/$id');
+      debugPrint('>>> [TRIPS API] RECEIVED DATA: ${response.data}');
       final map = Map<String, dynamic>.from(
         response.data['travel'] as Map<String, dynamic>,
       );
@@ -67,9 +70,24 @@ class TripsApi {
         '$baseUrl/api/travel',
         data: dto.toJson(),
       );
-      final map = Map<String, dynamic>.from(
-        response.data['travel'] as Map<String, dynamic>,
-      );
+      
+      final travelData = response.data['travel'];
+      final Map<String, dynamic> map;
+      if (travelData is String) {
+        map = {
+          'id': travelData,
+          'title': dto.title,
+          'description': dto.description,
+          'startDate': dto.startDate.toIso8601String(),
+          'endDate': dto.endDate.toIso8601String(),
+          'status': dto.status ?? 'planned',
+          'userId': 'unknown',
+          'createdAt': DateTime.now().toIso8601String(),
+          'updatedAt': DateTime.now().toIso8601String(),
+        };
+      } else {
+        map = Map<String, dynamic>.from(travelData as Map);
+      }
       if (map.containsKey('_id')) {
         map['id'] = map['_id'].toString();
       }
@@ -87,9 +105,23 @@ class TripsApi {
         '$baseUrl/api/travel/$id',
         data: dto.toJson(),
       );
-      final map = Map<String, dynamic>.from(
-        response.data['travel'] as Map<String, dynamic>,
-      );
+      
+      final travelData = response.data['travel'];
+      final Map<String, dynamic> map;
+      if (travelData is String) {
+        map = {
+          'id': travelData,
+          if (dto.title != null) 'title': dto.title,
+          if (dto.description != null) 'description': dto.description,
+          if (dto.startDate != null)
+            'startDate': dto.startDate!.toIso8601String(),
+          if (dto.endDate != null) 'endDate': dto.endDate!.toIso8601String(),
+          if (dto.status != null) 'status': dto.status,
+          'updatedAt': DateTime.now().toIso8601String(),
+        };
+      } else {
+        map = Map<String, dynamic>.from(travelData as Map);
+      }
       if (map.containsKey('_id')) {
         map['id'] = map['_id'].toString();
       }

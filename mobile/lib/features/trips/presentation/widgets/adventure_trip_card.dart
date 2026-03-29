@@ -163,8 +163,6 @@ class AdventureTripCard extends StatelessWidget {
         return Colors.amber;
       case TripStatus.completed:
         return Colors.green;
-      case TripStatus.canceled:
-        return Colors.red;
     }
   }
 
@@ -217,8 +215,6 @@ class _StatusChip extends StatelessWidget {
         return Colors.amber.shade700;
       case TripStatus.completed:
         return Colors.green;
-      case TripStatus.canceled:
-        return Colors.red;
     }
   }
 
@@ -230,8 +226,6 @@ class _StatusChip extends StatelessWidget {
         return 'Active Quest';
       case TripStatus.completed:
         return 'Completed';
-      case TripStatus.canceled:
-        return 'Canceled';
     }
   }
 
@@ -243,8 +237,6 @@ class _StatusChip extends StatelessWidget {
         return 'âš¡';
       case TripStatus.completed:
         return 'âœ…';
-      case TripStatus.canceled:
-        return 'X';
     }
   }
 }
