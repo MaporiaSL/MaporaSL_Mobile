@@ -29,7 +29,7 @@ class CreateTripDto {
       'startDate': startDate.toIso8601String(),
       'endDate': endDate.toIso8601String(),
       if (locations != null && locations!.isNotEmpty) 
-        'locations': locations!.map((l) => l.name).toList(),
+        'locations': locations!.map((l) => l.toJson()).toList(),
       if (tripType != null) 'tripType': tripType,
       if (startingPoint != null) 'startingPoint': startingPoint,
       if (status != null) 'status': status,
@@ -62,7 +62,7 @@ class UpdateTripDto {
     if (startDate != null) map['startDate'] = startDate!.toIso8601String();
     if (endDate != null) map['endDate'] = endDate!.toIso8601String();
     if (locations != null) 
-      map['locations'] = locations!.map((l) => l.name).toList();
+      map['locations'] = locations!.map((l) => l.toJson()).toList();
     if (status != null) map['status'] = status;
     return map;
   }
