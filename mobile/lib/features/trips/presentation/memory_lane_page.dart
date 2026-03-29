@@ -373,16 +373,14 @@ class _QuestLogView extends ConsumerWidget {
       return const Center(child: CircularProgressIndicator());
     }
 
-    final allQuests = explorationState.assignments.expand((a) => a.locations.map((l) => (location: l, district: a.district))).toList();
-
-    if (allQuests.isEmpty) {
+    if (explorationState.assignments.isEmpty) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(Ionicons.sparkles_outline, size: 48, color: isDark ? Colors.white10 : Colors.black12),
             const SizedBox(height: 16),
-            Text('No operational data found', style: TextStyle(color: isDark ? Colors.white38 : Colors.black38, fontWeight: FontWeight.bold)),
+            Text('No active missions found', style: TextStyle(color: isDark ? Colors.white38 : Colors.black38, fontWeight: FontWeight.bold)),
           ],
         ),
       );
@@ -390,47 +388,59 @@ class _QuestLogView extends ConsumerWidget {
 
     return ListView.builder(
       padding: const EdgeInsets.all(20),
-      itemCount: allQuests.length,
+      itemCount: explorationState.assignments.length,
       itemBuilder: (context, index) {
-        final q = allQuests[index];
-        final quest = q.location;
-        final district = q.district.toUpperCase();
+        final assignment = explorationState.assignments[index];
+        final district = assignment.district.toUpperCase();
+        final locations = assignment.locations;
+        final verifiedCount = locations.where((l) => l.visited).length;
         
         return Container(
-          margin: const EdgeInsets.only(bottom: 12),
-          padding: const EdgeInsets.all(16),
+          margin: const EdgeInsets.only(bottom: 16),
           decoration: BoxDecoration(
             color: isDark ? Colors.white.withOpacity(0.03) : Colors.white,
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(20),
             border: Border.all(color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05)),
           ),
-          child: Row(
-            children: [
-              Container(
+          child: Theme(
+            data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+            child: ExpansionTile(
+              leading: Container(
                 width: 42, height: 42, 
-                decoration: BoxDecoration(color: (quest.visited ? Colors.green : Colors.blue).withOpacity(0.1), shape: BoxShape.circle), 
-                child: Icon(quest.visited ? Ionicons.checkmark_done : Ionicons.flash_outline, color: quest.visited ? Colors.green : Colors.blue, size: 18),
+                decoration: BoxDecoration(color: Colors.amber.withOpacity(0.1), shape: BoxShape.circle), 
+                child: const Icon(Ionicons.folder_open_outline, color: Colors.amber, size: 20),
               ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(quest.name.toUpperCase(), style: TextStyle(fontWeight: FontWeight.w900, color: isDark ? Colors.white70 : Colors.black87, fontSize: 12, letterSpacing: 0.5)),
-                    const SizedBox(height: 2),
-                    Text(district, style: TextStyle(color: isDark ? Colors.white24 : Colors.black26, fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 1)),
-                  ],
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration: BoxDecoration(color: (quest.visited ? Colors.green : Colors.blue).withOpacity(0.1), borderRadius: BorderRadius.circular(6)),
-                child: Text(quest.visited ? 'VERIFIED' : 'ACTIVE', style: TextStyle(color: quest.visited ? Colors.green : Colors.blue, fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 1)),
-              ),
-            ],
+              title: Text(district, style: TextStyle(fontWeight: FontWeight.w900, color: isDark ? Colors.white70 : Colors.black87, fontSize: 13, letterSpacing: 1.5)),
+              subtitle: Text('$verifiedCount/${locations.length} NODES VERIFIED', style: TextStyle(color: isDark ? Colors.white24 : Colors.black26, fontSize: 8, fontWeight: FontWeight.bold, letterSpacing: 0.5)),
+              trailing: Icon(Ionicons.chevron_down_outline, size: 16, color: isDark ? Colors.white24 : Colors.black26),
+              childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              children: locations.map((quest) => _buildQuestSubItem(context, quest)).toList(),
+            ),
           ),
         );
       },
+    );
+  }
+
+  Widget _buildQuestSubItem(BuildContext context, dynamic quest) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final color = quest.visited ? Colors.green : Colors.blue;
+
+    return Container(
+      margin: const EdgeInsets.only(top: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: isDark ? Colors.white.withOpacity(0.02) : Colors.black.withOpacity(0.02),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        children: [
+          Icon(quest.visited ? Ionicons.checkmark_circle : Ionicons.ellipse_outline, color: color, size: 14),
+          const SizedBox(width: 12),
+          Expanded(child: Text(quest.name.toUpperCase(), style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: isDark ? Colors.white60 : Colors.black54, letterSpacing: 0.5))),
+          Text(quest.visited ? 'VERIFIED' : 'ACTIVE', style: TextStyle(color: color, fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 1)),
+        ],
+      ),
     );
   }
 }
