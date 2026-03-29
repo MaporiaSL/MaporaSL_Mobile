@@ -15,17 +15,27 @@ class PlaceAchievements {
       tierRewards: [50, 150, 300, 500],
     ),
     AchievementDefinition(
-      id: 'district_explorer',
-      title: 'District Explorer',
-      description: 'Visit unique districts in Sri Lanka',
-      badgeEmoji: '🗺️',
-      category: 'all_districts',
+      id: 'village_explorer',
+      title: 'Village Explorer',
+      description: 'Discover the heart of rural Sri Lanka',
+      badgeEmoji: '🏘️',
+      category: 'villages',
       track: 'Pioneer',
-      tiers: [2, 10, 20, 25],
-      tierRewards: [100, 250, 500, 1000],
+      tiers: [2, 5, 12, 25],
+      tierRewards: [50, 150, 300, 600],
     ),
 
     // Naturalist Track (Nature & Adventure)
+    AchievementDefinition(
+      id: 'mountain_climber',
+      title: 'Mountain Climber',
+      description: 'Conquer the peaks and misty hills',
+      badgeEmoji: '⛰️',
+      category: 'mountains',
+      track: 'Naturalist',
+      tiers: [2, 5, 15, 30],
+      tierRewards: [100, 200, 500, 1000],
+    ),
     AchievementDefinition(
       id: 'beach_master',
       title: 'Beach Master',
@@ -80,6 +90,28 @@ class PlaceAchievements {
       tiers: [5, 25, 100, 250],
       tierRewards: [50, 150, 500, 1200],
     ),
+    AchievementDefinition(
+      id: 'grand_reviewer',
+      title: 'Grand Reviewer',
+      description: 'Guide others with your insights',
+      badgeEmoji: '✍️',
+      category: 'reviews',
+      track: 'Chronicler',
+      tiers: [3, 10, 25, 50],
+      tierRewards: [50, 120, 300, 600],
+    ),
+
+    // Social Track (Identity & Connection)
+    AchievementDefinition(
+      id: 'social_butterfly',
+      title: 'Social Butterfly',
+      description: 'Connect and share your discoveries',
+      badgeEmoji: '🦋',
+      category: 'social',
+      track: 'Social',
+      tiers: [5, 15, 30, 60],
+      tierRewards: [40, 100, 250, 500],
+    ),
   ];
 
   /// Get achievement by ID
@@ -107,6 +139,8 @@ class AchievementDefinition {
   final String track;
   final List<int> tiers;
   final List<int> tierRewards;
+
+  static List<AchievementDefinition> get all => PlaceAchievements.definitions;
 
   static const List<Color> tierColors = [
     Color(0xFFCD7F32), // Bronze
@@ -153,7 +187,35 @@ class AchievementProgress {
     this.unlockedAt,
   });
 
+  /// Factory to create progress from current count
+  factory AchievementProgress.fromProgress(AchievementDefinition definition, int currentProgress) {
+    int currentTier = -1;
+    for (int i = 0; i < definition.tiers.length; i++) {
+      if (currentProgress >= definition.tiers[i]) {
+        currentTier = i;
+      } else {
+        break;
+      }
+    }
+    return AchievementProgress(
+      id: definition.id,
+      definition: definition,
+      currentProgress: currentProgress,
+      currentTier: currentTier,
+    );
+  }
+
   bool get isUnlocked => currentTier >= 0;
+
+  /// Total points earned across all completed tiers
+  int get totalEarnedPoints {
+    if (currentTier == -1) return 0;
+    int total = 0;
+    for (int i = 0; i <= currentTier; i++) {
+      total += definition.tierRewards[i];
+    }
+    return total;
+  }
 
   double get progressPercent {
     if (currentTier >= definition.tiers.length - 1) return 1.0;

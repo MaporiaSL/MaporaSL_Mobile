@@ -11,7 +11,7 @@ class AchievementsScreen extends ConsumerStatefulWidget {
 }
 
 class _AchievementsScreenState extends ConsumerState<AchievementsScreen> {
-  String _selectedTrack = 'Pioneer';
+  String _selectedTrack = 'ALL';
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +24,17 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen> {
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, _) => Center(child: Text('Error: $error')),
         data: (data) {
-          final trackItems = data.tracks[_selectedTrack] ?? [];
+          final List<String> availableTracks = ['ALL', ...data.tracks.keys.toList()..sort()];
+          if (!availableTracks.contains(_selectedTrack) && availableTracks.isNotEmpty) {
+            _selectedTrack = availableTracks.first;
+          }
+
+          final List<AchievementProgress> trackItems;
+          if (_selectedTrack == 'ALL') {
+            trackItems = data.achievements;
+          } else {
+            trackItems = data.tracks[_selectedTrack] ?? [];
+          }
           
           return CustomScrollView(
             physics: const BouncingScrollPhysics(),
@@ -46,7 +56,7 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen> {
                         ),
                       ),
                       const SizedBox(height: 16),
-                      _buildTrackSelector(isDark),
+                      _buildTrackSelector(isDark, availableTracks),
                     ],
                   ),
                 ),
@@ -137,13 +147,12 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen> {
     );
   }
 
-  Widget _buildTrackSelector(bool isDark) {
-    final tracks = ['Pioneer', 'Naturalist', 'Devotee', 'Chronicler'];
+  Widget _buildTrackSelector(bool isDark, List<String> availableTracks) {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       physics: const BouncingScrollPhysics(),
       child: Row(
-        children: tracks.map((track) {
+        children: availableTracks.map((track) {
           final isSelected = _selectedTrack == track;
           return Padding(
             padding: const EdgeInsets.only(right: 12),

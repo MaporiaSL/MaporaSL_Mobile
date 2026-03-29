@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gemified_travel_portfolio/providers/progress_provider.dart';
 import '../../../../core/services/api_client.dart';
 import '../../data/datasources/trips_api.dart';
 import '../../data/repositories/trips_repository.dart';
@@ -41,9 +42,11 @@ class TripsState {
 /// State notifier for trips management
 class TripsNotifier extends StateNotifier<TripsState> {
   final TripsRepository _repository;
+  final Ref _ref;
 
-  TripsNotifier({required TripsRepository repository})
+  TripsNotifier({required TripsRepository repository, required Ref ref})
     : _repository = repository,
+      _ref = ref,
       super(const TripsState());
 
   /// Load trips (initial load or refresh)
@@ -162,6 +165,12 @@ class TripsNotifier extends StateNotifier<TripsState> {
         return trip.id == id ? updatedTrip : trip;
       }).toList();
 
+      // If trip is completed, update progress provider
+      if (status == 'completed' || status == 'done') {
+        _ref.read(progressProvider.notifier).recordVisit();
+        _ref.read(progressProvider.notifier).addXP(100); 
+      }
+
       state = state.copyWith(trips: updatedTrips);
     } catch (e) {
       state = state.copyWith(error: e.toString());
@@ -190,5 +199,5 @@ final tripsRepositoryProvider = Provider<TripsRepository>((ref) {
 /// Main trips provider
 final tripsProvider = StateNotifierProvider<TripsNotifier, TripsState>((ref) {
   final repository = ref.watch(tripsRepositoryProvider);
-  return TripsNotifier(repository: repository);
+  return TripsNotifier(repository: repository, ref: ref);
 });
