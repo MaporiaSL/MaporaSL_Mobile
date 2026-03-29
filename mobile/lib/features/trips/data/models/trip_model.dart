@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'trip_model.g.dart';
 
-enum TripStatus { upcoming, active, completed }
+enum TripStatus { upcoming, active, completed, canceled }
 
 /// Trip model representing a user's travel adventure
 @JsonSerializable()

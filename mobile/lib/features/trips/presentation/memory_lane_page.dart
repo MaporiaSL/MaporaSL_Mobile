@@ -17,7 +17,8 @@ class MemoryLanePage extends ConsumerStatefulWidget {
   ConsumerState<MemoryLanePage> createState() => _MemoryLanePageState();
 }
 
-class _MemoryLanePageState extends ConsumerState<MemoryLanePage> with SingleTickerProviderStateMixin {
+class _MemoryLanePageState extends ConsumerState<MemoryLanePage>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
   @override
@@ -56,40 +57,63 @@ class _MemoryLanePageState extends ConsumerState<MemoryLanePage> with SingleTick
             flexibleSpace: FlexibleSpaceBar(
               background: Stack(
                 children: [
-                   // Atmospheric Background
-                   Positioned.fill(
-                     child: Container(
-                       decoration: BoxDecoration(
-                         gradient: LinearGradient(
-                           begin: Alignment.topCenter,
-                           end: Alignment.bottomCenter,
-                           colors: [
-                             colorScheme.primary.withOpacity(isDark ? 0.05 : 0.02),
-                             theme.scaffoldBackgroundColor,
-                           ],
-                         ),
-                       ),
-                     ),
-                   ),
-                   SafeArea(
-                     child: Padding(
-                       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                       child: Column(
-                         crossAxisAlignment: CrossAxisAlignment.start,
-                         children: [
-                           Text('EXPEDITION HUB', style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 3, fontSize: 20, color: isDark ? Colors.white : Colors.black87)),
-                           const SizedBox(height: 4),
-                           Text('Archives of your global footprint', style: TextStyle(color: isDark ? Colors.white38 : Colors.black38, fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1)),
-                           const SizedBox(height: 24),
-                           statsAsync.when(
-                             data: (stats) => _buildHeroStats(context, stats),
-                             loading: () => const Center(child: CircularProgressIndicator()),
-                             error: (_, __) => const SizedBox.shrink(),
-                           ),
-                         ],
-                       ),
-                     ),
-                   ),
+                  // Atmospheric Background
+                  Positioned.fill(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            colorScheme.primary.withOpacity(
+                              isDark ? 0.05 : 0.02,
+                            ),
+                            theme.scaffoldBackgroundColor,
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  SafeArea(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 10,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'EXPEDITION HUB',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 3,
+                              fontSize: 20,
+                              color: isDark ? Colors.white : Colors.black87,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Archives of your global footprint',
+                            style: TextStyle(
+                              color: isDark ? Colors.white38 : Colors.black38,
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1,
+                            ),
+                          ),
+                          const SizedBox(height: 24),
+                          statsAsync.when(
+                            data: (stats) => _buildHeroStats(context, stats),
+                            loading: () => const Center(
+                              child: CircularProgressIndicator(),
+                            ),
+                            error: (_, __) => const SizedBox.shrink(),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -97,15 +121,27 @@ class _MemoryLanePageState extends ConsumerState<MemoryLanePage> with SingleTick
               preferredSize: const Size.fromHeight(40),
               child: Container(
                 decoration: BoxDecoration(
-                  border: Border(bottom: BorderSide(color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05))),
+                  border: Border(
+                    bottom: BorderSide(
+                      color: isDark
+                          ? Colors.white.withOpacity(0.05)
+                          : Colors.black.withOpacity(0.05),
+                    ),
+                  ),
                 ),
                 child: TabBar(
                   controller: _tabController,
                   indicatorColor: colorScheme.primary,
                   indicatorWeight: 3,
                   labelColor: isDark ? Colors.white : Colors.black87,
-                  unselectedLabelColor: isDark ? Colors.white24 : Colors.black26,
-                  labelStyle: const TextStyle(fontWeight: FontWeight.w900, letterSpacing: 2, fontSize: 11),
+                  unselectedLabelColor: isDark
+                      ? Colors.white24
+                      : Colors.black26,
+                  labelStyle: const TextStyle(
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 2,
+                    fontSize: 11,
+                  ),
                   tabs: const [
                     Tab(text: 'JOURNEYS'),
                     Tab(text: 'MISSIONS'),
@@ -117,10 +153,7 @@ class _MemoryLanePageState extends ConsumerState<MemoryLanePage> with SingleTick
           SliverFillRemaining(
             child: TabBarView(
               controller: _tabController,
-              children: [
-                const _TripsTimelineView(),
-                const _QuestLogView(),
-              ],
+              children: [const _TripsTimelineView(), const _QuestLogView()],
             ),
           ),
         ],
@@ -132,16 +165,40 @@ class _MemoryLanePageState extends ConsumerState<MemoryLanePage> with SingleTick
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Row(
       children: [
-        _statBox(context, 'CHAPTERS', stats.totalTrips.toString(), Icons.auto_stories, Colors.blue),
+        _statBox(
+          context,
+          'CHAPTERS',
+          stats.totalTrips.toString(),
+          Icons.auto_stories,
+          Colors.blue,
+        ),
         const SizedBox(width: 12),
-        _statBox(context, 'GRID COVERAGE', '${stats.completionPercentage}%', Icons.grid_view_rounded, Colors.orange),
+        _statBox(
+          context,
+          'GRID COVERAGE',
+          '${stats.completionPercentage}%',
+          Icons.grid_view_rounded,
+          Colors.orange,
+        ),
         const SizedBox(width: 12),
-        _statBox(context, 'VERIFIED GEMS', stats.totalVisited.toString(), Icons.diamond_outlined, Colors.purple),
+        _statBox(
+          context,
+          'VERIFIED GEMS',
+          stats.totalVisited.toString(),
+          Icons.diamond_outlined,
+          Colors.purple,
+        ),
       ],
     );
   }
 
-  Widget _statBox(BuildContext context, String label, String value, IconData icon, Color color) {
+  Widget _statBox(
+    BuildContext context,
+    String label,
+    String value,
+    IconData icon,
+    Color color,
+  ) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Expanded(
       child: Container(
@@ -149,17 +206,44 @@ class _MemoryLanePageState extends ConsumerState<MemoryLanePage> with SingleTick
         decoration: BoxDecoration(
           color: isDark ? Colors.white.withOpacity(0.03) : Colors.white,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05)),
-          boxShadow: isDark ? null : [BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 10, offset: const Offset(0, 4))],
+          border: Border.all(
+            color: isDark
+                ? Colors.white.withOpacity(0.05)
+                : Colors.black.withOpacity(0.05),
+          ),
+          boxShadow: isDark
+              ? null
+              : [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.02),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Icon(icon, size: 16, color: color.withOpacity(0.7)),
             const SizedBox(height: 8),
-            Text(value, style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18, color: isDark ? Colors.white : Colors.black87)),
+            Text(
+              value,
+              style: TextStyle(
+                fontWeight: FontWeight.w900,
+                fontSize: 18,
+                color: isDark ? Colors.white : Colors.black87,
+              ),
+            ),
             const SizedBox(height: 2),
-            Text(label, style: TextStyle(fontSize: 8, fontWeight: FontWeight.bold, color: isDark ? Colors.white24 : Colors.black26, letterSpacing: 0.5)),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 8,
+                fontWeight: FontWeight.bold,
+                color: isDark ? Colors.white24 : Colors.black26,
+                letterSpacing: 0.5,
+              ),
+            ),
           ],
         ),
       ),
@@ -167,48 +251,143 @@ class _MemoryLanePageState extends ConsumerState<MemoryLanePage> with SingleTick
   }
 }
 
-class _TripsTimelineView extends ConsumerWidget {
-  const _TripsTimelineView();
+class _TripsTimelineView extends StatefulWidget {
+  const _TripsTimelineView({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final tripsState = ref.watch(tripsProvider);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+  State<_TripsTimelineView> createState() => _TripsTimelineViewState();
+}
 
-    if (tripsState.isLoading && tripsState.trips.isEmpty) {
-      return const Center(child: CircularProgressIndicator());
-    }
+class _TripsTimelineViewState extends State<_TripsTimelineView> {
+  String _activeFilter = 'All';
 
-    if (tripsState.trips.isEmpty) {
-      return _buildEmptyState(context, Ionicons.trail_sign_outline, 'No chapters in your story', 'Begin an expedition from the dashboard!');
-    }
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        _buildFilterBar(),
+        Expanded(
+          child: Consumer(
+            builder: (context, ref, child) {
+              final tripsState = ref.watch(tripsProvider);
 
-    final sortedTrips = List<TripModel>.from(tripsState.trips);
-    sortedTrips.sort((a, b) => b.startDate.compareTo(a.startDate));
+              if (tripsState.isLoading && tripsState.trips.isEmpty) {
+                return const Center(child: CircularProgressIndicator());
+              }
 
-    return ListView.builder(
-      padding: const EdgeInsets.fromLTRB(20, 20, 20, 100),
-      itemCount: sortedTrips.length,
-      itemBuilder: (context, index) {
-        final trip = sortedTrips[index];
-        return _TimelineItem(trip: trip, isLast: index == sortedTrips.length - 1);
-      },
+              final filteredTrips = _filterTrips(tripsState.trips);
+
+              if (filteredTrips.isEmpty) {
+                return _buildEmptyState(context, ref, _activeFilter);
+              }
+
+              final sortedTrips = List<TripModel>.from(filteredTrips);
+              sortedTrips.sort((a, b) => b.startDate.compareTo(a.startDate));
+
+              return ListView.builder(
+                padding: const EdgeInsets.fromLTRB(20, 10, 20, 100),
+                itemCount: sortedTrips.length,
+                itemBuilder: (context, index) {
+                  final trip = sortedTrips[index];
+                  return _TimelineItem(
+                    trip: trip,
+                    isLast: index == sortedTrips.length - 1,
+                  );
+                },
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 
-  Widget _buildEmptyState(BuildContext context, IconData icon, String title, String sub) {
+  Widget _buildFilterBar() {
+    final filters = ['All', 'Upcoming', 'Completed', 'Canceled'];
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final primary = theme.colorScheme.primary;
+
+    return Container(
+      height: 60,
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        itemCount: filters.length,
+        itemBuilder: (context, index) {
+          final filter = filters[index];
+          final isSelected = _activeFilter == filter;
+
+          return Padding(
+            padding: const EdgeInsets.only(right: 10),
+            child: FilterChip(
+              label: Text(filter),
+              selected: isSelected,
+              onSelected: (selected) {
+                setState(() {
+                  _activeFilter = filter;
+                });
+              },
+              backgroundColor: Colors.transparent,
+              selectedColor: primary.withOpacity(0.2),
+              side: BorderSide(
+                color: isSelected
+                    ? primary
+                    : (isDark ? Colors.white24 : Colors.black26),
+              ),
+              labelStyle: TextStyle(
+                color: isSelected
+                    ? primary
+                    : (isDark ? Colors.white38 : Colors.black38),
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                fontSize: 11,
+              ),
+              showCheckmark: false,
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  List<TripModel> _filterTrips(List<TripModel> trips) {
+    if (_activeFilter == 'All') return trips;
+
+    return trips.where((trip) {
+      final status = trip.status;
+      switch (_activeFilter) {
+        case 'Upcoming':
+          return status == 'planned';
+        case 'Completed':
+          return status == 'completed';
+        case 'Canceled':
+          return status == 'canceled';
+        default:
+          return true;
+      }
+    }).toList();
+  }
+
+  Widget _buildEmptyState(BuildContext context, WidgetRef ref, String filter) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(icon, size: 64, color: isDark ? Colors.white10 : Colors.black12),
+          Icon(
+            Ionicons.trail_sign_outline,
+            size: 64,
+            color: isDark ? Colors.white10 : Colors.black12,
+          ),
           const SizedBox(height: 16),
-          Text(title, style: TextStyle(color: isDark ? Colors.white38 : Colors.black38, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 8),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 40),
-            child: Text(sub, textAlign: TextAlign.center, style: TextStyle(color: isDark ? Colors.white24 : Colors.black26, fontSize: 12)),
+          Text(
+            filter == 'All' ? 'No journeys found' : 'No $filter journeys',
+            style: TextStyle(
+              fontSize: 14,
+              color: isDark ? Colors.white38 : Colors.black38,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ],
       ),
@@ -244,7 +423,9 @@ class _TimelineItem extends ConsumerWidget {
                   ref.read(tripsProvider.notifier).deleteTrip(trip.id);
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('JOURNEY "${trip.title.toUpperCase()}" DELETED'),
+                      content: Text(
+                        'JOURNEY "${trip.title.toUpperCase()}" DELETED',
+                      ),
                       action: SnackBarAction(
                         label: 'UNDO',
                         onPressed: () {
@@ -261,18 +442,41 @@ class _TimelineItem extends ConsumerWidget {
                     color: Colors.redAccent.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  child: const Icon(Ionicons.trash_outline, color: Colors.redAccent, size: 20),
+                  child: const Icon(
+                    Ionicons.trash_outline,
+                    color: Colors.redAccent,
+                    size: 20,
+                  ),
                 ),
                 child: InkWell(
-                  onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => CreateTripPage(trip: trip))),
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CreateTripPage(trip: trip),
+                    ),
+                  ),
                   borderRadius: BorderRadius.circular(20),
                   child: Container(
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      color: isDark ? Colors.white.withOpacity(0.04) : Colors.white,
+                      color: isDark
+                          ? Colors.white.withOpacity(0.04)
+                          : Colors.white,
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05)),
-                      boxShadow: isDark ? null : [BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 10, offset: const Offset(0, 4))],
+                      border: Border.all(
+                        color: isDark
+                            ? Colors.white.withOpacity(0.05)
+                            : Colors.black.withOpacity(0.05),
+                      ),
+                      boxShadow: isDark
+                          ? null
+                          : [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.02),
+                                blurRadius: 10,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -280,14 +484,35 @@ class _TimelineItem extends ConsumerWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Expanded(child: Text(trip.title.toUpperCase(), style: TextStyle(fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black87, letterSpacing: 1.5, fontSize: 13))),
+                            Expanded(
+                              child: Text(
+                                trip.title.toUpperCase(),
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w900,
+                                  color: isDark ? Colors.white : Colors.black87,
+                                  letterSpacing: 1.5,
+                                  fontSize: 13,
+                                ),
+                              ),
+                            ),
                             _StatusBadge(isDone: isDone),
                           ],
                         ),
                         const SizedBox(height: 4),
-                        Text(DateFormat('MMMM yyyy').format(trip.startDate).toUpperCase(), style: TextStyle(color: isDark ? Colors.white24 : Colors.black26, fontSize: 9, fontWeight: FontWeight.bold, letterSpacing: 1)),
+                        Text(
+                          DateFormat(
+                            'MMMM yyyy',
+                          ).format(trip.startDate).toUpperCase(),
+                          style: TextStyle(
+                            color: isDark ? Colors.white24 : Colors.black26,
+                            fontSize: 9,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1,
+                          ),
+                        ),
                         const SizedBox(height: 16),
-                        if (trip.locations != null && trip.locations!.isNotEmpty)
+                        if (trip.locations != null &&
+                            trip.locations!.isNotEmpty)
                           _buildNodeSummary(context, trip.locations!),
                         const SizedBox(height: 20),
                         Row(
@@ -295,14 +520,39 @@ class _TimelineItem extends ConsumerWidget {
                           children: [
                             TextButton(
                               onPressed: () async {
-                                final newStatus = isDone ? 'planned' : 'completed';
-                                await ref.read(tripsProvider.notifier).updateStatus(trip.id, newStatus);
+                                final newStatus = isDone
+                                    ? 'planned'
+                                    : 'completed';
+                                await ref
+                                    .read(tripsProvider.notifier)
+                                    .updateStatus(trip.id, newStatus);
                                 ref.invalidate(tripsStatsProvider);
                               },
-                              child: Text(isDone ? 'REOPEN MISSION' : 'FINALIZE JOURNEY', style: TextStyle(color: isDone ? (isDark ? Colors.white24 : Colors.black26) : Colors.green, fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 1)),
+                              child: Text(
+                                isDone ? 'REOPEN MISSION' : 'FINALIZE JOURNEY',
+                                style: TextStyle(
+                                  color: isDone
+                                      ? (isDark
+                                            ? Colors.white24
+                                            : Colors.black26)
+                                      : Colors.green,
+                                  fontSize: 9,
+                                  fontWeight: FontWeight.w900,
+                                  letterSpacing: 1,
+                                ),
+                              ),
                             ),
                             const SizedBox(width: 8),
-                            IconButton(icon: const Icon(Ionicons.trash_outline, size: 14, color: Colors.redAccent), onPressed: () => ref.read(tripsProvider.notifier).deleteTrip(trip.id)),
+                            IconButton(
+                              icon: const Icon(
+                                Ionicons.trash_outline,
+                                size: 14,
+                                color: Colors.redAccent,
+                              ),
+                              onPressed: () => ref
+                                  .read(tripsProvider.notifier)
+                                  .deleteTrip(trip.id),
+                            ),
                           ],
                         ),
                       ],
@@ -321,26 +571,34 @@ class _TimelineItem extends ConsumerWidget {
     return Column(
       children: [
         Container(
-          width: 14, height: 14,
+          width: 14,
+          height: 14,
           decoration: BoxDecoration(
-            shape: BoxShape.circle, 
-            color: color, 
+            shape: BoxShape.circle,
+            color: color,
             border: Border.all(color: color.withOpacity(0.2), width: 5),
-            boxShadow: [BoxShadow(color: color.withOpacity(0.3), blurRadius: 10, spreadRadius: 2)],
+            boxShadow: [
+              BoxShadow(
+                color: color.withOpacity(0.3),
+                blurRadius: 10,
+                spreadRadius: 2,
+              ),
+            ],
           ),
         ),
-        if (!isLast) Expanded(
-          child: Container(
-            width: 2, 
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [color.withOpacity(0.5), color.withOpacity(0.05)],
+        if (!isLast)
+          Expanded(
+            child: Container(
+              width: 2,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [color.withOpacity(0.5), color.withOpacity(0.05)],
+                ),
               ),
             ),
           ),
-        ),
       ],
     );
   }
@@ -349,14 +607,22 @@ class _TimelineItem extends ConsumerWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Row(
       children: [
-        Icon(Ionicons.location_outline, size: 12, color: isDark ? Colors.white24 : Colors.black26),
+        Icon(
+          Ionicons.location_outline,
+          size: 12,
+          color: isDark ? Colors.white24 : Colors.black26,
+        ),
         const SizedBox(width: 8),
         Expanded(
           child: Text(
             locations.map((l) => l.name).join(' → '),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: TextStyle(fontSize: 10, color: isDark ? Colors.white38 : Colors.black38, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              fontSize: 10,
+              color: isDark ? Colors.white38 : Colors.black38,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
       ],
@@ -374,15 +640,30 @@ class _StatusBadge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1), 
-        borderRadius: BorderRadius.circular(6), 
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(6),
         border: Border.all(color: color.withOpacity(0.2)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (isDone) ...[const Icon(Ionicons.shield_checkmark, size: 10, color: Colors.green), const SizedBox(width: 4)],
-          Text(isDone ? 'VERIFIED' : 'UPCOMING', style: TextStyle(color: color, fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 1)),
+          if (isDone) ...[
+            const Icon(
+              Ionicons.shield_checkmark,
+              size: 10,
+              color: Colors.green,
+            ),
+            const SizedBox(width: 4),
+          ],
+          Text(
+            isDone ? 'VERIFIED' : 'UPCOMING',
+            style: TextStyle(
+              color: color,
+              fontSize: 8,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 1,
+            ),
+          ),
         ],
       ),
     );
@@ -406,9 +687,19 @@ class _QuestLogView extends ConsumerWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Ionicons.sparkles_outline, size: 48, color: isDark ? Colors.white10 : Colors.black12),
+            Icon(
+              Ionicons.sparkles_outline,
+              size: 48,
+              color: isDark ? Colors.white10 : Colors.black12,
+            ),
             const SizedBox(height: 16),
-            Text('No active missions found', style: TextStyle(color: isDark ? Colors.white38 : Colors.black38, fontWeight: FontWeight.bold)),
+            Text(
+              'No active missions found',
+              style: TextStyle(
+                color: isDark ? Colors.white38 : Colors.black38,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ],
         ),
       );
@@ -422,27 +713,61 @@ class _QuestLogView extends ConsumerWidget {
         final district = assignment.district.toUpperCase();
         final locations = assignment.locations;
         final verifiedCount = locations.where((l) => l.visited).length;
-        
+
         return Container(
           margin: const EdgeInsets.only(bottom: 16),
           decoration: BoxDecoration(
             color: isDark ? Colors.white.withOpacity(0.03) : Colors.white,
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05)),
+            border: Border.all(
+              color: isDark
+                  ? Colors.white.withOpacity(0.05)
+                  : Colors.black.withOpacity(0.05),
+            ),
           ),
           child: Theme(
             data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
             child: ExpansionTile(
               leading: Container(
-                width: 42, height: 42, 
-                decoration: BoxDecoration(color: Colors.amber.withOpacity(0.1), shape: BoxShape.circle), 
-                child: const Icon(Ionicons.folder_open_outline, color: Colors.amber, size: 20),
+                width: 42,
+                height: 42,
+                decoration: BoxDecoration(
+                  color: Colors.amber.withOpacity(0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Ionicons.folder_open_outline,
+                  color: Colors.amber,
+                  size: 20,
+                ),
               ),
-              title: Text(district, style: TextStyle(fontWeight: FontWeight.w900, color: isDark ? Colors.white70 : Colors.black87, fontSize: 13, letterSpacing: 1.5)),
-              subtitle: Text('$verifiedCount/${locations.length} NODES VERIFIED', style: TextStyle(color: isDark ? Colors.white24 : Colors.black26, fontSize: 8, fontWeight: FontWeight.bold, letterSpacing: 0.5)),
-              trailing: Icon(Ionicons.chevron_down_outline, size: 16, color: isDark ? Colors.white24 : Colors.black26),
+              title: Text(
+                district,
+                style: TextStyle(
+                  fontWeight: FontWeight.w900,
+                  color: isDark ? Colors.white70 : Colors.black87,
+                  fontSize: 13,
+                  letterSpacing: 1.5,
+                ),
+              ),
+              subtitle: Text(
+                '$verifiedCount/${locations.length} NODES VERIFIED',
+                style: TextStyle(
+                  color: isDark ? Colors.white24 : Colors.black26,
+                  fontSize: 8,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 0.5,
+                ),
+              ),
+              trailing: Icon(
+                Ionicons.chevron_down_outline,
+                size: 16,
+                color: isDark ? Colors.white24 : Colors.black26,
+              ),
               childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-              children: locations.map((quest) => _buildQuestSubItem(context, quest)).toList(),
+              children: locations
+                  .map((quest) => _buildQuestSubItem(context, quest))
+                  .toList(),
             ),
           ),
         );
@@ -458,15 +783,41 @@ class _QuestLogView extends ConsumerWidget {
       margin: const EdgeInsets.only(top: 8),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withOpacity(0.02) : Colors.black.withOpacity(0.02),
+        color: isDark
+            ? Colors.white.withOpacity(0.02)
+            : Colors.black.withOpacity(0.02),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
         children: [
-          Icon(quest.visited ? Ionicons.checkmark_circle : Ionicons.ellipse_outline, color: color, size: 14),
+          Icon(
+            quest.visited
+                ? Ionicons.checkmark_circle
+                : Ionicons.ellipse_outline,
+            color: color,
+            size: 14,
+          ),
           const SizedBox(width: 12),
-          Expanded(child: Text(quest.name.toUpperCase(), style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: isDark ? Colors.white60 : Colors.black54, letterSpacing: 0.5))),
-          Text(quest.visited ? 'VERIFIED' : 'ACTIVE', style: TextStyle(color: color, fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 1)),
+          Expanded(
+            child: Text(
+              quest.name.toUpperCase(),
+              style: TextStyle(
+                fontSize: 10,
+                fontWeight: FontWeight.bold,
+                color: isDark ? Colors.white60 : Colors.black54,
+                letterSpacing: 0.5,
+              ),
+            ),
+          ),
+          Text(
+            quest.visited ? 'VERIFIED' : 'ACTIVE',
+            style: TextStyle(
+              color: color,
+              fontSize: 8,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 1,
+            ),
+          ),
         ],
       ),
     );
